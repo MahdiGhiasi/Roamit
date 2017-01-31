@@ -1,0 +1,14 @@
+﻿<Application
+    x:Class="QuickShare.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare"
+    xmlns:rome="using:MahdiGhiasi.Rome"
+    RequestedTheme="Light">
+    <Application.Resources>
+        <ResourceDictionary>
+            <rome:RemoteSystemKindToIconConverter x:Key="RemoteSystemKindToIconConverter"></rome:RemoteSystemKindToIconConverter>
+            <rome:RemoteSystemProximityToIconConverter x:Key="RemoteSystemProximityToIconConverter"></rome:RemoteSystemProximityToIconConverter>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
