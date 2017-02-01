@@ -1,4 +1,4 @@
-﻿using MahdiGhiasi.Rome;
+﻿using QuickShare.Rome;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,19 +51,6 @@ namespace QuickShare
         private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var a = 2;
-        }
-
-        private async void Button_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var ips = FileSendReceive.ServerIPFinder.FindMyIPAddresses();
-
-            string s = "";
-            foreach (var item in ips)
-            {
-                s += item + " , ";
-            }
-
-            ipText.Text = s;
         }
 
         private async void Button_Tapped_1(object sender, TappedRoutedEventArgs e)
@@ -164,14 +151,53 @@ namespace QuickShare
             var myfolder = await DownloadsFolder.CreateFolderAsync("QuickShare");
 
             futureAccessList.Clear();
-            futureAccessList.Add(myfolder);
+            futureAccessList.AddOrReplace("downloadMainFolder",myfolder);
         }
 
-        private void CreateFile_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void CreateFile_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
 
-            var folder = futureAccessList.
+            var folder = (await futureAccessList.GetItemAsync("downloadMainFolder")) as StorageFolder;
+
+            var file = await folder.CreateFileAsync("test.txt");
+
+            await FileIO.WriteTextAsync(file, "Hell yeah!");
         }
+
+
+        private async void Button_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var ips = FileSendReceive.ServerIPFinder.FindMyIPAddresses();
+
+            string s = "";
+            foreach (var item in ips)
+            {
+                s += item + ", ";
+            }
+            ipText.Text = s;
+
+            FileSendReceive.ServerIPFinder.Instance.IPDetectionCompleted += Instance_IPDetectionCompleted;
+
+            if (DevicesList.SelectedItem == null)
+                return;
+
+            var rs = DevicesList.SelectedItem as RemoteSystem;
+            var result = await packageManager.Connect(rs, true);
+            DevicesList.SelectedItem = null;
+
+            if (result == Windows.ApplicationModel.AppService.AppServiceConnectionStatus.Success)
+            {
+                await FileSendReceive.ServerIPFinder.Instance.StartFindingMyLocalIP();
+            }
+
+
+        }
+
+        private async void Instance_IPDetectionCompleted(object sender, FileSendReceive.IPDetectionCompletedEventArgs e)
+        {
+            await new MessageDialog("Done").ShowAsync();
+        }
+
     }
 }

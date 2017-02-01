@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Notifications;
 
-namespace QuickShare.Common
+namespace QuickShare.ServiceTask
 {
-    static class ToastFunctions
+    public static class ToastFunctions
     {
         public static void SendToast(string text)
         {

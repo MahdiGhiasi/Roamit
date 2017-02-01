@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Windows.UI.Core;
 
-namespace QuickShare.Common
+namespace QuickShare.Rome
 {
     public static class DispatcherTaskExtensions
     {

@@ -1,5 +1,4 @@
-﻿using MahdiGhiasi.Rome;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +10,11 @@ using Windows.ApplicationModel.AppService;
 using System.Net.Http;
 using Windows.UI.Popups;
 using QuickShare.Server;
+using QuickShare.Rome;
 
 namespace QuickShare.FileSendReceive
 {
-    class ServerIPFinder
+    public class ServerIPFinder
     {
         //Singleton class
         static ServerIPFinder _instance = null;
@@ -39,9 +39,9 @@ namespace QuickShare.FileSendReceive
 
         public async Task<bool> StartFindingMyLocalIP()
         {
-            var successKey = Common.RandomFunctions.RandomString(10);
+            var successKey = RandomFunctions.RandomString(10);
 
-            List<string> IPs = FindMyIPAddresses();
+            List<string> IPs = FindMyIPAddresses().ToList();
             servers = StartListeners(IPs, successKey);
 
             ValueSet vs = new ValueSet();
@@ -53,10 +53,9 @@ namespace QuickShare.FileSendReceive
             var response = await RomePackageManager.Instance.Send(vs);
             if (response.Status == Windows.ApplicationModel.AppService.AppServiceResponseStatus.Success)
             {
-                WaitForAnswer();
                 return true;
             }
-            
+
             return false;
         }
 
@@ -94,6 +93,8 @@ namespace QuickShare.FileSendReceive
         {
             clientAnswerStatus = 1;
 
+            IPDetectionCompleted?.Invoke(this, null);
+
             return "success";
         }
 
@@ -113,19 +114,10 @@ namespace QuickShare.FileSendReceive
             return servers;
         }
 
-        internal async Task ReceiveRequest(AppServiceRequest request)
-        {
-            await ReceiveRequestClient(request);
-        }
-
-        private async Task ReceiveRequestClient(AppServiceRequest request)
+        string senderIP = "";
+        public async Task ReceiveRequest(AppServiceRequest request)
         {
             ValueSet vs = new ValueSet();
-
-            await RomeHelper.RunOnCoreDispatcherIfPossible(async () =>
-            {
-                await new MessageDialog("BEGIN").ShowAsync();
-            });
 
             vs = new ValueSet();
 
@@ -140,33 +132,26 @@ namespace QuickShare.FileSendReceive
                 var expectedMessage = request.Message["DefaultMessage"] as string;
 
                 var IPs = JsonConvert.DeserializeObject<List<string>>(request.Message["IPs"] as string);
-                string senderIP = "";
+
+                List<Task<bool>> tasks = new List<Task<bool>>();
 
                 foreach (var ip in IPs)
-                {
-                    if (await CheckIP(ip, expectedMessage))
-                    {
-                        senderIP = ip;
-                        break;
-                    }
-                }
-                await RomeHelper.RunOnCoreDispatcherIfPossible(async () =>
-                {
-                    await new MessageDialog("FOUND").ShowAsync();
-                });
+                    tasks.Add(CheckIP(ip, expectedMessage));
 
-                vs.Add("SenderIP", senderIP);
+                var success = await tasks.LogicalAny();
+
+                if (!success)
+                    throw new Exception("Couldn't find the ip.");
+
+                System.Diagnostics.Debug.WriteLine(senderIP);
+
             }
             catch (Exception ex)
             {
                 vs.Add("Exception", ex.Message);
+                System.Diagnostics.Debug.WriteLine(ex.Message);
             }
 
-            await request.SendResponseAsync(vs);
-            await RomeHelper.RunOnCoreDispatcherIfPossible(async () =>
-            {
-                await new MessageDialog("SENT").ShowAsync();
-            });
             //await RomePackageManager.Instance.Send(vs);
         }
 
@@ -182,7 +167,10 @@ namespace QuickShare.FileSendReceive
                     var body = await response.Content.ReadAsStringAsync();
                     System.Diagnostics.Debug.WriteLine(body);
                     if (body == expectedMessage)
+                    {
+                        senderIP = ip;
                         return true;
+                    }
                 }
 
                 return false;
@@ -193,7 +181,7 @@ namespace QuickShare.FileSendReceive
             }
         }
 
-        public static List<string> FindMyIPAddresses()
+        public static IEnumerable<string> FindMyIPAddresses()
         {
             List<string> ipAddresses = new List<string>();
             var hostnames = NetworkInformation.GetHostNames();

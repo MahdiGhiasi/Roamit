@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace MahdiGhiasi.Rome
+namespace QuickShare.Rome
 {
-    public class SendFinishedEventArgs : EventArgs
+    public sealed class SendFinishedEventArgs
     {
         public string ErrorMessage { get; set; }
         public bool WasSendingSuccessful { get; set; }

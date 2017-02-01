@@ -8,9 +8,9 @@ using Windows.System;
 using Windows.System.RemoteSystems;
 using Windows.UI.Popups;
 
-namespace MahdiGhiasi.Rome
+namespace QuickShare.Rome
 {
-    class RomePackageManager
+    public class RomePackageManager
     {
         //Singleton class
         static RomePackageManager _instance = null;

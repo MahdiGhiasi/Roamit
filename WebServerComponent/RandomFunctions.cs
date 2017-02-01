@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickShare.Common
+namespace QuickShare.Server
 {
-    class RandomFunctions
+    public class RandomFunctions
     {
         private static Random random = new Random();
         public static string RandomString(int length)

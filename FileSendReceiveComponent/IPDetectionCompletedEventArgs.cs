@@ -2,7 +2,7 @@
 
 namespace QuickShare.FileSendReceive
 {
-    public class IPDetectionCompletedEventArgs : EventArgs
+    public class IPDetectionCompletedEventArgs
     {
         public bool Success { get; set; }
         public string IP { get; set; }

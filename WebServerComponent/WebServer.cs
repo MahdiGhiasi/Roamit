@@ -16,7 +16,7 @@ using Windows.Storage.Streams;
 
 namespace QuickShare.Server
 {
-    class WebServer : IDisposable
+    public class WebServer : IDisposable
     {
         HttpListener listener;
         Dictionary<string, object> Urls = new Dictionary<string, object>();

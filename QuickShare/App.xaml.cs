@@ -25,7 +25,6 @@ namespace QuickShare
     sealed partial class App : Application
     {
         private BackgroundTaskDeferral _backgroundTaskDeferral;
-        private AppServiceConnection _appServiceconnection;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -36,7 +35,7 @@ namespace QuickShare
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            MahdiGhiasi.Rome.RomePackageManager.Instance.Initialize("com.quickshare.service");
+            Rome.RomePackageManager.Instance.Initialize("com.quickshare.service");
         }
 
         /// <summary>
@@ -113,74 +112,7 @@ namespace QuickShare
         protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
             base.OnBackgroundActivated(args);
-
-            this._backgroundTaskDeferral = args.TaskInstance.GetDeferral();
-            args.TaskInstance.Canceled += OnTaskCanceled;
-            var details = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
-
-            if (details?.Name == "com.quickshare.service") //Remote Activation
-            {
-                _appServiceconnection = details.AppServiceConnection;
-                _appServiceconnection.RequestReceived += OnRequestReceived;
-                _appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed;                
-            }
         }
 
-        private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
-        {
-            if (_backgroundTaskDeferral != null)
-            {
-                // Complete the service deferral.
-                _backgroundTaskDeferral.Complete();
-                _backgroundTaskDeferral = null;
-            }
-        }
-
-        private void AppServiceconnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
-        {
-            if (_backgroundTaskDeferral != null)
-            {
-                // Complete the service deferral.
-                _backgroundTaskDeferral.Complete();
-            }
-        }
-
-        private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
-        {
-            if (args.Request.Message.ContainsKey("Receiver"))
-            {
-                if (args.Request.Message["Receiver"] as string == "ServerIPFinder")
-                {
-                    await FileSendReceive.ServerIPFinder.Instance.ReceiveRequest(args.Request);
-                }
-            }
-            else if (args.Request.Message.ContainsKey("Test"))
-            {
-                string s = args.Request.Message["Test"] as string;
-
-                if (s == null)
-                    s = "null";
-
-                ValueSet vs = new ValueSet();
-                vs.Add("RecvSuccessful", "RecvSuccessful");
-                await args.Request.SendResponseAsync(vs);
-
-                await System.Threading.Tasks.Task.Delay(1500);
-
-                Common.ToastFunctions.SendToast(s);
-            }
-            else if (args.Request.Message.ContainsKey("TestLongRunning"))
-            {
-                for (int i = 0; i < 10000; i++)
-                {
-                    Common.ToastFunctions.SendToast((i * 5).ToString() + " seconds");
-                    await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5));
-                }
-            }
-
-
-            if (_backgroundTaskDeferral != null)
-                _backgroundTaskDeferral.Complete();
-        }
     }
 }

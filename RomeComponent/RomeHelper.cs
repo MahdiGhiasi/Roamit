@@ -1,5 +1,4 @@
-﻿using QuickShare.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,9 +10,9 @@ using Windows.Foundation.Collections;
 using Windows.System.RemoteSystems;
 using Windows.UI.Core;
 
-namespace MahdiGhiasi.Rome
+namespace QuickShare.Rome
 {
-    internal class RomeHelper : IDisposable
+    public class RomeHelper : IDisposable
     {
         private RemoteSystemWatcher _remoteSystemWatcher;
 
@@ -40,7 +39,7 @@ namespace MahdiGhiasi.Rome
             }
         }
 
-        internal static async Task RunOnCoreDispatcherIfPossible(Action action, bool runAnyway = true)
+        public static async Task RunOnCoreDispatcherIfPossible(Action action, bool runAnyway = true)
         {
             CoreDispatcher dispatcher = null;
 

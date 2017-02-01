@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
-namespace MahdiGhiasi.Rome
+namespace QuickShare.Rome
 {
     public class RemoteSystemProximityToIconConverter : IValueConverter
     {
