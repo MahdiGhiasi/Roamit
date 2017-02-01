@@ -133,7 +133,6 @@ namespace QuickShare.Server
                 listener.Close();
             }
             catch { }
-            listener.Dispose();
         }
 
     }
