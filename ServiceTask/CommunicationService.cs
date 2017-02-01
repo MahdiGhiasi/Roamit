@@ -54,7 +54,7 @@ namespace QuickShare.ServiceTask
             {
                 if (args.Request.Message["Receiver"] as string == "ServerIPFinder")
                 {
-                    await FileSendReceive.ServerIPFinder.Instance.ReceiveRequest(args.Request);
+                    await FileSendReceive.ServerIPFinder.ReceiveRequest(args.Request);
                 }
             }
             else if (args.Request.Message.ContainsKey("Test"))

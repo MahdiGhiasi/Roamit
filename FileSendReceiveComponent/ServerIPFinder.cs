@@ -11,27 +11,14 @@ using System.Net.Http;
 using Windows.UI.Popups;
 using QuickShare.Server;
 using QuickShare.Rome;
+using Windows.UI.Notifications;
+using QuickShare.CommonFunctions;
+using Windows.Foundation;
 
 namespace QuickShare.FileSendReceive
 {
-    public class ServerIPFinder
+    public partial class ServerIPFinder
     {
-        //Singleton class
-        static ServerIPFinder _instance = null;
-        public static ServerIPFinder Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new ServerIPFinder();
-
-                return _instance;
-            }
-        }
-        private ServerIPFinder() { }
-
-        int clientAnswerStatus = 0;
-
         public delegate void IPDetectionCompletedEventHandler(object sender, IPDetectionCompletedEventArgs e);
         public event IPDetectionCompletedEventHandler IPDetectionCompleted;
 
@@ -39,16 +26,16 @@ namespace QuickShare.FileSendReceive
 
         public async Task<bool> StartFindingMyLocalIP()
         {
-            var successKey = RandomFunctions.RandomString(10);
+            var key = RandomFunctions.RandomString(10);
 
             List<string> IPs = FindMyIPAddresses().ToList();
-            servers = StartListeners(IPs, successKey);
+            servers = StartListeners(IPs, key);
 
             ValueSet vs = new ValueSet();
             vs.Add("Receiver", "ServerIPFinder");
             vs.Add("IPs", JsonConvert.SerializeObject(IPs));
             vs.Add("DefaultMessage", WebServer.DefaultRootPage());
-            vs.Add("SuccessKey", successKey);
+            vs.Add("InterruptKey", key);
 
             var response = await RomePackageManager.Instance.Send(vs);
             if (response.Status == Windows.ApplicationModel.AppService.AppServiceResponseStatus.Success)
@@ -57,27 +44,6 @@ namespace QuickShare.FileSendReceive
             }
 
             return false;
-        }
-
-        private async void WaitForAnswer()
-        {
-            clientAnswerStatus = 0;
-
-            await Task.Delay(TimeSpan.FromSeconds(10));
-
-            if (clientAnswerStatus != 1)
-            {
-                //Failed
-                clientAnswerStatus = 2;
-
-                IPDetectionCompleted?.Invoke(this, new IPDetectionCompletedEventArgs
-                {
-                    IP = "",
-                    Success = false
-                });
-
-                StopListeners(servers);
-            }
         }
 
         private void StopListeners(List<KeyValuePair<string, WebServer>> servers)
@@ -91,14 +57,47 @@ namespace QuickShare.FileSendReceive
 
         private string WebServerFetched(WebServer sender, HttpListenerRequest request)
         {
-            clientAnswerStatus = 1;
+            StopListeners(servers);
 
-            IPDetectionCompleted?.Invoke(this, null);
+            IPDetectionCompletedEventArgs ea;
+            try
+            {
+                var query = new WwwFormUrlDecoder(request.Url.Query);
+
+                var success = (query.GetFirstValueByName("success").ToLower() == "true");
+                var message = "";
+
+                if (!success)
+                    message = query.GetFirstValueByName("message");
+
+                ea = new IPDetectionCompletedEventArgs()
+                {
+                    Success = success,
+                    Message = message,
+                    MyIP = request.Host,
+                    TargetIP = request.RemoteEndpoint.Address.ToString()
+                };
+            }
+            catch (Exception ex)
+            {
+                ea = new IPDetectionCompletedEventArgs()
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    MyIP = request.Host,
+                    TargetIP = request.RemoteEndpoint.Address.ToString()
+                };
+            }
+
+            DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
+            {
+                IPDetectionCompleted?.Invoke(this, ea);
+            });
 
             return "success";
         }
 
-        private List<KeyValuePair<string, WebServer>> StartListeners(List<string> IPs, string successRandomString)
+        private List<KeyValuePair<string, WebServer>> StartListeners(List<string> IPs, string communicationKey)
         {
             var servers = new List<KeyValuePair<string, WebServer>>();
 
@@ -106,7 +105,7 @@ namespace QuickShare.FileSendReceive
             {
                 WebServer ws = new WebServer(item, 8081);
 
-                ws.AddResponseUrl("/" + successRandomString + "/", (Func<WebServer, HttpListenerRequest, string>)WebServerFetched);
+                ws.AddResponseUrl("/" + communicationKey + "/", (Func<WebServer, HttpListenerRequest, string>)WebServerFetched);
 
                 servers.Add(new KeyValuePair<string, WebServer>(item, ws));
             }
@@ -114,12 +113,11 @@ namespace QuickShare.FileSendReceive
             return servers;
         }
 
-        string senderIP = "";
-        public async Task ReceiveRequest(AppServiceRequest request)
-        {
-            ValueSet vs = new ValueSet();
+        static string senderIP = "";
 
-            vs = new ValueSet();
+        public static async Task ReceiveRequest(AppServiceRequest request)
+        {
+            string interruptKey = "";
 
             try
             {
@@ -127,9 +125,12 @@ namespace QuickShare.FileSendReceive
                     throw new Exception("Invalid request. (A)");
                 if (!request.Message.ContainsKey("DefaultMessage"))
                     throw new Exception("Invalid request. (B)");
-
+                if (!request.Message.ContainsKey("InterruptKey"))
+                    throw new Exception("Invalid request. (C)");
 
                 var expectedMessage = request.Message["DefaultMessage"] as string;
+
+                interruptKey = request.Message["InterruptKey"] as string;
 
                 var IPs = JsonConvert.DeserializeObject<List<string>>(request.Message["IPs"] as string);
 
@@ -143,19 +144,41 @@ namespace QuickShare.FileSendReceive
                 if (!success)
                     throw new Exception("Couldn't find the ip.");
 
-                System.Diagnostics.Debug.WriteLine(senderIP);
-
+                await NotifySender(senderIP, interruptKey, "success=true");
             }
             catch (Exception ex)
             {
-                vs.Add("Exception", ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.Message);
+                if ((interruptKey != "") && (senderIP != ""))
+                {
+                    await NotifySender(senderIP, interruptKey, "success=false&message=" + System.Net.WebUtility.UrlEncode(ex.Message));
+                }
             }
-
-            //await RomePackageManager.Instance.Send(vs);
         }
 
-        private async Task<bool> CheckIP(string ip, string expectedMessage)
+        private static async Task NotifySender(string senderIP, string key)
+        {
+            var httpClient = new HttpClient();
+
+            try
+            {
+                await httpClient.GetAsync("http://" + senderIP + ":8081/" + key + "/");
+            }
+            catch { }
+        }
+
+        private static async Task NotifySender(string senderIP, string key, string additional)
+        {
+            var httpClient = new HttpClient();
+
+            try
+            {
+                var response = await httpClient.GetAsync("http://" + senderIP + ":8081/" + key + "/?" + additional);
+            }
+            catch { }
+        }
+
+        private static async Task<bool> CheckIP(string ip, string expectedMessage)
         {
             var httpClient = new HttpClient();
 
@@ -165,10 +188,10 @@ namespace QuickShare.FileSendReceive
                 if (response.IsSuccessStatusCode)
                 {
                     var body = await response.Content.ReadAsStringAsync();
-                    System.Diagnostics.Debug.WriteLine(body);
                     if (body == expectedMessage)
                     {
                         senderIP = ip;
+                        System.Diagnostics.Debug.WriteLine(ip);
                         return true;
                     }
                 }
