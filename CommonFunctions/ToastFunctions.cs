@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Notifications;
 
-namespace QuickShare.CommonFunctions
+namespace QuickShare.Common
 {
     public static class ToastFunctions
     {

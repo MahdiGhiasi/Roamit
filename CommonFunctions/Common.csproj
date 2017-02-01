@@ -7,8 +7,8 @@
     <ProjectGuid>{0D9A737F-1505-45AE-B35C-D27390F14AE6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QuickShare.CommonFunctions</RootNamespace>
-    <AssemblyName>CommonFunctions</AssemblyName>
+    <RootNamespace>QuickShare.Common</RootNamespace>
+    <AssemblyName>Common</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
@@ -107,6 +107,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="DispatcherEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomFunctions.cs" />

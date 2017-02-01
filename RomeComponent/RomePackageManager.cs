@@ -213,7 +213,7 @@ namespace QuickShare.Rome
             int tryCount = getTryCount();
             for (int i = 0; i < tryCount; i++)
             {
-                Task launch = CommonFunctions.DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
+                Task launch = Common.DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
                 {
                     /*var options = new Windows.System.RemoteLauncherOptions()
                                     {

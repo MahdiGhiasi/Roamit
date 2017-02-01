@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickShare.CommonFunctions
+namespace QuickShare.Common
 {
     public class RandomFunctions
     {

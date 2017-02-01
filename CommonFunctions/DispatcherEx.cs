@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 
-namespace QuickShare.CommonFunctions
+namespace QuickShare.Common
 {
     public static class DispatcherEx
     {

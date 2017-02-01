@@ -12,7 +12,7 @@ using Windows.UI.Popups;
 using QuickShare.Server;
 using QuickShare.Rome;
 using Windows.UI.Notifications;
-using QuickShare.CommonFunctions;
+using QuickShare.Common;
 using Windows.Foundation;
 
 namespace QuickShare.FileSendReceive
@@ -103,7 +103,7 @@ namespace QuickShare.FileSendReceive
 
             foreach (var item in IPs)
             {
-                WebServer ws = new WebServer(item, 8081);
+                WebServer ws = new WebServer(item, Constants.CommunicationPort);
 
                 ws.AddResponseUrl("/" + communicationKey + "/", (Func<WebServer, HttpListenerRequest, string>)WebServerFetched);
 
@@ -162,7 +162,7 @@ namespace QuickShare.FileSendReceive
 
             try
             {
-                await httpClient.GetAsync("http://" + senderIP + ":8081/" + key + "/");
+                await httpClient.GetAsync("http://" + senderIP + ":" + Constants.CommunicationPort.ToString() + "/" + key + "/");
             }
             catch { }
         }
@@ -173,7 +173,7 @@ namespace QuickShare.FileSendReceive
 
             try
             {
-                var response = await httpClient.GetAsync("http://" + senderIP + ":8081/" + key + "/?" + additional);
+                var response = await httpClient.GetAsync("http://" + senderIP + ":" + Constants.CommunicationPort.ToString() + "/" + key + "/?" + additional);
             }
             catch { }
         }
@@ -184,7 +184,7 @@ namespace QuickShare.FileSendReceive
 
             try
             {
-                var response = await httpClient.GetAsync("http://" + ip + ":8081/");
+                var response = await httpClient.GetAsync("http://" + ip + ":" + Constants.CommunicationPort.ToString() + "/");
                 if (response.IsSuccessStatusCode)
                 {
                     var body = await response.Content.ReadAsStringAsync();

@@ -116,9 +116,9 @@
     <Folder Include="WebServer\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonFunctions\CommonFunctions.csproj">
+    <ProjectReference Include="..\CommonFunctions\Common.csproj">
       <Project>{0d9a737f-1505-45ae-b35c-d27390f14ae6}</Project>
-      <Name>CommonFunctions</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\FileSendReceiveComponent\FileSendReceiveComponent.csproj">
       <Project>{95c724d0-9cbc-4468-899d-5a29a6396e8c}</Project>

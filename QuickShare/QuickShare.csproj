@@ -130,9 +130,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonFunctions\CommonFunctions.csproj">
+    <ProjectReference Include="..\CommonFunctions\Common.csproj">
       <Project>{0D9A737F-1505-45AE-B35C-D27390F14AE6}</Project>
-      <Name>CommonFunctions</Name>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\FileSendReceiveComponent\FileSendReceiveComponent.csproj">
       <Project>{95c724d0-9cbc-4468-899d-5a29a6396e8c}</Project>
