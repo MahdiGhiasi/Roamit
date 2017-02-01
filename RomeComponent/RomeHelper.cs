@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.CommonFunctions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -39,50 +40,10 @@ namespace QuickShare.Rome
             }
         }
 
-        public static async Task RunOnCoreDispatcherIfPossible(Action action, bool runAnyway = true)
-        {
-            CoreDispatcher dispatcher = null;
-
-            try
-            {
-                dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
-            }
-            catch { }
-
-            if (dispatcher != null)
-            {
-                await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => { action.Invoke(); });
-            }
-            else if (runAnyway)
-            {
-                action.Invoke();
-            }
-        }
-
-        internal static async Task RunOnCoreDispatcherIfPossible(Func<Task> action, bool runAnyway = true)
-        {
-            CoreDispatcher dispatcher = null;
-
-            try
-            {
-                dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
-            }
-            catch { }
-
-            if (dispatcher != null)
-            {
-                await dispatcher.RunTaskAsync(async () => { await action(); });
-            }
-            else if (runAnyway)
-            {
-                await action();
-            }
-        }
-
         private async void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
         {
             var remoteSystem = args.RemoteSystem;
-            await RunOnCoreDispatcherIfPossible(() =>
+            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
             {
                 AddToRemoteSystemsList(args.RemoteSystem);
             });
@@ -90,7 +51,7 @@ namespace QuickShare.Rome
 
         private async void RemoteSystemWatcher_RemoteSystemRemoved(RemoteSystemWatcher sender, RemoteSystemRemovedEventArgs args)
         {
-            await RunOnCoreDispatcherIfPossible(() =>
+            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
             {
                 var remoteSystem = _remoteSystems.Where(s => s.Id == args.RemoteSystemId).FirstOrDefault();
                 if (remoteSystem != null)
@@ -104,12 +65,12 @@ namespace QuickShare.Rome
         {
             RemoteSystem remoteSystem = null;
 
-            await RunOnCoreDispatcherIfPossible(() =>
+            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
             {
                 remoteSystem = _remoteSystems.Where(s => s.Id == args.RemoteSystem.Id).FirstOrDefault();
             });
 
-            await RunOnCoreDispatcherIfPossible(() =>
+            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
             {
                 if (remoteSystem != null)
                     _remoteSystems.Remove(remoteSystem);

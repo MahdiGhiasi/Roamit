@@ -107,7 +107,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DispatcherTaskExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteSystemKindToIconConverter.cs" />
     <Compile Include="RemoteSystemProximityToIconConverter.cs" />
@@ -115,6 +114,12 @@
     <Compile Include="RomePackageManager.cs" />
     <Compile Include="SendFinishedEventArgs.cs" />
     <EmbeddedResource Include="Properties\RomeComponent.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommonFunctions\CommonFunctions.csproj">
+      <Project>{0d9a737f-1505-45ae-b35c-d27390f14ae6}</Project>
+      <Name>CommonFunctions</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
