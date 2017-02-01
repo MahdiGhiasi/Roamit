@@ -89,10 +89,12 @@ namespace QuickShare.FileSendReceive
                 };
             }
 
+#pragma warning disable CS4014
             DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
             {
                 IPDetectionCompleted?.Invoke(this, ea);
             });
+#pragma warning restore CS4014
 
             return "success";
         }
@@ -198,7 +200,7 @@ namespace QuickShare.FileSendReceive
 
                 return false;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
