@@ -46,14 +46,14 @@ namespace QuickShare.Server
             AddResponseUrl("/", DefaultRootPage());
         }
 
-        public void AddResponseUrl(string url, string response) { AddResponseUrl(url, response); }
-        public void AddResponseUrl(string url, byte[] response) { AddResponseUrl(url, response); }
-        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, string> response) { AddResponseUrl(url, response); }
-        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, byte[]> response) { AddResponseUrl(url, response); }
-        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, Task<string>> response) { AddResponseUrl(url, response); }
-        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, Task<byte[]>> response) { AddResponseUrl(url, response); }
+        public void AddResponseUrl(string url, string response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, byte[] response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, string> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, byte[]> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, Task<string>> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, Task<byte[]>> response) { AddResponseUrlInternal(url, response); }
 
-        private void AddResponseUrl(string url, object response)
+        private void AddResponseUrlInternal(string url, object response)
         {
             if (Urls.ContainsKey(url))
                 Urls.Remove(url);
