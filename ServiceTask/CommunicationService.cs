@@ -53,9 +53,21 @@ namespace QuickShare.ServiceTask
         {
             if (args.Request.Message.ContainsKey("Receiver"))
             {
-                if (args.Request.Message["Receiver"] as string == "ServerIPFinder")
+                string receiver = args.Request.Message["Receiver"] as string;
+                if (receiver == "ServerIPFinder")
                 {
                     await FileSendReceive.ServerIPFinder.ReceiveRequest(args.Request);
+                }
+                else if (receiver == "System")
+                {
+
+                    if (args.Request.Message.ContainsKey("FinishService"))
+                        if (_deferral != null)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Goodbye");
+                            _appServiceconnection.Dispose();
+                            _deferral.Complete();
+                        }
                 }
             }
             else if (args.Request.Message.ContainsKey("Test"))
