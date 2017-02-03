@@ -182,7 +182,7 @@ namespace QuickShare.Rome
                 }
                 return result;
             }
-            catch (Exception ex)
+            catch
             {
                 return AppServiceConnectionStatus.Unknown;
             }
