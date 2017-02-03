@@ -93,10 +93,6 @@ namespace QuickShare.ServiceTask
                     await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5));
                 }
             }
-
-
-            if (_deferral != null)
-                _deferral.Complete();
         }
     }
 }
