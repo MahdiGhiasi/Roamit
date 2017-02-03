@@ -58,6 +58,10 @@ namespace QuickShare.ServiceTask
                 {
                     await FileSendReceive.ServerIPFinder.ReceiveRequest(args.Request);
                 }
+                else if (receiver == "FileReceiver")
+                {
+                    await FileSendReceive.FileReceiver.ReceiveRequest(args.Request);
+                }
                 else if (receiver == "System")
                 {
 

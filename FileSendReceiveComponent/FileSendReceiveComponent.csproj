@@ -112,6 +112,7 @@
     <Compile Include="FileSender.cs" />
     <Compile Include="IPDetectionCompletedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FileTransferProgressEventArgs.cs" />
     <Compile Include="ServerIPFinder.cs" />
     <EmbeddedResource Include="Properties\FileSendReceiveComponent.rd.xml" />
   </ItemGroup>
