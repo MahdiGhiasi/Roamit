@@ -1,4 +1,5 @@
-﻿using QuickShare.Rome;
+﻿using QuickShare.FileSendReceive;
+using QuickShare.Rome;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,7 +44,7 @@ namespace QuickShare
             DevicesList.ItemsSource = packageManager.RemoteSystems;
         }
 
-        private async void DevicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void DevicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
@@ -55,22 +56,44 @@ namespace QuickShare
 
         private async void Button_Tapped_1(object sender, TappedRoutedEventArgs e)
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.List;
-            picker.SuggestedStartLocation =
-                Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-            picker.FileTypeFilter.Add(".mp4");
-            picker.FileTypeFilter.Add(".png");
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".jpeg");
-            picker.FileTypeFilter.Add(".zip");
+            var rs = DevicesList.SelectedItem as RemoteSystem;
+            if (rs == null)
+                return;
 
-            var file = await picker.PickSingleFileAsync();
-
-            IBuffer buffer = await FileIO.ReadBufferAsync(file);
-            //bytes = buffer.ToArray();
+            var result = await packageManager.Connect(rs, true);
+            DevicesList.SelectedItem = null;
 
 
+            if (result == Windows.ApplicationModel.AppService.AppServiceConnectionStatus.Success)
+            {
+                var picker = new Windows.Storage.Pickers.FileOpenPicker();
+                picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.List;
+                picker.SuggestedStartLocation =
+                    Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+                picker.FileTypeFilter.Add(".mp4");
+                picker.FileTypeFilter.Add(".png");
+                picker.FileTypeFilter.Add(".jpg");
+                picker.FileTypeFilter.Add(".jpeg");
+                picker.FileTypeFilter.Add(".zip");
+                picker.FileTypeFilter.Add(".txt");
+
+                var file = await picker.PickSingleFileAsync();
+
+                using (FileSender fs = new FileSender(rs))
+                {
+                    fs.FileTransferProgress += (ss, ee) =>
+                    {
+                        System.Diagnostics.Debug.WriteLine(ee.CurrentPart + " / " + ee.Total);
+                    };
+
+                    await fs.SendFile(file);
+                }
+                ValueSet vs = new ValueSet();
+                vs.Add("Receiver", "System");
+                vs.Add("FinishService", "FinishService");
+                await packageManager.Send(vs);
+            }
+            System.Diagnostics.Debug.WriteLine("Done");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -151,7 +174,7 @@ namespace QuickShare
             var myfolder = await DownloadsFolder.CreateFolderAsync("QuickShare");
 
             futureAccessList.Clear();
-            futureAccessList.AddOrReplace("downloadMainFolder",myfolder);
+            futureAccessList.AddOrReplace("downloadMainFolder", myfolder);
         }
 
         private async void CreateFile_Tapped(object sender, TappedRoutedEventArgs e)
@@ -177,7 +200,7 @@ namespace QuickShare
             }
             ipText.Text = s;
 
-            FileSendReceive.ServerIPFinder.Instance.IPDetectionCompleted += Instance_IPDetectionCompleted;
+           // FileSendReceive.ServerIPFinder.Instance.IPDetectionCompleted += Instance_IPDetectionCompleted;
 
             if (DevicesList.SelectedItem == null)
                 return;
@@ -188,15 +211,18 @@ namespace QuickShare
 
             if (result == Windows.ApplicationModel.AppService.AppServiceConnectionStatus.Success)
             {
-                await FileSendReceive.ServerIPFinder.Instance.StartFindingMyLocalIP();
+                //FileSender fs = new FileSender(null);
+                //await fs.SendFile();
+                //await FileSendReceive.ServerIPFinder.Instance.StartFindingMyLocalIP();
             }
-
-
         }
 
         private async void Instance_IPDetectionCompleted(object sender, FileSendReceive.IPDetectionCompletedEventArgs e)
         {
-            await new MessageDialog("Done").ShowAsync();
+            if (e.Success)
+                await new MessageDialog(e.TargetIP + " YayWeDidIt!").ShowAsync();
+            else
+                await new MessageDialog(e.TargetIP + " " + e.Message).ShowAsync();
         }
 
     }
