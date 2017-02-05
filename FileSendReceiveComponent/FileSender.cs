@@ -101,6 +101,19 @@ namespace QuickShare.FileSendReceive
             return true;
         }
 
+        private async Task<bool> WaitQueueToFinish()
+        {
+            var result = await queueFinishTcs.Task;
+
+            if (result.Length != 0)
+            {
+                System.Diagnostics.Debug.WriteLine(result);
+                return false;
+            }
+
+            return true;
+        }
+
         /// <param name="files">A list of Tuple(Relative directory path, StorageFile) objects.</param>
         private async Task<bool> SendQueue(List<Tuple<string, StorageFile>> files)
         {
@@ -141,7 +154,14 @@ namespace QuickShare.FileSendReceive
                 InitUrls(key, slicesCount);
             }
 
-            if (await SendQueueInit(totalSlices) == false)
+            var queueFinishKey = RandomFunctions.RandomString(15);
+
+            server.AddResponseUrl("/" + queueFinishKey + "/finishQueue/", (Func<WebServer, HttpListenerRequest, string>)QueueFinished);
+            System.Diagnostics.Debug.WriteLine("/" + queueFinishKey + "/finishQueue/");
+
+            queueFinishTcs = new TaskCompletionSource<string>();
+
+            if (await SendQueueInit(totalSlices, queueFinishKey) == false)
                 return false;
 
             for (int i = 0; i < files.Count; i++)
@@ -156,17 +176,20 @@ namespace QuickShare.FileSendReceive
                     return false;
             }
 
-            //TODO: Wait for it to finish.
+            if (!(await WaitQueueToFinish()))
+                return false;
 
             return true;
         }
 
-        private static async Task<bool> SendQueueInit(ulong totalSlices)
+        private async Task<bool> SendQueueInit(ulong totalSlices, string queueFinishKey)
         {
             ValueSet qInit = new ValueSet();
             qInit.Add("Receiver", "FileReceiver");
             qInit.Add("Type", "QueueInit");
             qInit.Add("TotalSlices", totalSlices);
+            qInit.Add("QueueFinishKey", queueFinishKey);
+            qInit.Add("ServerIP", ipFinderResult.MyIP);
 
             var result = await Rome.RomePackageManager.Instance.Send(qInit);
 
@@ -238,6 +261,29 @@ namespace QuickShare.FileSendReceive
 
             return "OK";
         }
+
+        private string QueueFinished(WebServer sender, HttpListenerRequest request)
+        {
+            try
+            {
+                var query = new WwwFormUrlDecoder(request.Url.Query);
+
+                var success = (query.GetFirstValueByName("success").ToLower() == "true");
+                var message = "";
+
+                if (!success)
+                    message = query.GetFirstValueByName("message");
+
+                queueFinishTcs.SetResult(message);
+            }
+            catch (Exception ex)
+            {
+                queueFinishTcs.SetResult(ex.Message);
+            }
+
+            return "OK";
+        }
+
 
         private async Task<byte[]> GetFileSlice(WebServer sender, HttpListenerRequest request)
         {
