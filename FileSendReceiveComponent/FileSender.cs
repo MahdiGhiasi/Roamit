@@ -25,6 +25,7 @@ namespace QuickShare.FileSendReceive
         IPDetectionCompletedEventArgs ipFinderResult = null;
 
         TaskCompletionSource<string> fileSendTcs;
+        TaskCompletionSource<string> queueFinishTcs;
 
         Dictionary<string, FileDetails> keyTable = new Dictionary<string, FileDetails>();
 
@@ -38,7 +39,7 @@ namespace QuickShare.FileSendReceive
             remoteSystem = rs;
         }
 
-        public async Task<bool> SendFile(StorageFile file, string directory = "")
+        public async Task<bool> SendFile(StorageFile file, string directory = "", bool isQueue = false)
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
                 await Handshake();
@@ -48,8 +49,8 @@ namespace QuickShare.FileSendReceive
 
             InitServer();
 
-            var key = RandomFunctions.RandomString(16);
-            
+            var key = GenerateUniqueRandomKey();
+
             var properties = await file.GetBasicPropertiesAsync();
             var slicesCount = (uint)Math.Ceiling(((double)properties.Size) / ((double)Constants.FileSliceMaxLength));
 
@@ -74,6 +75,19 @@ namespace QuickShare.FileSendReceive
             return true;
         }
 
+        private string GenerateUniqueRandomKey()
+        {
+            string s = "";
+
+            do
+            {
+                s = RandomFunctions.RandomString(24);
+            }
+            while (keyTable.ContainsKey(s));
+
+            return s;
+        }
+
         private async Task<bool> WaitForFinish()
         {
             var result = await fileSendTcs.Task;
@@ -85,6 +99,84 @@ namespace QuickShare.FileSendReceive
             }
 
             return true;
+        }
+
+        /// <param name="files">A list of Tuple(Relative directory path, StorageFile) objects.</param>
+        private async Task<bool> SendQueue(List<Tuple<string, StorageFile>> files)
+        {
+            if ((ipFinderResult == null) || (ipFinderResult.Success == false))
+                await Handshake();
+
+            if (ipFinderResult.Success == false)
+                return false;
+
+            InitServer();
+
+            Dictionary<StorageFile, string> sFileKeyPairs = new Dictionary<StorageFile, string>();
+            BasicProperties[] bps = new BasicProperties[files.Count];
+
+            ulong totalSlices = 0;
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                var item = files[i];
+
+                var key = GenerateUniqueRandomKey();
+
+                bps[i] = await item.Item2.GetBasicPropertiesAsync();
+                var slicesCount = (uint)Math.Ceiling(((double)bps[i].Size) / ((double)Constants.FileSliceMaxLength));
+
+                totalSlices += slicesCount;
+
+                keyTable.Add(key, new FileDetails
+                {
+                    storageFile = item.Item2,
+                    lastPieceAccessed = 0,
+                    lastSliceSize = (uint)(bps[i].Size % Constants.FileSliceMaxLength),
+                    lastSliceId = slicesCount - 1
+                });
+
+                sFileKeyPairs.Add(item.Item2, key);
+
+                InitUrls(key, slicesCount);
+            }
+
+            if (await SendQueueInit(totalSlices) == false)
+                return false;
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                var key = sFileKeyPairs[files[i].Item2];
+                if (!(await BeginSending(key, 
+                                         keyTable[key].lastSliceId + 1, 
+                                         files[i].Item2.Name,
+                                         bps[i], 
+                                         files[i].Item2.DateCreated, 
+                                         files[i].Item1)))
+                    return false;
+            }
+
+            //TODO: Wait for it to finish.
+
+            return true;
+        }
+
+        private static async Task<bool> SendQueueInit(ulong totalSlices)
+        {
+            ValueSet qInit = new ValueSet();
+            qInit.Add("Receiver", "FileReceiver");
+            qInit.Add("Type", "QueueInit");
+            qInit.Add("TotalSlices", totalSlices);
+
+            var result = await Rome.RomePackageManager.Instance.Send(qInit);
+
+            if (result.Status == Windows.ApplicationModel.AppService.AppServiceResponseStatus.Success)
+                return true;
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("SendQueueInit: Send failed (" + result.Status.ToString() + ")");
+                return false;
+            }
         }
 
         private async Task<bool> BeginSending(string key, uint slicesCount, string fileName, BasicProperties properties, DateTimeOffset dateCreated, string directory)

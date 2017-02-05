@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 
 namespace QuickShare.FileSendReceive
@@ -20,9 +21,61 @@ namespace QuickShare.FileSendReceive
         public delegate void ReceiveFileProgressEventHandler(FileTransferProgressEventArgs e);
         public static event ReceiveFileProgressEventHandler FileTransferProgress;
 
+        static bool isQueue = false;
+        static uint queueTotalSlices = 0;
+        static uint queueSlicesFinished = 0;
+        static uint queuedSlicesYet = 0;
+        static List<ValueSet> queueItems = null;
+
         public static async Task ReceiveRequest(AppServiceRequest request)
         {
-            var key = (string)request.Message["DownloadKey"];
+            if (request.Message["Type"] as string == "QueueInit")
+            {
+                //Queue initialization
+
+                isQueue = true;
+                queueTotalSlices = (uint)request.Message["TotalSlices"];
+                queueSlicesFinished = 0;
+                queuedSlicesYet = 0;
+                queueItems = new List<ValueSet>();
+
+                ValueSet vs = new ValueSet();
+                vs.Add("QueueInitialized", "1");
+                await request.SendResponseAsync(vs);
+
+                InvokeProgressEvent(0, 0, FileTransferState.QueueList);
+            }
+            else if (isQueue)
+            {
+                //Queue data details
+                queuedSlicesYet += (uint)request.Message["SlicesCount"];
+                queueItems.Add(request.Message);
+                
+                if (queuedSlicesYet == queueTotalSlices)
+                    await BeginProcessingQueue();
+                else if (queuedSlicesYet > queueTotalSlices)
+                    throw new Exception("Queued more slices than expected.");
+            }
+            else
+            {
+                //Singular file
+                await DownloadFile(request.Message);
+            }
+        }
+
+        private static async Task BeginProcessingQueue()
+        {
+            foreach (var item in queueItems)
+            {
+                await DownloadFile(item);
+            }
+
+            FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = queueTotalSlices, Total = queueTotalSlices, State = FileTransferState.Finished });
+        }
+
+        public static async Task DownloadFile(ValueSet message)
+        {
+            var key = (string)message["DownloadKey"];
 
             if (downloading.Contains(key))
                 return;
@@ -31,13 +84,13 @@ namespace QuickShare.FileSendReceive
 
             Debug.WriteLine("Receive begin");
 
-            var slicesCount = (uint)request.Message["SlicesCount"];
-            var fileName = (string)request.Message["FileName"];
-            var dateModifiedMilliseconds = (long)request.Message["DateModified"];
-            var dateCreatedMilliseconds = (long)request.Message["DateCreated"];
-            var fileSize = (ulong)request.Message["FileSize"];
-            var directory = (string)request.Message["Directory"];
-            var serverIP = (string)request.Message["ServerIP"];
+            var slicesCount = (uint)message["SlicesCount"];
+            var fileName = (string)message["FileName"];
+            var dateModifiedMilliseconds = (long)message["DateModified"];
+            var dateCreatedMilliseconds = (long)message["DateCreated"];
+            var fileSize = (ulong)message["FileSize"];
+            var directory = (string)message["Directory"];
+            var serverIP = (string)message["ServerIP"];
 
             var dateModified = DateTimeOffset.FromUnixTimeMilliseconds(dateModifiedMilliseconds).LocalDateTime;
             var dateCreated = DateTimeOffset.FromUnixTimeMilliseconds(dateCreatedMilliseconds).LocalDateTime;
@@ -67,7 +120,8 @@ namespace QuickShare.FileSendReceive
 
                     await stream.WriteAsync(buffer, 0, buffer.Length);
 
-                    FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = i + 1, Total = slicesCount});
+                    InvokeProgressEvent(slicesCount, i, FileTransferState.DataTransfer);
+
                     System.Diagnostics.Debug.WriteLine((i + 1) + " / " + slicesCount);
                 }
 
@@ -83,6 +137,29 @@ namespace QuickShare.FileSendReceive
             downloading.Remove(key);
 
             await ReceiveSuccessful(serverIP, key);
+
+            InvokeFinishedEvent(slicesCount);
+        }
+
+        private static void InvokeFinishedEvent(uint currentFileSlicesCount)
+        {
+            if (!isQueue)
+                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = currentFileSlicesCount, Total = currentFileSlicesCount, State = FileTransferState.Finished });
+            else
+                queueSlicesFinished += currentFileSlicesCount;
+        }
+
+        private static void InvokeProgressEvent(uint currentFileSlicesCount, uint currentFileSlice, FileTransferState state)
+        {
+            if (state == FileTransferState.Finished)
+                throw new InvalidOperationException();
+
+            if (!isQueue)
+                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = currentFileSlice + 1, Total = currentFileSlicesCount , State = FileTransferState.DataTransfer });
+            else if (state == FileTransferState.QueueList)    
+                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = 0, Total = 0, State = FileTransferState.QueueList });
+            else
+                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = queueSlicesFinished + currentFileSlicesCount, Total = queueTotalSlices, State = FileTransferState.QueueList });
         }
 
         private static async Task<byte[]> DownloadDataFromUrl(string url)
