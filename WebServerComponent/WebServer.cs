@@ -74,51 +74,44 @@ namespace QuickShare.Server
 
         private async void Listener_Request(object sender, HttpListenerRequestEventArgs e)
         {
-            bool handled = false;
-
-            foreach (var item in Urls)
+            if (Urls.ContainsKey(e.Request.Url.AbsolutePath))
             {
-                if (e.Request.Url.AbsolutePath == item.Key)
+                var value = Urls[e.Request.Url.AbsolutePath];
+                if (value is string)
                 {
-                    if (item.Value is string)
-                    {
-                        await e.Response.WriteAsync(item.Value as string);
-                    }
-                    else if (item.Value is byte[])
-                    {
-                        byte[] b = (byte[])item.Value;
-                        await e.Response.OutputStream.WriteAsync(b, 0, b.Count());
-                    }
-                    else if (item.Value is Func<WebServer, HttpListenerRequest, string>)
-                    {
-                        var output = ((Func<WebServer, HttpListenerRequest, string>)item.Value).Invoke(this, e.Request);
-                        await e.Response.WriteAsync(output);
-                    }
-                    else if (item.Value is Func<WebServer, HttpListenerRequest, byte[]>)
-                    {
-                        var output = ((Func<WebServer, HttpListenerRequest, byte[]>)item.Value).Invoke(this, e.Request);
-                        await e.Response.OutputStream.WriteAsync(output, 0, output.Count());
-                    }
-                    else if (item.Value is Func<WebServer, HttpListenerRequest, Task<string>>)
-                    {
-                        var output = await ((Func<WebServer, HttpListenerRequest, Task<string>>)item.Value).Invoke(this, e.Request);
-                        await e.Response.WriteAsync(output);
-                    }
-                    else if (item.Value is Func<WebServer, HttpListenerRequest, Task<byte[]>>)
-                    {
-                        var output = await ((Func<WebServer, HttpListenerRequest, Task<byte[]>>)item.Value).Invoke(this, e.Request);
-                        await e.Response.OutputStream.WriteAsync(output, 0, output.Count());
-                    }
-                    else
-                    {
-                        await e.Response.WriteAsync("<html><body>Invalid url handler.</body></html>");
-                    }
-
-                    handled = true;
+                    await e.Response.WriteAsync(value as string);
+                }
+                else if (value is byte[])
+                {
+                    byte[] b = (byte[])value;
+                    await e.Response.OutputStream.WriteAsync(b, 0, b.Count());
+                }
+                else if (value is Func<WebServer, HttpListenerRequest, string>)
+                {
+                    var output = ((Func<WebServer, HttpListenerRequest, string>)value).Invoke(this, e.Request);
+                    await e.Response.WriteAsync(output);
+                }
+                else if (value is Func<WebServer, HttpListenerRequest, byte[]>)
+                {
+                    var output = ((Func<WebServer, HttpListenerRequest, byte[]>)value).Invoke(this, e.Request);
+                    await e.Response.OutputStream.WriteAsync(output, 0, output.Count());
+                }
+                else if (value is Func<WebServer, HttpListenerRequest, Task<string>>)
+                {
+                    var output = await ((Func<WebServer, HttpListenerRequest, Task<string>>)value).Invoke(this, e.Request);
+                    await e.Response.WriteAsync(output);
+                }
+                else if (value is Func<WebServer, HttpListenerRequest, Task<byte[]>>)
+                {
+                    var output = await ((Func<WebServer, HttpListenerRequest, Task<byte[]>>)value).Invoke(this, e.Request);
+                    await e.Response.OutputStream.WriteAsync(output, 0, output.Count());
+                }
+                else
+                {
+                    await e.Response.WriteAsync("<html><body>Invalid url handler.</body></html>");
                 }
             }
-
-            if (!handled)
+            else
             {
                 await e.Response.WriteAsync("<html><body>Invalid Request.</body></html>");
             }
