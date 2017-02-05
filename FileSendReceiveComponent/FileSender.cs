@@ -26,13 +26,9 @@ namespace QuickShare.FileSendReceive
 
         TaskCompletionSource<string> fileSendTcs;
 
-        Dictionary<string, StorageFile> keyTable = new Dictionary<string, StorageFile>();
+        Dictionary<string, FileDetails> keyTable = new Dictionary<string, FileDetails>();
 
         WebServer server;
-
-        KeyValuePair<uint, ulong> lastPieceSize;
-
-        ulong lastPieceAccessed;
 
         public delegate void FileTransferProgressEventHandler(object sender, FileTransferProgressEventArgs e);
         public event FileTransferProgressEventHandler FileTransferProgress;
@@ -53,18 +49,21 @@ namespace QuickShare.FileSendReceive
             InitServer();
 
             var key = RandomFunctions.RandomString(16);
-
-            keyTable.Add(key, file);
             
             var properties = await file.GetBasicPropertiesAsync();
             var slicesCount = (uint)Math.Ceiling(((double)properties.Size) / ((double)Constants.FileSliceMaxLength));
 
-            lastPieceSize = new KeyValuePair<uint, ulong>(slicesCount - 1, properties.Size % Constants.FileSliceMaxLength);
+            keyTable.Add(key, new FileDetails
+            {
+                storageFile = file,
+                lastPieceAccessed = 0,
+                lastSliceSize = (uint)(properties.Size % Constants.FileSliceMaxLength),
+                lastSliceId = slicesCount - 1
+            });
 
             InitUrls(key, slicesCount);
 
             fileSendTcs = new TaskCompletionSource<string>();
-            lastPieceAccessed = 0;
 
             if (!(await BeginSending(key, slicesCount, file.Name, properties, file.DateCreated, directory)))
                 return false;
@@ -156,15 +155,15 @@ namespace QuickShare.FileSendReceive
                 var key = parts[0];
                 ulong id = ulong.Parse(parts[1]);
 
-                if (id >= lastPieceAccessed)
+                if (id >= keyTable[key].lastPieceAccessed)
                 {
-                    FileTransferProgress?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = id + 1, Total = lastPieceSize.Key + 1 });
+                    FileTransferProgress?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = id + 1, Total = keyTable[key].lastSliceId + 1 });
+                    keyTable[key].lastPieceAccessed = (uint)id;
                 }
                 
+                StorageFile file = keyTable[key].storageFile;
 
-                StorageFile file = keyTable[key];
-
-                int pieceSize = ((lastPieceSize.Key != id) || (lastPieceSize.Value == 0)) ? (int)Constants.FileSliceMaxLength : (int)lastPieceSize.Value;
+                int pieceSize = ((keyTable[key].lastSliceId != id) || (keyTable[key].lastSliceSize == 0)) ? (int)Constants.FileSliceMaxLength : (int)keyTable[key].lastSliceSize;
 
                 byte[] buffer = new byte[pieceSize];
 
