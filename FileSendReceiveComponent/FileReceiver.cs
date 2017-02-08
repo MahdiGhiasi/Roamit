@@ -183,7 +183,13 @@ namespace QuickShare.FileSendReceive
             if (directories.Count() == 0)
                 return downloadMainFolder;
 
-            throw new NotImplementedException();
+            StorageFolder curFolder = downloadMainFolder;
+            for (int i = 0; i < directories.Count(); i++)
+            {
+                curFolder = await curFolder.CreateFolderAsync(directories[i], CreationCollisionOption.OpenIfExists);
+            }
+
+            return curFolder;
         }
 
         private static async Task ReceiveFailed(string serverIP, string key, string message)
