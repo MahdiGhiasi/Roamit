@@ -56,7 +56,10 @@ namespace QuickShare.FileSendReceive
                 if (queuedSlicesYet == queueTotalSlices)
                     await BeginProcessingQueue();
                 else if (queuedSlicesYet > queueTotalSlices)
+                {
+                    Debug.WriteLine("Queued more slices than expected.");
                     throw new Exception("Queued more slices than expected.");
+                }
             }
             else
             {
