@@ -180,7 +180,7 @@ namespace QuickShare.FileSendReceive
             }
             else
             {
-                ea = new FileTransferProgressEventArgs { CurrentPart = queueSlicesFinished + currentFileSlicesCount, Total = queueTotalSlices, State = FileTransferState.QueueList };
+                ea = new FileTransferProgressEventArgs { CurrentPart = queueSlicesFinished + currentFileSlice + 1, Total = queueTotalSlices, State = FileTransferState.QueueList };
                 System.Diagnostics.Debug.WriteLine(ea.CurrentPart + " / " + ea.Total);
             }
 
