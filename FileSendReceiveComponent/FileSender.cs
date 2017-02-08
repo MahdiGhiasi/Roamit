@@ -182,6 +182,28 @@ namespace QuickShare.FileSendReceive
             return true;
         }
 
+        public async Task<bool> SendFolder(StorageFolder folder)
+        {
+            List<Tuple<string, StorageFile>> files = await GetFiles(folder);
+
+            return await SendQueue(files);
+        }
+
+        private async Task<List<Tuple<string, StorageFile>>> GetFiles(StorageFolder f, string relPath = "")
+        {
+            List<Tuple<string, StorageFile>> files = (from x in await f.GetFilesAsync()
+                                                      select new Tuple<string, StorageFile>(relPath + f.Name + "\\", x)).ToList();
+
+            var folders = await f.GetFoldersAsync();
+
+            foreach (var folder in folders)
+            {
+                files.AddRange(await GetFiles(folder, relPath + f.Name + "\\"));
+            }
+
+            return files;
+        }
+
         private async Task<bool> SendQueueInit(ulong totalSlices, string queueFinishKey)
         {
             ValueSet qInit = new ValueSet();

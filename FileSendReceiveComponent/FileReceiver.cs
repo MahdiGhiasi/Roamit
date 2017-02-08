@@ -26,10 +26,11 @@ namespace QuickShare.FileSendReceive
         static uint queueSlicesFinished = 0;
         static uint queuedSlicesYet = 0;
         static List<ValueSet> queueItems = null;
+        static string queueFinishUrl = "";
 
         public static async Task ReceiveRequest(AppServiceRequest request)
         {
-            if (request.Message["Type"] as string == "QueueInit")
+            if ((request.Message.ContainsKey("Type")) && (request.Message["Type"] as string == "QueueInit"))
             {
                 //Queue initialization
 
@@ -38,6 +39,7 @@ namespace QuickShare.FileSendReceive
                 queueSlicesFinished = 0;
                 queuedSlicesYet = 0;
                 queueItems = new List<ValueSet>();
+                queueFinishUrl = "http://" + (request.Message["ServerIP"] as string) + ":" + Constants.CommunicationPort + "/" + request.Message["QueueFinishKey"] + "/finishQueue/";
 
                 ValueSet vs = new ValueSet();
                 vs.Add("QueueInitialized", "1");
@@ -71,6 +73,19 @@ namespace QuickShare.FileSendReceive
             }
 
             FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = queueTotalSlices, Total = queueTotalSlices, State = FileTransferState.Finished });
+
+            await QueueProcessFinishedNotifySender();
+        }
+
+        private static async Task QueueProcessFinishedNotifySender()
+        {
+            var httpClient = new HttpClient();
+
+            try
+            {
+                await httpClient.GetAsync(queueFinishUrl + "?success=true");
+            }
+            catch { }
         }
 
         public static async Task DownloadFile(ValueSet message)
