@@ -225,5 +225,38 @@ namespace QuickShare
                 await new MessageDialog(e.TargetIP + " " + e.Message).ShowAsync();
         }
 
+        private async void LoadDir_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var rs = DevicesList.SelectedItem as RemoteSystem;
+            if (rs == null)
+                return;
+
+            var result = await packageManager.Connect(rs, true);
+            DevicesList.SelectedItem = null;
+
+
+            if (result == Windows.ApplicationModel.AppService.AppServiceConnectionStatus.Success)
+            {
+                var picker = new Windows.Storage.Pickers.FolderPicker();
+                picker.FileTypeFilter.Add("*");
+                var folder = await picker.PickSingleFolderAsync();
+                
+
+                using (FileSender fs = new FileSender(rs))
+                {
+                    fs.FileTransferProgress += (ss, ee) =>
+                    {
+                        System.Diagnostics.Debug.WriteLine(ee.CurrentPart + " / " + ee.Total);
+                    };
+
+                    await fs.SendFolder(folder);
+                }
+                ValueSet vs = new ValueSet();
+                vs.Add("Receiver", "System");
+                vs.Add("FinishService", "FinishService");
+                await packageManager.Send(vs);
+            }
+            System.Diagnostics.Debug.WriteLine("Done");
+        }
     }
 }
