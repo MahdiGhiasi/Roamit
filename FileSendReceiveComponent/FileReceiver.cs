@@ -22,7 +22,7 @@ namespace QuickShare.FileSendReceive
         public static event ReceiveFileProgressEventHandler FileTransferProgress;
 
         static bool isQueue = false;
-        static uint queueTotalSlices = 0;
+        static ulong queueTotalSlices = 0;
         static uint queueSlicesFinished = 0;
         static uint queuedSlicesYet = 0;
         static List<ValueSet> queueItems = null;
@@ -35,7 +35,7 @@ namespace QuickShare.FileSendReceive
                 //Queue initialization
 
                 isQueue = true;
-                queueTotalSlices = (uint)request.Message["TotalSlices"];
+                queueTotalSlices = (ulong)request.Message["TotalSlices"];
                 queueSlicesFinished = 0;
                 queuedSlicesYet = 0;
                 queueItems = new List<ValueSet>();
@@ -136,8 +136,6 @@ namespace QuickShare.FileSendReceive
                     await stream.WriteAsync(buffer, 0, buffer.Length);
 
                     InvokeProgressEvent(slicesCount, i, FileTransferState.DataTransfer);
-
-                    System.Diagnostics.Debug.WriteLine((i + 1) + " / " + slicesCount);
                 }
 
                 await stream.FlushAsync();
@@ -169,12 +167,24 @@ namespace QuickShare.FileSendReceive
             if (state == FileTransferState.Finished)
                 throw new InvalidOperationException();
 
+            FileTransferProgressEventArgs ea = null;
             if (!isQueue)
-                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = currentFileSlice + 1, Total = currentFileSlicesCount , State = FileTransferState.DataTransfer });
-            else if (state == FileTransferState.QueueList)    
-                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = 0, Total = 0, State = FileTransferState.QueueList });
+            {
+                ea = new FileTransferProgressEventArgs { CurrentPart = currentFileSlice + 1, Total = currentFileSlicesCount, State = FileTransferState.DataTransfer };
+                System.Diagnostics.Debug.WriteLine(ea.CurrentPart + " / " + ea.Total);
+            }
+            else if (state == FileTransferState.QueueList)
+            {
+                ea = new FileTransferProgressEventArgs { CurrentPart = 0, Total = 0, State = FileTransferState.QueueList };
+                System.Diagnostics.Debug.WriteLine("Downloading queue data...");
+            }
             else
-                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = queueSlicesFinished + currentFileSlicesCount, Total = queueTotalSlices, State = FileTransferState.QueueList });
+            {
+                ea = new FileTransferProgressEventArgs { CurrentPart = queueSlicesFinished + currentFileSlicesCount, Total = queueTotalSlices, State = FileTransferState.QueueList };
+                System.Diagnostics.Debug.WriteLine(ea.CurrentPart + " / " + ea.Total);
+            }
+
+            FileTransferProgress?.Invoke(ea);
         }
 
         private static async Task<byte[]> DownloadDataFromUrl(string url)

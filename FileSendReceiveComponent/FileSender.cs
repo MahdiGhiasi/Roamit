@@ -33,6 +33,7 @@ namespace QuickShare.FileSendReceive
 
         public delegate void FileTransferProgressEventHandler(object sender, FileTransferProgressEventArgs e);
         public event FileTransferProgressEventHandler FileTransferProgress;
+        private event FileTransferProgressEventHandler FileTransferProgressInternal;
 
         public FileSender(RemoteSystem rs)
         {
@@ -66,6 +67,12 @@ namespace QuickShare.FileSendReceive
 
             fileSendTcs = new TaskCompletionSource<string>();
 
+            ClearInternalEventSubscribers();
+            FileTransferProgressInternal += (s, ee) =>
+            {
+                FileTransferProgress?.Invoke(s, ee);
+            };
+
             if (!(await BeginSending(key, slicesCount, file.Name, properties, file.DateCreated, directory)))
                 return false;
 
@@ -73,6 +80,15 @@ namespace QuickShare.FileSendReceive
                 return false;
 
             return true;
+        }
+
+        private void ClearInternalEventSubscribers()
+        {
+            if (FileTransferProgressInternal == null)
+                return;
+
+            foreach (var d in FileTransferProgressInternal.GetInvocationList())
+                FileTransferProgressInternal -= (d as FileTransferProgressEventHandler);
         }
 
         private string GenerateUniqueRandomKey()
@@ -160,6 +176,23 @@ namespace QuickShare.FileSendReceive
             System.Diagnostics.Debug.WriteLine("/" + queueFinishKey + "/finishQueue/");
 
             queueFinishTcs = new TaskCompletionSource<string>();
+            fileSendTcs = null;
+
+            ulong finishedSlices = 0;
+
+            ClearInternalEventSubscribers();
+            FileTransferProgressInternal += (s, ee) =>
+            {
+                FileTransferProgress?.Invoke(s, new FileTransferProgressEventArgs
+                {
+                    State = ee.State,
+                    CurrentPart = finishedSlices + ee.CurrentPart,
+                    Total = totalSlices
+                });
+
+                if (ee.State == FileTransferState.Finished)
+                    finishedSlices += ee.Total;
+            };
 
             if (await SendQueueInit(totalSlices, queueFinishKey) == false)
                 return false;
@@ -263,7 +296,7 @@ namespace QuickShare.FileSendReceive
         }
 
         private string SendFinished(WebServer sender, HttpListenerRequest request)
-        {
+        {          
             try
             {
                 var query = new WwwFormUrlDecoder(request.Url.Query);
@@ -271,14 +304,19 @@ namespace QuickShare.FileSendReceive
                 var success = (query.GetFirstValueByName("success").ToLower() == "true");
                 var message = "";
 
-                if (!success)
+                string[] parts = request.Url.AbsolutePath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                var key = parts[0];
+                
+                if (success)
+                    FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = keyTable[key].lastSliceId + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.Finished });
+                else
                     message = query.GetFirstValueByName("message");
 
-                fileSendTcs.SetResult(message);
+                fileSendTcs?.SetResult(message);
             }
             catch (Exception ex)
             {
-                fileSendTcs.SetResult(ex.Message);
+                fileSendTcs?.SetResult(ex.Message);
             }
 
             return "OK";
@@ -317,7 +355,7 @@ namespace QuickShare.FileSendReceive
 
                 if (id >= keyTable[key].lastPieceAccessed)
                 {
-                    FileTransferProgress?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = id + 1, Total = keyTable[key].lastSliceId + 1 });
+                    FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = id + 1, Total = keyTable[key].lastSliceId + 1 , State = FileTransferState.DataTransfer });
                     keyTable[key].lastPieceAccessed = (uint)id;
                 }
                 
