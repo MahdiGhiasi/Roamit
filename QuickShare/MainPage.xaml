@@ -6,33 +6,171 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Loaded="Page_Loaded">
+    Loaded="Page_Loaded"
+    MinWidth="150">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Tapped="Grid_Tapped">
-        <ListView x:Name="DevicesList" Margin="20,20,20,159" SelectionChanged="DevicesList_SelectionChanged" Background="LightGray">
-            <ListView.ItemTemplate>
-                <DataTemplate>
+    <Page.Resources>
+        <Style x:Key="CircleButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundTransparentBrush}"/>
+            <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}"/>
+            <Setter Property="Padding" Value="8,4,8,4"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="BorderCircle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="BorderCircle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="BorderCircle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke" Storyboard.TargetName="BorderCircle">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledTransparentBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter" VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Ellipse x:Name="BorderCircle" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1.5" Opacity="0.5"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+
+    <Grid Background="{ThemeResource AppBarBackground}">
+        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+            <!--<ListView Margin="0,0,0,10">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.Items>
+                    <ListViewItem>
+                        <Rectangle Width="50" Height="50" Fill="Gray" />
+                    </ListViewItem>
+                    <ListViewItem>
+                        <Rectangle Width="50" Height="50" Fill="Gray" />
+                    </ListViewItem>
+                    <ListViewItem>
+                        <Rectangle Width="50" Height="50" Fill="Gray" />
+                    </ListViewItem>
+                    <ListViewItem>
+                        <Rectangle Width="50" Height="50" Fill="Gray" />
+                    </ListViewItem>
+                </ListView.Items>
+            </ListView>-->
+            <Polygon Points="0,15 30,0, 30,15" Stroke="{ThemeResource ListViewItemBackgroundSelectedPressed}" Fill="{ThemeResource ListViewItemBackgroundSelectedPressed}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Stretch="Fill" />
+            <Grid x:Name="activeDeviceContainer" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" Height="50" VerticalAlignment="Bottom" Margin="0,0,0,0">
+                <ContentControl x:Name="activeDevice" Padding="8" Content="NO DEVICE SELECTED" FontSize="22" FontWeight="ExtraBlack">
+                    <ContentControl.ContentTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition />
+                        </TransitionCollection>
+                    </ContentControl.ContentTransitions>
+                </ContentControl>
+                <!--<Polygon Points="0,20 30,0, 30,20" Stroke="LightGray" Fill="LightGray" VerticalAlignment="Bottom" HorizontalAlignment="Right" />-->
+            </Grid>
+            <ListView x:Name="devicesList" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" Height="100" VerticalAlignment="Bottom" Opacity="0.9">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Border VerticalAlignment="Center" HorizontalAlignment="Center" Padding="3">
+                                <StackPanel Orientation="Horizontal" >
+                                    <Grid>
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
+                                    </Grid>
+                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"></TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+
+        <Grid Margin="0,0,0,180">
+            <Button Content="Select a file" Width="180" Height="180" FontWeight="Light" FontSize="20" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,100"/>
+            <Grid Margin="30,230,0,0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <Button Content="Clipboard" Width="88" Height="88" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <!-- 44+ (44/sqrt(2)) = 75.112 -->
+                <Polyline Stroke="Gray" StrokeThickness="1.5" Points="75.112,75.112 100,112 120,112" HorizontalAlignment="Left" VerticalAlignment="Top"></Polyline>
+                <TextBlock Margin="124,100,0,0" Text="Hello world!" Foreground="Gray" />
+            </Grid>
+            <Button Width="88" Height="88" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="230,120,0,0">
+                <Button.Content>
                     <Grid>
-                        <Border VerticalAlignment="Center" HorizontalAlignment="Center" Padding="3">
-                            <StackPanel Orientation="Horizontal" >
-                                <Grid>
-                                    <TextBlock FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
-                                    <TextBlock FontFamily="Segoe MDL2 Assets" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
-                                </Grid>
-                                <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"></TextBlock>
-                            </StackPanel>
-                        </Border>
+                        <Grid Margin="10,-10,0,0" Opacity="0.5">
+                            <Rectangle Width="40" Height="40" Fill="DarkRed"></Rectangle>
+                        </Grid>
+                        <Grid Opacity="0.7">
+                            <Rectangle Width="40" Height="40" Fill="DarkRed"></Rectangle>
+                        </Grid>
+                        <Grid Margin="-10,10,0,0" Opacity="0.9">
+                            <Rectangle Width="40" Height="40" Fill="DarkRed"></Rectangle>
+                        </Grid>
                     </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <TextBlock VerticalAlignment="Bottom" Text="???" x:Name="ipText" />
-        <Button VerticalAlignment="Bottom" Content="StartServer" Margin="10,0,0,25" Tapped="Button_Tapped" />
-        <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Load file" Margin="0,0,107,20" Tapped="Button_Tapped_1" />
-        <Button Height="30" Margin="20,0,0,104" Width="206" VerticalAlignment="Bottom" Content="Continous notifications" Tapped="ContinousNotifications_Tapped" />
-        <Button Height="30" Margin="20,0,0,69" Width="206" VerticalAlignment="Bottom" Content="One long running" Tapped="OneLongRunning_Tapped" />
-        <Button Height="30" Margin="0,0,0,69" Width="129" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="create folder" Tapped="CreateFolder_Tapped" />
-        <Button Height="30" Margin="0,0,0,104" Width="129" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="create file" Tapped="CreateFile_Tapped" />
-        <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Load dir" Margin="0,0,20,20" Tapped="LoadDir_Tapped" />
+                </Button.Content>
+            </Button>
+        </Grid>
+        <!--
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,200" x:Name="PCMessage" Visibility="Collapsed">
+            <TextBlock Text="Drop anything here" FontWeight="ExtraLight" FontSize="50" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.3" />
+            <TextBlock Text="Or tap to select a file" FontWeight="ExtraLight" FontSize="30" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.3" Margin="0,10,0,0" />
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,200" x:Name="PhoneMessage" Visibility="Visible">
+            <TextBlock Text="Tap to select a file" FontWeight="ExtraLight" FontSize="36" TextWrapping="Wrap" TextAlignment="Center" Opacity="0.3" Margin="0,10,0,0" />
+        </StackPanel>
+        -->
+
     </Grid>
 </Page>

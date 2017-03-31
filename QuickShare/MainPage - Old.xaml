@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="QuickShare.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Tapped="Grid_Tapped">
+        <ListView x:Name="DevicesList" Margin="20,20,20,159" SelectionChanged="DevicesList_SelectionChanged" Background="LightGray">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Border VerticalAlignment="Center" HorizontalAlignment="Center" Padding="3">
+                            <StackPanel Orientation="Horizontal" >
+                                <Grid>
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
+                                </Grid>
+                                <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"></TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <TextBlock VerticalAlignment="Bottom" Text="???" x:Name="ipText" />
+        <Button VerticalAlignment="Bottom" Content="StartServer" Margin="10,0,0,25" Tapped="Button_Tapped" />
+        <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Load file" Margin="0,0,107,20" Tapped="Button_Tapped_1" />
+        <Button Height="30" Margin="20,0,0,104" Width="206" VerticalAlignment="Bottom" Content="Continous notifications" Tapped="ContinousNotifications_Tapped" />
+        <Button Height="30" Margin="20,0,0,69" Width="206" VerticalAlignment="Bottom" Content="One long running" Tapped="OneLongRunning_Tapped" />
+        <Button Height="30" Margin="0,0,0,69" Width="129" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="create folder" Tapped="CreateFolder_Tapped" />
+        <Button Height="30" Margin="0,0,0,104" Width="129" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="create file" Tapped="CreateFile_Tapped" />
+        <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Load dir" Margin="0,0,20,20" Tapped="LoadDir_Tapped" />
+    </Grid>
+</Page>
