@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:QuickShare"
     xmlns:rome="using:QuickShare.Rome"
-    RequestedTheme="Light">
+    RequestedTheme="Dark">
     <Application.Resources>
         <ResourceDictionary>
             <rome:RemoteSystemKindToIconConverter x:Key="RemoteSystemKindToIconConverter"></rome:RemoteSystemKindToIconConverter>
