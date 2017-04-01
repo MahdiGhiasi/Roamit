@@ -32,13 +32,16 @@ namespace QuickShare
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        RomePackageManager packageManager = RomePackageManager.Instance;
+        public static MainPage Current;
 
-        RemoteSystem selectedSystem = null;
+        public RomePackageManager packageManager = RomePackageManager.Instance;
+        public RemoteSystem selectedSystem = null;
 
         public MainPage()
         {
             this.InitializeComponent();
+
+            Current = this;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
