@@ -46,10 +46,10 @@ namespace QuickShare
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            ContentFrame.Navigate(typeof(MainActions));
+
             await packageManager.InitializeDiscovery();
             devicesList.ItemsSource = packageManager.RemoteSystems;
-
-            ContentFrame.Navigate(typeof(MainActions));
         }
 
         private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
