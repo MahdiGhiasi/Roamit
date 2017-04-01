@@ -15,7 +15,7 @@ namespace QuickShare
         Text, Bitmap, StorageItem, None
     }
 
-    public sealed partial class MainPage : Page
+    public sealed partial class MainActions : Page
     {
         ClipboardContentType currentContent = ClipboardContentType.None;
         bool isApplicationWindowActive = true;

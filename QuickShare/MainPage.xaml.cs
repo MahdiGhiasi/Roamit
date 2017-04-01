@@ -46,7 +46,7 @@ namespace QuickShare
             await packageManager.InitializeDiscovery();
             devicesList.ItemsSource = packageManager.RemoteSystems;
 
-            await InitClipboardAsync();
+            ContentFrame.Navigate(typeof(MainActions));
         }
 
         private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
