@@ -32,5 +32,6 @@
     <Capability Name="internetClientServer" />
     <Capability Name="privateNetworkClientServer" />
     <uap3:Capability Name="remoteSystem" />
+    <uap:Capability Name="picturesLibrary" />
   </Capabilities>
 </Package>
