@@ -117,20 +117,29 @@
 
                 <Button Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.3}" 
                     Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.3}" 
-                    FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,-50,20,0">
+                    x:Name="sendPictureButton" common:SizeChange.IsEnabled="True" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,-50,20,0">
                     <Button.RenderTransform>
                         <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-200)*0.6}" />
                     </Button.RenderTransform>
                     <Button.Content>
                         <Grid>
-                            <Grid Margin="10,-10,0,0" Opacity="0.5">
-                                <Rectangle Width="40" Height="40" Fill="DarkRed"></Rectangle>
+                            <Grid Margin="24,-24,0,0" Opacity="0.5">
+                                <Image x:Name="img3" 
+                                       Stretch="UniformToFill" 
+                                       Width="{Binding (common:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
+                                       Height="{Binding (common:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
                             </Grid>
                             <Grid Opacity="0.7">
-                                <Rectangle Width="40" Height="40" Fill="DarkRed"></Rectangle>
+                                <Image x:Name="img2" 
+                                       Stretch="UniformToFill" 
+                                       Width="{Binding (common:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
+                                       Height="{Binding (common:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
                             </Grid>
-                            <Grid Margin="-10,10,0,0" Opacity="0.9">
-                                <Rectangle Width="40" Height="40" Fill="DarkRed"></Rectangle>
+                            <Grid Margin="-24,24,0,0" Opacity="0.9">
+                                <Image x:Name="img1" 
+                                       Stretch="UniformToFill" 
+                                       Width="{Binding (common:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
+                                       Height="{Binding (common:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
                             </Grid>
                         </Grid>
                     </Button.Content>

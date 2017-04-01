@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -30,6 +33,28 @@ namespace QuickShare
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             await InitClipboardAsync();
+
+            StorageFolder f = KnownFolders.PicturesLibrary;
+            List<StorageFile> files = (await f.GetFilesAsync(Windows.Storage.Search.CommonFileQuery.OrderByDate, 0, 3)).ToList();
+            List<BitmapImage> bitmaps = new List<BitmapImage>();
+
+            foreach (var file in files)
+            {
+                var thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.SingleItem);
+                var image = new BitmapImage();
+                await image.SetSourceAsync(thumbnailStream);
+                bitmaps.Add(image);
+            }
+
+            if (bitmaps.Count < 1)
+                return;
+            img1.Source = bitmaps[0];
+            if (bitmaps.Count < 2)
+                return;
+            img2.Source = bitmaps[1];
+            if (bitmaps.Count < 3)
+                return;
+            img3.Source = bitmaps[2];
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
