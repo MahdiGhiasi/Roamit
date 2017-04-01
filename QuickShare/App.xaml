@@ -9,6 +9,7 @@
         <ResourceDictionary>
             <rome:RemoteSystemKindToIconConverter x:Key="RemoteSystemKindToIconConverter"></rome:RemoteSystemKindToIconConverter>
             <rome:RemoteSystemProximityToIconConverter x:Key="RemoteSystemProximityToIconConverter"></rome:RemoteSystemProximityToIconConverter>
+            <local:MathConverter x:Key="MathConverter"></local:MathConverter>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
