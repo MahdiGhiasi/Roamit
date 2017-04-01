@@ -161,13 +161,13 @@
                                 FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                         <!-- 44+ (44/sqrt(2)) = 75.112 -->
 
-                    <RelativePanel>
+                    <RelativePanel x:Name="ClipboardContentPreviewContainer">
                         <RelativePanel.RenderTransform>
                             <TranslateTransform X="{Binding (common:SizeChange.ActualWidth), ElementName=ClipboardButton, Converter={StaticResource MathConverter}, ConverterParameter=(x/2)+((x/2)/1.41421)}"
                                                 Y="{Binding (common:SizeChange.ActualHeight), ElementName=ClipboardButton, Converter={StaticResource MathConverter}, ConverterParameter=(x/2)+((x/2)/1.41421)}" />
                         </RelativePanel.RenderTransform>
                         <Polyline Stroke="Gray" StrokeThickness="1.5" Points="0,0 16,16 24,16" HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="clipboardPolyline" Opacity="0.5" />
-                        <TextBlock RelativePanel.RightOf="clipboardPolyline" RelativePanel.AlignBottomWith="clipboardPolyline" Margin="4,0,0,-8" Text="Hello world!" Foreground="Gray" VerticalAlignment="Bottom" />
+                        <TextBlock RelativePanel.RightOf="clipboardPolyline" RelativePanel.AlignBottomWith="clipboardPolyline" Margin="4,0,0,-8" Text="Hello world!" Foreground="Gray" VerticalAlignment="Bottom" x:Name="ClipboardTextPreview" />
                         
                     </RelativePanel>
                 </Grid>

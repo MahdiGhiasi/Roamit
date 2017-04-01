@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -44,6 +45,8 @@ namespace QuickShare
         {
             await packageManager.InitializeDiscovery();
             devicesList.ItemsSource = packageManager.RemoteSystems;
+
+            await InitClipboardAsync();
         }
 
         private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
