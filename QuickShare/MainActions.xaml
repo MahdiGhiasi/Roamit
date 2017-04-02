@@ -161,6 +161,7 @@
                     </Grid.RenderTransform>
                     <Button Content="Select a file" 
                             x:Name="SelectFileButton"
+                            Tapped="SelectFile_Tapped"
                             Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
                             Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
                             FontWeight="Light" FontSize="24" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,100">
@@ -180,6 +181,7 @@
                         </Grid.RenderTransform>
                         <Button x:Name="ClipboardButton"
                                 Content="Clipboard" 
+                                Tapped="ClipboardButton_Tapped"
                                 common:SizeChange.IsEnabled="True"
                                 Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.24}" 
                                 Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.24}" 

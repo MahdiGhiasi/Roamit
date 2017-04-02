@@ -68,5 +68,27 @@ namespace QuickShare
 
             base.OnNavigatingFrom(e);
         }
+
+        private void ClipboardButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainSend), "clipboard");
+        }
+
+        private async void SelectFile_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.List;
+            picker.SuggestedStartLocation =
+                Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+
+            picker.FileTypeFilter.Add("*");
+
+            var files = await picker.PickMultipleFilesAsync();
+
+            MainPage.Current.filesToSend.Clear();
+            MainPage.Current.filesToSend.AddRange(files);
+
+            Frame.Navigate(typeof(MainSend), "file");
+        }
     }
 }
