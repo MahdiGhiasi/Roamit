@@ -28,10 +28,17 @@ namespace QuickShare
         public MainActions()
         {
             this.InitializeComponent();
+
+            ClipboardContentPreviewContainer.Opacity = 0;
+            ClipboardButton.Opacity = 0;
+            sendPictureButton.Opacity = 0;
+            SelectFileButton.Opacity = 0;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            buttonsShowStoryboard.Begin();
+
             await InitClipboardAsync();
 
             StorageFolder f = KnownFolders.PicturesLibrary;

@@ -25,6 +25,66 @@
                     <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0.5"/>
                 </DoubleAnimationUsingKeyFrames>
             </Storyboard>
+            <Storyboard x:Name="buttonsShowStoryboard">
+                <!-- SendFile button -->
+                <DoubleAnimation Storyboard.TargetName="sendFileButtonGridTransform" 
+                                 Storyboard.TargetProperty="Y"
+                                 Duration="0:0:0.3" From="-32" To="0" >
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase  EasingMode="EaseOut"  />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="SelectFileButton">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                
+                <!-- Clipboard button -->
+                <DoubleAnimation Storyboard.TargetName="clipboardButtonGridTransform" 
+                                 Storyboard.TargetProperty="Y"
+                                 Duration="0:0:0.3" From="32" To="0" >
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase  EasingMode="EaseOut"  />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="clipboardButtonGridTransform" 
+                                 Storyboard.TargetProperty="X"
+                                 Duration="0:0:0.3" From="-32" To="0" >
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase  EasingMode="EaseOut"  />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="sendPictureButton">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                
+                <!-- SendPicture button -->
+                <DoubleAnimation Storyboard.TargetName="pictureButtonGridTransform" 
+                                 Storyboard.TargetProperty="Y"
+                                 Duration="0:0:0.3" From="32" To="0" >
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase  EasingMode="EaseOut"  />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="pictureButtonGridTransform" 
+                                 Storyboard.TargetProperty="X"
+                                 Duration="0:0:0.3" From="32" To="0" >
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase  EasingMode="EaseOut"  />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ClipboardButton">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                
+                <!-- Clipboard preview container -->
+                <DoubleAnimationUsingKeyFrames BeginTime="0:0:0.3" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ClipboardContentPreviewContainer">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
             <Style x:Key="CircleButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
@@ -95,25 +155,36 @@
     <Grid Background="Transparent">
         <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4+200}">
             <Grid Margin="0,0,0,180" x:Name="buttonsParentGrid" common:SizeChange.IsEnabled="True" MaxWidth="500">
-                <Button Content="Select a file" 
-                    Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
-                    Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
-                    FontWeight="Light" FontSize="24" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,100">
-                    <Button.RenderTransform>
-                        <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-400)*0.2}" />
-                    </Button.RenderTransform>
-                </Button>
+                <Grid>
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="sendFileButtonGridTransform" />
+                    </Grid.RenderTransform>
+                    <Button Content="Select a file" 
+                            x:Name="SelectFileButton"
+                            Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
+                            Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
+                            FontWeight="Light" FontSize="24" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,100">
+                        <Button.RenderTransform>
+                            <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-400)*0.2}" />
+                        </Button.RenderTransform>
+                    </Button>
+                </Grid>
 
                 <Grid x:Name="clipboardGrid" Margin="30,40,0,0" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <Grid.RenderTransform>
                         <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-200)*0.6}" />
                     </Grid.RenderTransform>
-                    <Button x:Name="ClipboardButton"
+                    <Grid>
+                        <Grid.RenderTransform>
+                            <TranslateTransform x:Name="clipboardButtonGridTransform" />
+                        </Grid.RenderTransform>
+                        <Button x:Name="ClipboardButton"
                                 Content="Clipboard" 
                                 common:SizeChange.IsEnabled="True"
                                 Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.24}" 
                                 Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.24}" 
-                                FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                    </Grid>
                     <!-- 44+ (44/sqrt(2)) = 75.112 -->
 
                     <RelativePanel x:Name="ClipboardContentPreviewContainer">
@@ -127,39 +198,43 @@
                     </RelativePanel>
                 </Grid>
 
-
-                <Button Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.3}" 
+                <Grid>
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="pictureButtonGridTransform" />
+                    </Grid.RenderTransform>
+                    <Button Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.3}" 
                     Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.3}" 
                     x:Name="sendPictureButton" common:SizeChange.IsEnabled="True" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,-50,20,0">
-                    <Button.RenderTransform>
-                        <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-200)*0.6}" />
-                    </Button.RenderTransform>
-                    <Button.Content>
-                        <Grid>
-                            <Grid Margin="24,-24,0,0">
-                                <Image x:Name="img3" 
+                        <Button.RenderTransform>
+                            <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-200)*0.6}" />
+                        </Button.RenderTransform>
+                        <Button.Content>
+                            <Grid>
+                                <Grid Margin="24,-24,0,0">
+                                    <Image x:Name="img3" 
                                        Opacity="0"
                                        Stretch="UniformToFill"
                                        Width="{Binding (common:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
                                        Height="{Binding (common:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
-                            </Grid>
-                            <Grid>
-                                <Image x:Name="img2" 
+                                </Grid>
+                                <Grid>
+                                    <Image x:Name="img2" 
                                        Opacity="0"
                                        Stretch="UniformToFill" 
                                        Width="{Binding (common:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
                                        Height="{Binding (common:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
-                            </Grid>
-                            <Grid Margin="-24,24,0,0">
-                                <Image x:Name="img1" 
+                                </Grid>
+                                <Grid Margin="-24,24,0,0">
+                                    <Image x:Name="img1" 
                                        Opacity="0"
                                        Stretch="UniformToFill" 
                                        Width="{Binding (common:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
                                        Height="{Binding (common:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Button.Content>
-                </Button>
+                        </Button.Content>
+                    </Button>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>
