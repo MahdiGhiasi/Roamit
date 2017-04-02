@@ -46,15 +46,13 @@ namespace QuickShare
                 bitmaps.Add(image);
             }
 
-            if (bitmaps.Count < 1)
-                return;
-            img1.Source = bitmaps[0];
-            if (bitmaps.Count < 2)
-                return;
-            img2.Source = bitmaps[1];
-            if (bitmaps.Count < 3)
-                return;
-            img3.Source = bitmaps[2];
+            if (bitmaps.Count >= 1)
+                img1.Source = bitmaps[0];
+            if (bitmaps.Count >= 2)
+                img2.Source = bitmaps[1];
+            if (bitmaps.Count >= 3)
+                img3.Source = bitmaps[2];
+            imageShowStoryboard.Begin();
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
