@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Data;
 
 
 /*
- * Modified to run in UWP framework by Mahdi Ghiasi. 
+ * Added Minimum and Maximum operators and modified to run in UWP framework by Mahdi Ghiasi. 
  */
 namespace QuickShare.Common
 {
@@ -23,7 +23,7 @@ namespace QuickShare.Common
     /// <remarks>
     /// MathConverter can act as a value converter, or as a multivalue converter (WPF only).
     /// It is also a markup extension (WPF only) which allows to avoid declaring resources,
-    /// ConverterParameter must contain an arithmetic expression over converter arguments. Operations supported are +, -, * and /
+    /// ConverterParameter must contain an arithmetic expression over converter arguments. Operations supported are +, -, *, /, Min (using symbol 'v') and Max (using symbol '^')
     /// Single argument of a value converter may referred as x, a, or {0}
     /// Arguments of multi value converter may be referred as x,y,z,t (first-fourth argument), or a,b,c,d, or {0}, {1}, {2}, {3}, {4}, ...
     /// The converter supports arithmetic expressions of arbitrary complexity, including nested subexpressions
@@ -151,6 +151,8 @@ namespace QuickShare.Common
                     case '-': _operation = (a, b) => (a - b); break;
                     case '*': _operation = (a, b) => (a * b); break;
                     case '/': _operation = (a, b) => (a / b); break;
+                    case 'v': _operation = (a, b) => (Math.Min(a, b)); break;
+                    case '^': _operation = (a, b) => (Math.Max(a, b)); break;
                     default: throw new ArgumentException("Invalid operation " + operation);
                 }
             }
@@ -210,7 +212,7 @@ namespace QuickShare.Common
 
                     var c = text[pos];
 
-                    if (c == '+' || c == '-')
+                    if (c == '+' || c == '-' || c == 'v' || c == '^')
                     {
                         ++pos;
                         IExpression right = ParseTerm();
