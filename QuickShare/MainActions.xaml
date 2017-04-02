@@ -157,10 +157,10 @@
             <TextBlock Text="Or just drag and drop anything here" FontWeight="Light" FontSize="20"  Foreground="Gray" TextWrapping="Wrap" TextAlignment="Center" x:Name="DragDropText" />
         </Grid>
         <StackPanel Margin="20,20,0,0">
-            <ContentControl Content="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid}" />
-            <ContentControl Content="{Binding (common:SizeChange.ActualWidth), ElementName=MainGrid}" />
+            <ContentControl Content="{Binding (common:SizeChange.ActualHeight), ElementName=buttonsParentGrid}" />
+            <ContentControl Content="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid}" />
         </StackPanel>
-        <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4+200}" Margin="0,50,0,0">
+        <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x-270}" Margin="0,50,0,0">
             <Grid Margin="0,0,0,180" x:Name="buttonsParentGrid" common:SizeChange.IsEnabled="True" MaxWidth="500">
                 <Grid>
                     <Grid.RenderTransform>
@@ -173,7 +173,7 @@
                             Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
                             BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,100">
                         <Button.RenderTransform>
-                            <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-400)*0.2}" />
+                            <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-300)*0}" />
                         </Button.RenderTransform>
                         <Button.Content>
                             <StackPanel>
@@ -184,9 +184,10 @@
                     </Button>
                 </Grid>
 
-                <Grid x:Name="clipboardGrid" Margin="30,40,0,0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <Grid x:Name="clipboardGrid" Margin="20,80,0,0" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <Grid.RenderTransform>
-                        <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-200)*0.6}" />
+                        <TranslateTransform X="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((x-310)*0.5)v10}"
+                                            Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((x-230)*0.3)+35}" />
                     </Grid.RenderTransform>
                     <Grid>
                         <Grid.RenderTransform>
@@ -195,8 +196,8 @@
                         <Button x:Name="ClipboardButton"
                                 Tapped="ClipboardButton_Tapped"
                                 common:SizeChange.IsEnabled="True"
-                                Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.24}" 
-                                Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.24}" 
+                                Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.24)^80}" 
+                                Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.24)^80}" 
                                 BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" >
                             <Button.Content>
                                 <StackPanel>
@@ -223,11 +224,12 @@
                     <Grid.RenderTransform>
                         <TranslateTransform x:Name="pictureButtonGridTransform" />
                     </Grid.RenderTransform>
-                    <Button Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.3}" 
-                    Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.3}" 
-                    x:Name="sendPictureButton" common:SizeChange.IsEnabled="True" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,-50,20,0">
+                    <Button Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.3)^100}" 
+                    Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.3)^100}" 
+                    x:Name="sendPictureButton" common:SizeChange.IsEnabled="True" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,20,10,0">
                         <Button.RenderTransform>
-                            <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-200)*0.6}" />
+                            <TranslateTransform X="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((290-x)*0.5)^(-10)}"
+                                                Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((x-230)*0.3)+35}" />
                         </Button.RenderTransform>
                         <Button.Content>
                             <Grid>
