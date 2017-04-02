@@ -12,6 +12,7 @@ using Windows.Storage;
 using Windows.System.RemoteSystems;
 using Windows.Storage.FileProperties;
 using Windows.Foundation;
+using System.Diagnostics;
 
 namespace QuickShare.FileSendReceive
 {
@@ -68,9 +69,12 @@ namespace QuickShare.FileSendReceive
             fileSendTcs = new TaskCompletionSource<string>();
 
             ClearInternalEventSubscribers();
-            FileTransferProgressInternal += (s, ee) =>
+            FileTransferProgressInternal += async (s, ee) =>
             {
-                FileTransferProgress?.Invoke(s, ee);
+                await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
+                {
+                    FileTransferProgress?.Invoke(s, ee);
+                });
             };
 
             if (!(await BeginSending(key, slicesCount, file.Name, properties, file.DateCreated, directory)))
@@ -373,8 +377,9 @@ namespace QuickShare.FileSendReceive
 
                 return buffer;
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine("Exception in GetFileSlice(): " + ex.Message);
                 return "Invalid Request".Select(c => (byte)c).ToArray();
             }
         }

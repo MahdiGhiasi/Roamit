@@ -52,6 +52,13 @@ namespace QuickShare
 
             await packageManager.InitializeDiscovery();
             devicesList.ItemsSource = packageManager.RemoteSystems;
+
+            var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
+            if (!futureAccessList.ContainsItem("downloadMainFolder"))
+            {
+                var myfolder = await DownloadsFolder.CreateFolderAsync("QuickShare");
+                futureAccessList.AddOrReplace("downloadMainFolder", myfolder);
+            }
         }
 
         private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
