@@ -209,7 +209,7 @@
                     </Grid>
                     <!-- 44+ (44/sqrt(2)) = 75.112 -->
 
-                    <RelativePanel x:Name="ClipboardContentPreviewContainer">
+                    <RelativePanel x:Name="ClipboardContentPreviewContainer" Margin="0,0,-1000,0">
                         <RelativePanel.RenderTransform>
                             <TranslateTransform X="{Binding (common:SizeChange.ActualWidth), ElementName=ClipboardButton, Converter={StaticResource MathConverter}, ConverterParameter=(x/2)+((x/2)/1.41421)}"
                                                 Y="{Binding (common:SizeChange.ActualHeight), ElementName=ClipboardButton, Converter={StaticResource MathConverter}, ConverterParameter=(x/2)+((x/2)/1.41421)}" />
