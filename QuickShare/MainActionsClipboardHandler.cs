@@ -90,8 +90,8 @@ namespace QuickShare
             ClipboardButton.IsEnabled = true;
             ClipboardContentPreviewContainer.Visibility = Visibility.Visible;
 
-            if (text.Length > 101)
-                ClipboardTextPreview.Text = text.Substring(0, 100) + "...";
+            if (text.Length > 61)
+                ClipboardTextPreview.Text = text.Substring(0, 60).Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ") + "...";
             else
                 ClipboardTextPreview.Text = text;
         }
