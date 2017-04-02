@@ -37,6 +37,8 @@ namespace QuickShare
         public RomePackageManager packageManager = RomePackageManager.Instance;
         public RemoteSystem selectedSystem = null;
 
+        public List<IStorageItem> filesToSend = new List<IStorageItem>();
+
         public MainPage()
         {
             this.InitializeComponent();
