@@ -152,22 +152,35 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Background="Transparent">
-        <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4+200}">
+    <Grid Background="Transparent" x:Name="MainGrid" common:SizeChange.IsEnabled="True">
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <TextBlock Text="Or just drag and drop anything here" FontWeight="Light" FontSize="20"  Foreground="Gray" TextWrapping="Wrap" TextAlignment="Center" x:Name="DragDropText" />
+        </Grid>
+        <StackPanel Margin="20,20,0,0">
+            <ContentControl Content="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid}" />
+            <ContentControl Content="{Binding (common:SizeChange.ActualWidth), ElementName=MainGrid}" />
+        </StackPanel>
+        <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4+200}" Margin="0,50,0,0">
             <Grid Margin="0,0,0,180" x:Name="buttonsParentGrid" common:SizeChange.IsEnabled="True" MaxWidth="500">
                 <Grid>
                     <Grid.RenderTransform>
                         <TranslateTransform x:Name="sendFileButtonGridTransform" />
                     </Grid.RenderTransform>
-                    <Button Content="Select a file" 
-                            x:Name="SelectFileButton"
+                    
+                    <Button x:Name="SelectFileButton"
                             Tapped="SelectFile_Tapped"
                             Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
                             Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
-                            FontWeight="Light" FontSize="24" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,100">
+                            BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,100">
                         <Button.RenderTransform>
                             <TranslateTransform Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-400)*0.2}" />
                         </Button.RenderTransform>
+                        <Button.Content>
+                            <StackPanel>
+                                <TextBlock Text="&#xE8E5;" FontFamily="Segoe MDL2 Assets" Foreground="Gray" HorizontalAlignment="Center" FontSize="24" Margin="0,0,0,12" />
+                                <TextBlock Text="Select a file" FontWeight="Light" FontSize="24" Foreground="Gray" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
                     </Button>
                 </Grid>
 
@@ -180,12 +193,18 @@
                             <TranslateTransform x:Name="clipboardButtonGridTransform" />
                         </Grid.RenderTransform>
                         <Button x:Name="ClipboardButton"
-                                Content="Clipboard" 
                                 Tapped="ClipboardButton_Tapped"
                                 common:SizeChange.IsEnabled="True"
                                 Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.24}" 
                                 Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.24}" 
-                                FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                                BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                            <Button.Content>
+                                <StackPanel>
+                                    <TextBlock Text="&#xE77F;" FontFamily="Segoe MDL2 Assets" Foreground="Gray" HorizontalAlignment="Center" FontSize="20" Margin="0,0,0,4" />
+                                    <TextBlock Text="Clipboard" FontWeight="Light" FontSize="16" Foreground="Gray"  HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
                     </Grid>
                     <!-- 44+ (44/sqrt(2)) = 75.112 -->
 

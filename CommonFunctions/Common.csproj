@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="DeviceInfo.cs" />
     <Compile Include="DispatcherEx.cs" />
     <Compile Include="MathConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

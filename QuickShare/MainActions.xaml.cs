@@ -33,6 +33,9 @@ namespace QuickShare
             ClipboardButton.Opacity = 0;
             sendPictureButton.Opacity = 0;
             SelectFileButton.Opacity = 0;
+
+            if (Common.DeviceInfo.FormFactorType == Common.DeviceInfo.DeviceFormFactorType.Phone)
+                DragDropText.Visibility = Visibility.Collapsed;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
