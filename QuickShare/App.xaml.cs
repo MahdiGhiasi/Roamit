@@ -79,7 +79,7 @@ namespace QuickShare
                     // parameter
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
-                ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(150, 150));
+                ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(330, 550));
 
                 // Ensure the current window is active
                 Window.Current.Activate();
