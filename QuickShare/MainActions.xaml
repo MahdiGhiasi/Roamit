@@ -82,7 +82,7 @@
                 <!-- Clipboard preview container -->
                 <DoubleAnimationUsingKeyFrames BeginTime="0:0:0.3" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ClipboardContentPreviewContainer">
                     <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
                 
                 <!-- Drag and drop text transform -->
