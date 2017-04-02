@@ -84,6 +84,20 @@
                     <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                     <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
+                
+                <!-- Drag and drop text transform -->
+                <DoubleAnimation Storyboard.TargetName="dragDropTextTransform" 
+                                 Storyboard.TargetProperty="Y"
+                                 BeginTime="0:0:0.5"
+                                 Duration="0:0:0.3" From="-16" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase  EasingMode="EaseOut"  />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="DragDropText" BeginTime="0:0:0.5">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Style x:Key="CircleButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
@@ -154,6 +168,9 @@
 
     <Grid Background="Transparent" x:Name="MainGrid" common:SizeChange.IsEnabled="True">
         <Grid VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="dragDropTextTransform" />
+            </Grid.RenderTransform>
             <TextBlock Text="Or just drag and drop anything here" FontWeight="Light" FontSize="20"  Foreground="Gray" TextWrapping="Wrap" TextAlignment="Center" x:Name="DragDropText" />
         </Grid>
         <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x-270}" Margin="0,50,0,0">
