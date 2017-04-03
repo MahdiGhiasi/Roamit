@@ -98,6 +98,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IncrementalLoadingCollection.cs" />
     <Compile Include="MainActions.xaml.cs">
       <DependentUpon>MainActions.xaml</DependentUpon>
     </Compile>
@@ -112,6 +113,7 @@
       <DependentUpon>PicturePicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="PicturePickerItem.cs" />
+    <Compile Include="PicturePickerSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectedIndexToEnabledConverter.cs" />
   </ItemGroup>

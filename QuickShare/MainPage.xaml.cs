@@ -22,6 +22,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Collections.ObjectModel;
+using QuickShare.Common;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -38,6 +40,8 @@ namespace QuickShare
         public RemoteSystem selectedSystem = null;
 
         public List<IStorageItem> filesToSend = new List<IStorageItem>();
+
+        public IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem> PicturePickerItems { get; internal set; } 
 
         public MainPage()
         {
@@ -59,6 +63,9 @@ namespace QuickShare
                 var myfolder = await DownloadsFolder.CreateFolderAsync("QuickShare");
                 futureAccessList.AddOrReplace("downloadMainFolder", myfolder);
             }
+
+            PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 35 : 75);
+            await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)35 : (uint)75);
         }
 
         private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
