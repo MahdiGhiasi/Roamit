@@ -52,9 +52,12 @@ namespace QuickShare
             foreach (var file in files)
             {
                 var thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.SingleItem);
-                var image = new BitmapImage();
-                await image.SetSourceAsync(thumbnailStream);
-                bitmaps.Add(image);
+                if (thumbnailStream != null)
+                {
+                    var image = new BitmapImage();
+                    await image.SetSourceAsync(thumbnailStream);
+                    bitmaps.Add(image);
+                }
             }
 
             if (bitmaps.Count >= 1)
