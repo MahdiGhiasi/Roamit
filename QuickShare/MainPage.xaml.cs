@@ -71,5 +71,17 @@ namespace QuickShare
         {
             
         }
+
+        private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            if (e.Content is MainActions)
+            {
+                BottomBar.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BottomBar.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }
