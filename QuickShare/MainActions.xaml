@@ -29,9 +29,9 @@
                 <!-- SendFile button -->
                 <DoubleAnimation Storyboard.TargetName="sendFileButtonGridTransform" 
                                  Storyboard.TargetProperty="Y"
-                                 Duration="0:0:0.3" From="-32" To="0" >
+                                 Duration="0:0:0.4" From="-88" To="0" >
                     <DoubleAnimation.EasingFunction>
-                        <ExponentialEase  EasingMode="EaseOut"  />
+                        <BackEase EasingMode="EaseOut" Amplitude="0.5" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="SelectFileButton">
@@ -42,45 +42,45 @@
                 <!-- Clipboard button -->
                 <DoubleAnimation Storyboard.TargetName="clipboardButtonGridTransform" 
                                  Storyboard.TargetProperty="Y"
-                                 Duration="0:0:0.3" From="32" To="0" >
+                                 Duration="0:0:0.4" From="48" To="0" BeginTime="0:0:0.05">
                     <DoubleAnimation.EasingFunction>
-                        <ExponentialEase  EasingMode="EaseOut"  />
+                        <BackEase EasingMode="EaseOut" Amplitude="0.3" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="clipboardButtonGridTransform" 
                                  Storyboard.TargetProperty="X"
-                                 Duration="0:0:0.3" From="-32" To="0" >
+                                 Duration="0:0:0.4" From="-48" To="0" BeginTime="0:0:0.05">
                     <DoubleAnimation.EasingFunction>
-                        <ExponentialEase  EasingMode="EaseOut"  />
+                        <BackEase EasingMode="EaseOut" Amplitude="0.3" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="sendPictureButton">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="sendPictureButton" BeginTime="0:0:0.05">
                     <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
                 
                 <!-- SendPicture button -->
                 <DoubleAnimation Storyboard.TargetName="pictureButtonGridTransform" 
                                  Storyboard.TargetProperty="Y"
-                                 Duration="0:0:0.3" From="32" To="0" >
+                                 Duration="0:0:0.4" From="48" To="0" BeginTime="0:0:0.1">
                     <DoubleAnimation.EasingFunction>
-                        <ExponentialEase  EasingMode="EaseOut"  />
+                        <BackEase EasingMode="EaseOut" Amplitude="0.3" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="pictureButtonGridTransform" 
                                  Storyboard.TargetProperty="X"
-                                 Duration="0:0:0.3" From="32" To="0" >
+                                 Duration="0:0:0.4" From="48" To="0" BeginTime="0:0:0.1">
                     <DoubleAnimation.EasingFunction>
-                        <ExponentialEase  EasingMode="EaseOut"  />
+                        <BackEase EasingMode="EaseOut" Amplitude="0.3" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ClipboardButton">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ClipboardButton" BeginTime="0:0:0.1">
                     <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
                 
                 <!-- Clipboard preview container -->
-                <DoubleAnimationUsingKeyFrames BeginTime="0:0:0.3" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ClipboardContentPreviewContainer">
+                <DoubleAnimationUsingKeyFrames BeginTime="0:0:0.4" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ClipboardContentPreviewContainer">
                     <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                     <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
@@ -88,13 +88,13 @@
                 <!-- Drag and drop text transform -->
                 <DoubleAnimation Storyboard.TargetName="dragDropTextTransform" 
                                  Storyboard.TargetProperty="Y"
-                                 BeginTime="0:0:0.5"
+                                 BeginTime="0:0:0.6"
                                  Duration="0:0:0.3" From="-16" To="0">
                     <DoubleAnimation.EasingFunction>
                         <ExponentialEase  EasingMode="EaseOut"  />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="DragDropText" BeginTime="0:0:0.5">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="DragDropText" BeginTime="0:0:0.6">
                     <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                     <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
