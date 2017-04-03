@@ -108,7 +108,12 @@
     <Compile Include="MainSend.xaml.cs">
       <DependentUpon>MainSend.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PicturePicker.xaml.cs">
+      <DependentUpon>PicturePicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PicturePickerItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectedIndexToEnabledConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -140,6 +145,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainSend.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PicturePicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

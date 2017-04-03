@@ -239,7 +239,7 @@
                     </Grid.RenderTransform>
                     <Button Width="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.3)^100}" 
                     Height="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.3)^100}" 
-                    x:Name="sendPictureButton" common:SizeChange.IsEnabled="True" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,20,10,0">
+                    x:Name="sendPictureButton" common:SizeChange.IsEnabled="True" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="Gray" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,20,10,0" Tapped="sendPictureButton_Tapped">
                         <Button.RenderTransform>
                             <TranslateTransform X="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((290-x)*0.5)^(-10)}"
                                                 Y="{Binding (common:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((x-230)*0.3)+35}" />

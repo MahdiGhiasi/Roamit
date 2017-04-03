@@ -1,0 +1,61 @@
+﻿<Page x:Name="page"
+    x:Class="QuickShare.PicturePicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <Grid Background="Transparent">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Background="{ThemeResource AppBarBackground}">
+                    <TextBlock Text="Recent photos" FontSize="18" Margin="10,10,0,10" FontWeight="Bold" />
+                </Grid>
+                <GridView x:Name="gridView" Grid.Row="1" SelectionMode="Multiple" IsMultiSelectCheckBoxEnabled="True" ItemsSource="{Binding Items, ElementName=page}">
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Width="140" Height="140">
+                                <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapGrid Orientation="Horizontal"
+                              HorizontalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" 
+                        Content="BROWSE IN PHOTOS APP" 
+                        Tapped="BrowseButton_Tapped"
+                        VerticalAlignment="Stretch" 
+                        HorizontalAlignment="Stretch" />
+                <Button Grid.Column="1" 
+                        Content="SEND" 
+                        Tapped="SendButton_Tapped"
+                        VerticalAlignment="Stretch" 
+                        HorizontalAlignment="Stretch" 
+                        Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" 
+                        IsEnabled="{Binding SelectedIndex, Converter={StaticResource SelectedIndexToEnabledConverter}, ElementName=gridView}" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
