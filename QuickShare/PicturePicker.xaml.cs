@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -34,14 +35,39 @@ namespace QuickShare
             this.InitializeComponent();
         }
 
-        private void SendButton_Tapped(object sender, TappedRoutedEventArgs e)
+        private void Send(IEnumerable<StorageFile> files)
         {
-            
+            MainPage.Current.filesToSend.Clear();
+            MainPage.Current.filesToSend.AddRange(files);
+
+            Frame.Navigate(typeof(MainSend), "file");
         }
 
-        private void BrowseButton_Tapped(object sender, TappedRoutedEventArgs e)
+        private void SendButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Frame.GoBack();
+            List<StorageFile> files = (from x in gridView.SelectedItems
+                                       select (x as PicturePickerItem).File).ToList();
+
+            Send(files);
+        }
+
+        private async void BrowseButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+            picker.FileTypeFilter.Add(".gif");
+            picker.FileTypeFilter.Add(".bmp");
+            picker.FileTypeFilter.Add(".mp4");
+
+            var files = await picker.PickMultipleFilesAsync();
+            if (files != null)
+            {
+                Send(files);
+            }
         }
     }
 }
