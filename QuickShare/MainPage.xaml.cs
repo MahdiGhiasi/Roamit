@@ -50,9 +50,27 @@ namespace QuickShare
             Current = this;
         }
 
+        private void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
+        {
+            if (ContentFrame.Content is MainActions)
+                return;
+
+            if (ContentFrame.Content is MainSend)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            e.Handled = true;
+            if (ContentFrame.CanGoBack)
+                ContentFrame.GoBack();
+        }
+
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ContentFrame.Navigate(typeof(MainActions));
+
+            Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
             await packageManager.InitializeDiscovery();
             devicesList.ItemsSource = packageManager.RemoteSystems;
@@ -81,14 +99,15 @@ namespace QuickShare
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            if (e.Content is MainActions)
-            {
-                BottomBar.Visibility = Visibility.Visible;
-            }
+            if ((e.Content is MainActions) || (e.Content is MainSend))
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
             else
-            {
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Visible;
+
+            if (e.Content is MainActions)
+                BottomBar.Visibility = Visibility.Visible;
+            else
                 BottomBar.Visibility = Visibility.Collapsed;
-            }
         }
     }
 }
