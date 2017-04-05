@@ -41,6 +41,17 @@ namespace QuickShare.FileSendReceive
             remoteSystem = rs;
         }
 
+        public async Task<bool> SendFiles(IEnumerable<StorageFile> files, string directoryName)
+        {
+            List<Tuple<string, StorageFile>> l = new List<Tuple<string, StorageFile>>();
+            foreach (var file in files)
+            {
+                l.Add(new Tuple<string, StorageFile>(directoryName, file));
+            }
+
+            return await SendQueue(l);
+        }
+
         public async Task<bool> SendFile(StorageFile file, string directory = "", bool isQueue = false)
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
