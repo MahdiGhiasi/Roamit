@@ -33,7 +33,7 @@
         </ResourceDictionary>
     </Page.Resources>
     
-    <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" common:SizeChange.IsEnabled="True">
+    <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid">
         <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
 
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" x:Name="BottomBar">
