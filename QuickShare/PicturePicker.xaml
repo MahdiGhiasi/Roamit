@@ -27,7 +27,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Background="{ThemeResource AppBarBackground}">
-                    <TextBlock Text="Recent photos" FontSize="18" Margin="10,10,0,10" FontWeight="Bold" />
+                    <TextBlock Text="Recent photos" FontSize="18" Margin="16,12,0,12" FontWeight="Bold" />
                 </Grid>
                 <GridView x:Name="gridView" Grid.Row="1" SelectionMode="Multiple" IsMultiSelectCheckBoxEnabled="True" ItemsSource="{Binding Items, ElementName=page}">
                     <GridView.ItemTemplate>
