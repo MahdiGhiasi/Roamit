@@ -97,7 +97,7 @@ namespace QuickShare
             
         }
 
-        private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
+        private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
             if ((e.Content is MainActions) || (e.Content is MainSend))
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
@@ -105,9 +105,19 @@ namespace QuickShare
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Visible;
 
             if (e.Content is MainActions)
-                BottomBar.Visibility = Visibility.Visible;
+            {
+                if (BottomBar.Visibility == Visibility.Collapsed) //Don't play animation on app startup
+                {
+                    BottomBar.Visibility = Visibility.Visible;
+                    bottomBarShowStoryboard.Begin();
+                }
+            }
             else
+            {
+                bottomBarHideStoryboard.Begin();
+                await Task.Delay(400);
                 BottomBar.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

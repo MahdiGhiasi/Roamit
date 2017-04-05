@@ -10,10 +10,36 @@
     Loaded="Page_Loaded"
     MinWidth="150">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <Storyboard x:Name="bottomBarShowStoryboard">
+                <DoubleAnimation Storyboard.TargetName="BottomBar" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 Duration="0:0:0.3" From="170" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" /> <!-- Because ExponentialEase animation is Mobile is buggy -->
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+            <Storyboard x:Name="bottomBarHideStoryboard">
+                <DoubleAnimation Storyboard.TargetName="BottomBar" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 Duration="0:0:0.4" From="0" To="250">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+        </ResourceDictionary>
+    </Page.Resources>
+    
     <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" common:SizeChange.IsEnabled="True">
         <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
 
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" x:Name="BottomBar">
+            <StackPanel.RenderTransform>
+                <TranslateTransform />
+            </StackPanel.RenderTransform>
             <Polygon Points="0,15 30,0, 30,15" Stroke="{ThemeResource ListViewItemBackgroundSelectedPressed}" Fill="{ThemeResource ListViewItemBackgroundSelectedPressed}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Stretch="Fill" />
             <Grid x:Name="activeDeviceContainer" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" Height="50" VerticalAlignment="Bottom" Margin="0,0,0,0">
                 <ContentControl x:Name="activeDevice" Padding="8" Content="NO DEVICE SELECTED" FontSize="22" FontWeight="ExtraBlack">
@@ -25,7 +51,7 @@
                 </ContentControl>
                 <!--<Polygon Points="0,20 30,0, 30,20" Stroke="LightGray" Fill="LightGray" VerticalAlignment="Bottom" HorizontalAlignment="Right" />-->
             </Grid>
-            <ListView x:Name="devicesList" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" Height="100" VerticalAlignment="Bottom" Opacity="0.9">
+            <ListView x:Name="devicesList" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" Height="120" VerticalAlignment="Bottom" Opacity="0.9">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
