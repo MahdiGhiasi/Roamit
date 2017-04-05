@@ -25,6 +25,10 @@ namespace QuickShare
     /// </summary>
     public sealed partial class MainSend : Page
     {
+        public string SendStatus { get; set; } = "Connecting...";
+        public ulong ProgressValue { get; set; }
+        public ulong ProgressMaximum { get; set; }
+
         public MainSend()
         {
             this.InitializeComponent();
@@ -58,22 +62,27 @@ namespace QuickShare
             }
             else if (mode == "file")
             {
-                StatusText.Text = "Sending file...";
+                SendStatus = "Sending file...";
 
                 using (FileSender fs = new FileSender(rs))
                 {
+
                     fs.FileTransferProgress += (ss, ee) =>
                     {
-                        ProgressText.Text = ee.CurrentPart + " / " + ee.Total;
+                        ProgressMaximum = ee.Total + 1;
+                        ProgressValue = ee.CurrentPart;
                     };
 
                     await fs.SendFile(MainPage.Current.filesToSend[0] as StorageFile);
+                    Progress.Value = Progress.Maximum;
                 }
 
                 ValueSet vs = new ValueSet();
                 vs.Add("Receiver", "System");
                 vs.Add("FinishService", "FinishService");
                 await MainPage.Current.packageManager.Send(vs);
+
+                SendStatus = "Finished.";
             }
             else if (mode == "folder")
             {
