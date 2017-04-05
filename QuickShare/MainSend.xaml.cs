@@ -1,4 +1,5 @@
-﻿using QuickShare.FileSendReceive;
+﻿using QuickShare.Common;
+using QuickShare.FileSendReceive;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,13 +26,18 @@ namespace QuickShare
     /// </summary>
     public sealed partial class MainSend : Page
     {
-        public string SendStatus { get; set; } = "Connecting...";
-        public ulong ProgressValue { get; set; }
-        public ulong ProgressMaximum { get; set; }
+        private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
         public MainSend()
         {
             this.InitializeComponent();
+
+            defaultViewModel["SendStatus"] = "Connecting...";
+        }
+
+        public ObservableDictionary DefaultViewModel
+        {
+            get { return this.defaultViewModel; }
         }
 
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -62,19 +68,31 @@ namespace QuickShare
             }
             else if (mode == "file")
             {
-                SendStatus = "Sending file...";
+                defaultViewModel["SendStatus"] = (MainPage.Current.filesToSend.Count == 1) ? "Sending file..." : "Sending files...";
 
                 using (FileSender fs = new FileSender(rs))
                 {
 
                     fs.FileTransferProgress += (ss, ee) =>
                     {
-                        ProgressMaximum = ee.Total + 1;
-                        ProgressValue = ee.CurrentPart;
+                        defaultViewModel["ProgressMaximum"] = ee.Total + 1;
+                        defaultViewModel["ProgressValue"] = ee.CurrentPart;
                     };
 
-                    await fs.SendFile(MainPage.Current.filesToSend[0] as StorageFile);
-                    Progress.Value = Progress.Maximum;
+                    if (MainPage.Current.filesToSend.Count == 0)
+                    {
+                        defaultViewModel["SendStatus"] = "No files.";
+                        return;
+                    }
+                    else if (MainPage.Current.filesToSend.Count == 1)
+                    {
+                        await fs.SendFile(MainPage.Current.filesToSend[0]);
+                    }
+                    else
+                    {
+                        await fs.SendFiles(MainPage.Current.filesToSend, DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
+                    }
+                    defaultViewModel["ProgressValue"] = Progress.Maximum;
                 }
 
                 ValueSet vs = new ValueSet();
@@ -82,7 +100,7 @@ namespace QuickShare
                 vs.Add("FinishService", "FinishService");
                 await MainPage.Current.packageManager.Send(vs);
 
-                SendStatus = "Finished.";
+                defaultViewModel["SendStatus"] = "Finished.";
             }
             else if (mode == "folder")
             {

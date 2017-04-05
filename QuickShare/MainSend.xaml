@@ -7,13 +7,14 @@
     xmlns:controls="using:QuickShare.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
     mc:Ignorable="d"
     x:Name="page">
 
     <Grid Background="Transparent" x:Name="parentGrid">
         <Button Content="Back" Margin="10,0,0,0" Tapped="BackButton_Tapped" />
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="{Binding SendStatus, ElementName=page}" 
+            <TextBlock Text="{Binding SendStatus}" 
                        x:Name="StatusText" 
                        FontSize="28" 
                        TextAlignment="Center" 
@@ -21,8 +22,8 @@
                        Margin="0,0,0,40" />
             <controls:CircularProgressBar x:Name="Progress" 
                                           Minimum="0"
-                                          Value="{Binding ProgressValue, ElementName=page}"
-                                          Maximum="{Binding ProgressMaximum, ElementName=page}"
+                                          Value="{Binding ProgressValue}"
+                                          Maximum="{Binding ProgressMaximum}"
                                           HorizontalAlignment="Stretch" 
                                           VerticalAlignment="Stretch" 
                                           FontSize="30" 

@@ -39,7 +39,7 @@ namespace QuickShare
         public RomePackageManager packageManager = RomePackageManager.Instance;
         public RemoteSystem selectedSystem = null;
 
-        public List<IStorageItem> filesToSend = new List<IStorageItem>();
+        public List<StorageFile> filesToSend = new List<StorageFile>();
 
         public IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem> PicturePickerItems { get; internal set; } 
 
