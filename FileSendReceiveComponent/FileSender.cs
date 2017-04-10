@@ -321,11 +321,14 @@ namespace QuickShare.FileSendReceive
 
                 string[] parts = request.Url.AbsolutePath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 var key = parts[0];
-                
+
                 if (success)
                     FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = keyTable[key].lastSliceId + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.Finished });
                 else
+                {
                     message = query.GetFirstValueByName("message");
+                    FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = keyTable[key].lastSliceId + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.Error, Message = message });
+                }
 
                 fileSendTcs?.SetResult(message);
             }

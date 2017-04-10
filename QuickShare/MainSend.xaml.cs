@@ -70,13 +70,23 @@ namespace QuickShare
             {
                 defaultViewModel["SendStatus"] = (MainPage.Current.filesToSend.Count == 1) ? "Sending file..." : "Sending files...";
 
+                bool failed = false;
+                string message = "";
+
                 using (FileSender fs = new FileSender(rs))
                 {
-
                     fs.FileTransferProgress += (ss, ee) =>
                     {
-                        defaultViewModel["ProgressMaximum"] = ee.Total + 1;
-                        defaultViewModel["ProgressValue"] = ee.CurrentPart;
+                        if (ee.State == FileTransferState.Error)
+                        {
+                            failed = true;
+                            message = ee.Message;
+                        }
+                        else
+                        {
+                            defaultViewModel["ProgressMaximum"] = ee.Total + 1;
+                            defaultViewModel["ProgressValue"] = ee.CurrentPart;
+                        }
                     };
 
                     if (MainPage.Current.filesToSend.Count == 0)
@@ -100,7 +110,15 @@ namespace QuickShare
                 vs.Add("FinishService", "FinishService");
                 await MainPage.Current.packageManager.Send(vs);
 
-                defaultViewModel["SendStatus"] = "Finished.";
+                if (failed)
+                {
+                    defaultViewModel["SendStatus"] = "Failed.";
+                    await (new MessageDialog("Send failed.\r\n\r\n" + message)).ShowAsync();
+                }
+                else
+                {
+                    defaultViewModel["SendStatus"] = "Finished.";
+                }
             }
             else if (mode == "folder")
             {

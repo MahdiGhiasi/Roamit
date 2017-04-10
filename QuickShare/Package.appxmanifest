@@ -24,6 +24,9 @@
         <uap:Extension Category="windows.appService" EntryPoint="QuickShare.ServiceTask.CommunicationService">
           <uap3:AppService Name="com.quickshare.service" SupportsRemoteSystems="true"/>
         </uap:Extension>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="com.quickshare.notificationservice" />
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -50,6 +50,40 @@ namespace QuickShare
             Current = this;
         }
 
+        public async Task FileTransferProgress(FileTransferProgressEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("HandledIt!");
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) //Phone
+            {
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                if (e.State == FileTransferState.Finished)
+                {
+                    statusBar.ProgressIndicator.Text = "";
+                    statusBar.ProgressIndicator.ProgressValue = 0;
+                    await statusBar.ProgressIndicator.HideAsync();
+                }
+                else
+                {
+                    statusBar.ProgressIndicator.Text = "Receiving...";
+                    statusBar.ProgressIndicator.ProgressValue = ((double)e.CurrentPart) / (double)(e.Total + 1);
+                    await statusBar.ProgressIndicator.ShowAsync();
+                }
+            }
+
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) //Desktop
+            {
+                var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+                if (e.State == FileTransferState.Finished)
+                {
+                    appView.Title = "";
+                }
+                else
+                {
+                    appView.Title = "Receiving " + ((int)Math.Round((100.0 * e.CurrentPart) / (e.Total + 1))).ToString() + "%";
+                }
+            }
+        }
+
         private void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
         {
             if (ContentFrame.Content is MainActions)
@@ -78,7 +112,7 @@ namespace QuickShare
             var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
             if (!futureAccessList.ContainsItem("downloadMainFolder"))
             {
-                var myfolder = await DownloadsFolder.CreateFolderAsync("QuickShare");
+                var myfolder = await DownloadsFolder.CreateFolderAsync("QuickShare" + DateTime.Now.Millisecond);
                 futureAccessList.AddOrReplace("downloadMainFolder", myfolder);
             }
 
@@ -119,5 +153,6 @@ namespace QuickShare
                 BottomBar.Visibility = Visibility.Collapsed;
             }
         }
+
     }
 }

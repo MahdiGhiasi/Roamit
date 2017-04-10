@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +33,11 @@ namespace QuickShare.Rome
             RemoteSystemAccessStatus accessStatus = await RemoteSystem.RequestAccessAsync();
             if (accessStatus == RemoteSystemAccessStatus.Allowed)
             {
-                _remoteSystemWatcher = RemoteSystem.CreateWatcher();
+                //Debug.WriteLine("Blah blah " + RemoteSystem.IsAuthorizationKindEnabled(RemoteSystemAuthorizationKind.Anonymous));
+                // Construct a user type filter that includes anonymous devices 
+                RemoteSystemAuthorizationKindFilter authorizationKindFilter = new RemoteSystemAuthorizationKindFilter(RemoteSystemAuthorizationKind.Anonymous);
+                
+                _remoteSystemWatcher = RemoteSystem.CreateWatcher((new IRemoteSystemFilter[] { authorizationKindFilter }));
                 _remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
                 _remoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
                 _remoteSystemWatcher.RemoteSystemUpdated += RemoteSystemWatcher_RemoteSystemUpdated;
@@ -43,6 +48,7 @@ namespace QuickShare.Rome
         private async void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
         {
             var remoteSystem = args.RemoteSystem;
+            
             await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
             {
                 AddToRemoteSystemsList(args.RemoteSystem);

@@ -1,6 +1,8 @@
-﻿using QuickShare.Common;
+﻿using Newtonsoft.Json;
+using QuickShare.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,9 +28,9 @@ namespace QuickShare.ServiceTask
                 _appServiceconnection = details.AppServiceConnection;
                 _appServiceconnection.RequestReceived += OnRequestReceived;
                 _appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed;
+                FileSendReceive.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
             }
         }
-
 
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
@@ -97,6 +99,38 @@ namespace QuickShare.ServiceTask
                     await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5));
                 }
             }
+        }
+
+        private AppServiceConnection notificationService;
+        private async void FileReceiver_FileTransferProgress(FileSendReceive.FileTransferProgressEventArgs e)
+        {
+            // Add the connection.
+            if (this.notificationService == null)
+            {
+                this.notificationService = new AppServiceConnection();
+
+                // Here, we use the app service name defined in the app service provider's Package.appxmanifest file in the <Extension> section.
+                this.notificationService.AppServiceName = "com.quickshare.notificationservice";
+
+                // Use Windows.ApplicationModel.Package.Current.Id.FamilyName within the app service provider to get this value.
+                this.notificationService.PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;
+
+                var status = await this.notificationService.OpenAsync();
+                if (status != AppServiceConnectionStatus.Success)
+                {
+                    Debug.WriteLine("Failed to connect to notification service: " + status);
+                    return;
+                }
+            }
+
+            // Call the service.
+            var message = new ValueSet();
+            message.Add("Data", JsonConvert.SerializeObject(e));
+
+            AppServiceResponse response = await this.notificationService.SendMessageAsync(message);
+
+            if (response.Status != AppServiceResponseStatus.Success)
+                Debug.WriteLine("Failed to send message to notification service: " + response.Status);
         }
     }
 }

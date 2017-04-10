@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QuickShare.FileSendReceive;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -110,10 +112,48 @@ namespace QuickShare
             deferral.Complete();
         }
 
+        private AppServiceConnection appServiceConnection;
+        private BackgroundTaskDeferral appServiceDeferral;
+
         protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
             base.OnBackgroundActivated(args);
+
+            IBackgroundTaskInstance taskInstance = args.TaskInstance;
+            AppServiceTriggerDetails appService = taskInstance.TriggerDetails as AppServiceTriggerDetails;
+
+            if (appService?.Name == "com.quickshare.notificationservice")
+            {
+                appServiceDeferral = taskInstance.GetDeferral();
+                taskInstance.Canceled += OnAppServicesCanceled;
+                appServiceConnection = appService.AppServiceConnection;
+                appServiceConnection.RequestReceived += OnAppServiceRequestReceived;
+                appServiceConnection.ServiceClosed += AppServiceConnection_ServiceClosed;
+            }
         }
 
+        private async void OnAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+            AppServiceDeferral messageDeferral = args.GetDeferral();
+            ValueSet message = args.Request.Message;
+
+            await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<FileTransferProgressEventArgs>(message["Data"] as string));
+
+            ValueSet returnMessage = new ValueSet();
+            returnMessage.Add("Status", "OK");
+            await args.Request.SendResponseAsync(returnMessage);
+
+            messageDeferral.Complete();
+        }
+
+        private void OnAppServicesCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            appServiceDeferral.Complete();
+        }
+
+        private void AppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+        {
+            appServiceDeferral.Complete();
+        }
     }
 }

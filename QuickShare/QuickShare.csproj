@@ -11,7 +11,7 @@
     <AssemblyName>QuickShare</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.15063.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -111,6 +111,7 @@
     <Compile Include="MainSend.xaml.cs">
       <DependentUpon>MainSend.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NotificationHandler.cs" />
     <Compile Include="PicturePicker.xaml.cs">
       <DependentUpon>PicturePicker.xaml</DependentUpon>
     </Compile>
@@ -178,6 +179,11 @@
       <Project>{c6ea0fea-5297-4b9a-93a7-d8a266a63049}</Project>
       <Name>ServiceTask</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="WindowsMobile, Version=10.0.15063.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

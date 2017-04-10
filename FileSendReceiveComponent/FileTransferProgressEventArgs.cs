@@ -5,6 +5,7 @@
         public ulong CurrentPart { get; set; }
         public ulong Total { get; set; }
         public FileTransferState State { get; set; }
+        public string Message { get; set; } = "";
     }
 
     public enum FileTransferState
@@ -13,5 +14,6 @@
         QueueList = 1,
         DataTransfer = 2,
         Finished = 3,
+        Error = 4,
     }
 }
