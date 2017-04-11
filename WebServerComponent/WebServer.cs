@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.Common;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -14,9 +15,9 @@ using Windows.Networking.Sockets;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace QuickShare.Server
+namespace QuickShare.Windows
 {
-    public class WebServer : IDisposable
+    public class WebServer : IWebServer
     {
         HttpListener listener;
         Dictionary<string, object> Urls = new Dictionary<string, object>();
@@ -24,7 +25,7 @@ namespace QuickShare.Server
         string ip;
         int port;
 
-        public WebServer(string _ip, int _port)
+        public void StartWebServer(string _ip, int _port)
         {
             ip = _ip;
             port = _port;
@@ -36,7 +37,7 @@ namespace QuickShare.Server
             AddRootPage();
         }
 
-        public static string DefaultRootPage()
+        public string DefaultRootPage()
         {
             return "<html><head><title>QuickShare</title></head><body><h3>Hello from QuickShare :)</h3></body></html>";
         }
@@ -48,10 +49,10 @@ namespace QuickShare.Server
 
         public void AddResponseUrl(string url, string response) { AddResponseUrlInternal(url, response); }
         public void AddResponseUrl(string url, byte[] response) { AddResponseUrlInternal(url, response); }
-        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, string> response) { AddResponseUrlInternal(url, response); }
-        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, byte[]> response) { AddResponseUrlInternal(url, response); }
-        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, Task<string>> response) { AddResponseUrlInternal(url, response); }
-        public void AddResponseUrl(string url, Func<WebServer, HttpListenerRequest, Task<byte[]>> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<IWebServer, HttpRequest, string> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<IWebServer, HttpRequest, byte[]> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<IWebServer, HttpRequest, Task<string>> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<IWebServer, HttpRequest, Task<byte[]>> response) { AddResponseUrlInternal(url, response); }
 
         private void AddResponseUrlInternal(string url, object response)
         {
