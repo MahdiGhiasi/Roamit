@@ -15,7 +15,7 @@ namespace QuickShare
         {
             Debug.WriteLine("Notification received: " + e.CurrentPart + " / " + e.Total + " (" + e.State.ToString() + ")");
             bool UISuccess = false;
-            if ((CoreApplication.MainView.CoreWindow.Dispatcher != null) && (MainPage.Current != null))
+            if ((CoreApplication.MainView.CoreWindow?.Dispatcher != null) && (MainPage.Current != null))
             {
                 UISuccess = true;
                 Debug.WriteLine("Dispatcher present and MainPage exists.");
