@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using QuickShare.Common;
 using QuickShare.FileTransfer;
 using System;
 using System.Collections.Generic;
@@ -137,7 +138,10 @@ namespace QuickShare
             AppServiceDeferral messageDeferral = args.GetDeferral();
             ValueSet message = args.Request.Message;
 
-            await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<FileTransferProgressEventArgs>(message["Data"] as string));
+            await DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
+            {
+                await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<FileTransferProgressEventArgs>(message["Data"] as string));
+            });
 
             ValueSet returnMessage = new ValueSet();
             returnMessage.Add("Status", "OK");
