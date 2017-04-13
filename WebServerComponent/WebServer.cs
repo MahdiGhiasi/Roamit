@@ -15,7 +15,7 @@ using Windows.Networking.Sockets;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace QuickShare.Windows
+namespace QuickShare.UWP
 {
     public class WebServer : IWebServer
     {
@@ -49,10 +49,10 @@ namespace QuickShare.Windows
 
         public void AddResponseUrl(string url, string response) { AddResponseUrlInternal(url, response); }
         public void AddResponseUrl(string url, byte[] response) { AddResponseUrlInternal(url, response); }
-        public void AddResponseUrl(string url, Func<IWebServer, HttpRequest, string> response) { AddResponseUrlInternal(url, response); }
-        public void AddResponseUrl(string url, Func<IWebServer, HttpRequest, byte[]> response) { AddResponseUrlInternal(url, response); }
-        public void AddResponseUrl(string url, Func<IWebServer, HttpRequest, Task<string>> response) { AddResponseUrlInternal(url, response); }
-        public void AddResponseUrl(string url, Func<IWebServer, HttpRequest, Task<byte[]>> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<IWebServer, RequestDetails, string> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<IWebServer, RequestDetails, byte[]> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<IWebServer, RequestDetails, Task<string>> response) { AddResponseUrlInternal(url, response); }
+        public void AddResponseUrl(string url, Func<IWebServer, RequestDetails, Task<byte[]>> response) { AddResponseUrlInternal(url, response); }
 
         private void AddResponseUrlInternal(string url, object response)
         {
@@ -77,6 +77,18 @@ namespace QuickShare.Windows
         {
             if (Urls.ContainsKey(e.Request.Url.AbsolutePath))
             {
+                RequestDetails rd = new RequestDetails
+                {
+                    Headers = new Dictionary<string, object>(e.Request.Headers),
+                    Host = e.Request.Host,
+                    HttpMethod = e.Request.HttpMethod,
+                    InputStream = e.Request.InputStream,
+                    KeepAlive = e.Request.KeepAlive,
+                    ProtocolVersion = e.Request.ProtocolVersion,
+                    RemoteEndpointAddress = e.Request.RemoteEndpoint.Address.ToString(),
+                    Url = e.Request.Url,
+                };
+
                 var value = Urls[e.Request.Url.AbsolutePath];
                 if (value is string)
                 {
@@ -87,24 +99,24 @@ namespace QuickShare.Windows
                     byte[] b = (byte[])value;
                     await e.Response.OutputStream.WriteAsync(b, 0, b.Count());
                 }
-                else if (value is Func<WebServer, HttpListenerRequest, string>)
+                else if (value is Func<IWebServer, RequestDetails, string>)
                 {
-                    var output = ((Func<WebServer, HttpListenerRequest, string>)value).Invoke(this, e.Request);
+                    var output = ((Func<IWebServer, RequestDetails, string>)value).Invoke(this, rd);
                     await e.Response.WriteAsync(output);
                 }
-                else if (value is Func<WebServer, HttpListenerRequest, byte[]>)
+                else if (value is Func<IWebServer, RequestDetails, byte[]>)
                 {
-                    var output = ((Func<WebServer, HttpListenerRequest, byte[]>)value).Invoke(this, e.Request);
+                    var output = ((Func<IWebServer, RequestDetails, byte[]>)value).Invoke(this, rd);
                     await e.Response.OutputStream.WriteAsync(output, 0, output.Count());
                 }
-                else if (value is Func<WebServer, HttpListenerRequest, Task<string>>)
+                else if (value is Func<IWebServer, RequestDetails, Task<string>>)
                 {
-                    var output = await ((Func<WebServer, HttpListenerRequest, Task<string>>)value).Invoke(this, e.Request);
+                    var output = await ((Func<IWebServer, RequestDetails, Task<string>>)value).Invoke(this, rd);
                     await e.Response.WriteAsync(output);
                 }
-                else if (value is Func<WebServer, HttpListenerRequest, Task<byte[]>>)
+                else if (value is Func<IWebServer, RequestDetails, Task<byte[]>>)
                 {
-                    var output = await ((Func<WebServer, HttpListenerRequest, Task<byte[]>>)value).Invoke(this, e.Request);
+                    var output = await ((Func<IWebServer, RequestDetails, Task<byte[]>>)value).Invoke(this, rd);
                     await e.Response.OutputStream.WriteAsync(output, 0, output.Count());
                 }
                 else
