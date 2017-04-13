@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.Common.Rome;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,10 +8,11 @@ using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.System.RemoteSystems;
 using Windows.UI.Popups;
+using System.Collections.Generic;
 
-namespace QuickShare.Rome
+namespace QuickShare.UWP.Rome
 {
-    public class RomePackageManager
+    public class RomePackageManager : IRomePackageManager
     {
         //Singleton class
         static RomePackageManager _instance = null;
@@ -107,7 +109,7 @@ namespace QuickShare.Rome
             {
                 System.Diagnostics.Debug.WriteLine("Reconnecting...");
                 var result = await Connect(remoteSystem, keepCurrentConnectionAlive);
-                if (result != AppServiceConnectionStatus.Success)
+                if (result != RomeAppServiceConnectionStatus.Success)
                 {
                     System.Diagnostics.Debug.WriteLine("Reconnect failed. " + result);
                 }
@@ -121,8 +123,12 @@ namespace QuickShare.Rome
             await (new MessageDialog("RECEIVED!")).ShowAsync();
         }
 
-        public async Task<AppServiceConnectionStatus> Connect(RemoteSystem _remoteSystem, bool keepAlive)
+        public async Task<RomeAppServiceConnectionStatus> Connect(object _remoteSystem, bool keepAlive)
         {
+            RemoteSystem rs = _remoteSystem as RemoteSystem;
+            if (rs == null)
+                throw new InvalidCastException();
+
             try
             {
                 keepCurrentConnectionAlive = keepAlive;
@@ -131,7 +137,7 @@ namespace QuickShare.Rome
                 AppServiceConnectionStatus result = AppServiceConnectionStatus.Unknown;
                 bool workDone;
 
-                int tryCount = getTryCount(_remoteSystem);
+                int tryCount = getTryCount(rs);
                 for (int i = 0; i < tryCount; i++)
                 {
                     workDone = false;
@@ -140,11 +146,11 @@ namespace QuickShare.Rome
                     {
                         if (romeHelper == null)
                         {
-                            remoteSystem = _remoteSystem;
+                            remoteSystem = rs;
                         }
                         else
                         {
-                            remoteSystem = romeHelper.RemoteSystems.FirstOrDefault(x => x.Id == _remoteSystem.Id);
+                            remoteSystem = romeHelper.RemoteSystems.FirstOrDefault(x => x.Id == rs.Id);
                             if (remoteSystem == null)
                             {
                                 result = AppServiceConnectionStatus.RemoteSystemUnavailable;
@@ -163,7 +169,7 @@ namespace QuickShare.Rome
                         if (appService != curService)
                             result = AppServiceConnectionStatus.Unknown;
                     });
-                    Task delay = SetTimeoutTask(_remoteSystem, i);
+                    Task delay = SetTimeoutTask(rs, i);
 
                     await Task.WhenAny(new Task[] { connect, delay });
 
@@ -180,11 +186,11 @@ namespace QuickShare.Rome
                     appService.RequestReceived += AppService_RequestReceived;
                     appService.ServiceClosed += AppService_ServiceClosed;
                 }
-                return result;
+                return (RomeAppServiceConnectionStatus)result;
             }
             catch
             {
-                return AppServiceConnectionStatus.Unknown;
+                return RomeAppServiceConnectionStatus.Unknown;
             }
         }
 
@@ -198,14 +204,14 @@ namespace QuickShare.Rome
             return delay;
         }
 
-        public async Task<RemoteLaunchUriStatus> LaunchStoreForApp()
+        public async Task<RomeRemoteLaunchUriStatus> LaunchStoreForApp()
         {
             var result = await LaunchUri(new Uri(@"ms-windows-store://pdp/?PFN=" + appService.PackageFamilyName));
 
-            return result;
+            return (RomeRemoteLaunchUriStatus)result;
         }
 
-        public async Task<RemoteLaunchUriStatus> LaunchUri(Uri uri)
+        public async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri uri)
         {
             RemoteLaunchUriStatus launchStatus = RemoteLaunchUriStatus.RemoteSystemUnavailable;
 
@@ -239,22 +245,40 @@ namespace QuickShare.Rome
             }
 
 
-            return launchStatus;
+            return (RomeRemoteLaunchUriStatus)launchStatus;
         }
 
-        public async Task<AppServiceResponse> Send(ValueSet data)
+        public async Task<RomeAppServiceResponse> Send(Dictionary<string, object> data)
         {
+            var res = await Connect(remoteSystem, keepCurrentConnectionAlive);
+
+            ValueSet sendData = new ValueSet();
+            foreach (var item in data)
+                sendData.Add(item.Key, item.Value);
+
             AppServiceResponse response = null;
             int tryCount = getTryCount();
             for (int i = 0; i < tryCount; i++)
             {
-                response = await Send(data, i);
+                response = await Send(sendData, i);
                 if (response != null)
                     break;
 
                 System.Diagnostics.Debug.WriteLine("Send failed.");
             }
-            return response;
+            
+            if (response == null)
+            {
+                return null;
+            }
+            else
+            {
+                return new RomeAppServiceResponse()
+                {
+                    Status = (RomeAppServiceResponseStatus)response.Status,
+                    Message = response.Message?.ToDictionary(p => p.Key, p => p.Value)
+                };
+            }
         }
 
         private async Task<AppServiceResponse> Send(ValueSet data, int tryi)

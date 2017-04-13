@@ -100,6 +100,11 @@
     </Compile>
     <Compile Include="Controls\Arc.cs" />
     <Compile Include="Controls\CircularProgressBar.cs" />
+    <Compile Include="HelperClasses\DeviceInfo.cs" />
+    <Compile Include="HelperClasses\MathConverter.cs" />
+    <Compile Include="HelperClasses\ObservableDictionary.cs" />
+    <Compile Include="HelperClasses\SizeChange.cs" />
+    <Compile Include="HelperClasses\ToastFunctions.cs" />
     <Compile Include="IncrementalLoadingCollection.cs" />
     <Compile Include="MainActions.xaml.cs">
       <DependentUpon>MainActions.xaml</DependentUpon>
@@ -163,13 +168,13 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonFunctions\Common.csproj">
-      <Project>{0D9A737F-1505-45AE-B35C-D27390F14AE6}</Project>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{e9e7916c-d4fd-4b08-b904-3bcae5de1af0}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FileSendReceiveComponent\FileSendReceiveComponent.csproj">
-      <Project>{95c724d0-9cbc-4468-899d-5a29a6396e8c}</Project>
-      <Name>FileSendReceiveComponent</Name>
+    <ProjectReference Include="..\FileTransfer\FileTransfer.csproj">
+      <Project>{d78fdfff-e82c-4e9c-b78f-54e1d924d49f}</Project>
+      <Name>FileTransfer</Name>
     </ProjectReference>
     <ProjectReference Include="..\RomeComponent\RomeComponent.csproj">
       <Project>{dbf6ee00-7c48-4e1d-baba-5be9b42b186b}</Project>
@@ -179,11 +184,23 @@
       <Project>{c6ea0fea-5297-4b9a-93a7-d8a266a63049}</Project>
       <Name>ServiceTask</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WebServerComponent\WebServerComponent.csproj">
+      <Project>{b896c07b-e6c7-419f-8ae4-4853e0fb876a}</Project>
+      <Name>WebServerComponent</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsMobile, Version=10.0.15063.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PCLStorage">
+      <HintPath>..\PCLStorageEx2\WinRT\PCLStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage.Abstractions">
+      <HintPath>..\PCLStorageEx2\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

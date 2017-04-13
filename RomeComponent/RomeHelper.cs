@@ -12,7 +12,7 @@ using Windows.Foundation.Collections;
 using Windows.System.RemoteSystems;
 using Windows.UI.Core;
 
-namespace QuickShare.Rome
+namespace QuickShare.UWP.Rome
 {
     public class RomeHelper : IDisposable
     {

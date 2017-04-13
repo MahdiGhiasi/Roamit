@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PCLStorage;
 using QuickShare.Common;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace QuickShare.ServiceTask
                 _appServiceconnection = details.AppServiceConnection;
                 _appServiceconnection.RequestReceived += OnRequestReceived;
                 _appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed;
-                FileSendReceive.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
+                FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
             }
         }
 
@@ -55,14 +56,29 @@ namespace QuickShare.ServiceTask
         {
             if (args.Request.Message.ContainsKey("Receiver"))
             {
+                var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
+                if (!futureAccessList.ContainsItem("downloadMainFolder"))
+                    return;
+
+                IFolder downloadFolder = new WinRTFolder(await futureAccessList.GetFolderAsync("downloadMainFolder"));
+
+
                 string receiver = args.Request.Message["Receiver"] as string;
+
+                Dictionary<string, object> reqMessage = new Dictionary<string, object>();
+
+                foreach (var item in args.Request.Message)
+                {
+                    reqMessage.Add(item.Key, item.Value);
+                }
+
                 if (receiver == "ServerIPFinder")
                 {
-                    await FileSendReceive.ServerIPFinder.ReceiveRequest(args.Request);
+                    await FileTransfer.ServerIPFinder.ReceiveRequest(reqMessage);
                 }
                 else if (receiver == "FileReceiver")
                 {
-                    await FileSendReceive.FileReceiver.ReceiveRequest(args.Request);
+                    await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, downloadFolder);
                 }
                 else if (receiver == "System")
                 {
@@ -76,7 +92,7 @@ namespace QuickShare.ServiceTask
                         }
                 }
             }
-            else if (args.Request.Message.ContainsKey("Test"))
+           /* else if (args.Request.Message.ContainsKey("Test"))
             {
                 string s = args.Request.Message["Test"] as string;
 
@@ -98,11 +114,11 @@ namespace QuickShare.ServiceTask
                     ToastFunctions.SendToast((i * 5).ToString() + " seconds");
                     await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5));
                 }
-            }
+            }*/
         }
 
         private AppServiceConnection notificationService;
-        private async void FileReceiver_FileTransferProgress(FileSendReceive.FileTransferProgressEventArgs e)
+        private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
         {
             // Add the connection.
             if (this.notificationService == null)

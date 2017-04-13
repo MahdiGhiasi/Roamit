@@ -107,6 +107,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DispatcherEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteSystemKindToIconConverter.cs" />
     <Compile Include="RemoteSystemProximityToIconConverter.cs" />
@@ -116,8 +117,8 @@
     <EmbeddedResource Include="Properties\RomeComponent.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonFunctions\Common.csproj">
-      <Project>{0d9a737f-1505-45ae-b35c-d27390f14ae6}</Project>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{e9e7916c-d4fd-4b08-b904-3bcae5de1af0}</Project>
       <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>

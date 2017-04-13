@@ -13,14 +13,12 @@ namespace QuickShare.Common
         
         void AddResponseUrl(string url, string response);
         void AddResponseUrl(string url, byte[] response);
-        void AddResponseUrl(string url, Func<IWebServer, HttpRequest, string> response);
-        void AddResponseUrl(string url, Func<IWebServer, HttpRequest, byte[]> response);
-        void AddResponseUrl(string url, Func<IWebServer, HttpRequest, Task<string>> response);
-        void AddResponseUrl(string url, Func<IWebServer, HttpRequest, Task<byte[]>> response);
+        void AddResponseUrl(string url, Func<IWebServer, RequestDetails, string> response);
+        void AddResponseUrl(string url, Func<IWebServer, RequestDetails, byte[]> response);
+        void AddResponseUrl(string url, Func<IWebServer, RequestDetails, Task<string>> response);
+        void AddResponseUrl(string url, Func<IWebServer, RequestDetails, Task<byte[]>> response);
         
         void ClearResponseUrls();
         void RemoveResponseUrl(string url);
-        
-        void Dispose();
     }
 }

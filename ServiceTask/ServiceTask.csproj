@@ -111,23 +111,24 @@
     <Compile Include="CommunicationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="FileSendReceive\" />
-    <Folder Include="WebServer\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CommonFunctions\Common.csproj">
-      <Project>{0d9a737f-1505-45ae-b35c-d27390f14ae6}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FileSendReceiveComponent\FileSendReceiveComponent.csproj">
-      <Project>{95c724d0-9cbc-4468-899d-5a29a6396e8c}</Project>
-      <Name>FileSendReceiveComponent</Name>
+    <ProjectReference Include="..\FileTransfer\FileTransfer.csproj">
+      <Project>{d78fdfff-e82c-4e9c-b78f-54e1d924d49f}</Project>
+      <Name>FileTransfer</Name>
     </ProjectReference>
     <ProjectReference Include="..\RomeComponent\RomeComponent.csproj">
       <Project>{dbf6ee00-7c48-4e1d-baba-5be9b42b186b}</Project>
       <Name>RomeComponent</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PCLStorage">
+      <HintPath>..\PCLStorageEx2\WinRT\PCLStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage.Abstractions">
+      <HintPath>..\PCLStorageEx2\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

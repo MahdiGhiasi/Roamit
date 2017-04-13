@@ -1,5 +1,6 @@
 ﻿using QuickShare.Common;
-using QuickShare.FileSendReceive;
+using QuickShare.Common.Rome;
+using QuickShare.FileTransfer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Networking.Connectivity;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -45,6 +47,28 @@ namespace QuickShare
             Frame.GoBack();
         }
 
+        public IEnumerable<string> FindMyIPAddresses()
+        {
+            List<string> ipAddresses = new List<string>();
+            var hostnames = NetworkInformation.GetHostNames();
+            foreach (var hn in hostnames)
+            {
+                if (hn.Type == Windows.Networking.HostNameType.Ipv4)
+                {
+                    //IanaInterfaceType == 71 => Wifi
+                    //IanaInterfaceType == 6 => Ethernet (Emulator)
+                    if (hn.IPInformation != null &&
+                    (hn.IPInformation.NetworkAdapter.IanaInterfaceType == 71
+                    || hn.IPInformation.NetworkAdapter.IanaInterfaceType == 6))
+                    {
+                        string ipAddress = hn.DisplayName;
+                        ipAddresses.Add(ipAddress);
+                    }
+                }
+            }
+
+            return ipAddresses;
+        }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -53,7 +77,7 @@ namespace QuickShare
             var rs = MainPage.Current.selectedSystem;
             var result = await MainPage.Current.packageManager.Connect(rs, true);
 
-            if (result != Windows.ApplicationModel.AppService.AppServiceConnectionStatus.Success)
+            if (result != RomeAppServiceConnectionStatus.Success)
             {
                 await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
                 Frame.GoBack();
@@ -73,7 +97,10 @@ namespace QuickShare
                 bool failed = false;
                 string message = "";
 
-                using (FileSender fs = new FileSender(rs))
+                using (FileSender fs = new FileSender(rs, 
+                                                      new QuickShare.UWP.WebServerGenerator(), 
+                                                      QuickShare.UWP.Rome.RomePackageManager.Instance, 
+                                                      FindMyIPAddresses()))
                 {
                     fs.FileTransferProgress += (ss, ee) =>
                     {
@@ -96,16 +123,17 @@ namespace QuickShare
                     }
                     else if (MainPage.Current.filesToSend.Count == 1)
                     {
-                        await fs.SendFile(MainPage.Current.filesToSend[0]);
+                        await fs.SendFile(new PCLStorage.WinRTFile(MainPage.Current.filesToSend[0]));
                     }
                     else
                     {
-                        await fs.SendFiles(MainPage.Current.filesToSend, DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
+                        await fs.SendFiles(from x in MainPage.Current.filesToSend
+                                           select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
                     }
                     defaultViewModel["ProgressValue"] = Progress.Maximum;
                 }
 
-                ValueSet vs = new ValueSet();
+                Dictionary<string, object> vs = new Dictionary<string, object>();
                 vs.Add("Receiver", "System");
                 vs.Add("FinishService", "FinishService");
                 await MainPage.Current.packageManager.Send(vs);

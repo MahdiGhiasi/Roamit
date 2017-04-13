@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using QuickShare.FileSendReceive;
+using QuickShare.FileTransfer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,7 +36,7 @@ namespace QuickShare
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            Rome.RomePackageManager.Instance.Initialize("com.quickshare.service");
+            UWP.Rome.RomePackageManager.Instance.Initialize("com.quickshare.service");
         }
 
         /// <summary>

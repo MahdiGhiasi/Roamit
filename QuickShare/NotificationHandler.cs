@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using QuickShare.FileSendReceive;
+using QuickShare.FileTransfer;
 using Windows.Foundation.Collections;
 using QuickShare.Common;
 using Windows.ApplicationModel.Core;
