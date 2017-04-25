@@ -174,7 +174,7 @@
             <TextBlock Text="Or just drag and drop anything here" FontWeight="Light" FontSize="20"  Foreground="Gray" TextWrapping="Wrap" TextAlignment="Center" x:Name="DragDropText" />
         </Grid>
         <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x-270}" Margin="0,50,0,0">
-            <Grid Margin="0,0,0,180" x:Name="buttonsParentGrid" common:SizeChange.IsEnabled="True" MaxWidth="500">
+            <Grid Margin="0,0,0,200" x:Name="buttonsParentGrid" common:SizeChange.IsEnabled="True" MaxWidth="500">
                 <Grid>
                     <Grid.RenderTransform>
                         <TranslateTransform x:Name="sendFileButtonGridTransform" />

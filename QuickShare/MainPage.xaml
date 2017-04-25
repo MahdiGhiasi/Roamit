@@ -51,7 +51,7 @@
                 </ContentControl>
                 <!--<Polygon Points="0,20 30,0, 30,20" Stroke="LightGray" Fill="LightGray" VerticalAlignment="Bottom" HorizontalAlignment="Right" />-->
             </Grid>
-            <ListView x:Name="devicesList" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" Height="120" VerticalAlignment="Bottom" Opacity="0.9">
+            <ListView x:Name="devicesList" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" Height="108" VerticalAlignment="Bottom" Opacity="0.9">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
