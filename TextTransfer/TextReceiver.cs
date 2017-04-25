@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.DataStore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,7 @@ namespace QuickShare.TextTransfer
                 TextReceiveFinished?.Invoke(new TextReceiveEventArgs
                 {
                     Success = false,
-                    Content = "",
+                    Guid = null,
                 });
                 return false;
             }
@@ -31,29 +32,29 @@ namespace QuickShare.TextTransfer
                 var totalParts = (int)data["TotalParts"];
 
                 if (partNumber == 0)
-                    ReceiveContentManager.Add(guid, "");
+                    DataStorageProviders.TextReceiveContentManager.Add(guid, "");
 
-                if (!ReceiveContentManager.ContainsKey(guid))
+                if (!DataStorageProviders.TextReceiveContentManager.ContainsKey(guid))
                 {
                     TextReceiveFinished?.Invoke(new TextReceiveEventArgs
                     {
                         Success = false,
-                        Content = "",
+                        Guid = guid,
                     });
                     return false;
                 }
 
-                ReceiveContentManager.Add(guid, ReceiveContentManager.GetItem(guid) + (string)data["Content"]);
+                DataStorageProviders.TextReceiveContentManager.Add(guid, DataStorageProviders.TextReceiveContentManager.GetItemContent(guid) + (string)data["Content"]);
 
                 if (partNumber == (totalParts - 1)) //Finished receiving data.
                 {
                     TextReceiveFinished?.Invoke(new TextReceiveEventArgs
                     {
                         Success = true,
-                        Content = ReceiveContentManager.GetItem(guid),
+                        Guid = guid,
                     });
 
-                    ReceiveContentManager.Remove(guid);
+                    DataStorageProviders.TextReceiveContentManager.Remove(guid);
                 }
 
             }

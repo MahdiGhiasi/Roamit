@@ -113,6 +113,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\DataStore\DataStore.csproj">
+      <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
+      <Name>DataStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FileTransfer\FileTransfer.csproj">
       <Project>{d78fdfff-e82c-4e9c-b78f-54e1d924d49f}</Project>
       <Name>FileTransfer</Name>
@@ -120,6 +124,10 @@
     <ProjectReference Include="..\RomeComponent\RomeComponent.csproj">
       <Project>{dbf6ee00-7c48-4e1d-baba-5be9b42b186b}</Project>
       <Name>RomeComponent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TextTransfer\TextTransfer.csproj">
+      <Project>{7b9a3000-aaa1-4ebc-8aee-68b24e1c1543}</Project>
+      <Name>TextTransfer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

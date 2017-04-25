@@ -173,6 +173,10 @@
       <Project>{e9e7916c-d4fd-4b08-b904-3bcae5de1af0}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataStore\DataStore.csproj">
+      <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
+      <Name>DataStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FileTransfer\FileTransfer.csproj">
       <Project>{d78fdfff-e82c-4e9c-b78f-54e1d924d49f}</Project>
       <Name>FileTransfer</Name>

@@ -6,6 +6,8 @@ using QuickShare.Common;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using System.Diagnostics;
+using QuickShare.TextTransfer;
+using QuickShare.DataStore;
 
 namespace QuickShare
 {
@@ -39,6 +41,15 @@ namespace QuickShare
             Debug.WriteLine("Nope");
 
             ToastFunctions.SendToast(e.CurrentPart + " / " + e.Total);
+        }
+
+        internal static async Task HandleAsync(TextReceiveEventArgs e)
+        {
+            ToastFunctions.SendToast("Received text with guid " + (e.Guid?.ToString() ?? "null") + " and it was " + (e.Success ? "successful" : "not successful") + ".");
+
+            string content = DataStorageProviders.TextReceiveContentManager.GetItemContent((Guid)e.Guid);
+
+            ToastFunctions.SendToast(content);
         }
     }
 }

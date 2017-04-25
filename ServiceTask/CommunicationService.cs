@@ -26,10 +26,13 @@ namespace QuickShare.ServiceTask
 
             if (details?.Name == "com.quickshare.service") //Remote Activation
             {
+                DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
+
                 _appServiceconnection = details.AppServiceConnection;
                 _appServiceconnection.RequestReceived += OnRequestReceived;
                 _appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed;
                 FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
+                TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
             }
         }
 
@@ -80,6 +83,10 @@ namespace QuickShare.ServiceTask
                 {
                     await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, downloadFolder);
                 }
+                else if (receiver == "TextReceiver")
+                {
+                     TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
+                }
                 else if (receiver == "System")
                 {
 
@@ -118,9 +125,8 @@ namespace QuickShare.ServiceTask
         }
 
         private AppServiceConnection notificationService;
-        private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
+        private async Task<bool> ConnectToNotificationService()
         {
-            // Add the connection.
             if (this.notificationService == null)
             {
                 this.notificationService = new AppServiceConnection();
@@ -135,12 +141,37 @@ namespace QuickShare.ServiceTask
                 if (status != AppServiceConnectionStatus.Success)
                 {
                     Debug.WriteLine("Failed to connect to notification service: " + status);
-                    return;
+                    return false;
                 }
             }
 
+            return true;
+        }
+
+        private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
+        {
+            if (!await ConnectToNotificationService())
+                return;
+
             // Call the service.
             var message = new ValueSet();
+            message.Add("Type", "FileTransferProgress");
+            message.Add("Data", JsonConvert.SerializeObject(e));
+
+            AppServiceResponse response = await this.notificationService.SendMessageAsync(message);
+
+            if (response.Status != AppServiceResponseStatus.Success)
+                Debug.WriteLine("Failed to send message to notification service: " + response.Status);
+        }
+
+        private async void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)
+        {
+            if (!await ConnectToNotificationService())
+                return;
+
+            // Call the service.
+            var message = new ValueSet();
+            message.Add("Type", "TextReceive");
             message.Add("Data", JsonConvert.SerializeObject(e));
 
             AppServiceResponse response = await this.notificationService.SendMessageAsync(message);
