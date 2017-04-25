@@ -229,7 +229,12 @@
                         </RelativePanel.RenderTransform>
                         <Polyline Stroke="Gray" StrokeThickness="1.5" Points="0,0 16,16 24,16" HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="clipboardPolyline" Opacity="0.5" />
                         <TextBlock RelativePanel.RightOf="clipboardPolyline" RelativePanel.AlignBottomWith="clipboardPolyline" Margin="4,0,0,-8" Text="Hello world!" Foreground="Gray" VerticalAlignment="Bottom" x:Name="ClipboardTextPreview" />
-
+                        <HyperlinkButton RelativePanel.Below="ClipboardTextPreview" 
+                                         x:Name="ClipboardLaunchUrlButton"
+                                         Content="Or open this URL on the device" 
+                                         Opacity="0.75" 
+                                         Margin="28,4,0,0"
+                                         Tapped="ClipboardLaunchUrlButton_Tapped" />
                     </RelativePanel>
                 </Grid>
 

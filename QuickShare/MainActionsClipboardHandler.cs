@@ -94,6 +94,12 @@ namespace QuickShare
                 ClipboardTextPreview.Text = text.Substring(0, 60).Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ") + "...";
             else
                 ClipboardTextPreview.Text = text.Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ");
+
+            bool isValidUri = Uri.TryCreate(text, UriKind.Absolute, out _);
+            if (isValidUri)
+                ClipboardLaunchUrlButton.Visibility = Visibility.Visible;
+            else
+                ClipboardLaunchUrlButton.Visibility = Visibility.Collapsed;
         }
 
         private async void Window_Activated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)

@@ -102,5 +102,10 @@ namespace QuickShare
         {
             Frame.Navigate(typeof(PicturePicker));
         }
+
+        private void ClipboardLaunchUrlButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainSend), "clipboardUrlLaunch");
+        }
     }
 }
