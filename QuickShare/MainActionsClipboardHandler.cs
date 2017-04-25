@@ -93,7 +93,7 @@ namespace QuickShare
             if (text.Length > 61)
                 ClipboardTextPreview.Text = text.Substring(0, 60).Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ") + "...";
             else
-                ClipboardTextPreview.Text = text;
+                ClipboardTextPreview.Text = text.Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ");
         }
 
         private async void Window_Activated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
