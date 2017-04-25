@@ -90,12 +90,23 @@ namespace QuickShare
             if (mode == "text")
             {
                 TextSender ts = new TextSender(MainPage.Current.packageManager);
+
+                ts.TextSendProgress += (ee) =>
+                {
+                    defaultViewModel["ProgressMaximum"] = ee.TotalParts;
+                    defaultViewModel["ProgressValue"] = ee.SentParts;
+                };
+
+                defaultViewModel["SendStatus"] = "Sending...";
+
                 bool sendResult = await ts.Send(SendDataTemporaryStorage.Text, ContentType.ClipboardContent);
 
                 if (sendResult)
                     defaultViewModel["SendStatus"] = "Finished.";
                 else
                     defaultViewModel["SendStatus"] = "Failed :(";
+
+                defaultViewModel["ProgressValue"] = defaultViewModel["ProgressMaximum"];
             }
             else if (mode == "launchUri")
             {
@@ -146,7 +157,7 @@ namespace QuickShare
                         await fs.SendFiles(from x in SendDataTemporaryStorage.Files
                                            select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
                     }
-                    defaultViewModel["ProgressValue"] = Progress.Maximum;
+                    defaultViewModel["ProgressValue"] = defaultViewModel["ProgressMaximum"];
                 }
 
                 Dictionary<string, object> vs = new Dictionary<string, object>();

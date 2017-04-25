@@ -47,7 +47,11 @@ namespace QuickShare
         {
             ToastFunctions.SendToast("Received text with guid " + (e.Guid?.ToString() ?? "null") + " and it was " + (e.Success ? "successful" : "not successful") + ".");
 
+            DataStorageProviders.TextReceiveContentManager.Open();
+
             string content = DataStorageProviders.TextReceiveContentManager.GetItemContent((Guid)e.Guid);
+
+            DataStorageProviders.TextReceiveContentManager.Close();
 
             ToastFunctions.SendToast(content);
         }
