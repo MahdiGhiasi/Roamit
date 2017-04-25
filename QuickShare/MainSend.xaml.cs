@@ -1,6 +1,7 @@
 ﻿using QuickShare.Common;
 using QuickShare.Common.Rome;
 using QuickShare.FileTransfer;
+using QuickShare.TextTransfer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -86,13 +87,28 @@ namespace QuickShare
 
             var mode = e.Parameter.ToString();
 
-            if (mode == "clipboard")
+            if (mode == "text")
             {
+                TextSender ts = new TextSender(MainPage.Current.packageManager);
+                bool sendResult = await ts.Send(SendDataTemporaryStorage.Text, ContentType.ClipboardContent);
 
+                if (sendResult)
+                    defaultViewModel["SendStatus"] = "Finished.";
+                else
+                    defaultViewModel["SendStatus"] = "Failed :(";
+            }
+            else if (mode == "launchUri")
+            {
+                var launchResult = await MainPage.Current.packageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri);
+
+                if (launchResult == RomeRemoteLaunchUriStatus.Success)
+                    defaultViewModel["SendStatus"] = "Finished.";
+                else
+                    defaultViewModel["SendStatus"] = launchResult.ToString();
             }
             else if (mode == "file")
             {
-                defaultViewModel["SendStatus"] = (MainPage.Current.filesToSend.Count == 1) ? "Sending file..." : "Sending files...";
+                defaultViewModel["SendStatus"] = (SendDataTemporaryStorage.Files.Count == 1) ? "Sending file..." : "Sending files...";
 
                 bool failed = false;
                 string message = "";
@@ -116,18 +132,18 @@ namespace QuickShare
                         }
                     };
 
-                    if (MainPage.Current.filesToSend.Count == 0)
+                    if (SendDataTemporaryStorage.Files.Count == 0)
                     {
                         defaultViewModel["SendStatus"] = "No files.";
                         return;
                     }
-                    else if (MainPage.Current.filesToSend.Count == 1)
+                    else if (SendDataTemporaryStorage.Files.Count == 1)
                     {
-                        await fs.SendFile(new PCLStorage.WinRTFile(MainPage.Current.filesToSend[0]));
+                        await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0]));
                     }
                     else
                     {
-                        await fs.SendFiles(from x in MainPage.Current.filesToSend
+                        await fs.SendFiles(from x in SendDataTemporaryStorage.Files
                                            select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
                     }
                     defaultViewModel["ProgressValue"] = Progress.Maximum;

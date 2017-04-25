@@ -37,8 +37,8 @@ namespace QuickShare
 
         private void Send(IEnumerable<StorageFile> files)
         {
-            MainPage.Current.filesToSend.Clear();
-            MainPage.Current.filesToSend.AddRange(files);
+            SendDataTemporaryStorage.Files.Clear();
+            SendDataTemporaryStorage.Files.AddRange(files);
 
             Frame.Navigate(typeof(MainSend), "file");
         }

@@ -78,7 +78,9 @@ namespace QuickShare
 
         private void ClipboardButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Frame.Navigate(typeof(MainSend), "clipboard");
+            SendDataTemporaryStorage.Text = clipboardTextContent;
+
+            Frame.Navigate(typeof(MainSend), "text");
         }
 
         private async void SelectFile_Tapped(object sender, TappedRoutedEventArgs e)
@@ -92,8 +94,8 @@ namespace QuickShare
 
             var files = await picker.PickMultipleFilesAsync();
 
-            MainPage.Current.filesToSend.Clear();
-            MainPage.Current.filesToSend.AddRange(files);
+            SendDataTemporaryStorage.Files.Clear();
+            SendDataTemporaryStorage.Files.AddRange(files);
 
             Frame.Navigate(typeof(MainSend), "file");
         }
@@ -105,7 +107,9 @@ namespace QuickShare
 
         private void ClipboardLaunchUrlButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Frame.Navigate(typeof(MainSend), "clipboardUrlLaunch");
+            SendDataTemporaryStorage.LaunchUri = new Uri(clipboardTextContent);
+
+            Frame.Navigate(typeof(MainSend), "launchUri");
         }
     }
 }

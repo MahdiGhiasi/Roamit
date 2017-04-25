@@ -20,6 +20,7 @@ namespace QuickShare
         ClipboardContentType currentContent = ClipboardContentType.None;
         bool isApplicationWindowActive = true;
         bool needToPrintClipboardFormat = false;
+        string clipboardTextContent = "";
 
         private async Task InitClipboardAsync()
         {
@@ -89,6 +90,8 @@ namespace QuickShare
 
             ClipboardButton.IsEnabled = true;
             ClipboardContentPreviewContainer.Visibility = Visibility.Visible;
+
+            clipboardTextContent = text;
 
             if (text.Length > 61)
                 ClipboardTextPreview.Text = text.Substring(0, 60).Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ") + "...";
