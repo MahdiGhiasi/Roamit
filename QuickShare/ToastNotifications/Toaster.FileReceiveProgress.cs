@@ -11,7 +11,7 @@ namespace QuickShare.ToastNotifications
 {
     internal static partial class Toaster // :D
     {
-        private static Dictionary<Guid, double> fileReceiveProgresses = new Dictionary<Guid, double>();
+        private static Dictionary<Guid, string> fileReceiveProgresses = new Dictionary<Guid, string>();
 
         public static void ShowFileReceiveProgressNotification(string hostName, double percent, Guid guid)
         {
@@ -30,17 +30,20 @@ namespace QuickShare.ToastNotifications
             }
         }
 
+        static DateTime lastNotifTime = DateTime.MinValue;
         private static void ShowFileReceiveProgressNotificationPreCreators(string hostName, double percent, Guid guid)
         {
-            if ((fileReceiveProgresses.ContainsKey(guid)) && (fileReceiveProgresses[guid] == percent))
+            string percentString = ((int)(Math.Round(100.0 * percent))).ToString() + "%";
+
+            if ((fileReceiveProgresses.ContainsKey(guid)) && (fileReceiveProgresses[guid] == percentString))
                 return;
 
-            fileReceiveProgresses[guid] = percent;
+            if (DateTime.Now - lastNotifTime < TimeSpan.FromSeconds(4))
+                return;
 
-            if (ToastNotificationManager.History.GetHistory().FirstOrDefault(x => x.Tag == guid.ToString()) != null)
-                ToastNotificationManager.History.Remove(guid.ToString());
+            lastNotifTime = DateTime.Now;
 
-            string percentString = ((int)(Math.Round(100.0 * percent))).ToString() + "%";
+            fileReceiveProgresses[guid] = percentString;
 
             string toastXml = Templates.BasicText.Replace("{title}", $"Receiving from {hostName}...")
                                                  .Replace("{subtitle}", percentString);
@@ -51,6 +54,10 @@ namespace QuickShare.ToastNotifications
             var toast = new ToastNotification(doc);
             toast.SuppressPopup = true;
             toast.Tag = guid.ToString();
+
+            if (ToastNotificationManager.History.GetHistory().FirstOrDefault(x => x.Tag == guid.ToString()) != null)
+                ToastNotificationManager.History.Remove(guid.ToString());
+
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
