@@ -129,6 +129,7 @@ namespace QuickShare
                                                       QuickShare.UWP.Rome.RomePackageManager.Instance, 
                                                       FindMyIPAddresses()))
                 {
+                    defaultViewModel["ProgressMaximum"] = 1;
                     fs.FileTransferProgress += (ss, ee) =>
                     {
                         if (ee.State == FileTransferState.Error)
