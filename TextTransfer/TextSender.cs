@@ -12,6 +12,9 @@ namespace QuickShare.TextTransfer
         IRomePackageManager packageManager;
         int partLength = 1000;
 
+        public delegate void TextSendProgressEventHandler(TextSendEventArgs e);
+        public event TextSendProgressEventHandler TextSendProgress;
+
         public TextSender(IRomePackageManager _packageManager)
         {
             packageManager = _packageManager;
@@ -19,26 +22,25 @@ namespace QuickShare.TextTransfer
 
         public async Task<bool> Send(string text, ContentType contentType)
         {
-            List<string> parts = new List<string>();
-
-            while (text.Length > 0)
-            {
-                parts.Add(text.Substring(0, partLength));
-                text = text.Substring(partLength); //TODO: fix this.
-            }
+            List<string> parts = Enumerable.Range(0, (int)Math.Ceiling(text.Length / ((double)partLength)))
+                                           .Select(i => new string(text.Skip(i * (int)partLength)
+                                                                       .Take((int)partLength)
+                                                                       .ToArray())).ToList();
 
             //TODO: Add unique random id for each request and receive to file. (?)
+
+            var requestGuid = Guid.NewGuid().ToString();
 
             for (int i = 0; i < parts.Count; i++)
             {
                 Dictionary<string, object> vs = new Dictionary<string, object>
                 {
                     { "Receiver", "TextReceiver" },
-                    { "Type", contentType },
+                    { "Type", (int)contentType },
                     { "PartNumber", i },
                     { "TotalParts", parts.Count },
                     { "Content", parts[i] },
-                    { "UniqueId", Guid.NewGuid().ToString() },
+                    { "UniqueId", requestGuid },
                 };
                 var result = await packageManager.Send(vs);
 
@@ -48,6 +50,8 @@ namespace QuickShare.TextTransfer
                     System.Diagnostics.Debug.WriteLine("TextSender.Send: Send failed (" + result.Status.ToString() + ")");
                     return false;
                 }
+
+                TextSendProgress?.Invoke(new TextSendEventArgs { SentParts = i + 1, TotalParts = parts.Count });
             }
 
             return true;
