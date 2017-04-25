@@ -31,6 +31,9 @@ namespace QuickShare.TextTransfer
                 var partNumber = (int)data["PartNumber"];
                 var totalParts = (int)data["TotalParts"];
 
+                if (!DataStorageProviders.TextReceiveContentManager.IsOpened)
+                    DataStorageProviders.TextReceiveContentManager.Open();
+
                 if (partNumber == 0)
                     DataStorageProviders.TextReceiveContentManager.Add(guid, "");
 
@@ -53,10 +56,9 @@ namespace QuickShare.TextTransfer
                         Success = true,
                         Guid = guid,
                     });
-
-                    DataStorageProviders.TextReceiveContentManager.Remove(guid);
                 }
 
+                DataStorageProviders.TextReceiveContentManager.Close();
             }
 
             return true;
