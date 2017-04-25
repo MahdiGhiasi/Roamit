@@ -15,7 +15,7 @@ namespace QuickShare.DataStore
         //Internal constructor
         internal TextReceiveContentManager(string dbPath)
         {
-            db = new LiteDatabase(new ConnectionString { Filename = dbPath, Async = true });
+            db = new LiteDatabase($"Filename={dbPath};");
             data = db.GetCollection<TextReceiveRow>("Data");
         }
 
