@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -10,8 +11,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Shapes;
-
-// The Templated Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234235
 
 namespace QuickShare.Controls
 {
@@ -26,6 +25,13 @@ namespace QuickShare.Controls
             this.DefaultStyleKey = typeof(CircularProgressBar);
             this.ValueChanged += CircularProgressBar_ValueChanged;
             this.SizeChanged += CircularProgressBar_SizeChanged;
+
+            this.Loaded += CircularProgressBar_Loaded;
+        }
+
+        private void CircularProgressBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            CircularProgressBar_ValueChanged(sender, null);
         }
 
         double thickness = 2.0;
@@ -72,6 +78,20 @@ namespace QuickShare.Controls
             }
         }
 
+        bool isIndeterminate = false;
+        public new bool IsIndeterminate
+        {
+            get
+            {
+                return isIndeterminate;
+            }
+            set
+            {
+                isIndeterminate = value;
+                CircularProgressBar_ValueChanged(this, null);
+            }
+        }
+
         private void CircularProgressBar_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (indicatorArc == null)
@@ -90,7 +110,48 @@ namespace QuickShare.Controls
             if (indicatorArc == null)
                 return;
 
-            UpdateArcValues();
+            if (this.IsIndeterminate)
+                UpdateArcAsIndeterminate();
+            else
+                UpdateArcValues();
+        }
+
+        private void UpdateArcAsIndeterminate()
+        {
+            storyboard = new Storyboard();
+
+            double _value = 1.0 / 12.0;
+            double currentAngle = indicatorArc.Angle;
+            double newAngle = _value * 360.0;
+
+            DoubleAnimation da1 = new DoubleAnimation()
+            {
+                From = currentAngle,
+                To = newAngle,
+                //EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut },
+                Duration = TimeSpan.FromMilliseconds(250),
+                EnableDependentAnimation = true,
+            };
+            Storyboard.SetTarget(da1, indicatorArc);
+            Storyboard.SetTargetProperty(da1, "Angle");
+
+            DoubleAnimation da2 = new DoubleAnimation()
+            {
+                From = 0.0,
+                To = 360.0,
+                Duration = TimeSpan.FromMilliseconds(1000),
+                EnableDependentAnimation = true,
+                RepeatBehavior = RepeatBehavior.Forever
+            };
+            Storyboard.SetTarget(da2, indicatorArc);
+            Storyboard.SetTargetProperty(da2, "StartAngle");
+
+            storyboard.Children.Add(da1);
+            storyboard.Children.Add(da2);
+            storyboard.Begin();
+
+            if (PercentIndicatorVisibility == Visibility.Visible)
+                indicatorPercent.Text = "";
         }
 
         private void UpdateArcValues()
@@ -107,17 +168,29 @@ namespace QuickShare.Controls
             double currentAngle = indicatorArc.Angle;
             double newAngle = ((_value - Minimum) / (Maximum - Minimum)) * 360.0;
 
-            DoubleAnimation da = new DoubleAnimation();
-            da.From = currentAngle;
-            da.To = newAngle;
-            da.EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut };
-            da.Duration = TimeSpan.FromMilliseconds(250);
-            da.EnableDependentAnimation = true;
+            DoubleAnimation da1 = new DoubleAnimation()
+            {
+                From = currentAngle,
+                To = newAngle,
+                EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut },
+                Duration = TimeSpan.FromMilliseconds(250),
+                EnableDependentAnimation = true
+            };
+            Storyboard.SetTarget(da1, indicatorArc);
+            Storyboard.SetTargetProperty(da1, "Angle");
 
-            Storyboard.SetTarget(da, indicatorArc);
-            Storyboard.SetTargetProperty(da, "Angle");
+            DoubleAnimation da2 = new DoubleAnimation()
+            {
+                To = indicatorArc.StartAngle > 180 ? 360 : 0,
+                EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut },
+                Duration = TimeSpan.FromMilliseconds(250),
+                EnableDependentAnimation = true
+            };
+            Storyboard.SetTarget(da2, indicatorArc);
+            Storyboard.SetTargetProperty(da2, "StartAngle");
 
-            storyboard.Children.Add(da);
+            storyboard.Children.Add(da1);
+            storyboard.Children.Add(da2);
             storyboard.Begin();
 
             if (PercentIndicatorVisibility == Visibility.Visible)
