@@ -125,6 +125,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectedIndexToEnabledConverter.cs" />
     <Compile Include="SendDataTemporaryStorage.cs" />
+    <Compile Include="ToastNotifications\Templates.cs" />
+    <Compile Include="ToastNotifications\Toaster.FileReceiveProgress.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

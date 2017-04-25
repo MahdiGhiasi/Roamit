@@ -151,12 +151,14 @@ namespace QuickShare
                     }
                     else if (SendDataTemporaryStorage.Files.Count == 1)
                     {
-                        await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0]));
+                        if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0])))
+                            failed = true;
                     }
                     else
                     {
-                        await fs.SendFiles(from x in SendDataTemporaryStorage.Files
-                                           select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
+                        if (!await fs.SendFiles(from x in SendDataTemporaryStorage.Files
+                                                select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
+                            failed = true;
                     }
                     defaultViewModel["ProgressValue"] = defaultViewModel["ProgressMaximum"];
                 }

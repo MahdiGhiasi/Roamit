@@ -25,7 +25,7 @@ namespace QuickShare.TextTransfer
                 });
                 return false;
             }
-
+            
             if (type == ContentType.ClipboardContent)
             {
                 var partNumber = (int)data["PartNumber"];
@@ -60,7 +60,7 @@ namespace QuickShare.TextTransfer
 
                 DataStorageProviders.TextReceiveContentManager.Close();
             }
-
+            
             return true;
         }
     }

@@ -13,7 +13,7 @@ namespace QuickShare.Common
     public static class DeviceInfo
     {
         public static string SystemFamily { get; }
-        public static string SystemVersion { get; }
+        public static Version SystemVersion { get; }
         public static string SystemArchitecture { get; }
         public static string ApplicationName { get; }
         public static string ApplicationVersion { get; }
@@ -34,7 +34,7 @@ namespace QuickShare.Common
             ulong v2 = (v & 0x0000FFFF00000000L) >> 32;
             ulong v3 = (v & 0x00000000FFFF0000L) >> 16;
             ulong v4 = (v & 0x000000000000FFFFL);
-            SystemVersion = $"{v1}.{v2}.{v3}.{v4}";
+            SystemVersion = new Version($"{v1}.{v2}.{v3}.{v4}");
 
             // get the package architecure
             Package package = Package.Current;

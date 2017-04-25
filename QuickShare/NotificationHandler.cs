@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using System.Diagnostics;
 using QuickShare.TextTransfer;
 using QuickShare.DataStore;
+using QuickShare.ToastNotifications;
 
 namespace QuickShare
 {
@@ -40,7 +41,8 @@ namespace QuickShare
 
             Debug.WriteLine("Nope");
 
-            ToastFunctions.SendToast(e.CurrentPart + " / " + e.Total);
+            double percent = ((double)e.CurrentPart) / ((double)e.Total);
+            Toaster.ShowFileReceiveProgressNotification("remote device", percent, Guid.Empty);
         }
 
         internal static async Task HandleAsync(TextReceiveEventArgs e)
