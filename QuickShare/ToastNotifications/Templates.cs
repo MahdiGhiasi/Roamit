@@ -18,6 +18,19 @@ namespace QuickShare.ToastNotifications
   </visual>
 </toast>";
 
+        internal static string ProgressBar { get; } = @"
+<toast launch='{argsLaunch}'>
+  <visual>
+    <binding template='ToastGeneric'>
+      <text>{title}</text>
+      <progress
+        title='{progressTitle}'
+        value='{progressValue}'
+        valueStringOverride='{progressValueStringOverride}'
+        status='{progressStatus}'/>
+    </binding>
+  </visual>  
+</toast>";
 
     }
 }

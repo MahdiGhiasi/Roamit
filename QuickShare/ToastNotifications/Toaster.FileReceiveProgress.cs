@@ -93,7 +93,30 @@ namespace QuickShare.ToastNotifications
 
         private static void ShowFileReceiveProgressNotificationCreators(string hostName, double percent, Guid guid)
         {
-            ShowFileReceiveProgressNotificationCreatorsForPhone(hostName, percent, guid);
+            if (ToastNotificationManager.History.GetHistory().FirstOrDefault(x => x.Tag == guid.ToString()) == null)
+            {
+                string toastXml = Templates.ProgressBar.Replace("{title}", $"Receiving from {hostName}...")
+                                                       .Replace("{argsLaunch}", "action=fileProgress")
+                                                       .Replace("{progressTitle}", "")
+                                                       .Replace("{progressValueStringOverride}", "")
+                                                       .Replace("{progressStatus}", "");
+
+                var doc = new XmlDocument();
+                doc.LoadXml(toastXml);
+
+                var toast = new ToastNotification(doc)
+                {
+                    SuppressPopup = true,
+                    Tag = guid.ToString()
+                };
+
+                ToastNotificationManager.CreateToastNotifier().Show(toast);
+            }
+            
+            NotificationData data = new NotificationData();
+            data.Values.Add("progressValue", percent.ToString());
+
+            ToastNotificationManager.CreateToastNotifier().Update(data, guid.ToString());
         }
 
         private static void ShowFileReceiveProgressNotificationCreatorsForPhone(string hostName, double percent, Guid guid)
@@ -115,9 +138,8 @@ namespace QuickShare.ToastNotifications
                 ToastNotificationManager.CreateToastNotifier().Show(toast);
             }
 
-            string percentString = ((int)(Math.Round(100.0 * percent))).ToString() + "%";
-            System.Diagnostics.Debug.WriteLine(percent);
-            System.Diagnostics.Debug.WriteLine(percentString);
+            int percentR = ((int)(Math.Round(100.0 * percent)));
+            string percentString = (percentR < 0) ? "Initializing" : (percentR.ToString() + "%");
 
             NotificationData data = new NotificationData();
             data.Values.Add("subtitle", percentString);
