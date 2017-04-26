@@ -9,6 +9,7 @@ namespace QuickShare.FileTransfer
         public FileTransferState State { get; set; }
         public string Message { get; set; } = "";
         public Guid Guid { get; set; }
+        public string SenderName { get; set; }
     }
 
     public enum FileTransferState

@@ -26,6 +26,9 @@ namespace QuickShare.FileTransfer
         static List<Dictionary<string, object>> queueItems = null;
         static string queueFinishUrl = "";
 
+        static Guid requestGuid;
+        static string senderName = "remote device";
+
         public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, IFolder downloadFolder)
         {
             Dictionary<string, object> returnVal = null;
@@ -43,6 +46,9 @@ namespace QuickShare.FileTransfer
                 returnVal = new Dictionary<string, object>();
                 returnVal.Add("QueueInitialized", "1");
 
+                requestGuid = (Guid)request["Guid"];
+                senderName = (string)request["SenderName"];
+
                 /* TODO: Do this from outside of this function */
                 //await request.SendResponseAsync(vs);
 
@@ -53,7 +59,7 @@ namespace QuickShare.FileTransfer
                 //Queue data details
                 queuedSlicesYet += (uint)request["SlicesCount"];
                 queueItems.Add(request);
-                
+
                 if (queuedSlicesYet == queueTotalSlices)
                     await BeginProcessingQueue(downloadFolder);
                 else if (queuedSlicesYet > queueTotalSlices)
@@ -78,7 +84,7 @@ namespace QuickShare.FileTransfer
                 await DownloadFile(item, downloadFolder);
             }
 
-            FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = queueTotalSlices, Total = queueTotalSlices, State = FileTransferState.Finished });
+            FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = queueTotalSlices, Total = queueTotalSlices, State = FileTransferState.Finished, Guid = requestGuid, SenderName = senderName });
 
             await QueueProcessFinishedNotifySender();
         }
@@ -113,6 +119,13 @@ namespace QuickShare.FileTransfer
             var directory = (string)message["Directory"];
             var serverIP = (string)message["ServerIP"];
 
+            if (!isQueue)
+            {
+                requestGuid = (Guid)message["Guid"];
+                senderName = (string)message["SenderName"];
+            }
+
+
             var dateModified = DateTimeExtension.FromUnixTimeMilliseconds(dateModifiedMilliseconds);
             var dateCreated = DateTimeExtension.FromUnixTimeMilliseconds(dateCreatedMilliseconds);
 
@@ -125,7 +138,7 @@ namespace QuickShare.FileTransfer
             IFolder downloadFolder = await CreateDirectoryIfNecessary(downloadMainFolder, directory);
 
             IFile file = await CreateFile(downloadFolder, fileName);
-            
+
             using (var stream = await file.OpenAsync(FileAccess.ReadAndWrite))
             {
                 for (uint i = 0; i < slicesCount; i++)
@@ -158,7 +171,7 @@ namespace QuickShare.FileTransfer
         private static void InvokeFinishedEvent(uint currentFileSlicesCount)
         {
             if (!isQueue)
-                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = currentFileSlicesCount, Total = currentFileSlicesCount, State = FileTransferState.Finished });
+                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = currentFileSlicesCount, Total = currentFileSlicesCount, State = FileTransferState.Finished, Guid = requestGuid, SenderName = senderName });
             else
                 queueSlicesFinished += currentFileSlicesCount;
         }
@@ -171,17 +184,17 @@ namespace QuickShare.FileTransfer
             FileTransferProgressEventArgs ea = null;
             if (!isQueue)
             {
-                ea = new FileTransferProgressEventArgs { CurrentPart = currentFileSlice + 1, Total = currentFileSlicesCount, State = FileTransferState.DataTransfer };
+                ea = new FileTransferProgressEventArgs { CurrentPart = currentFileSlice + 1, Total = currentFileSlicesCount, State = FileTransferState.DataTransfer, Guid = requestGuid, SenderName = senderName };
                 System.Diagnostics.Debug.WriteLine(ea.CurrentPart + " / " + ea.Total);
             }
             else if (state == FileTransferState.QueueList)
             {
-                ea = new FileTransferProgressEventArgs { CurrentPart = 0, Total = 0, State = FileTransferState.QueueList };
+                ea = new FileTransferProgressEventArgs { CurrentPart = 0, Total = 0, State = FileTransferState.QueueList, Guid = requestGuid, SenderName = senderName };
                 System.Diagnostics.Debug.WriteLine("Downloading queue data...");
             }
             else
             {
-                ea = new FileTransferProgressEventArgs { CurrentPart = queueSlicesFinished + currentFileSlice + 1, Total = queueTotalSlices, State = FileTransferState.QueueList };
+                ea = new FileTransferProgressEventArgs { CurrentPart = queueSlicesFinished + currentFileSlice + 1, Total = queueTotalSlices, State = FileTransferState.QueueList, Guid = requestGuid, SenderName = senderName };
                 System.Diagnostics.Debug.WriteLine(ea.CurrentPart + " / " + ea.Total);
             }
 

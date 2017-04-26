@@ -95,8 +95,7 @@ namespace QuickShare.ToastNotifications
         {
             if (ToastNotificationManager.History.GetHistory().FirstOrDefault(x => x.Tag == guid.ToString()) == null)
             {
-                string toastXml = Templates.ProgressBar.Replace("{title}", $"Receiving from {hostName}...")
-                                                       .Replace("{argsLaunch}", "action=fileProgress")
+                string toastXml = Templates.ProgressBar.Replace("{argsLaunch}", "action=fileProgress")
                                                        .Replace("{progressTitle}", "")
                                                        .Replace("{progressValueStringOverride}", "")
                                                        .Replace("{progressStatus}", "");
@@ -115,6 +114,7 @@ namespace QuickShare.ToastNotifications
             
             NotificationData data = new NotificationData();
             data.Values.Add("progressValue", percent.ToString());
+            data.Values.Add("title", $"Receiving from {hostName}...");
 
             ToastNotificationManager.CreateToastNotifier().Update(data, guid.ToString());
         }
@@ -123,8 +123,7 @@ namespace QuickShare.ToastNotifications
         {
             if (ToastNotificationManager.History.GetHistory().FirstOrDefault(x => x.Tag == guid.ToString()) == null)
             {
-                string toastXml = Templates.BasicText.Replace("{title}", $"Receiving from {hostName}...")
-                                                     .Replace("{argsLaunch}", "action=fileProgress");
+                string toastXml = Templates.BasicText.Replace("{argsLaunch}", "action=fileProgress");
 
                 var doc = new XmlDocument();
                 doc.LoadXml(toastXml);
@@ -143,6 +142,7 @@ namespace QuickShare.ToastNotifications
 
             NotificationData data = new NotificationData();
             data.Values.Add("subtitle", percentString);
+            data.Values.Add("title", $"Receiving from {hostName}...");
 
             ToastNotificationManager.CreateToastNotifier().Update(data, guid.ToString());
         }

@@ -34,11 +34,13 @@ namespace QuickShare.FileTransfer
         IWebServerGenerator webServerGenerator;
         IRomePackageManager packageManager;
 
+        string deviceName;
+
         public delegate void FileTransferProgressEventHandler(object sender, FileTransferProgressEventArgs e);
         public event FileTransferProgressEventHandler FileTransferProgress;
         private event FileTransferProgressEventHandler FileTransferProgressInternal;
 
-        public FileSender(object _remoteSystem, IWebServerGenerator _webServerGenerator, IRomePackageManager _packageManager, IEnumerable<string> _myIPs)
+        public FileSender(object _remoteSystem, IWebServerGenerator _webServerGenerator, IRomePackageManager _packageManager, IEnumerable<string> _myIPs, string _deviceName)
         {
             remoteSystem = _remoteSystem;
             webServerGenerator = _webServerGenerator;
@@ -47,6 +49,8 @@ namespace QuickShare.FileTransfer
             ipFinder = new ServerIPFinder(webServerGenerator, packageManager);
 
             myIPs = new List<string>(_myIPs);
+
+            deviceName = _deviceName;
         }
 
         public async Task<bool> SendFiles(IEnumerable<IFile> files, string directoryName)
@@ -93,7 +97,7 @@ namespace QuickShare.FileTransfer
                 FileTransferProgress?.Invoke(s, ee);
             };
 
-            if (!(await BeginSending(key, slicesCount, file.Name, properties, directory)))
+            if (!(await BeginSending(key, slicesCount, file.Name, properties, directory, false)))
                 return false;
 
             if (!(await WaitForFinish()))
@@ -224,7 +228,8 @@ namespace QuickShare.FileTransfer
                                          keyTable[key].lastSliceId + 1, 
                                          files[i].Item2.Name,
                                          fs[i], 
-                                         files[i].Item1)))
+                                         files[i].Item1,
+                                         true)))
                     return false;
             }
 
@@ -264,6 +269,8 @@ namespace QuickShare.FileTransfer
             qInit.Add("TotalSlices", totalSlices);
             qInit.Add("QueueFinishKey", queueFinishKey);
             qInit.Add("ServerIP", ipFinderResult.MyIP);
+            qInit.Add("Guid", Guid.NewGuid());
+            qInit.Add("SenderName", deviceName);
 
             var result = await packageManager.Send(qInit);
 
@@ -276,7 +283,7 @@ namespace QuickShare.FileTransfer
             }
         }
 
-        private async Task<bool> BeginSending(string key, uint slicesCount, string fileName, IFileStats properties, string directory)
+        private async Task<bool> BeginSending(string key, uint slicesCount, string fileName, IFileStats properties, string directory, bool isQueue)
         {
             Dictionary<string, object> vs = new Dictionary<string, object>();
             vs.Add("Receiver", "FileReceiver");
@@ -288,6 +295,12 @@ namespace QuickShare.FileTransfer
             vs.Add("FileSize", properties.Length);
             vs.Add("Directory", directory);
             vs.Add("ServerIP", ipFinderResult.MyIP);
+
+            if (!isQueue)
+            {
+                vs.Add("Guid", Guid.NewGuid());
+                vs.Add("SenderName", deviceName);
+            }
 
             var result = await packageManager.Send(vs);
 

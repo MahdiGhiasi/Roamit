@@ -45,7 +45,7 @@ namespace QuickShare
             Debug.WriteLine("Nope");
 
             double percent = ((double)e.CurrentPart) / ((double)e.Total);
-            Toaster.ShowFileReceiveProgressNotification("remote device", percent, e.Guid);
+            Toaster.ShowFileReceiveProgressNotification(e.SenderName, percent, e.Guid);
         }
 
         internal static async Task HandleAsync(TextReceiveEventArgs e)

@@ -128,7 +128,8 @@ namespace QuickShare
                 using (FileSender fs = new FileSender(rs, 
                                                       new QuickShare.UWP.WebServerGenerator(), 
                                                       QuickShare.UWP.Rome.RomePackageManager.Instance, 
-                                                      FindMyIPAddresses()))
+                                                      FindMyIPAddresses(),
+                                                      (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName))
                 {
                     defaultViewModel["ProgressMaximum"] = 1;
                     fs.FileTransferProgress += (ss, ee) =>

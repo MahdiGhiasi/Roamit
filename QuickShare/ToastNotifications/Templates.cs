@@ -32,5 +32,18 @@ namespace QuickShare.ToastNotifications
   </visual>  
 </toast>";
 
+        internal static string FileReceived { get; } = @"
+<toast launch='action=fileFinished'>
+  <visual>
+    <binding template='ToastGeneric'>
+      <text>{title}</text>
+      <text>{subtitle}</text>
+    </binding>
+  </visual>
+  <actions>
+    <action content='Open containing folder' activationType='foreground' arguments='action=openContainingFolder&amp;guid={guid}'/>
+  </actions>
+</toast>";
+
     }
 }
