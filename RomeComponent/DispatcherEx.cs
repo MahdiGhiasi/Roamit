@@ -16,7 +16,7 @@ namespace QuickShare.Common
 
             try
             {
-                dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+                dispatcher = CoreApplication.MainView?.CoreWindow?.Dispatcher;
             }
             catch { }
 
