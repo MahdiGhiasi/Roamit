@@ -23,6 +23,7 @@ namespace QuickShare.ToastNotifications
 
             var toast = new ToastNotification(doc)
             {
+                NotificationMirroring = NotificationMirroring.Disabled,
                 Tag = guid.ToString()
             };
 

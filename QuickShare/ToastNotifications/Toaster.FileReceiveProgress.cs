@@ -83,6 +83,7 @@ namespace QuickShare.ToastNotifications
             var toast = new ToastNotification(doc)
             {
                 SuppressPopup = true,
+                NotificationMirroring = NotificationMirroring.Disabled,
                 Tag = guid.ToString()
             };
 
@@ -106,6 +107,7 @@ namespace QuickShare.ToastNotifications
                 var toast = new ToastNotification(doc)
                 {
                     SuppressPopup = true,
+                    NotificationMirroring = NotificationMirroring.Disabled,
                     Tag = guid.ToString()
                 };
 
@@ -131,6 +133,7 @@ namespace QuickShare.ToastNotifications
                 var toast = new ToastNotification(doc)
                 {
                     SuppressPopup = true,
+                    NotificationMirroring = NotificationMirroring.Disabled,
                     Tag = guid.ToString()
                 };
 
