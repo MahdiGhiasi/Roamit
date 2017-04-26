@@ -278,8 +278,6 @@ namespace QuickShare.FileTransfer
 
         private async Task<bool> BeginSending(string key, uint slicesCount, string fileName, IFileStats properties, string directory)
         {
-            await Task.Delay(1000);
-
             Dictionary<string, object> vs = new Dictionary<string, object>();
             vs.Add("Receiver", "FileReceiver");
             vs.Add("DownloadKey", key);
