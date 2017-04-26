@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -42,9 +43,29 @@ namespace QuickShare
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             buttonsShowStoryboard.Begin();
-
             await InitClipboardAsync();
 
+            try
+            {
+                await InitPicturePicker();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to initialize picture picker. Will try again after a second. Exception: " + ex.ToString());
+                try
+                {
+                    await Task.Delay(1000);
+                    await InitPicturePicker();
+                }
+                catch (Exception ex2)
+                {
+                    Debug.WriteLine("Failed to initialize picture picker again. :( Exception: " + ex2.ToString());
+                }
+            }
+        }
+
+        private async Task InitPicturePicker()
+        {
             StorageFolder f = KnownFolders.PicturesLibrary;
             List<StorageFile> files = (await f.GetFilesAsync(Windows.Storage.Search.CommonFileQuery.OrderByDate, 0, 3)).ToList();
             List<BitmapImage> bitmaps = new List<BitmapImage>();
