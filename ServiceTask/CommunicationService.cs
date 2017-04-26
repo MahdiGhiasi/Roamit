@@ -33,13 +33,17 @@ namespace QuickShare.ServiceTask
                 _appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed;
                 FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
                 TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
+                taskInstance.Canceled += OnTaskCanceled;
             }
+
         }
 
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
             if (_deferral != null)
             {
+                Debug.WriteLine("SERVICETASK CANCELED!");
+                Debug.WriteLine(reason);
                 // Complete the service deferral.
                 _deferral.Complete();
                 _deferral = null;
@@ -85,7 +89,7 @@ namespace QuickShare.ServiceTask
                 }
                 else if (receiver == "TextReceiver")
                 {
-                     TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
+                    TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
                 }
                 else if (receiver == "System")
                 {
@@ -99,36 +103,43 @@ namespace QuickShare.ServiceTask
                         }
                 }
             }
-           /* else if (args.Request.Message.ContainsKey("Test"))
-            {
-                string s = args.Request.Message["Test"] as string;
+            /* else if (args.Request.Message.ContainsKey("Test"))
+             {
+                 string s = args.Request.Message["Test"] as string;
 
-                if (s == null)
-                    s = "null";
+                 if (s == null)
+                     s = "null";
 
-                ValueSet vs = new ValueSet();
-                vs.Add("RecvSuccessful", "RecvSuccessful");
-                await args.Request.SendResponseAsync(vs);
+                 ValueSet vs = new ValueSet();
+                 vs.Add("RecvSuccessful", "RecvSuccessful");
+                 await args.Request.SendResponseAsync(vs);
 
-                await System.Threading.Tasks.Task.Delay(1500);
+                 await System.Threading.Tasks.Task.Delay(1500);
 
-                ToastFunctions.SendToast(s);
-            }
-            else if (args.Request.Message.ContainsKey("TestLongRunning"))
-            {
-                for (int i = 0; i < 10000; i++)
-                {
-                    ToastFunctions.SendToast((i * 5).ToString() + " seconds");
-                    await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5));
-                }
-            }*/
+                 ToastFunctions.SendToast(s);
+             }
+             else if (args.Request.Message.ContainsKey("TestLongRunning"))
+             {
+                 for (int i = 0; i < 10000; i++)
+                 {
+                     ToastFunctions.SendToast((i * 5).ToString() + " seconds");
+                     await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5));
+                 }
+             }*/
         }
 
-        private AppServiceConnection notificationService;
+        private AppServiceConnection notificationService = null;
+        private bool connectingToNotificationService = false;
         private async Task<bool> ConnectToNotificationService()
         {
+            if (connectingToNotificationService)
+                return false;
+            connectingToNotificationService = true;
+
+
             if (this.notificationService == null)
             {
+
                 this.notificationService = new AppServiceConnection();
 
                 // Here, we use the app service name defined in the app service provider's Package.appxmanifest file in the <Extension> section.
@@ -137,31 +148,50 @@ namespace QuickShare.ServiceTask
                 // Use Windows.ApplicationModel.Package.Current.Id.FamilyName within the app service provider to get this value.
                 this.notificationService.PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;
 
+                Debug.WriteLine("Connecting to notification service...");
                 var status = await this.notificationService.OpenAsync();
+
                 if (status != AppServiceConnectionStatus.Success)
                 {
                     Debug.WriteLine("Failed to connect to notification service: " + status);
+                    connectingToNotificationService = false;
                     return false;
                 }
+                Debug.WriteLine("Connected to notification service.");
             }
 
+            connectingToNotificationService = false;
             return true;
         }
 
         private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("Progress " + e.CurrentPart + "/" + e.Total);
+
             if (!await ConnectToNotificationService())
                 return;
 
-            // Call the service.
-            var message = new ValueSet();
-            message.Add("Type", "FileTransferProgress");
-            message.Add("Data", JsonConvert.SerializeObject(e));
 
-            AppServiceResponse response = await this.notificationService.SendMessageAsync(message);
+            try
+            {
+                // Call the service.
+                var message = new ValueSet();
+                message.Add("Type", "FileTransferProgress");
+                message.Add("Data", JsonConvert.SerializeObject(e));
 
-            if (response.Status != AppServiceResponseStatus.Success)
-                Debug.WriteLine("Failed to send message to notification service: " + response.Status);
+                AppServiceResponse response = await this.notificationService.SendMessageAsync(message);
+
+                if (response.Status != AppServiceResponseStatus.Success)
+                {
+                    Debug.WriteLine("Failed to send message to notification service: " + response.Status);
+                    notificationService = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to send message to notification service (an exception was thrown): " + ex.ToString());
+                notificationService = null;
+            }
         }
 
         private async void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)

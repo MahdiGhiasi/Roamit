@@ -1,4 +1,6 @@
-﻿namespace QuickShare.FileTransfer
+﻿using System;
+
+namespace QuickShare.FileTransfer
 {
     public class FileTransferProgressEventArgs
     {
@@ -6,6 +8,7 @@
         public ulong Total { get; set; }
         public FileTransferState State { get; set; }
         public string Message { get; set; } = "";
+        public Guid Guid { get; set; }
     }
 
     public enum FileTransferState

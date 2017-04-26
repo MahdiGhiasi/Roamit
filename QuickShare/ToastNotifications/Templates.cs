@@ -9,7 +9,7 @@ namespace QuickShare.ToastNotifications
     internal static class Templates
     {
         internal static string BasicText { get; } = @"
-<toast>
+<toast launch='{argsLaunch}'>
   <visual>
     <binding template='ToastGeneric'>
       <text>{title}</text>

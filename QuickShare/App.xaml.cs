@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.QueryStringDotNET;
+using Newtonsoft.Json;
 using QuickShare.Common;
 using QuickShare.FileTransfer;
 using QuickShare.TextTransfer;
@@ -13,6 +14,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,9 +39,16 @@ namespace QuickShare
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.UnhandledException += App_UnhandledException;
 
             UWP.Rome.RomePackageManager.Instance.Initialize("com.quickshare.service");
             DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
+        }
+
+        private async void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var message = new MessageDialog(e.Message + "\r\n\r\n" + e.Exception.ToString(), "Unhandled exception occured.");
+            await message.ShowAsync();
         }
 
         /// <summary>
@@ -66,7 +75,7 @@ namespace QuickShare
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                if (e?.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
                     //TODO: Load state from previously suspended application
                 }
@@ -75,14 +84,14 @@ namespace QuickShare
                 Window.Current.Content = rootFrame;
             }
 
-            if (e.PrelaunchActivated == false)
+            if (e?.PrelaunchActivated != true)
             {
                 if (rootFrame.Content == null)
                 {
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    rootFrame.Navigate(typeof(MainPage), e?.Arguments);
                 }
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(330, 550));
 
@@ -99,6 +108,40 @@ namespace QuickShare
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName, e.Exception);
+        }
+
+        protected override void OnActivated(IActivatedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            if (rootFrame == null)
+            {
+                OnLaunched(null);
+                rootFrame = Window.Current.Content as Frame;
+            }
+
+            if (e is ToastNotificationActivatedEventArgs)
+            {
+                var toastActivationArgs = e as ToastNotificationActivatedEventArgs;
+
+                // Parse the query string
+                QueryString args = QueryString.Parse(toastActivationArgs.Argument);
+
+                switch (args["action"])
+                {
+                    case "fileProgress":
+                        if (rootFrame.Content is MainPage)
+                            break;
+
+                        rootFrame.Navigate(typeof(MainPage));
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+            base.OnActivated(e);
         }
 
         /// <summary>

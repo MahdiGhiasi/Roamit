@@ -15,6 +15,10 @@ namespace QuickShare.ToastNotifications
 
         public static void ShowFileReceiveProgressNotification(string hostName, double percent, Guid guid)
         {
+            System.Diagnostics.Debug.WriteLine("Notif" + percent);
+
+            //return;
+
             Version creators = new Version("10.0.15063.0");
 
             if (DeviceInfo.SystemVersion >= creators)
@@ -30,6 +34,7 @@ namespace QuickShare.ToastNotifications
             }
         }
 
+        /**
         static DateTime lastNotifTime = DateTime.MinValue;
         private static void ShowFileReceiveProgressNotificationPreCreators(string hostName, double percent, Guid guid)
         {
@@ -60,15 +65,64 @@ namespace QuickShare.ToastNotifications
 
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
+        /**/
+
+        /**/
+        private static void ShowFileReceiveProgressNotificationPreCreators(string hostName, double percent, Guid guid)
+        {
+            if (ToastNotificationManager.History.GetHistory().FirstOrDefault(x => x.Tag == guid.ToString()) != null)
+                return;
+
+            string toastXml = Templates.BasicText.Replace("{title}", $"Receiving from {hostName}...")
+                                                 .Replace("{subtitle}", "Open the app to see transfer progress.")
+                                                 .Replace("{argsLaunch}", "action=fileProgress");
+
+            var doc = new XmlDocument();
+            doc.LoadXml(toastXml);
+
+            var toast = new ToastNotification(doc)
+            {
+                SuppressPopup = true,
+                Tag = guid.ToString()
+            };
+
+            ToastNotificationManager.CreateToastNotifier().Show(toast);
+        }
+        /**/
+
 
         private static void ShowFileReceiveProgressNotificationCreators(string hostName, double percent, Guid guid)
         {
-            ShowFileReceiveProgressNotificationPreCreators(hostName, percent, guid);
+            ShowFileReceiveProgressNotificationCreatorsForPhone(hostName, percent, guid);
         }
 
         private static void ShowFileReceiveProgressNotificationCreatorsForPhone(string hostName, double percent, Guid guid)
         {
-            ShowFileReceiveProgressNotificationPreCreators(hostName, percent, guid);
+            if (ToastNotificationManager.History.GetHistory().FirstOrDefault(x => x.Tag == guid.ToString()) == null)
+            {
+                string toastXml = Templates.BasicText.Replace("{title}", $"Receiving from {hostName}...")
+                                                     .Replace("{argsLaunch}", "action=fileProgress");
+
+                var doc = new XmlDocument();
+                doc.LoadXml(toastXml);
+
+                var toast = new ToastNotification(doc)
+                {
+                    SuppressPopup = true,
+                    Tag = guid.ToString()
+                };
+
+                ToastNotificationManager.CreateToastNotifier().Show(toast);
+            }
+
+            string percentString = ((int)(Math.Round(100.0 * percent))).ToString() + "%";
+            System.Diagnostics.Debug.WriteLine(percent);
+            System.Diagnostics.Debug.WriteLine(percentString);
+
+            NotificationData data = new NotificationData();
+            data.Values.Add("subtitle", percentString);
+
+            ToastNotificationManager.CreateToastNotifier().Update(data, guid.ToString());
         }
     }
 }

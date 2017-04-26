@@ -119,7 +119,8 @@ namespace QuickShare
             }
             else if (mode == "file")
             {
-                defaultViewModel["SendStatus"] = (SendDataTemporaryStorage.Files.Count == 1) ? "Sending file..." : "Sending files...";
+                string sendingText = (SendDataTemporaryStorage.Files.Count == 1) ? "Sending file..." : "Sending files...";
+                defaultViewModel["SendStatus"] = "Preparing...";
 
                 bool failed = false;
                 string message = "";
@@ -139,6 +140,7 @@ namespace QuickShare
                         }
                         else
                         {
+                            defaultViewModel["SendStatus"] = sendingText;
                             defaultViewModel["ProgressMaximum"] = ee.Total + 1;
                             defaultViewModel["ProgressValue"] = ee.CurrentPart;
                         }

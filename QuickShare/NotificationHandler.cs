@@ -37,12 +37,15 @@ namespace QuickShare
             Debug.WriteLine("So?");
 
             if (UISuccess)
+            {
+                Toaster.ClearNotification(e.Guid);
                 return;
+            }
 
             Debug.WriteLine("Nope");
 
             double percent = ((double)e.CurrentPart) / ((double)e.Total);
-            Toaster.ShowFileReceiveProgressNotification("remote device", percent, Guid.Empty);
+            Toaster.ShowFileReceiveProgressNotification("remote device", percent, e.Guid);
         }
 
         internal static async Task HandleAsync(TextReceiveEventArgs e)
