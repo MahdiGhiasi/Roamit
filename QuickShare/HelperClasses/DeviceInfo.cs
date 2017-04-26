@@ -58,9 +58,16 @@ namespace QuickShare.Common
                     FormFactorType = DeviceFormFactorType.Phone;
                     break;
                 case "Windows.Desktop":
-                    FormFactorType = UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse
-                        ? DeviceFormFactorType.Desktop
-                        : DeviceFormFactorType.Tablet;
+                    try
+                    {
+                        FormFactorType = UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse
+                            ? DeviceFormFactorType.Desktop
+                            : DeviceFormFactorType.Tablet;
+                    }
+                    catch //UI is not present at this point, we'll assume Desktop.
+                    {
+                        FormFactorType = DeviceFormFactorType.Desktop;
+                    }
                     break;
                 case "Windows.Universal":
                     FormFactorType = DeviceFormFactorType.IoT;
