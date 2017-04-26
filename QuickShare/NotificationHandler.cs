@@ -36,7 +36,7 @@ namespace QuickShare
 
             Debug.WriteLine("So?");
 
-            if (UISuccess)
+            if ((UISuccess) && (e.State != FileTransferState.Finished))
             {
                 Toaster.ClearNotification(e.Guid);
                 return;
@@ -44,8 +44,15 @@ namespace QuickShare
 
             Debug.WriteLine("Nope");
 
-            double percent = ((double)e.CurrentPart) / ((double)e.Total);
-            Toaster.ShowFileReceiveProgressNotification(e.SenderName, percent, e.Guid);
+            if (e.State == FileTransferState.Finished)
+            {
+                Toaster.ShowFileReceiveFinishedNotification(e.TotalFiles, e.SenderName, e.Guid);
+            }
+            else
+            {
+                double percent = ((double)e.CurrentPart) / ((double)e.Total);
+                Toaster.ShowFileReceiveProgressNotification(e.SenderName, percent, e.Guid);
+            }
         }
 
         internal static async Task HandleAsync(TextReceiveEventArgs e)

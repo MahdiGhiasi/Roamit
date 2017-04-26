@@ -135,6 +135,13 @@ namespace QuickShare
 
                         rootFrame.Navigate(typeof(MainPage));
                         break;
+                    case "fileFinished":
+                        //TODO: Open history page
+                        break;
+                    case "openContainingFolder":
+                        Guid itemGuid = Guid.Parse(args["guid"]);
+                        //TODO: Open containing folder
+                        break;
                     default:
                         break;
                 }

@@ -10,6 +10,7 @@ namespace QuickShare.FileTransfer
         public string Message { get; set; } = "";
         public Guid Guid { get; set; }
         public string SenderName { get; set; }
+        public int TotalFiles { get; set; }
     }
 
     public enum FileTransferState
