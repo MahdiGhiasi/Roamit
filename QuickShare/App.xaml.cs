@@ -5,6 +5,7 @@ using QuickShare.FileTransfer;
 using QuickShare.TextTransfer;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -58,6 +59,7 @@ namespace QuickShare
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            Debug.WriteLine("Launched.");
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
@@ -112,6 +114,8 @@ namespace QuickShare
 
         protected override void OnActivated(IActivatedEventArgs e)
         {
+            Debug.WriteLine("Activated.");
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             if (rootFrame == null)
