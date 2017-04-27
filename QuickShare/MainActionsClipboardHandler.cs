@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,30 +53,38 @@ namespace QuickShare
 
         private async Task ProcessClipboardAsync()
         {
-            var content = Clipboard.GetContent();
-            if (content.Contains(StandardDataFormats.Bitmap))
+            try
             {
-                currentContent = ClipboardContentType.Bitmap;
+                var content = Clipboard.GetContent();
+                if (content.Contains(StandardDataFormats.Bitmap))
+                {
+                    currentContent = ClipboardContentType.Bitmap;
 
-                SetClipboardPreviewText("(image)");
-            }
-            else if (content.Contains(StandardDataFormats.StorageItems))
-            {
-                currentContent = ClipboardContentType.StorageItem;
+                    SetClipboardPreviewText("(image)");
+                }
+                else if (content.Contains(StandardDataFormats.StorageItems))
+                {
+                    currentContent = ClipboardContentType.StorageItem;
 
-                SetClipboardPreviewText("(file or folder)");
-            }
-            else if (content.Contains(StandardDataFormats.Text))
-            {
-                currentContent = ClipboardContentType.Text;
-                string text = await content.GetTextAsync();
+                    SetClipboardPreviewText("(file or folder)");
+                }
+                else if (content.Contains(StandardDataFormats.Text))
+                {
+                    currentContent = ClipboardContentType.Text;
+                    string text = await content.GetTextAsync();
 
-                SetClipboardPreviewText(text);
+                    SetClipboardPreviewText(text);
+                }
+                else
+                {
+                    //Unknown clipboard content.
+                    SetClipboardPreviewText("");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                //Unknown clipboard content.
                 SetClipboardPreviewText("");
+                Debug.WriteLine($"Failed to access clipboard: {ex.ToString()}");
             }
         }
 
