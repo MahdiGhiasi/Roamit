@@ -209,11 +209,13 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="PCLStorage">
-      <HintPath>..\PCLStorageEx2\WinRT\PCLStorage.dll</HintPath>
+    <Reference Include="PCLStorage, Version=1.0.2.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\PCLStorageEx-NetStandard1.2\WinRT\PCLStorage.dll</HintPath>
     </Reference>
-    <Reference Include="PCLStorage.Abstractions">
-      <HintPath>..\PCLStorageEx2\PCLStorage.Abstractions.dll</HintPath>
+    <Reference Include="PCLStorage.Abstractions, Version=1.0.2.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

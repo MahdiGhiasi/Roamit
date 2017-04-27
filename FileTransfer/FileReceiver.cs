@@ -189,7 +189,7 @@ namespace QuickShare.FileTransfer
 
             IFile file = await CreateFile(downloadFolder, fileName);
 
-            using (var stream = await file.OpenAsync(FileAccess.ReadAndWrite))
+            using (var stream = await file.OpenAsync(PCLStorage.FileAccess.ReadAndWrite))
             {
                 for (uint i = 0; i < slicesCount; i++)
                 {

@@ -10,6 +10,7 @@ using System.Diagnostics;
 using QuickShare.FileTransfer;
 using QuickShare.Common.Rome;
 using PCLStorage;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace QuickShare.FileTransfer
 {
@@ -331,9 +332,9 @@ namespace QuickShare.FileTransfer
         {          
             try
             {
-                var query = Microsoft.QueryStringDotNET.QueryString.Parse(request.Url.Query.Substring(1));
+                var query = QueryHelpers.ParseQuery(request.Url.Query);
 
-                var success = (query["success"].ToLower() == "true");
+                var success = (query["success"][0].ToLower() == "true");
                 var message = "";
 
                 string[] parts = request.Url.AbsolutePath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
@@ -343,7 +344,7 @@ namespace QuickShare.FileTransfer
                     FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = keyTable[key].lastSliceId + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.Finished });
                 else
                 {
-                    message = query["message"];
+                    message = query["message"][0];
                     FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = keyTable[key].lastSliceId + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.Error, Message = message });
                 }
 
@@ -361,13 +362,13 @@ namespace QuickShare.FileTransfer
         {
             try
             {
-                var query = Microsoft.QueryStringDotNET.QueryString.Parse(request.Url.Query.Substring(1));
+                var query = QueryHelpers.ParseQuery(request.Url.Query);
 
-                var success = (query["success"].ToLower() == "true");
+                var success = (query["success"][0].ToLower() == "true");
                 var message = "";
 
                 if (!success)
-                    message = query["message"];
+                    message = query["message"][0];
 
                 queueFinishTcs.SetResult(message);
             }
@@ -400,7 +401,7 @@ namespace QuickShare.FileTransfer
 
                 byte[] buffer = new byte[pieceSize];
 
-                using (Stream stream = await file.OpenAsync(FileAccess.Read))
+                using (Stream stream = await file.OpenAsync(PCLStorage.FileAccess.Read))
                 {
                     stream.Seek((int)(id * Constants.FileSliceMaxLength), SeekOrigin.Begin);
                     await stream.ReadAsync(buffer, 0, pieceSize);

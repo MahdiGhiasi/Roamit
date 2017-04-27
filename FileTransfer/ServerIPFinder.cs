@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using QuickShare.Common;
 using QuickShare.Common.Rome;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace QuickShare.FileTransfer
 {
@@ -62,13 +63,13 @@ namespace QuickShare.FileTransfer
             IPDetectionCompletedEventArgs ea;
             try
             {
-                var query = Microsoft.QueryStringDotNET.QueryString.Parse(request.Url.Query.Substring(1));
+                var query = QueryHelpers.ParseQuery(request.Url.Query);
                 
-                var success = (query["success"].ToLower() == "true");
+                var success = (query["success"][0].ToLower() == "true");
                 var message = "";
 
                 if (!success)
-                    message = query["message"];
+                    message = query["message"][0];
 
                 ea = new IPDetectionCompletedEventArgs()
                 {
