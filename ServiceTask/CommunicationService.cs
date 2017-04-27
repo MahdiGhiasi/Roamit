@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿#undef NOTIFICATIONHANDLER_DEBUGINFO
+
+using Newtonsoft.Json;
 using PCLStorage;
 using QuickShare.Common;
 using System;
@@ -139,25 +141,36 @@ namespace QuickShare.ServiceTask
 
             if (this.notificationService == null)
             {
-
-                this.notificationService = new AppServiceConnection();
-
-                // Here, we use the app service name defined in the app service provider's Package.appxmanifest file in the <Extension> section.
-                this.notificationService.AppServiceName = "com.quickshare.notificationservice";
-
-                // Use Windows.ApplicationModel.Package.Current.Id.FamilyName within the app service provider to get this value.
-                this.notificationService.PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;
-
-                Debug.WriteLine("Connecting to notification service...");
-                var status = await this.notificationService.OpenAsync();
-
-                if (status != AppServiceConnectionStatus.Success)
+                try
                 {
-                    Debug.WriteLine("Failed to connect to notification service: " + status);
-                    connectingToNotificationService = false;
-                    return false;
+                    this.notificationService = new AppServiceConnection();
+
+                    // Here, we use the app service name defined in the app service provider's Package.appxmanifest file in the <Extension> section.
+                    this.notificationService.AppServiceName = "com.quickshare.notificationservice";
+
+                    // Use Windows.ApplicationModel.Package.Current.Id.FamilyName within the app service provider to get this value.
+                    this.notificationService.PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;
+
+#if NOTIFICATIONHANDLER_DEBUGINFO
+                    Debug.WriteLine("Connecting to notification service...");
+#endif
+                    var status = await this.notificationService.OpenAsync();
+
+                    if (status != AppServiceConnectionStatus.Success)
+                    {
+                        Debug.WriteLine("Failed to connect to notification service: " + status);
+                        connectingToNotificationService = false;
+                        return false;
+                    }
+#if NOTIFICATIONHANDLER_DEBUGINFO
+                    Debug.WriteLine("Connected to notification service.");
+#endif
                 }
-                Debug.WriteLine("Connected to notification service.");
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to connect to notification service, exception thrown: {ex.ToString()}");
+                    this.notificationService = null;
+                }
             }
 
             connectingToNotificationService = false;
@@ -166,7 +179,9 @@ namespace QuickShare.ServiceTask
 
         private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
         {
+#if NOTIFICATIONHANDLER_DEBUGINFO
             System.Diagnostics.Debug.WriteLine("Progress " + e.CurrentPart + "/" + e.Total);
+#endif
 
             if (!await ConnectToNotificationService())
                 return;

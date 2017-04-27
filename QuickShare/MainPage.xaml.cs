@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Navigation;
 using QuickShare.Common;
 using QuickShare.UWP.Rome;
 using QuickShare.FileTransfer;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -32,11 +33,12 @@ namespace QuickShare
             this.InitializeComponent();
 
             Current = this;
+
+            Debug.WriteLine("MainPage created.");
         }
 
         public async Task FileTransferProgress(FileTransferProgressEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("HandledIt!");
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) //Phone
             {
                 var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
@@ -86,6 +88,8 @@ namespace QuickShare
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("MainPage loaded begin");
+
             ContentFrame.Navigate(typeof(MainActions));
 
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;

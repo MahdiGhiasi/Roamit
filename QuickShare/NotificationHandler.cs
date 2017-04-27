@@ -1,4 +1,6 @@
-﻿using System;
+﻿#undef NOTIFICATIONHANDLER_DEBUGINFO
+
+using System;
 using System.Threading.Tasks;
 using QuickShare.FileTransfer;
 using Windows.Foundation.Collections;
@@ -16,25 +18,33 @@ namespace QuickShare
     {
         internal static async Task HandleAsync(FileTransferProgressEventArgs e)
         {
+#if NOTIFICATIONHANDLER_DEBUGINFO
             Debug.WriteLine("Notification received: " + e.CurrentPart + " / " + e.Total + " (" + e.State.ToString() + ")");
+#endif
             bool UISuccess = false;
             if ((CoreApplication.MainView.CoreWindow?.Dispatcher != null) && (MainPage.Current != null))
             {
                 UISuccess = true;
+#if NOTIFICATIONHANDLER_DEBUGINFO
                 Debug.WriteLine("Dispatcher present and MainPage exists.");
+#endif
                 await DispatcherEx.RunTaskAsync(CoreApplication.MainView.CoreWindow.Dispatcher, async () =>
                 {
                     //If app is minimized, send notifications but update the title too.
                     if (!Window.Current.Visible)
                         UISuccess = false;
 
+#if NOTIFICATIONHANDLER_DEBUGINFO
                     Debug.WriteLine("Window.Current.Visible is true");
+#endif
 
                     await MainPage.Current.FileTransferProgress(e);
                 });
             }
 
+#if NOTIFICATIONHANDLER_DEBUGINFO
             Debug.WriteLine("So?");
+#endif
 
             if ((UISuccess) && (e.State != FileTransferState.Finished))
             {
@@ -42,7 +52,9 @@ namespace QuickShare
                 return;
             }
 
+#if NOTIFICATIONHANDLER_DEBUGINFO
             Debug.WriteLine("Nope");
+#endif
 
             if (e.State == FileTransferState.Finished)
             {

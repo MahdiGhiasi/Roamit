@@ -1,4 +1,6 @@
-﻿using QuickShare.Common;
+﻿#undef NOTIFICATIONHANDLER_DEBUGINFO
+
+using QuickShare.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,9 @@ namespace QuickShare.ToastNotifications
 
         public static void ShowFileReceiveProgressNotification(string hostName, double percent, Guid guid)
         {
+#if NOTIFICATIONHANDLER_DEBUGINFO
             System.Diagnostics.Debug.WriteLine("Notif" + percent);
+#endif
 
             //return;
 
