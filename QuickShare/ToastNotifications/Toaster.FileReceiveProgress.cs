@@ -134,7 +134,9 @@ namespace QuickShare.ToastNotifications
                 {
                     SuppressPopup = true,
                     NotificationMirroring = NotificationMirroring.Disabled,
-                    Tag = guid.ToString()
+                    Tag = guid.ToString(),
+                    Data = new NotificationData(new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("title", "Receiving..."),
+                                                                                         new KeyValuePair<string, string>("subtitle", guid.ToString()) })
                 };
 
                 ToastNotificationManager.CreateToastNotifier().Show(toast);
