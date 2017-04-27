@@ -7,39 +7,10 @@ using System.Threading.Tasks;
 
 namespace QuickShare.DataStore
 {
-    public class TextReceiveContentManager
+    public class TextReceiveContentManager : StorageManager<TextReceiveRow>
     {
-        LiteDatabase db;
-        LiteCollection<TextReceiveRow> data;
-        string dbPath;
-
-        //Internal constructor
-        internal TextReceiveContentManager(string _dbPath)
+        public TextReceiveContentManager(string _dbPath) : base(_dbPath, "Data")
         {
-            dbPath = _dbPath;
-        }
-
-        public bool IsOpened
-        {
-            get
-            {
-                return (db != null);
-            }
-        }
-
-        public void Open()
-        {
-            try
-            {
-                db = new LiteDatabase($"Filename={dbPath};");
-                data = db.GetCollection<TextReceiveRow>("Data");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Failed to open db.");
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                System.Diagnostics.Debug.WriteLine("*****");
-            }
         }
 
         public bool ContainsKey(Guid guid)
@@ -78,13 +49,6 @@ namespace QuickShare.DataStore
         public string GetItemContent(Guid guid)
         {
             return GetItem(guid).Content;
-        }
-
-        public void Close()
-        {
-            db.Dispose();
-            db = null;
-            data = null;
         }
     }
 }

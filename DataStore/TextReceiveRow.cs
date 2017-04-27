@@ -3,7 +3,7 @@ using System;
 
 namespace QuickShare.DataStore
 {
-    internal class TextReceiveRow
+    public class TextReceiveRow
     {
         [BsonIndex(true)]
         public Guid Id { get; internal set; }
