@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.System;
+
+namespace QuickShare.HelperClasses
+{
+    internal static class LaunchOperations
+    {
+        internal static async Task<bool> LaunchFolder(IStorageFolder folder)
+        {
+            return await Launcher.LaunchFolderAsync(folder);
+        }
+
+        internal static async Task<bool> LaunchFolderAndSelectItems(IStorageFolder folder, IEnumerable<IStorageItem> selectedItems)
+        {
+            FolderLauncherOptions options = new FolderLauncherOptions();
+            foreach (var item in selectedItems)
+            {
+                options.ItemsToSelect.Add(item);
+            }
+            return await Launcher.LaunchFolderAsync(folder, options);
+        }
+    }
+}

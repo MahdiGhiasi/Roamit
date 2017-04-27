@@ -1,5 +1,6 @@
 ﻿using PCLStorage;
 using QuickShare.Common;
+using QuickShare.DataStore;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -76,7 +77,31 @@ namespace QuickShare.FileTransfer
             {
                 //Singular file
                 filesCount = 1;
+
+                DataStorageProviders.HistoryManager.Open();
+                DataStorageProviders.HistoryManager.Add(requestGuid,
+                    DateTime.Now,
+                    senderName,
+                    new ReceivedFileCollection
+                    {
+                        Files = new List<ReceivedFile>()
+                        {
+                            new ReceivedFile
+                            {
+                                Name = (string)request["FileName"],
+                                Size = (long)request["FileSize"],
+                                StorePath = (string)request["Directory"],
+                            }
+                        }
+                    },
+                    false);
+                DataStorageProviders.HistoryManager.Close();
+
                 await DownloadFile(request, downloadFolder);
+
+                DataStorageProviders.HistoryManager.Open();
+                DataStorageProviders.HistoryManager.ChangeCompletedStatus(requestGuid, true);
+                DataStorageProviders.HistoryManager.Close();
             }
 
             return returnVal;
@@ -84,12 +109,32 @@ namespace QuickShare.FileTransfer
 
         private static async Task BeginProcessingQueue(IFolder downloadFolder)
         {
+            var logItems = from x in queueItems
+                           select new ReceivedFile
+                           {
+                               Name = (string)x["FileName"],
+                               Size = (long)x["FileSize"],
+                               StorePath = (string)x["Directory"],
+                           };
+
+            DataStorageProviders.HistoryManager.Open();
+            DataStorageProviders.HistoryManager.Add(requestGuid,
+                DateTime.Now,
+                senderName,
+                new ReceivedFileCollection { Files = logItems.ToList() },
+                false);
+            DataStorageProviders.HistoryManager.Close();
+
             foreach (var item in queueItems)
             {
                 await DownloadFile(item, downloadFolder);
             }
 
             FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = queueTotalSlices, Total = queueTotalSlices, State = FileTransferState.Finished, Guid = requestGuid, SenderName = senderName, TotalFiles = filesCount });
+
+            DataStorageProviders.HistoryManager.Open();
+            DataStorageProviders.HistoryManager.ChangeCompletedStatus(requestGuid, true);
+            DataStorageProviders.HistoryManager.Close();
 
             await QueueProcessFinishedNotifySender();
         }

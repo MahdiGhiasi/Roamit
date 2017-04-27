@@ -12,12 +12,15 @@ namespace QuickShare.TextTransfer
         IRomePackageManager packageManager;
         int partLength = 1000;
 
+        string deviceName = "remote device";
+
         public delegate void TextSendProgressEventHandler(TextSendEventArgs e);
         public event TextSendProgressEventHandler TextSendProgress;
 
-        public TextSender(IRomePackageManager _packageManager)
+        public TextSender(IRomePackageManager _packageManager, string _deviceName)
         {
             packageManager = _packageManager;
+            deviceName = _deviceName;
         }
 
         public async Task<bool> Send(string text, ContentType contentType)
@@ -41,6 +44,7 @@ namespace QuickShare.TextTransfer
                     { "TotalParts", parts.Count },
                     { "Content", parts[i] },
                     { "UniqueId", requestGuid },
+                    { "SenderName" , deviceName },
                 };
                 var result = await packageManager.Send(vs);
 

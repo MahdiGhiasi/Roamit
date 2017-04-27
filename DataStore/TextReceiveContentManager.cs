@@ -9,7 +9,7 @@ namespace QuickShare.DataStore
 {
     public class TextReceiveContentManager : StorageManager<TextReceiveRow>
     {
-        public TextReceiveContentManager(string _dbPath) : base(_dbPath, "Data")
+        internal TextReceiveContentManager(string _dbPath) : base(_dbPath, "Data")
         {
         }
 

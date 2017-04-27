@@ -56,6 +56,14 @@ namespace QuickShare.TextTransfer
                         Success = true,
                         Guid = guid,
                     });
+
+                    DataStorageProviders.HistoryManager.Open();
+                    DataStorageProviders.HistoryManager.Add(guid, 
+                        DateTime.Now,
+                        (string)data["SenderName"],
+                        new ReceivedText(),
+                        true);
+                    DataStorageProviders.HistoryManager.Close();
                 }
 
                 DataStorageProviders.TextReceiveContentManager.Close();

@@ -85,11 +85,13 @@ namespace QuickShare
                 return;
             }
 
+            string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
+
             var mode = e.Parameter.ToString();
 
             if (mode == "text")
             {
-                TextSender ts = new TextSender(MainPage.Current.packageManager);
+                TextSender ts = new TextSender(MainPage.Current.packageManager, deviceName);
 
                 ts.TextSendProgress += (ee) =>
                 {
@@ -129,7 +131,7 @@ namespace QuickShare
                                                       new QuickShare.UWP.WebServerGenerator(), 
                                                       QuickShare.UWP.Rome.RomePackageManager.Instance, 
                                                       FindMyIPAddresses(),
-                                                      (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName))
+                                                      deviceName))
                 {
                     defaultViewModel["ProgressMaximum"] = 1;
                     fs.FileTransferProgress += (ss, ee) =>
