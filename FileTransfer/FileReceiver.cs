@@ -77,6 +77,8 @@ namespace QuickShare.FileTransfer
             {
                 //Singular file
                 filesCount = 1;
+                requestGuid = (Guid)request["Guid"];
+                senderName = (string)request["SenderName"];
 
                 DataStorageProviders.HistoryManager.Open();
                 DataStorageProviders.HistoryManager.Add(requestGuid,
@@ -168,13 +170,6 @@ namespace QuickShare.FileTransfer
             var fileSize = (long)message["FileSize"];
             var directory = (string)message["Directory"];
             var serverIP = (string)message["ServerIP"];
-
-            if (!isQueue)
-            {
-                requestGuid = (Guid)message["Guid"];
-                senderName = (string)message["SenderName"];
-            }
-
 
             var dateModified = DateTimeExtension.FromUnixTimeMilliseconds(dateModifiedMilliseconds);
             var dateCreated = DateTimeExtension.FromUnixTimeMilliseconds(dateCreatedMilliseconds);

@@ -8,7 +8,7 @@ namespace QuickShare.DataStore
     public class HistoryRow
     {
         [BsonIndex(true)]
-        public Guid RequestGuid { get; internal set; }
+        public Guid Id { get; internal set; }
 
         public DateTime ReceiveTime { get; internal set; }
         public IReceivedData Data { get; internal set; }

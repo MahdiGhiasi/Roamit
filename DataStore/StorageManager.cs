@@ -41,7 +41,7 @@ namespace QuickShare.DataStore
 
         public void Close()
         {
-            db.Dispose();
+            db?.Dispose();
             db = null;
             data = null;
         }

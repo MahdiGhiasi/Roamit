@@ -12,7 +12,7 @@ namespace QuickShare.DataStore
 
         public bool ContainsKey(Guid guid)
         {
-            return data.Exists(x => x.RequestGuid == guid);
+            return data.Exists(x => x.Id == guid);
         }
 
         public void Add(Guid guid, DateTime receiveTime, string senderName, IReceivedData receivedData, bool completed)
@@ -22,7 +22,7 @@ namespace QuickShare.DataStore
 
             HistoryRow r = new HistoryRow()
             {
-                RequestGuid = guid,
+                Id = guid,
                 ReceiveTime = receiveTime,
                 RemoteDeviceName = senderName,
                 Data = receivedData,
@@ -33,7 +33,7 @@ namespace QuickShare.DataStore
 
         public void Remove(Guid guid)
         {
-            data.Delete(x => x.RequestGuid == guid);
+            data.Delete(x => x.Id == guid);
         }
 
         public HistoryRow GetItem(Guid guid)
