@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
@@ -29,18 +30,19 @@ namespace QuickShare
     /// </summary>
     public sealed partial class MainSend : Page
     {
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
+        public MainSendViewModel ViewModel { get; set; } 
 
         public MainSend()
         {
             this.InitializeComponent();
 
-            defaultViewModel["SendStatus"] = "Connecting...";
-        }
-
-        public ObservableDictionary DefaultViewModel
-        {
-            get { return this.defaultViewModel; }
+            ViewModel = new MainSendViewModel()
+            {
+                SendStatus = "Connecting...",
+                ProgressIsIndeterminate = true,
+                ProgressValue = 0,
+                ProgressMaximum = 0,
+            };
         }
 
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -77,7 +79,7 @@ namespace QuickShare
 
             var rs = MainPage.Current.selectedSystem;
             var result = await MainPage.Current.packageManager.Connect(rs, true);
-
+            
             if (result != RomeAppServiceConnectionStatus.Success)
             {
                 await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
@@ -95,34 +97,34 @@ namespace QuickShare
 
                 ts.TextSendProgress += (ee) =>
                 {
-                    defaultViewModel["ProgressMaximum"] = ee.TotalParts;
-                    defaultViewModel["ProgressValue"] = ee.SentParts;
+                    ViewModel.ProgressMaximum = ee.TotalParts;
+                    ViewModel.ProgressValue = ee.SentParts;
                 };
 
-                defaultViewModel["SendStatus"] = "Sending...";
+                ViewModel.SendStatus = "Sending...";
 
                 bool sendResult = await ts.Send(SendDataTemporaryStorage.Text, ContentType.ClipboardContent);
 
                 if (sendResult)
-                    defaultViewModel["SendStatus"] = "Finished.";
+                    ViewModel.SendStatus = "Finished.";
                 else
-                    defaultViewModel["SendStatus"] = "Failed :(";
+                    ViewModel.SendStatus = "Failed :(";
 
-                defaultViewModel["ProgressValue"] = defaultViewModel["ProgressMaximum"];
+                ViewModel.ProgressValue = ViewModel.ProgressMaximum;
             }
             else if (mode == "launchUri")
             {
                 var launchResult = await MainPage.Current.packageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri);
 
                 if (launchResult == RomeRemoteLaunchUriStatus.Success)
-                    defaultViewModel["SendStatus"] = "Finished.";
+                    ViewModel.SendStatus = "Finished.";
                 else
-                    defaultViewModel["SendStatus"] = launchResult.ToString();
+                    ViewModel.SendStatus = launchResult.ToString();
             }
             else if (mode == "file")
             {
                 string sendingText = (SendDataTemporaryStorage.Files.Count == 1) ? "Sending file..." : "Sending files...";
-                defaultViewModel["SendStatus"] = "Preparing...";
+                ViewModel.SendStatus = "Preparing...";
 
                 bool failed = false;
                 string message = "";
@@ -133,8 +135,8 @@ namespace QuickShare
                                                       FindMyIPAddresses(),
                                                       deviceName))
                 {
-                    defaultViewModel["ProgressMaximum"] = 1;
-                    fs.FileTransferProgress += (ss, ee) =>
+                    ViewModel.ProgressMaximum = 1;
+                    fs.FileTransferProgress += async (ss, ee) =>
                     {
                         if (ee.State == FileTransferState.Error)
                         {
@@ -143,29 +145,41 @@ namespace QuickShare
                         }
                         else
                         {
-                            defaultViewModel["SendStatus"] = sendingText;
-                            defaultViewModel["ProgressMaximum"] = ee.Total + 1;
-                            defaultViewModel["ProgressValue"] = ee.CurrentPart;
+                            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
+                            {
+                                ViewModel.SendStatus = sendingText;
+                                ViewModel.ProgressMaximum = (int)ee.Total + 1;
+                                ViewModel.ProgressValue = (int)ee.CurrentPart;
+                                ViewModel.ProgressIsIndeterminate = false;
+                            }, false);
                         }
                     };
 
                     if (SendDataTemporaryStorage.Files.Count == 0)
                     {
-                        defaultViewModel["SendStatus"] = "No files.";
+                        ViewModel.SendStatus = "No files.";
+                        ViewModel.ProgressIsIndeterminate = false;
                         return;
                     }
                     else if (SendDataTemporaryStorage.Files.Count == 1)
                     {
-                        if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0])))
-                            failed = true;
+                        await Task.Run(async () =>
+                        {
+                            if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0])))
+                                failed = true;
+                        });
                     }
                     else
                     {
-                        if (!await fs.SendFiles(from x in SendDataTemporaryStorage.Files
-                                                select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
-                            failed = true;
+                        await Task.Run(async () =>
+                        {
+                            if (!await fs.SendFiles(from x in SendDataTemporaryStorage.Files
+                                                    select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
+                                failed = true;
+                        });
                     }
-                    defaultViewModel["ProgressValue"] = defaultViewModel["ProgressMaximum"];
+
+                    ViewModel.ProgressValue = ViewModel.ProgressMaximum;
                 }
 
                 Dictionary<string, object> vs = new Dictionary<string, object>();
@@ -175,12 +189,12 @@ namespace QuickShare
 
                 if (failed)
                 {
-                    defaultViewModel["SendStatus"] = "Failed.";
+                    ViewModel.SendStatus = "Failed.";
                     await (new MessageDialog("Send failed.\r\n\r\n" + message)).ShowAsync();
                 }
                 else
                 {
-                    defaultViewModel["SendStatus"] = "Finished.";
+                    ViewModel.SendStatus = "Finished.";
                 }
             }
             else if (mode == "folder")

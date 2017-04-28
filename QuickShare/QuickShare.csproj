@@ -94,6 +94,7 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
     <Compile Include="HelperClasses\LaunchOperations.cs" />
+    <Compile Include="MainSendViewModel.cs" />
     <Compile Include="ToastNotifications\Toaster.cs" />
     <Compile Include="ToastNotifications\Toaster.FileReceiveFinished.cs" />
   </ItemGroup>
