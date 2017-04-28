@@ -32,7 +32,7 @@ namespace QuickShare.ToastNotifications
   </visual>  
 </toast>";
 
-        internal static string FileReceived { get; } = @"
+        internal static string SingleFileReceived { get; } = @"
 <toast launch='action=fileFinished'>
   <visual>
     <binding template='ToastGeneric'>
@@ -41,7 +41,34 @@ namespace QuickShare.ToastNotifications
     </binding>
   </visual>
   <actions>
-    <action content='Open containing folder' activationType='foreground' arguments='action=openContainingFolder&amp;guid={guid}'/>
+    <action content='Open containing folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
+    <action content='Open file' activationType='foreground' arguments='action=openSingleFile&amp;guid={guid}'/>
+  </actions>
+</toast>";
+
+        internal static string SingleFileReceivedWithNoOpenFileButton { get; } = @"
+<toast launch='action=fileFinished'>
+  <visual>
+    <binding template='ToastGeneric'>
+      <text>{title}</text>
+      <text>{subtitle}</text>
+    </binding>
+  </visual>
+  <actions>
+    <action content='Open containing folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
+  </actions>
+</toast>";
+
+        internal static string MultipleFilesReceived { get; } = @"
+<toast launch='action=fileFinished'>
+  <visual>
+    <binding template='ToastGeneric'>
+      <text>{title}</text>
+      <text>{subtitle}</text>
+    </binding>
+  </visual>
+  <actions>
+    <action content='Open containing folder' activationType='foreground' arguments='action=openFolder&amp;guid={guid}'/>
   </actions>
 </toast>";
 
