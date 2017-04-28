@@ -24,6 +24,8 @@
                                           Value="{x:Bind ViewModel.ProgressValue, Mode=OneWay}"
                                           Maximum="{x:Bind ViewModel.ProgressMaximum, Mode=OneWay}"
                                           IsIndeterminate="{x:Bind ViewModel.ProgressIsIndeterminate, Mode=OneWay}"
+                                          ValueChangeAnimationLength="0:0:0.35"
+                                          IndeterminateLoopAnimationLength="0:0:2"
                                           HorizontalAlignment="Stretch" 
                                           VerticalAlignment="Stretch" 
                                           FontSize="30" 
