@@ -162,11 +162,14 @@ namespace QuickShare.Controls
             if (_value < Minimum)
                 _value = Minimum;
 
-            if (_value >= Maximum)
+            if ((_value >= Maximum) && (Maximum != 0))
                 _value = Maximum - (Maximum - Minimum) / (1000.0 * Maximum);
 
             double currentAngle = indicatorArc.Angle;
             double newAngle = ((_value - Minimum) / (Maximum - Minimum)) * 360.0;
+
+            if (Maximum == Minimum)
+                newAngle = currentAngle;
 
             DoubleAnimation da1 = new DoubleAnimation()
             {
