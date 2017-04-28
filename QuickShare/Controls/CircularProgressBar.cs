@@ -92,6 +92,34 @@ namespace QuickShare.Controls
             }
         }
 
+        TimeSpan valueChangeAnimationLength = TimeSpan.FromMilliseconds(250);
+        public TimeSpan ValueChangeAnimationLength
+        {
+            get
+            {
+                return valueChangeAnimationLength;
+            }
+            set
+            {
+                valueChangeAnimationLength = value;
+                CircularProgressBar_ValueChanged(this, null);
+            }
+        }
+
+        TimeSpan indeterminateLoopAnimationLength = TimeSpan.FromMilliseconds(1000);
+        public TimeSpan IndeterminateLoopAnimationLength
+        {
+            get
+            {
+                return indeterminateLoopAnimationLength;
+            }
+            set
+            {
+                indeterminateLoopAnimationLength = value;
+                CircularProgressBar_ValueChanged(this, null);
+            }
+        }
+
         private void CircularProgressBar_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (indicatorArc == null)
@@ -129,7 +157,7 @@ namespace QuickShare.Controls
                 From = currentAngle,
                 To = newAngle,
                 //EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut },
-                Duration = TimeSpan.FromMilliseconds(250),
+                Duration = ValueChangeAnimationLength,
                 EnableDependentAnimation = true,
             };
             Storyboard.SetTarget(da1, indicatorArc);
@@ -139,7 +167,7 @@ namespace QuickShare.Controls
             {
                 From = 0.0,
                 To = 360.0,
-                Duration = TimeSpan.FromMilliseconds(1000),
+                Duration = IndeterminateLoopAnimationLength,
                 EnableDependentAnimation = true,
                 RepeatBehavior = RepeatBehavior.Forever
             };
@@ -176,7 +204,7 @@ namespace QuickShare.Controls
                 From = currentAngle,
                 To = newAngle,
                 EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut },
-                Duration = TimeSpan.FromMilliseconds(250),
+                Duration = ValueChangeAnimationLength,
                 EnableDependentAnimation = true
             };
             Storyboard.SetTarget(da1, indicatorArc);
@@ -186,7 +214,7 @@ namespace QuickShare.Controls
             {
                 To = indicatorArc.StartAngle > 180 ? 360 : 0,
                 EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut },
-                Duration = TimeSpan.FromMilliseconds(250),
+                Duration = ValueChangeAnimationLength,
                 EnableDependentAnimation = true
             };
             Storyboard.SetTarget(da2, indicatorArc);
