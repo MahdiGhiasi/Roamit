@@ -128,7 +128,7 @@ namespace QuickShare.FileTransfer
                 new ReceivedFileCollection
                 {
                     Files = logItems.ToList(),
-                    StoreRootPath = queueParentDirectory,
+                    StoreRootPath = System.IO.Path.Combine(downloadFolder.Path, queueParentDirectory),
                 },
                 false);
             DataStorageProviders.HistoryManager.Close();
