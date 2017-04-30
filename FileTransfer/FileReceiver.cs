@@ -112,6 +112,11 @@ namespace QuickShare.FileTransfer
             return returnVal;
         }
 
+        public static void ClearEventRegistrations()
+        {
+            FileTransferProgress = null;
+        }
+
         private static async Task BeginProcessingQueue(IFolder downloadFolder)
         {
             var logItems = from x in queueItems

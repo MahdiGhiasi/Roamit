@@ -33,8 +33,13 @@ namespace QuickShare.ServiceTask
                 _appServiceconnection = details.AppServiceConnection;
                 _appServiceconnection.RequestReceived += OnRequestReceived;
                 _appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed;
+
+                FileTransfer.FileReceiver.ClearEventRegistrations();
                 FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
+
+                TextTransfer.TextReceiver.ClearEventRegistrations();
                 TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
+
                 taskInstance.Canceled += OnTaskCanceled;
             }
 
@@ -63,6 +68,7 @@ namespace QuickShare.ServiceTask
 
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
+            //Debug.WriteLine("***************************REQUEST RECEIVED!");
             if (args.Request.Message.ContainsKey("Receiver"))
             {
                 var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;

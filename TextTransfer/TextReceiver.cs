@@ -71,5 +71,10 @@ namespace QuickShare.TextTransfer
             
             return true;
         }
+
+        public static void ClearEventRegistrations()
+        {
+            TextReceiveFinished = null;
+        }
     }
 }
