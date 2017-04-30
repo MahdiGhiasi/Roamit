@@ -96,7 +96,8 @@ namespace QuickShare.FileTransfer
                                 Size = (long)request["FileSize"],
                                 StorePath = System.IO.Path.Combine(downloadFolder.Path, (string)request["Directory"]),
                             }
-                        }
+                        },
+                        StoreRootPath = System.IO.Path.Combine(downloadFolder.Path, (string)request["Directory"]),
                     },
                     false);
                 DataStorageProviders.HistoryManager.Close();
