@@ -1,6 +1,7 @@
 ﻿using Microsoft.QueryStringDotNET;
 using Newtonsoft.Json;
 using QuickShare.Common;
+using QuickShare.DataStore;
 using QuickShare.FileTransfer;
 using QuickShare.TextTransfer;
 using System;
@@ -112,7 +113,7 @@ namespace QuickShare
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName, e.Exception);
         }
 
-        protected override void OnActivated(IActivatedEventArgs e)
+        protected override async void OnActivated(IActivatedEventArgs e)
         {
             Debug.WriteLine("Activated.");
 
@@ -131,6 +132,7 @@ namespace QuickShare
                 // Parse the query string
                 QueryString args = QueryString.Parse(toastActivationArgs.Argument);
 
+                HistoryRow hr;
                 switch (args["action"])
                 {
                     case "fileProgress":
@@ -142,9 +144,26 @@ namespace QuickShare
                     case "fileFinished":
                         //TODO: Open history page
                         break;
-                    case "openContainingFolder":
-                        Guid itemGuid = Guid.Parse(args["guid"]);
-                        //TODO: Open containing folder
+                    case "openFolder":
+                        DataStorageProviders.HistoryManager.Open();
+                        hr = DataStorageProviders.HistoryManager.GetItem(Guid.Parse(args["guid"]));
+                        DataStorageProviders.HistoryManager.Close();
+
+                        await HelperClasses.LaunchOperations.LaunchFolderFromPathAsync((hr.Data as ReceivedFileCollection).StoreRootPath);
+                        break;
+                    case "openFolderSingleFile":
+                        DataStorageProviders.HistoryManager.Open();
+                        hr = DataStorageProviders.HistoryManager.GetItem(Guid.Parse(args["guid"]));
+                        DataStorageProviders.HistoryManager.Close();
+
+                        await HelperClasses.LaunchOperations.LaunchFolderFromPathAndSelectSingleItemAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
+                        break;
+                    case "openSingleFile":
+                        DataStorageProviders.HistoryManager.Open();
+                        hr = DataStorageProviders.HistoryManager.GetItem(Guid.Parse(args["guid"]));
+                        DataStorageProviders.HistoryManager.Close();
+
+                        await HelperClasses.LaunchOperations.LaunchFileFromPathAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
                         break;
                     default:
                         break;

@@ -10,6 +10,7 @@ namespace QuickShare.DataStore
     public class ReceivedFileCollection : IReceivedData
     {
         public List<ReceivedFile> Files { get; set; } = new List<ReceivedFile>();
+        public string StoreRootPath { get; set; }
     }
 
     public class ReceivedFile

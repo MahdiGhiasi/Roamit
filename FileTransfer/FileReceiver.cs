@@ -27,6 +27,7 @@ namespace QuickShare.FileTransfer
         static List<Dictionary<string, object>> queueItems = null;
         static string queueFinishUrl = "";
         static int filesCount = 0;
+        static string queueParentDirectory = "";
 
         static Guid requestGuid;
         static string senderName = "remote device";
@@ -45,6 +46,7 @@ namespace QuickShare.FileTransfer
                 queueItems = new List<Dictionary<string, object>>();
                 queueFinishUrl = "http://" + (request["ServerIP"] as string) + ":" + Constants.CommunicationPort + "/" + request["QueueFinishKey"] + "/finishQueue/";
                 filesCount = 0;
+                queueParentDirectory = (string)request["parentDirectoryName"];
 
                 returnVal = new Dictionary<string, object>();
                 returnVal.Add("QueueInitialized", "1");
@@ -92,7 +94,7 @@ namespace QuickShare.FileTransfer
                             {
                                 Name = (string)request["FileName"],
                                 Size = (long)request["FileSize"],
-                                StorePath = (string)request["Directory"],
+                                StorePath = System.IO.Path.Combine(downloadFolder.Path, (string)request["Directory"]),
                             }
                         }
                     },
@@ -116,14 +118,18 @@ namespace QuickShare.FileTransfer
                            {
                                Name = (string)x["FileName"],
                                Size = (long)x["FileSize"],
-                               StorePath = (string)x["Directory"],
+                               StorePath = System.IO.Path.Combine(downloadFolder.Path, (string)x["Directory"]),
                            };
 
             DataStorageProviders.HistoryManager.Open();
             DataStorageProviders.HistoryManager.Add(requestGuid,
                 DateTime.Now,
                 senderName,
-                new ReceivedFileCollection { Files = logItems.ToList() },
+                new ReceivedFileCollection
+                {
+                    Files = logItems.ToList(),
+                    StoreRootPath = queueParentDirectory,
+                },
                 false);
             DataStorageProviders.HistoryManager.Close();
 

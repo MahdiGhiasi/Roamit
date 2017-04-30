@@ -62,7 +62,7 @@ namespace QuickShare.FileTransfer
                 l.Add(new Tuple<string, IFile>(directoryName, file));
             }
 
-            return await SendQueue(l);
+            return await SendQueue(l, directoryName);
         }
 
         public async Task<bool> SendFile(IFile file, string directory = "", bool isQueue = false)
@@ -156,7 +156,7 @@ namespace QuickShare.FileTransfer
         }
 
         /// <param name="files">A list of Tuple(Relative directory path, StorageFile) objects.</param>
-        private async Task<bool> SendQueue(List<Tuple<string, IFile>> files)
+        private async Task<bool> SendQueue(List<Tuple<string, IFile>> files, string parentDirectoryName)
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
                 await Handshake();
@@ -219,7 +219,7 @@ namespace QuickShare.FileTransfer
                     finishedSlices += ee.Total;
             };
 
-            if (await SendQueueInit(totalSlices, queueFinishKey) == false)
+            if (await SendQueueInit(totalSlices, queueFinishKey, parentDirectoryName) == false)
                 return false;
 
             for (int i = 0; i < files.Count; i++)
@@ -240,11 +240,11 @@ namespace QuickShare.FileTransfer
             return true;
         }
 
-        public async Task<bool> SendFolder(IFolder folder)
+        public async Task<bool> SendFolder(IFolder folder, string parentDirectoryName)
         {
             List<Tuple<string, IFile>> files = await GetFiles(folder);
 
-            return await SendQueue(files);
+            return await SendQueue(files, parentDirectoryName);
         }
 
         private async Task<List<Tuple<string, IFile>>> GetFiles(IFolder f, string relPath = "")
@@ -262,7 +262,7 @@ namespace QuickShare.FileTransfer
             return files;
         }
 
-        private async Task<bool> SendQueueInit(ulong totalSlices, string queueFinishKey)
+        private async Task<bool> SendQueueInit(ulong totalSlices, string queueFinishKey, string parentDirectoryName)
         {
             Dictionary<string, object> qInit = new Dictionary<string, object>();
             qInit.Add("Receiver", "FileReceiver");
@@ -272,6 +272,7 @@ namespace QuickShare.FileTransfer
             qInit.Add("ServerIP", ipFinderResult.MyIP);
             qInit.Add("Guid", Guid.NewGuid());
             qInit.Add("SenderName", deviceName);
+            qInit.Add("parentDirectoryName", parentDirectoryName);
 
             var result = await packageManager.Send(qInit);
 

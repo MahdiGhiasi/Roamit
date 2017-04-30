@@ -24,5 +24,27 @@ namespace QuickShare.HelperClasses
             }
             return await Launcher.LaunchFolderAsync(folder, options);
         }
+
+        internal static async Task<bool> LaunchFolderFromPathAsync(string path)
+        {
+            var folder = await StorageFolder.GetFolderFromPathAsync(path);
+            return await LaunchFolder(folder);
+        }
+
+        internal static async Task<bool> LaunchFolderFromPathAndSelectSingleItemAsync(string path, string fileName)
+        {
+            var folder = await StorageFolder.GetFolderFromPathAsync(path);
+            var file = await folder.GetFileAsync(fileName);
+
+            return await LaunchFolderAndSelectItems(folder, new IStorageItem[] { file });
+        }
+
+        internal static async Task<bool> LaunchFileFromPathAsync(string path, string fileName)
+        {
+            var folder = await StorageFolder.GetFolderFromPathAsync(path);
+            var file = await folder.GetFileAsync(fileName);
+
+            return await Launcher.LaunchFileAsync(file);
+        }
     }
 }
