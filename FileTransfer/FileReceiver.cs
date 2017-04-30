@@ -190,6 +190,13 @@ namespace QuickShare.FileTransfer
 
             IFile file = await CreateFile(downloadFolder, fileName);
 
+            if (file.Name != fileName) //File already existed, so new name generated for it. We should update database now.
+            {
+                DataStorageProviders.HistoryManager.Open();
+                DataStorageProviders.HistoryManager.UpdateFileName(requestGuid, fileName, file.Name, System.IO.Path.Combine(downloadFolder.Path, directory));
+                DataStorageProviders.HistoryManager.Close();
+            }
+
             using (var stream = await file.OpenAsync(PCLStorage.FileAccess.ReadAndWrite))
             {
                 for (uint i = 0; i < slicesCount; i++)

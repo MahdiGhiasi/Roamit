@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace QuickShare.DataStore
@@ -45,6 +46,23 @@ namespace QuickShare.DataStore
         {
             var item = GetItem(guid);
             item.Completed = isCompleted;
+            data.Update(guid, item);
+        }
+
+        public void UpdateFileName(Guid guid, string oldName, string newName, string directory)
+        {
+            var item = GetItem(guid);
+            var d = item.Data as ReceivedFileCollection;
+
+            if (d == null)
+                return;
+
+            var file = d.Files.FirstOrDefault(x => (x.Name == oldName && x.StorePath == directory));
+
+            if (file == null)
+                return;
+
+            file.Name = newName;
             data.Update(guid, item);
         }
     }
