@@ -132,31 +132,31 @@ namespace QuickShare
                 switch (args["action"])
                 {
                     case "fileProgress":
-                        launchRootFrameIfNecessary(ref rootFrame);
+                        LaunchRootFrameIfNecessary(ref rootFrame);
                         if (rootFrame.Content is MainPage)
                             break;
                         rootFrame.Navigate(typeof(MainPage));
                         break;
                     case "fileFinished":
-                        launchRootFrameIfNecessary(ref rootFrame);
+                        LaunchRootFrameIfNecessary(ref rootFrame);
 
                         //TODO: Open history page
 
                         break;
                     case "openFolder":
-                        hr = getHistoryItemGuid(Guid.Parse(args["guid"]));
+                        hr = GetHistoryItemGuid(Guid.Parse(args["guid"]));
                         await HelperClasses.LaunchOperations.LaunchFolderFromPathAsync((hr.Data as ReceivedFileCollection).StoreRootPath);
                         if (isJustLaunched)
                             Application.Current.Exit();
                         break;
                     case "openFolderSingleFile":
-                        hr = getHistoryItemGuid(Guid.Parse(args["guid"]));
+                        hr = GetHistoryItemGuid(Guid.Parse(args["guid"]));
                         await HelperClasses.LaunchOperations.LaunchFolderFromPathAndSelectSingleItemAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
                         if (isJustLaunched)
                             Application.Current.Exit();
                         break;
                     case "openSingleFile":
-                        hr = getHistoryItemGuid(Guid.Parse(args["guid"]));
+                        hr = GetHistoryItemGuid(Guid.Parse(args["guid"]));
                         await HelperClasses.LaunchOperations.LaunchFileFromPathAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
                         if (isJustLaunched)
                             Application.Current.Exit();
@@ -170,7 +170,7 @@ namespace QuickShare
             base.OnActivated(e);
         }
         
-        private HistoryRow getHistoryItemGuid(Guid guid)
+        private HistoryRow GetHistoryItemGuid(Guid guid)
         {
             HistoryRow hr;
             DataStorageProviders.HistoryManager.Open();
@@ -179,7 +179,7 @@ namespace QuickShare
             return hr;
         }
 
-        private void launchRootFrameIfNecessary(ref Frame rootFrame)
+        private void LaunchRootFrameIfNecessary(ref Frame rootFrame)
         {
             if (rootFrame == null)
             {
