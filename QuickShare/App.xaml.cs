@@ -166,6 +166,10 @@ namespace QuickShare
                 }
 
             }
+            else
+            {
+                LaunchRootFrameIfNecessary(ref rootFrame);
+            }
 
             base.OnActivated(e);
         }
