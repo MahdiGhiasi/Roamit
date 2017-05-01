@@ -119,11 +119,7 @@ namespace QuickShare
 
             Frame rootFrame = Window.Current.Content as Frame;
 
-            if (rootFrame == null)
-            {
-                OnLaunched(null);
-                rootFrame = Window.Current.Content as Frame;
-            }
+            bool isJustLaunched = (rootFrame == null);
 
             if (e is ToastNotificationActivatedEventArgs)
             {
@@ -136,13 +132,26 @@ namespace QuickShare
                 switch (args["action"])
                 {
                     case "fileProgress":
+                        if (rootFrame == null)
+                        {
+                            OnLaunched(null);
+                            rootFrame = Window.Current.Content as Frame;
+                        }
+
                         if (rootFrame.Content is MainPage)
                             break;
 
                         rootFrame.Navigate(typeof(MainPage));
                         break;
                     case "fileFinished":
+                        if (rootFrame == null)
+                        {
+                            OnLaunched(null);
+                            rootFrame = Window.Current.Content as Frame;
+                        }
+
                         //TODO: Open history page
+
                         break;
                     case "openFolder":
                         DataStorageProviders.HistoryManager.Open();
@@ -150,6 +159,9 @@ namespace QuickShare
                         DataStorageProviders.HistoryManager.Close();
 
                         await HelperClasses.LaunchOperations.LaunchFolderFromPathAsync((hr.Data as ReceivedFileCollection).StoreRootPath);
+
+                        if (isJustLaunched)
+                            Application.Current.Exit();
                         break;
                     case "openFolderSingleFile":
                         DataStorageProviders.HistoryManager.Open();
@@ -157,6 +169,9 @@ namespace QuickShare
                         DataStorageProviders.HistoryManager.Close();
 
                         await HelperClasses.LaunchOperations.LaunchFolderFromPathAndSelectSingleItemAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
+
+                        if (isJustLaunched)
+                            Application.Current.Exit();
                         break;
                     case "openSingleFile":
                         DataStorageProviders.HistoryManager.Open();
@@ -164,6 +179,9 @@ namespace QuickShare
                         DataStorageProviders.HistoryManager.Close();
 
                         await HelperClasses.LaunchOperations.LaunchFileFromPathAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
+
+                        if (isJustLaunched)
+                            Application.Current.Exit();
                         break;
                     default:
                         break;
