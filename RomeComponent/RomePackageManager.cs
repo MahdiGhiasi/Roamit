@@ -54,7 +54,7 @@ namespace QuickShare.UWP.Rome
         {
             get
             {
-                return romeHelper.RemoteSystems;
+                return romeHelper?.RemoteSystems ?? new ObservableCollection<RemoteSystem>();
             }
         }
 
