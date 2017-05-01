@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="HelperClasses\LaunchOperations.cs" />
     <Compile Include="MainSendViewModel.cs" />
+    <Compile Include="RemoteSystemNormalizer.cs" />
     <Compile Include="ToastNotifications\Toaster.ClipboardTextReceived.cs" />
     <Compile Include="ToastNotifications\Toaster.cs" />
     <Compile Include="ToastNotifications\Toaster.FileReceiveFinished.cs" />
@@ -190,6 +191,10 @@
     <ProjectReference Include="..\DataStore\DataStore.csproj">
       <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
       <Name>DataStore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevicesListManager\DevicesListManager.csproj">
+      <Project>{3085ef40-87c7-4b3b-929c-50e6a15fc42b}</Project>
+      <Name>DevicesListManager</Name>
     </ProjectReference>
     <ProjectReference Include="..\FileTransfer\FileTransfer.csproj">
       <Project>{d78fdfff-e82c-4e9c-b78f-54e1d924d49f}</Project>

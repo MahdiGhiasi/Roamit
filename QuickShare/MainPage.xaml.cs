@@ -11,6 +11,8 @@ using QuickShare.Common;
 using QuickShare.UWP.Rome;
 using QuickShare.FileTransfer;
 using System.Diagnostics;
+using QuickShare.DevicesListManager;
+using System.Linq;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -25,8 +27,9 @@ namespace QuickShare
 
         public RomePackageManager packageManager = RomePackageManager.Instance;
         public RemoteSystem selectedSystem = null;
+        public DevicesListManager.DevicesListManager listManager = new DevicesListManager.DevicesListManager("", new RemoteSystemNormalizer());
 
-        public IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem> PicturePickerItems { get; internal set; } 
+        public IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem> PicturePickerItems { get; internal set; }
 
         public MainPage()
         {
@@ -95,7 +98,8 @@ namespace QuickShare
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
             await packageManager.InitializeDiscovery();
-            devicesList.ItemsSource = packageManager.RemoteSystems;
+            packageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
+            devicesList.ItemsSource = listManager.RemoteSystems;//packageManager.RemoteSystems;
 
             var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
             if (!futureAccessList.ContainsItem("downloadMainFolder"))
@@ -108,15 +112,37 @@ namespace QuickShare
             await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)35 : (uint)75);
         }
 
+        private void RemoteSystems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+                foreach (var item in e.NewItems)
+                {
+                    listManager.AddDevice(item);
+                }
+
+            if (e.OldItems != null)
+                foreach (var item in e.OldItems)
+                {
+                    listManager.RemoveDevice(item);
+                }
+        }
+
         private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedSystem = devicesList.SelectedItem as RemoteSystem;
+            if (devicesList.SelectedItem == null)
+                return;
+
+            var s = devicesList.SelectedItem as NormalizedRemoteSystem;
+
+            selectedSystem = packageManager.RemoteSystems.FirstOrDefault(x => x.Id == s.Id);
             activeDevice.Content = selectedSystem?.DisplayName.ToUpper();
+
+            listManager.Select(s);
         }
 
         private void button_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            
+
         }
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
