@@ -227,9 +227,8 @@ namespace QuickShare.FileTransfer
 
             downloading.Remove(key);
 
-            await ReceiveSuccessful(serverIP, key);
-
             InvokeFinishedEvent(slicesCount);
+            await ReceiveSuccessful(serverIP, key);
         }
 
         private static void InvokeFinishedEvent(uint currentFileSlicesCount)
