@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
@@ -19,6 +20,10 @@ namespace QuickShare.ServiceTask
     {
         BackgroundTaskDeferral _deferral;
         private AppServiceConnection _appServiceconnection;
+
+        //Instantiate a Singleton of the Semaphore with a value of 1. This means that only 1 thread can be granted access at a time.
+        static SemaphoreSlim notificationSemaphoreSlim = new SemaphoreSlim(1, 1);
+        static int waitingNumSemaphore = 0;
 
         public void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -101,10 +106,14 @@ namespace QuickShare.ServiceTask
                 }
                 else if (receiver == "System")
                 {
-
                     if (args.Request.Message.ContainsKey("FinishService"))
                         if (_deferral != null)
                         {
+                            System.Diagnostics.Debug.WriteLine("Let's say goodbye");
+
+                            while (waitingNumSemaphore > 0)
+                                await Task.Delay(100);
+
                             System.Diagnostics.Debug.WriteLine("Goodbye");
                             _appServiceconnection.Dispose();
                             _deferral.Complete();
@@ -137,14 +146,9 @@ namespace QuickShare.ServiceTask
         }
 
         private AppServiceConnection notificationService = null;
-        private bool connectingToNotificationService = false;
+
         private async Task<bool> ConnectToNotificationService()
         {
-            if (connectingToNotificationService)
-                return false;
-            connectingToNotificationService = true;
-
-
             if (this.notificationService == null)
             {
                 try
@@ -165,7 +169,7 @@ namespace QuickShare.ServiceTask
                     if (status != AppServiceConnectionStatus.Success)
                     {
                         Debug.WriteLine("Failed to connect to notification service: " + status);
-                        connectingToNotificationService = false;
+                        notificationSemaphoreSlim.Release();
                         return false;
                     }
 #if NOTIFICATIONHANDLER_DEBUGINFO
@@ -179,18 +183,23 @@ namespace QuickShare.ServiceTask
                 }
             }
 
-            connectingToNotificationService = false;
             return true;
         }
 
         private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
         {
+            await notificationSemaphoreSlim.WaitAsync();
+            waitingNumSemaphore++;
 #if NOTIFICATIONHANDLER_DEBUGINFO
-            System.Diagnostics.Debug.WriteLine("Progress " + e.CurrentPart + "/" + e.Total);
+            System.Diagnostics.Debug.WriteLine("Progress " + e.CurrentPart + "/" + e.Total + " : " + e.State);
 #endif
 
             if (!await ConnectToNotificationService())
+            {
+                waitingNumSemaphore--;
+                notificationSemaphoreSlim.Release();
                 return;
+            }
 
 
             try
@@ -213,22 +222,43 @@ namespace QuickShare.ServiceTask
                 Debug.WriteLine("Failed to send message to notification service (an exception was thrown): " + ex.ToString());
                 notificationService = null;
             }
+            waitingNumSemaphore--;
+            notificationSemaphoreSlim.Release();
         }
 
         private async void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)
         {
+            await notificationSemaphoreSlim.WaitAsync();
+            waitingNumSemaphore++;
+
             if (!await ConnectToNotificationService())
+            {
+                waitingNumSemaphore--;
+                notificationSemaphoreSlim.Release();
                 return;
+            }
 
-            // Call the service.
-            var message = new ValueSet();
-            message.Add("Type", "TextReceive");
-            message.Add("Data", JsonConvert.SerializeObject(e));
+            try
+            {
+                // Call the service.
+                var message = new ValueSet();
+                message.Add("Type", "TextReceive");
+                message.Add("Data", JsonConvert.SerializeObject(e));
 
-            AppServiceResponse response = await this.notificationService.SendMessageAsync(message);
+                AppServiceResponse response = await this.notificationService.SendMessageAsync(message);
 
-            if (response.Status != AppServiceResponseStatus.Success)
-                Debug.WriteLine("Failed to send message to notification service: " + response.Status);
+                if (response.Status != AppServiceResponseStatus.Success)
+                    Debug.WriteLine("Failed to send message to notification service: " + response.Status);
+            }
+            catch (Exception ex)
+            {
+                waitingNumSemaphore--;
+                notificationSemaphoreSlim.Release();
+                throw ex;
+            }
+
+            waitingNumSemaphore--;
+            notificationSemaphoreSlim.Release();
         }
     }
 }
