@@ -11,11 +11,13 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <Storyboard x:Name="circleReverseStoryboard" Completed="circleReverseStoryboard_Completed">
-                <DoubleAnimation From="100"
+            <Storyboard x:Name="circleReverseStoryboard" 
+                        Completed="circleReverseStoryboard_Completed">
+                <DoubleAnimation From="359.999"
                                  To="0"
-                                 Duration="0:0:3"
-                                 Storyboard.TargetProperty="Value"
+                                 Duration="0:0:1"
+                                 EnableDependentAnimation="True"
+                                 Storyboard.TargetProperty="Angle"
                                  Storyboard.TargetName="circle" />
             </Storyboard>
         </ResourceDictionary>
@@ -42,21 +44,20 @@
         <Grid x:Name="Main" Visibility="{Binding MainVisibility}">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Copied to clipboard"
-                           FontSize="20"
+                           FontSize="24"
                            FontWeight="ExtraLight"
                            Margin="0,0,0,20"
                            VerticalAlignment="Center" 
                            HorizontalAlignment="Stretch"
                            TextWrapping="Wrap"
                            TextAlignment="Center" />
-                <controls:CircularProgressBar x:Name="circle"
-                                              PercentIndicatorVisibility="Collapsed"
-                                              ValueChangeAnimationLength="0:0:0"
-                                              Minimum="0"
-                                              Maximum="100"
-                                              Width="100"
-                                              Height="100"
-                                              Value="60" />
+                <controls:Arc x:Name="circle"
+                              StartAngle="0"
+                              Angle="359.999"
+                              Radius="50"
+                              Stroke="{ThemeResource ProgressBarForegroundThemeBrush}"
+                              StrokeThickness="4"
+                              HorizontalAlignment="Center" />
             </StackPanel>
         </Grid>
     </Grid>
