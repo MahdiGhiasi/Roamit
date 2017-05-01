@@ -93,8 +93,12 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
+    <Compile Include="ClipboardReceive.xaml.cs">
+      <DependentUpon>ClipboardReceive.xaml</DependentUpon>
+    </Compile>
     <Compile Include="HelperClasses\LaunchOperations.cs" />
     <Compile Include="MainSendViewModel.cs" />
+    <Compile Include="ToastNotifications\Toaster.ClipboardTextReceived.cs" />
     <Compile Include="ToastNotifications\Toaster.cs" />
     <Compile Include="ToastNotifications\Toaster.FileReceiveFinished.cs" />
   </ItemGroup>
@@ -153,6 +157,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ClipboardReceive.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainActions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

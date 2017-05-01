@@ -69,15 +69,14 @@ namespace QuickShare
 
         internal static async Task HandleAsync(TextReceiveEventArgs e)
         {
-            ToastFunctions.SendToast("Received text with guid " + (e.Guid?.ToString() ?? "null") + " and it was " + (e.Success ? "successful" : "not successful") + ".");
-
-            DataStorageProviders.TextReceiveContentManager.Open();
-
-            string content = DataStorageProviders.TextReceiveContentManager.GetItemContent((Guid)e.Guid);
-
-            DataStorageProviders.TextReceiveContentManager.Close();
-
-            ToastFunctions.SendToast(content);
+            if (e.Success)
+            {
+                Toaster.ShowClipboardTextReceivedNotification((Guid)e.Guid, e.HostName);
+            }
+            else
+            {
+                Debug.WriteLine($"text with guid {e.Guid.ToString()} : success = false");
+            }
         }
     }
 }

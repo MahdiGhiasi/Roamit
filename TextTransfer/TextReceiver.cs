@@ -22,6 +22,7 @@ namespace QuickShare.TextTransfer
                 {
                     Success = false,
                     Guid = null,
+                    HostName = "",
                 });
                 return false;
             }
@@ -43,6 +44,7 @@ namespace QuickShare.TextTransfer
                     {
                         Success = false,
                         Guid = guid,
+                        HostName = (string)data["SenderName"],
                     });
                     return false;
                 }
@@ -55,6 +57,7 @@ namespace QuickShare.TextTransfer
                     {
                         Success = true,
                         Guid = guid,
+                        HostName = (string)data["SenderName"],
                     });
 
                     DataStorageProviders.HistoryManager.Open();

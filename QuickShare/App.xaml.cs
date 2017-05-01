@@ -131,6 +131,10 @@ namespace QuickShare
                 HistoryRow hr;
                 switch (args["action"])
                 {
+                    case "clipboardReceive":
+                        LaunchRootFrameIfNecessary(ref rootFrame);
+                        rootFrame.Navigate(typeof(ClipboardReceive), args["guid"]);
+                        break;
                     case "fileProgress":
                         LaunchRootFrameIfNecessary(ref rootFrame);
                         if (rootFrame.Content is MainPage)

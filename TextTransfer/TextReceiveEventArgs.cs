@@ -6,5 +6,6 @@ namespace QuickShare.TextTransfer
     {
         public bool Success { get; set; }
         public Guid? Guid { get; set; }
+        public string HostName { get; set; }
     }
 }

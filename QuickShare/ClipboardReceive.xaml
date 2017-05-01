@@ -1,0 +1,63 @@
+﻿<Page
+    x:Class="QuickShare.ClipboardReceive"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    DataContext="{Binding ViewModel, RelativeSource={RelativeSource Self}}"
+    xmlns:local="using:QuickShare"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:QuickShare.Controls"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <Storyboard x:Name="circleReverseStoryboard" Completed="circleReverseStoryboard_Completed">
+                <DoubleAnimation From="100"
+                                 To="0"
+                                 Duration="0:0:3"
+                                 Storyboard.TargetProperty="Value"
+                                 Storyboard.TargetName="circle" />
+            </Storyboard>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <Grid x:Name="WaitingToActivate" Visibility="{Binding WaitingToActivateVisibility}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <TextBlock Text="Tap to copy to clipboard" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Center" TextWrapping="Wrap" FontSize="30" FontWeight="ExtraLight" />
+            </Grid>
+            <Grid Grid.Row="1">
+                <TextBlock Opacity="0.5"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           Text="{Binding ClipboardContent}" />
+            </Grid>
+        </Grid>
+        <Grid x:Name="Main" Visibility="{Binding MainVisibility}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="Copied to clipboard"
+                           FontSize="20"
+                           FontWeight="ExtraLight"
+                           Margin="0,0,0,20"
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Stretch"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center" />
+                <controls:CircularProgressBar x:Name="circle"
+                                              PercentIndicatorVisibility="Collapsed"
+                                              ValueChangeAnimationLength="0:0:0"
+                                              Minimum="0"
+                                              Maximum="100"
+                                              Width="100"
+                                              Height="100"
+                                              Value="60" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
