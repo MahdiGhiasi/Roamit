@@ -51,7 +51,7 @@ namespace QuickShare
             }
         }
 
-        private async Task ProcessClipboardAsync()
+        private async Task ProcessClipboardAsync(int retryCount = 2)
         {
             try
             {
@@ -85,6 +85,13 @@ namespace QuickShare
             {
                 SetClipboardPreviewText("");
                 Debug.WriteLine($"Failed to access clipboard: {ex.ToString()}");
+
+                if (retryCount > 0)
+                {
+                    Debug.WriteLine("Will retry");
+                    await Task.Delay(1000);
+                    await ProcessClipboardAsync(retryCount - 1);
+                }
             }
         }
 
