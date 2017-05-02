@@ -42,6 +42,7 @@ namespace QuickShare
                 ProgressIsIndeterminate = true,
                 ProgressValue = 0,
                 ProgressMaximum = 0,
+                UnlockNoticeVisibility = Visibility.Visible,
             };
         }
 
@@ -88,8 +89,8 @@ namespace QuickShare
             }
 
             string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
-
             var mode = e.Parameter.ToString();
+            ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
 
             if (mode == "text")
             {

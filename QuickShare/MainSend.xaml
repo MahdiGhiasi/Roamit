@@ -32,6 +32,11 @@
                                           Width="250" 
                                           Height="250" 
                                           Thickness="6" />
+            <TextBlock Text="Make sure to unlock your device."
+                       HorizontalAlignment="Stretch" 
+                       TextAlignment="Center"
+                       Margin="0,60,0,0"
+                       Visibility="{x:Bind ViewModel.UnlockNoticeVisibility, Mode=OneWay}" />
         </StackPanel>
     </Grid>
 </Page>

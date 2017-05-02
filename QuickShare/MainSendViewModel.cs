@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Windows.UI.Xaml;
 
 namespace QuickShare
 {
@@ -59,6 +60,21 @@ namespace QuickShare
                 OnPropertyChanged("ProgressIsIndeterminate");
             }
         }
+
+        Visibility unlockNoticeVisibility;
+        public Visibility UnlockNoticeVisibility
+        {
+            get
+            {
+                return unlockNoticeVisibility;
+            }
+            set
+            {
+                unlockNoticeVisibility = value;
+                OnPropertyChanged("UnlockNoticeVisibility");
+            }
+        }
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
 
