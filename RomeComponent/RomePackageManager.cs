@@ -35,7 +35,7 @@ namespace QuickShare.UWP.Rome
         bool keepCurrentConnectionAlive = false;
 
         internal int tryCountProximity = 6;
-        internal int tryCountCloud = 2;
+        internal int tryCountCloud = 3;
 
         private int getTryCount(RemoteSystem rs = null)
         {
@@ -162,20 +162,12 @@ namespace QuickShare.UWP.Rome
 
                         if (wakeResult == RomeRemoteLaunchUriStatus.Success)
                         {
-                            await ReinitializeDiscovery();
-
-                            int count = 0;
-                            RemoteSystem rsNew = null;
-                            while (rsNew == null)
-                            {
-                                rsNew = romeHelper.RemoteSystems.FirstOrDefault(x => x.Id == rs.Id);
-                                count++;
-
-                                if (count > 20)
-                                    return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
-
-                                await Task.Delay(50);
-                            }
+                            RemoteSystem rsNew = await RediscoverRemoteSystem(rs);
+                            System.Diagnostics.Debug.WriteLine(rsNew.IsAvailableByProximity);
+                            if (rsNew == null)
+                                return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
+                            else
+                                rs = rsNew;
                         }
                     }
                     
@@ -215,6 +207,12 @@ namespace QuickShare.UWP.Rome
                     else
                         System.Diagnostics.Debug.WriteLine("Connecting timeout");
 
+                    RemoteSystem rsNew2 = await RediscoverRemoteSystem(rs);
+                    System.Diagnostics.Debug.WriteLine(rsNew2.IsAvailableByProximity);
+                    if (rsNew2 == null)
+                        return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
+                    else
+                        rs = rsNew2;
                 }
 
 
@@ -229,6 +227,26 @@ namespace QuickShare.UWP.Rome
             {
                 return RomeAppServiceConnectionStatus.Unknown;
             }
+        }
+
+        private async Task<RemoteSystem> RediscoverRemoteSystem(RemoteSystem rs)
+        {
+            await ReinitializeDiscovery();
+
+            int count = 0;
+            RemoteSystem rsNew = null;
+            while (rsNew == null)
+            {
+                rsNew = romeHelper.RemoteSystems.FirstOrDefault(x => x.Id == rs.Id);
+                count++;
+
+                if (count > 20)
+                    return null;
+
+                await Task.Delay(50);
+            }
+
+            return rsNew;
         }
 
         private static Task SetTimeoutTask(RemoteSystem _remoteSystem, int tryi)
