@@ -170,6 +170,20 @@ namespace QuickShare
                 }
 
             }
+            else if (e.Kind == ActivationKind.Protocol)
+            {
+                ProtocolActivatedEventArgs pEventArgs = e as ProtocolActivatedEventArgs;
+
+                if ((pEventArgs.Uri.AbsoluteUri.ToLower() == "quickshare://wake") || (pEventArgs.Uri.AbsoluteUri.ToLower() == "quickshare://wake/"))
+                {
+                    Debug.WriteLine("Wake request received");
+                    Application.Current.Exit();
+                }
+                else
+                {
+                    LaunchRootFrameIfNecessary(ref rootFrame);
+                }
+            }
             else
             {
                 LaunchRootFrameIfNecessary(ref rootFrame);

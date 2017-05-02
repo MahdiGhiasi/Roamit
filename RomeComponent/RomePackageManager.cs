@@ -42,7 +42,9 @@ namespace QuickShare.UWP.Rome
             if (rs == null)
                 rs = remoteSystem;
 
-            if (rs.IsAvailableByProximity)
+            if (rs == null)
+                return tryCountCloud;
+            else if (rs.IsAvailableByProximity)
                 return tryCountProximity;
             else
                 return tryCountCloud;
@@ -65,6 +67,12 @@ namespace QuickShare.UWP.Rome
                 romeHelper = new RomeHelper();
                 await romeHelper.Initialize();
             }
+        }
+
+        private async Task ReinitializeDiscovery()
+        {
+            romeHelper = new RomeHelper();
+            await romeHelper.Initialize();
         }
 
         public void Initialize(string appServiceName)
@@ -125,6 +133,11 @@ namespace QuickShare.UWP.Rome
 
         public async Task<RomeAppServiceConnectionStatus> Connect(object _remoteSystem, bool keepAlive)
         {
+            return await Connect(_remoteSystem, keepAlive, null);
+        }
+
+        public async Task<RomeAppServiceConnectionStatus> Connect(object _remoteSystem, bool keepAlive, Uri wakeUri)
+        {
             RemoteSystem rs = _remoteSystem as RemoteSystem;
             if (rs == null)
                 throw new InvalidCastException();
@@ -142,6 +155,30 @@ namespace QuickShare.UWP.Rome
                 {
                     workDone = false;
 
+                    if ((i == 0) && (wakeUri != null) && (!rs.IsAvailableByProximity))
+                    {
+                        //Wake device first
+                        var wakeResult = await LaunchUri(wakeUri, rs);
+
+                        if (wakeResult == RomeRemoteLaunchUriStatus.Success)
+                        {
+                            await ReinitializeDiscovery();
+
+                            int count = 0;
+                            RemoteSystem rsNew = null;
+                            while (rsNew == null)
+                            {
+                                rsNew = romeHelper.RemoteSystems.FirstOrDefault(x => x.Id == rs.Id);
+                                count++;
+
+                                if (count > 20)
+                                    return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
+
+                                await Task.Delay(50);
+                            }
+                        }
+                    }
+                    
                     Task connect = Task.Run(async () =>
                     {
                         if (romeHelper == null)
@@ -213,6 +250,19 @@ namespace QuickShare.UWP.Rome
 
         public async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri uri)
         {
+            return await LaunchUri(uri, null);
+        }
+
+        public async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri uri, object remoteSystemOverride)
+        {
+            RemoteSystem rs = null;
+            if (remoteSystemOverride != null)
+            {
+                rs = remoteSystemOverride as RemoteSystem;
+                if (rs == null)
+                    throw new InvalidCastException();
+            }            
+
             RemoteLaunchUriStatus launchStatus = RemoteLaunchUriStatus.RemoteSystemUnavailable;
 
             bool workDone = false;
@@ -226,11 +276,15 @@ namespace QuickShare.UWP.Rome
                                         FallbackUri = new Uri(@"http://google.com")
                                     };*/
 
-                    launchStatus = await Windows.System.RemoteLauncher.LaunchUriAsync(connectionRequest, uri/*, options*/);
+                    RemoteSystemConnectionRequest req = connectionRequest;
+                    if (rs != null)
+                        req = new RemoteSystemConnectionRequest(rs);
+
+                    launchStatus = await Windows.System.RemoteLauncher.LaunchUriAsync(req, uri/*, options*/);
                     workDone = true;
                 }, false);
 
-                Task delay = SetTimeoutTask(remoteSystem, i);
+                Task delay = SetTimeoutTask(remoteSystem ?? rs, i);
 
                 await Task.WhenAny(new Task[] { launch, delay });
 

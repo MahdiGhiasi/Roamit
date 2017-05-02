@@ -78,7 +78,7 @@ namespace QuickShare
             base.OnNavigatedTo(e);
 
             var rs = MainPage.Current.selectedSystem;
-            var result = await MainPage.Current.packageManager.Connect(rs, true);
+            var result = await MainPage.Current.packageManager.Connect(rs, true, new Uri("quickshare://wake"));
             
             if (result != RomeAppServiceConnectionStatus.Success)
             {
