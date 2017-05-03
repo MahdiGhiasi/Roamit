@@ -33,11 +33,11 @@ namespace QuickShare.UWP.Rome
             RemoteSystemAccessStatus accessStatus = await RemoteSystem.RequestAccessAsync();
             if (accessStatus == RemoteSystemAccessStatus.Allowed)
             {
-                //Debug.WriteLine("Blah blah " + RemoteSystem.IsAuthorizationKindEnabled(RemoteSystemAuthorizationKind.Anonymous));
                 // Construct a user type filter that includes anonymous devices 
-                RemoteSystemAuthorizationKindFilter authorizationKindFilter = new RemoteSystemAuthorizationKindFilter(RemoteSystemAuthorizationKind.Anonymous);
-                
-                _remoteSystemWatcher = RemoteSystem.CreateWatcher((new IRemoteSystemFilter[] { authorizationKindFilter }));
+                //RemoteSystemAuthorizationKindFilter authorizationKindFilter = new RemoteSystemAuthorizationKindFilter(RemoteSystemAuthorizationKind.Anonymous);
+                //_remoteSystemWatcher = RemoteSystem.CreateWatcher((new IRemoteSystemFilter[] { authorizationKindFilter }));
+
+                _remoteSystemWatcher = RemoteSystem.CreateWatcher();
                 _remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
                 _remoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
                 _remoteSystemWatcher.RemoteSystemUpdated += RemoteSystemWatcher_RemoteSystemUpdated;
