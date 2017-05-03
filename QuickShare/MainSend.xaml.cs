@@ -78,8 +78,8 @@ namespace QuickShare
         {
             base.OnNavigatedTo(e);
 
-            var rs = MainPage.Current.selectedSystem;
-            var result = await MainPage.Current.packageManager.Connect(rs, true, new Uri("quickshare://wake"));
+            var rs = MainPage.Current.GetSelectedSystem();
+            var result = await MainPage.Current.PackageManager.Connect(rs, true, new Uri("quickshare://wake"));
             
             if (result != RomeAppServiceConnectionStatus.Success)
             {
@@ -94,7 +94,7 @@ namespace QuickShare
 
             if (mode == "text")
             {
-                TextSender ts = new TextSender(MainPage.Current.packageManager, deviceName);
+                TextSender ts = new TextSender(MainPage.Current.PackageManager, deviceName);
 
                 ts.TextSendProgress += (ee) =>
                 {
@@ -115,7 +115,7 @@ namespace QuickShare
             }
             else if (mode == "launchUri")
             {
-                var launchResult = await MainPage.Current.packageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri);
+                var launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri);
 
                 if (launchResult == RomeRemoteLaunchUriStatus.Success)
                     ViewModel.SendStatus = "Finished.";
@@ -186,7 +186,7 @@ namespace QuickShare
                 Dictionary<string, object> vs = new Dictionary<string, object>();
                 vs.Add("Receiver", "System");
                 vs.Add("FinishService", "FinishService");
-                await MainPage.Current.packageManager.Send(vs);
+                await MainPage.Current.PackageManager.Send(vs);
 
                 if (failed)
                 {

@@ -25,10 +25,8 @@ namespace QuickShare
     {
         public static MainPage Current;
 
-        public RomePackageManager packageManager = RomePackageManager.Instance;
-        public RemoteSystem selectedSystem = null;
-        public DevicesListManager.DevicesListManager listManager = new DevicesListManager.DevicesListManager("", new RemoteSystemNormalizer());
-
+        public RomePackageManager PackageManager { get; } = RomePackageManager.Instance;
+        public MainPageViewModel ViewModel { get; set; } = new MainPageViewModel();
         public IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem> PicturePickerItems { get; internal set; }
 
         public MainPage()
@@ -73,6 +71,11 @@ namespace QuickShare
             }
         }
 
+        internal RemoteSystem GetSelectedSystem()
+        {
+            return PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == ViewModel.ListManager.SelectedRemoteSystem.Id);
+        }
+
         private void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
         {
             if (ContentFrame.Content is MainActions)
@@ -97,9 +100,8 @@ namespace QuickShare
 
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
-            await packageManager.InitializeDiscovery();
-            packageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
-            devicesList.ItemsSource = listManager.RemoteSystems;//packageManager.RemoteSystems;
+            DiscoverDevices();
+            PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
             var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
             if (!futureAccessList.ContainsItem("downloadMainFolder"))
@@ -117,13 +119,13 @@ namespace QuickShare
             if (e.NewItems != null)
                 foreach (var item in e.NewItems)
                 {
-                    listManager.AddDevice(item);
+                    ViewModel.ListManager.AddDevice(item);
                 }
 
             if (e.OldItems != null)
                 foreach (var item in e.OldItems)
                 {
-                    listManager.RemoveDevice(item);
+                    ViewModel.ListManager.RemoveDevice(item);
                 }
         }
 
@@ -133,11 +135,8 @@ namespace QuickShare
                 return;
 
             var s = devicesList.SelectedItem as NormalizedRemoteSystem;
-
-            selectedSystem = packageManager.RemoteSystems.FirstOrDefault(x => x.Id == s.Id);
-            activeDevice.Content = selectedSystem?.DisplayName.ToUpper();
-
-            listManager.Select(s);
+            
+            ViewModel.ListManager.Select(s);
         }
 
         private void button_Tapped(object sender, TappedRoutedEventArgs e)
@@ -154,8 +153,9 @@ namespace QuickShare
 
             if (e.Content is MainActions)
             {
-                if (BottomBar.Visibility == Visibility.Collapsed) //Don't play animation on app startup
+                if (BottomBar.Visibility == Visibility.Collapsed) //Don't play animation and rediscover devices on app startup
                 {
+                    DiscoverDevices();
                     BottomBar.Visibility = Visibility.Visible;
                     bottomBarShowStoryboard.Begin();
                 }
@@ -168,5 +168,39 @@ namespace QuickShare
             }
         }
 
+        private async void DiscoverDevices()
+        {
+            string selItemId = "";
+
+            if (ViewModel.ListManager.SelectedRemoteSystem != null)
+                selItemId = ViewModel.ListManager.SelectedRemoteSystem.Id;
+
+            await PackageManager.ReinitializeDiscovery();
+
+            if (selItemId != "")
+            {
+                for (int i = 0; i < 2; i++) //Try two times
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    var selItem = PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == selItemId);
+                    if (selItem != null)
+                    {
+                        ViewModel.ListManager.Select(new RemoteSystemNormalizer().Normalize(selItem));
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+
+            ViewModel.ListManager.SelectHighScoreItem();
+            if (ViewModel.ListManager.SelectedRemoteSystem == null)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                ViewModel.ListManager.SelectHighScoreItem();
+            }
+        }
     }
 }

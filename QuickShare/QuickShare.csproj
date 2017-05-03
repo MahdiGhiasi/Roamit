@@ -97,6 +97,7 @@
       <DependentUpon>ClipboardReceive.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelperClasses\LaunchOperations.cs" />
+    <Compile Include="MainPageViewModel.cs" />
     <Compile Include="MainSendViewModel.cs" />
     <Compile Include="RemoteSystemNormalizer.cs" />
     <Compile Include="ToastNotifications\Toaster.ClipboardTextReceived.cs" />

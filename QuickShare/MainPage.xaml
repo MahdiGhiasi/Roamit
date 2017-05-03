@@ -42,16 +42,27 @@
             </StackPanel.RenderTransform>
             <Polygon Points="0,15 30,0, 30,15" Stroke="{ThemeResource ListViewItemBackgroundSelectedPressed}" Fill="{ThemeResource ListViewItemBackgroundSelectedPressed}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Stretch="Fill" />
             <Grid x:Name="activeDeviceContainer" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" Height="50" VerticalAlignment="Bottom" Margin="0,0,0,0">
-                <ContentControl x:Name="activeDevice" Padding="8" Content="NO DEVICE SELECTED" FontSize="22" FontWeight="ExtraBlack">
+                <ContentControl x:Name="activeDevice" Padding="8" Content="{x:Bind ViewModel.SelectedRemoteSystem, Mode=OneWay}" FontSize="22">
                     <ContentControl.ContentTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition />
                         </TransitionCollection>
                     </ContentControl.ContentTransitions>
+                    <ContentControl.ContentTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" >
+                                <Grid>
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
+                                </Grid>
+                                <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" VerticalAlignment="Center"></TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ContentControl.ContentTemplate>
                 </ContentControl>
                 <!--<Polygon Points="0,20 30,0, 30,20" Stroke="LightGray" Fill="LightGray" VerticalAlignment="Bottom" HorizontalAlignment="Right" />-->
             </Grid>
-            <ListView x:Name="devicesList" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" Height="108" VerticalAlignment="Bottom" Opacity="0.9">
+            <ListView x:Name="devicesList" ItemsSource="{x:Bind ViewModel.DevicesList, Mode=OneWay}" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" Height="108" VerticalAlignment="Bottom" Opacity="0.9">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -67,6 +78,15 @@
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel>
+                            <VirtualizingStackPanel.ChildrenTransitions>
+                                <TransitionCollection/>
+                            </VirtualizingStackPanel.ChildrenTransitions>
+                        </VirtualizingStackPanel>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
             </ListView>
         </StackPanel>
     </Grid>

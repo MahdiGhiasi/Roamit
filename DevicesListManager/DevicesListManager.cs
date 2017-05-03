@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 
 namespace QuickShare.DevicesListManager
 {
-    public class DevicesListManager
+    public class DevicesListManager : INotifyPropertyChanged
     {
         private readonly uint _initialCountValue = 5;
 
@@ -15,14 +16,34 @@ namespace QuickShare.DevicesListManager
         List<object> devices = new List<object>();
 
         public ObservableCollection<NormalizedRemoteSystem> RemoteSystems { get; private set; } = new ObservableCollection<NormalizedRemoteSystem>();
-        public NormalizedRemoteSystem SelectedRemoteSystem { get; set; }
 
+        public event PropertyChangedEventHandler PropertyChanged;
         Dictionary<string, uint> selectCounts = new Dictionary<string, uint>();
+
+        NormalizedRemoteSystem selectedRemoteSystem;
+        public NormalizedRemoteSystem SelectedRemoteSystem
+        {
+            get
+            {
+                return selectedRemoteSystem;
+            }
+            set
+            {
+                selectedRemoteSystem = value;
+                OnPropertyChanged("SelectedRemoteSystem");
+            }
+        }
 
         public DevicesListManager(string _dataFileLocation, IAttributesNormalizer _attributesNormalizer)
         {
             dataFileLocation = _dataFileLocation;
             attrNormalizer = _attributesNormalizer;
+        }
+
+        // Create the OnPropertyChanged method to raise the event
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public void AddDevice(object o)
@@ -34,7 +55,6 @@ namespace QuickShare.DevicesListManager
         public void RemoveDevice(object o)
         {
             devices.Remove(o);
-            Sort();
         }
 
         public void RemoveDeviceById(string id)
@@ -54,7 +74,7 @@ namespace QuickShare.DevicesListManager
                 RemoveDevice(i);
             }
         }
-        
+
         public void Select(NormalizedRemoteSystem rs)
         {
             if (selectCounts.ContainsKey(rs.Id))
@@ -74,6 +94,18 @@ namespace QuickShare.DevicesListManager
             return Math.Ceiling(((double)selectCounts[rs.Id]) / 10.0);
         }
 
+        public List<NormalizedRemoteSystem> GetSortedList(NormalizedRemoteSystem selected)
+        {
+            var output = new List<NormalizedRemoteSystem>();
+            foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
+            {
+                if (item.Id != selected?.Id)
+                    RemoteSystems.Add(item);
+            }
+
+            return output;
+        }
+
         public void Sort()
         {
             RemoteSystems.Clear();
@@ -82,6 +114,19 @@ namespace QuickShare.DevicesListManager
                 if (item.Id != SelectedRemoteSystem?.Id)
                     RemoteSystems.Add(item);
             }
+        }
+
+        public NormalizedRemoteSystem SelectHighScoreItem()
+        {
+            if (RemoteSystems.Count == 0)
+                return null;
+
+            SelectedRemoteSystem = null;
+            Sort();
+
+            NormalizedRemoteSystem output = RemoteSystems[0];
+            Select(output);
+            return output;
         }
     }
 }
