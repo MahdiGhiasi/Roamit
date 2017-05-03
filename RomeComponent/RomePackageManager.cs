@@ -69,7 +69,7 @@ namespace QuickShare.UWP.Rome
             }
         }
 
-        public async Task ReinitializeDiscovery()
+        private async Task ReinitializeDiscovery()
         {
             romeHelper = new RomeHelper();
             await romeHelper.Initialize();

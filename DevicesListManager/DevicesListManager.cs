@@ -75,15 +75,23 @@ namespace QuickShare.DevicesListManager
             }
         }
 
-        public void Select(NormalizedRemoteSystem rs)
+        public void Select(object o)
         {
-            if (selectCounts.ContainsKey(rs.Id))
-                selectCounts[rs.Id]++;
-            else
-                selectCounts[rs.Id] = _initialCountValue;
+            if (o is NormalizedRemoteSystem)
+            {
+                var rs = o as NormalizedRemoteSystem;
+                if (selectCounts.ContainsKey(rs.Id))
+                    selectCounts[rs.Id]++;
+                else
+                    selectCounts[rs.Id] = _initialCountValue;
 
-            SelectedRemoteSystem = rs;
-            Sort();
+                SelectedRemoteSystem = rs;
+                Sort();
+            }
+            else
+            {
+                Select(attrNormalizer.Normalize(o));
+            }
         }
 
         private double CalculateScore(NormalizedRemoteSystem rs)

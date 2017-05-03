@@ -127,6 +127,10 @@ namespace QuickShare
                 {
                     ViewModel.ListManager.RemoveDevice(item);
                 }
+
+            var selItem = PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == ViewModel.ListManager.SelectedRemoteSystem?.Id);
+            if ((selItem != null) && (ViewModel.ListManager.SelectedRemoteSystem.IsAvailableByProximity != selItem.IsAvailableByProximity))
+                ViewModel.ListManager.Select(selItem);
         }
 
         private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -153,9 +157,8 @@ namespace QuickShare
 
             if (e.Content is MainActions)
             {
-                if (BottomBar.Visibility == Visibility.Collapsed) //Don't play animation and rediscover devices on app startup
+                if (BottomBar.Visibility == Visibility.Collapsed) //Don't play animation on app startup
                 {
-                    DiscoverDevices();
                     BottomBar.Visibility = Visibility.Visible;
                     bottomBarShowStoryboard.Begin();
                 }
@@ -170,34 +173,12 @@ namespace QuickShare
 
         private async void DiscoverDevices()
         {
-            string selItemId = "";
-
-            if (ViewModel.ListManager.SelectedRemoteSystem != null)
-                selItemId = ViewModel.ListManager.SelectedRemoteSystem.Id;
-
-            await PackageManager.ReinitializeDiscovery();
-
-            if (selItemId != "")
-            {
-                for (int i = 0; i < 2; i++) //Try two times
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(1));
-                    var selItem = PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == selItemId);
-                    if (selItem != null)
-                    {
-                        ViewModel.ListManager.Select(new RemoteSystemNormalizer().Normalize(selItem));
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-            }
-
+            await PackageManager.InitializeDiscovery();
+            await Task.Delay(TimeSpan.FromSeconds(1));
             ViewModel.ListManager.SelectHighScoreItem();
             if (ViewModel.ListManager.SelectedRemoteSystem == null)
             {
+                //Try again
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 ViewModel.ListManager.SelectHighScoreItem();
             }
