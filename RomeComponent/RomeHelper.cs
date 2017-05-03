@@ -11,15 +11,18 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation.Collections;
 using Windows.System.RemoteSystems;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace QuickShare.UWP.Rome
 {
     public class RomeHelper : IDisposable
     {
+        private readonly TimeSpan refreshInterval = TimeSpan.FromSeconds(3);
+
         private RemoteSystemWatcher _remoteSystemWatcher;
+        private DispatcherTimer timer = new DispatcherTimer();
 
         private ObservableCollection<RemoteSystem> _remoteSystems = new ObservableCollection<RemoteSystem>();
-
         public ObservableCollection<RemoteSystem> RemoteSystems
         {
             get { return _remoteSystems; }
@@ -42,7 +45,17 @@ namespace QuickShare.UWP.Rome
                 _remoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
                 _remoteSystemWatcher.RemoteSystemUpdated += RemoteSystemWatcher_RemoteSystemUpdated;
                 _remoteSystemWatcher.Start();
+
+                timer.Interval = refreshInterval;
+                timer.Tick += Timer_Tick;
+                timer.Start();
             }
+        }
+
+        private void Timer_Tick(object sender, object e)
+        {
+            _remoteSystemWatcher.Stop();
+            _remoteSystemWatcher.Start();
         }
 
         private async void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
@@ -51,6 +64,10 @@ namespace QuickShare.UWP.Rome
             
             await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
             {
+                var existingRs = _remoteSystems.FirstOrDefault(x => x.Id == remoteSystem.Id);
+                if (existingRs != null)
+                    _remoteSystems.Remove(existingRs);
+
                 AddToRemoteSystemsList(args.RemoteSystem);
             });
         }
@@ -70,7 +87,6 @@ namespace QuickShare.UWP.Rome
         private async void RemoteSystemWatcher_RemoteSystemUpdated(RemoteSystemWatcher sender, RemoteSystemUpdatedEventArgs args)
         {
             RemoteSystem remoteSystem = null;
-
             await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
             {
                 remoteSystem = _remoteSystems.Where(s => s.Id == args.RemoteSystem.Id).FirstOrDefault();
