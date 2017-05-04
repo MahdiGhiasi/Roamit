@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="QuickShare.Android.QuickShare.Android" android:versionCode="1" android:versionName="1.0">
-  <uses-sdk android:minSdkVersion="16" />
-  <application android:label="QuickShare.Android"></application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="QuickShare.Droid.QuickShare.Droid" android:versionCode="1" android:versionName="1.0">
+	<uses-sdk android:minSdkVersion="16" />
+	<application android:label="QuickShare.Droid"></application>
 </manifest>

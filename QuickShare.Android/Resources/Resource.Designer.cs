@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("QuickShare.Android.Resource", IsApplication=true)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("QuickShare.Droid.Resource", IsApplication=true)]
 
-namespace QuickShare.Android
+namespace QuickShare.Droid
 {
 	
 	
@@ -26,6 +26,8 @@ namespace QuickShare.Android
 		
 		public static void UpdateIdValues()
 		{
+			global::QuickShare.Droid.RomeComponent.Resource.String.ApplicationName = global::QuickShare.Droid.Resource.String.ApplicationName;
+			global::QuickShare.Droid.RomeComponent.Resource.String.Hello = global::QuickShare.Droid.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
@@ -53,6 +55,34 @@ namespace QuickShare.Android
 			}
 			
 			private Drawable()
+			{
+			}
+		}
+		
+		public partial class Id
+		{
+			
+			// aapt resource value: 0x7f050001
+			public const int button1 = 2131034113;
+			
+			// aapt resource value: 0x7f050000
+			public const int button2 = 2131034112;
+			
+			// aapt resource value: 0x7f050002
+			public const int button3 = 2131034114;
+			
+			// aapt resource value: 0x7f050004
+			public const int listView1 = 2131034116;
+			
+			// aapt resource value: 0x7f050003
+			public const int textView1 = 2131034115;
+			
+			static Id()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Id()
 			{
 			}
 		}
