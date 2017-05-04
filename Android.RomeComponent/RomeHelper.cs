@@ -18,8 +18,6 @@ namespace QuickShare.Droid.RomeComponent
 {
     public class RomeHelper : IDisposable
     {
-        readonly string CLIENT_ID = "";
-
         Dialog authDialog;
         WebView webView;
         Context appContext;
@@ -35,7 +33,7 @@ namespace QuickShare.Droid.RomeComponent
             appContext = _appContext;
 
             //Assumed Platform.FetchAuthCode is already handled.
-            var result = await Platform.InitializeAsync(_appContext, CLIENT_ID);
+            var result = await Platform.InitializeAsync(_appContext, Secrets.CLIENT_ID);
             
             if (result == true)
             {
