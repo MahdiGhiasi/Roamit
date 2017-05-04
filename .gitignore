@@ -302,4 +302,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-Android.RomeComponent/Secrets.cs
+Droid.RomeComponent/Secrets.cs

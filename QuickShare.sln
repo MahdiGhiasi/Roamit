@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RomeComponent", "RomeCompon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServerComponent", "WebServerComponent\WebServerComponent.csproj", "{B896C07B-E6C7-419F-8AE4-4853E0FB876A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickShare.Android", "QuickShare.Android\QuickShare.Android.csproj", "{CB23DC33-E319-402F-BBF0-3FAB110DDA3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickShare.Droid", "QuickShare.Droid\QuickShare.Droid.csproj", "{CB23DC33-E319-402F-BBF0-3FAB110DDA3D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{E9E7916C-D4FD-4B08-B904-3BCAE5DE1AF0}"
 EndProject
@@ -29,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D4E76C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevicesListManager", "DevicesListManager\DevicesListManager.csproj", "{3085EF40-87C7-4B3B-929C-50E6A15FC42B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Android.RomeComponent", "Android.RomeComponent\Android.RomeComponent.csproj", "{2894CF75-2EA2-4B83-9238-06525EEE443D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Droid.RomeComponent", "Droid.RomeComponent\Droid.RomeComponent.csproj", "{2894CF75-2EA2-4B83-9238-06525EEE443D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
