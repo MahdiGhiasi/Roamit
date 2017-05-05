@@ -76,9 +76,15 @@ namespace QuickShare
         {
             var initialSize = PicturePickerSource.ThumbnailSize + 4;
 
-            var count = Math.Floor((Window.Current.Content as Frame).ActualWidth / initialSize);
+            double width;
+            if (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone)
+                width = Math.Min((Window.Current.Content as Frame).ActualWidth, (Window.Current.Content as Frame).ActualHeight);
+            else
+                width = (Window.Current.Content as Frame).ActualWidth;
 
-            ThumbnailItemSizeUnit.Width = Math.Floor((Window.Current.Content as Frame).ActualWidth / count) - 4;
+            var count = Math.Floor(width / initialSize);
+
+            ThumbnailItemSizeUnit.Width = Math.Floor(width / count) - 4;
             ThumbnailItemSizeUnit.Height = ThumbnailItemSizeUnit.Width;
         }
     }
