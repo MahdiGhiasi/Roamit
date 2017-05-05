@@ -97,6 +97,7 @@
       <DependentUpon>ClipboardReceive.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelperClasses\LaunchOperations.cs" />
+    <Compile Include="HelperClasses\VisualChildFinder.cs" />
     <Compile Include="MainPageViewModel.cs" />
     <Compile Include="MainSendViewModel.cs" />
     <Compile Include="RemoteSystemNormalizer.cs" />

@@ -13,6 +13,7 @@ using QuickShare.FileTransfer;
 using System.Diagnostics;
 using QuickShare.DevicesListManager;
 using System.Linq;
+using QuickShare.HelperClasses;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -140,13 +141,11 @@ namespace QuickShare
                 return;
 
             var s = devicesList.SelectedItem as NormalizedRemoteSystem;
-            
+
             ViewModel.ListManager.Select(s);
-        }
 
-        private void button_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-
+            var sv = VisualChildFinder.FindVisualChild<ScrollViewer>(devicesList);
+            sv.ChangeView(0, 0, sv.ZoomFactor, false);
         }
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
