@@ -77,11 +77,11 @@
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" 
-                        Content="BROWSE IN PHOTOS APP" 
+                        Content="BROWSE" 
                         Tapped="BrowseButton_Tapped"
                         VerticalAlignment="Stretch" 
                         HorizontalAlignment="Stretch" />
