@@ -14,6 +14,12 @@ using System.Diagnostics;
 using QuickShare.DevicesListManager;
 using System.Linq;
 using QuickShare.HelperClasses;
+using Windows.UI.Composition;
+using Windows.UI.Xaml.Hosting;
+using System.Numerics;
+using Windows.UI.ViewManagement;
+using Windows.UI;
+using Windows.ApplicationModel.Core;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -96,6 +102,10 @@ namespace QuickShare
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("MainPage loaded begin");
+
+            //TODO: Check if supported (Creators + PC)
+            ApplyAcrylicAccent();
+            ApplyAcrylicAppBar();
 
             ContentFrame.Navigate(typeof(MainActions));
 
@@ -183,5 +193,26 @@ namespace QuickShare
                 ViewModel.ListManager.SelectHighScoreItem();
             }
         }
+
+        private void ApplyAcrylicAppBar()
+        {
+            ApplicationViewTitleBar formattableTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+            formattableTitleBar.ButtonBackgroundColor = Colors.Transparent;
+            CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = true;
+        }
+
+        private void ApplyAcrylicAccent()
+        {
+            _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
+            _hostSprite = _compositor.CreateSpriteVisual();
+            _hostSprite.Size = new Vector2((float)BlurGrid.ActualWidth, (float)BlurGrid.ActualHeight);
+
+            ElementCompositionPreview.SetElementChildVisual(
+                    BlurGrid, _hostSprite);
+            _hostSprite.Brush = _compositor.CreateHostBackdropBrush();
+        }
+        Compositor _compositor;
+        SpriteVisual _hostSprite;
     }
 }

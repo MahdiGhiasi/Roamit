@@ -11,6 +11,7 @@
             <rome:RemoteSystemKindToIconConverter x:Key="RemoteSystemKindToIconConverter"></rome:RemoteSystemKindToIconConverter>
             <rome:RemoteSystemProximityToIconConverter x:Key="RemoteSystemProximityToIconConverter"></rome:RemoteSystemProximityToIconConverter>
             <common:MathConverter x:Key="MathConverter"></common:MathConverter>
+            <common:BrushAlphaModifier x:Key="BrushAlphaModifier"></common:BrushAlphaModifier>
             <local:SelectedIndexToEnabledConverter x:Key="SelectedIndexToEnabledConverter"></local:SelectedIndexToEnabledConverter>
         </ResourceDictionary>
     </Application.Resources>

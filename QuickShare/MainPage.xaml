@@ -34,14 +34,18 @@
     </Page.Resources>
     
     <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid">
-        <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+        <Grid x:Name="BlurGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" Background="#B1000000" Padding="0,36,0,0" />
+        <Grid x:Name="TitleBarGrid" Height="36" VerticalAlignment="Top">
+            <TextBlock Text="QuickShare" Margin="12,8,0,0" FontSize="12" Foreground="LightGray" />
+        </Grid>
 
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" x:Name="BottomBar">
             <StackPanel.RenderTransform>
                 <TranslateTransform />
             </StackPanel.RenderTransform>
-            <Polygon Points="0,15 30,0, 30,15" Stroke="{ThemeResource ListViewItemBackgroundSelectedPressed}" Fill="{ThemeResource ListViewItemBackgroundSelectedPressed}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Stretch="Fill" />
-            <Grid x:Name="activeDeviceContainer" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" Height="50" VerticalAlignment="Bottom" Margin="0,0,0,0">
+            <Polygon Points="0,15 30,0, 30,15" Stroke="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" Fill="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Stretch="Fill" />
+            <Grid x:Name="activeDeviceContainer" Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" Height="50" VerticalAlignment="Bottom" Margin="0,0,0,0">
                 <ContentControl x:Name="activeDevice" Padding="8" Content="{x:Bind ViewModel.SelectedRemoteSystem, Mode=OneWay}" FontSize="22">
                     <ContentControl.ContentTransitions>
                         <TransitionCollection>
@@ -62,7 +66,7 @@
                 </ContentControl>
                 <!--<Polygon Points="0,20 30,0, 30,20" Stroke="LightGray" Fill="LightGray" VerticalAlignment="Bottom" HorizontalAlignment="Right" />-->
             </Grid>
-            <ListView x:Name="devicesList" ItemsSource="{x:Bind ViewModel.DevicesList, Mode=OneWay}" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" Height="108" VerticalAlignment="Bottom" Opacity="0.9">
+            <ListView x:Name="devicesList" ItemsSource="{x:Bind ViewModel.DevicesList, Mode=OneWay}" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" Height="108" VerticalAlignment="Bottom" Opacity="0.9">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>

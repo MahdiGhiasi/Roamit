@@ -39,7 +39,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0" Background="{ThemeResource AppBarBackground}">
+                <Grid Grid.Row="0">
                     <TextBlock Text="Recent photos" FontSize="18" Margin="16,12,0,12" FontWeight="Bold" />
                     <Grid x:Name="ThumbnailItemSizeUnit" Width="140" Height="140" Visibility="Collapsed" />
                 </Grid>
