@@ -25,15 +25,17 @@ namespace QuickShare
     where T : IIncrementalSource<I>, new()
     {
         private T source;
+        private int itemsPerPart;
         private int itemsPerPage;
         private bool hasMoreItems;
         private int currentPage;
 
-        public IncrementalLoadingCollection(int itemsPerPage = 20)
+        public IncrementalLoadingCollection(int preferredItemsPerPage = 20, int partCoefficient = 3)
         {
-            this.source = new T();
-            this.itemsPerPage = itemsPerPage;
-            this.hasMoreItems = true;
+            source = new T();
+            itemsPerPart = Math.Max(preferredItemsPerPage / partCoefficient, 5);
+            itemsPerPage = itemsPerPart * partCoefficient;
+            hasMoreItems = true;
         }
 
         public bool HasMoreItems
@@ -51,23 +53,26 @@ namespace QuickShare
                 uint resultCount = 0;
                 IEnumerable<I> result = null;
 
-                //dispatcher.RunAsync doesn't wait for task to be done, so we use this method instead.
-                await DispatcherEx.RunTaskAsync(dispatcher, async () =>
+                for (int i = 0; i < 5; i++)
                 {
-                    result = await source.GetPagedItems(currentPage++, itemsPerPage);
-
-                    if (result == null || result.Count() == 0)
+                    //dispatcher.RunAsync doesn't wait for task to be done, so we use this method instead.
+                    await DispatcherEx.RunTaskAsync(dispatcher, async () =>
                     {
-                        hasMoreItems = false;
-                    }
-                    else
-                    {
-                        resultCount = (uint)result.Count();
+                        result = await source.GetPagedItems(currentPage++, itemsPerPart);
 
-                        foreach (I item in result)
-                            this.Add(item);
-                    }
-                }, CoreDispatcherPriority.High);
+                        if (result == null || result.Count() == 0)
+                        {
+                            hasMoreItems = false;
+                        }
+                        else
+                        {
+                            resultCount = (uint)result.Count();
+
+                            foreach (I item in result)
+                                this.Add(item);
+                        }
+                    }, CoreDispatcherPriority.High);
+                }
                 return new LoadMoreItemsResult() { Count = resultCount };
             }).AsAsyncOperation<LoadMoreItemsResult>();
         }

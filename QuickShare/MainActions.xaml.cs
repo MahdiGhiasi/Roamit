@@ -66,27 +66,21 @@ namespace QuickShare
 
         private async Task InitPicturePicker()
         {
-            StorageFolder f = KnownFolders.PicturesLibrary;
-            List<StorageFile> files = (await f.GetFilesAsync(Windows.Storage.Search.CommonFileQuery.OrderByDate, 0, 3)).ToList();
-            List<BitmapImage> bitmaps = new List<BitmapImage>();
+            var thumbnails = MainPage.Current.PicturePickerItems;
 
-            foreach (var file in files)
+            while (thumbnails.Count == 0)
             {
-                var thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.SingleItem);
-                if (thumbnailStream != null)
-                {
-                    var image = new BitmapImage();
-                    await image.SetSourceAsync(thumbnailStream);
-                    bitmaps.Add(image);
-                }
+                await Task.Delay(100);
+                if (!thumbnails.HasMoreItems)
+                    return;
             }
 
-            if (bitmaps.Count >= 1)
-                img1.Source = bitmaps[0];
-            if (bitmaps.Count >= 2)
-                img2.Source = bitmaps[1];
-            if (bitmaps.Count >= 3)
-                img3.Source = bitmaps[2];
+            if (thumbnails.Count >= 1)
+                img1.Source = thumbnails[0].Thumbnail;
+            if (thumbnails.Count >= 2)
+                img2.Source = thumbnails[1].Thumbnail;
+            if (thumbnails.Count >= 3)
+                img3.Source = thumbnails[2].Thumbnail;
             imageShowStoryboard.Begin();
         }
 
