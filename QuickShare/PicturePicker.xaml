@@ -6,16 +6,29 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Page.Transitions>
-        <TransitionCollection>
-            <NavigationThemeTransition>
-                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                    <DrillInNavigationTransitionInfo />
-                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
-            </NavigationThemeTransition>
-        </TransitionCollection>
-    </Page.Transitions>
+    
     <Grid Background="Transparent">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SharedVisualStates">
+                <VisualState x:Name="DefaultLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1024" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="GridEntranceTransition.IsStaggeringEnabled" Value="False" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NarrowLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="GridEntranceTransition.IsStaggeringEnabled" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -28,21 +41,32 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Background="{ThemeResource AppBarBackground}">
                     <TextBlock Text="Recent photos" FontSize="18" Margin="16,12,0,12" FontWeight="Bold" />
+                    <Grid x:Name="ThumbnailItemSizeUnit" Width="140" Height="140" Visibility="Collapsed" />
                 </Grid>
                 <GridView x:Name="gridView" Grid.Row="1" SelectionMode="Multiple" IsMultiSelectCheckBoxEnabled="True" ItemsSource="{Binding Items, ElementName=page}">
                     <GridView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Width="140" Height="140">
+                            <Grid Width="{Binding Width, ElementName=ThumbnailItemSizeUnit}" Height="{Binding Height, ElementName=ThumbnailItemSizeUnit}">
                                 <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapGrid Orientation="Horizontal"
-                              HorizontalAlignment="Center"/>
+                            <ItemsWrapGrid Orientation="Horizontal"
+                                           HorizontalAlignment="Center" />
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition x:Name="GridEntranceTransition"  
+                                                     IsStaggeringEnabled="False"
+                                                     FromHorizontalOffset="-100"
+                                                     FromVerticalOffset="0" />
+                            <AddDeleteThemeTransition />
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
                 </GridView>
             </Grid>
             <Grid Grid.Row="1">

@@ -33,6 +33,8 @@ namespace QuickShare
         public PicturePicker()
         {
             this.InitializeComponent();
+
+            SetThumbnailsSize();
         }
 
         private void Send(IEnumerable<StorageFile> files)
@@ -68,6 +70,16 @@ namespace QuickShare
             {
                 Send(files);
             }
+        }
+
+        private void SetThumbnailsSize()
+        {
+            var initialSize = 140 + 4;
+
+            var count = Math.Floor((Window.Current.Content as Frame).ActualWidth / initialSize);
+
+            ThumbnailItemSizeUnit.Width = Math.Floor((Window.Current.Content as Frame).ActualWidth / count) - 4;
+            ThumbnailItemSizeUnit.Height = ThumbnailItemSizeUnit.Width;
         }
     }
 }
