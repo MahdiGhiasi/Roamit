@@ -47,6 +47,13 @@
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <Grid Width="{Binding Width, ElementName=ThumbnailItemSizeUnit}" Height="{Binding Height, ElementName=ThumbnailItemSizeUnit}">
+                                <Grid.Transitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition FromHorizontalOffset="-20"
+                                                                 FromVerticalOffset="0"
+                                                                 IsStaggeringEnabled="True" />
+                                    </TransitionCollection>
+                                </Grid.Transitions>
                                 <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                             </Grid>
                         </DataTemplate>
@@ -63,7 +70,6 @@
                                                      IsStaggeringEnabled="False"
                                                      FromHorizontalOffset="-100"
                                                      FromVerticalOffset="0" />
-                            <AddDeleteThemeTransition />
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
