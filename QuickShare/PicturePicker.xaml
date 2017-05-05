@@ -50,8 +50,7 @@
                                 <Grid.Transitions>
                                     <TransitionCollection>
                                         <EntranceThemeTransition FromHorizontalOffset="-20"
-                                                                 FromVerticalOffset="0"
-                                                                 IsStaggeringEnabled="True" />
+                                                                 FromVerticalOffset="0" />
                                     </TransitionCollection>
                                 </Grid.Transitions>
                                 <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
