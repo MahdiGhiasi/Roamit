@@ -74,7 +74,7 @@ namespace QuickShare
 
         private void SetThumbnailsSize()
         {
-            var initialSize = 140 + 4;
+            var initialSize = PicturePickerSource.ThumbnailSize + 4;
 
             var count = Math.Floor((Window.Current.Content as Frame).ActualWidth / initialSize);
 

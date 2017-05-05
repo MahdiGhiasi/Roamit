@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.Common;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace QuickShare
 {
     public class PicturePickerSource : IIncrementalSource<PicturePickerItem>
     {
+        public static uint ThumbnailSize = (uint)(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 140 : 160);
+
         private List<PicturePickerItem> allItems = new List<PicturePickerItem>();
         private bool isFillingList = false;
         int lastPageIndexLoaded = 0;
@@ -75,7 +78,7 @@ namespace QuickShare
 
             foreach (var file in files)
             {
-                var thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.SingleItem, 140);
+                var thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.SingleItem, PicturePickerSource.ThumbnailSize);
 
                 if (thumbnailStream != null)
                 {
