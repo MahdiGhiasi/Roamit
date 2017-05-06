@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
+    SizeChanged="Page_SizeChanged"
     MinWidth="150">
 
     <Page.Resources>
@@ -35,10 +36,12 @@
     
     <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid">
         <Grid x:Name="BlurGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" Background="#B1000000" Padding="0,36,0,0" />
-        <Grid x:Name="TitleBarGrid" Height="36" VerticalAlignment="Top">
-            <TextBlock Text="QuickShare" Margin="12,8,0,0" FontSize="12" Foreground="LightGray" />
-        </Grid>
+        <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" Background="#B1000000" Padding="{x:Bind ViewModel.FramePadding, Mode=OneWay}" />
+        <StackPanel x:Name="TitleBarStackPanel" Height="36" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="{x:Bind ViewModel.CustomTopBarVisibility, Mode=OneWay}">
+            <Grid Width="40" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.BackButtonPlaceholderVisibility, Mode=OneWay}"  />
+            <TextBlock Text="{x:Bind ViewModel.Caption, Mode=OneWay}"  FontSize="12" Foreground="LightGray" x:Name="TitleBarCaption" />
+            <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
+        </StackPanel>
 
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" x:Name="BottomBar">
             <StackPanel.RenderTransform>

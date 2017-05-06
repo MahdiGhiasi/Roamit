@@ -2,6 +2,7 @@
 using QuickShare.UWP.Rome;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Windows.UI.Xaml;
 
 namespace QuickShare
 {
@@ -43,6 +44,59 @@ namespace QuickShare
             }
         }
 
+        private string caption = "";
+        public string Caption
+        {
+            get { return caption; }
+            set
+            {
+                if (value.Length == 0)
+                    caption = "";
+                else
+                    caption = value + " - ‌"; //NOTE: This includes a NimFasele in the end of string.
+                OnPropertyChanged("Caption");
+            }
+        }
+
+        private Visibility backButtonPlaceholderVisibility;
+        public Visibility BackButtonPlaceholderVisibility
+        {
+            get { return backButtonPlaceholderVisibility; }
+            set
+            {
+                backButtonPlaceholderVisibility = value;
+                OnPropertyChanged("BackButtonPlaceholderVisibility");
+            }
+        }
+
+        private bool isAcrylicEnabled = false;
+        public bool IsAcrylicEnabled
+        {
+            get { return isAcrylicEnabled; }
+            set
+            {
+                isAcrylicEnabled = value;
+                OnPropertyChanged("IsAcrylicEnabled");
+                OnPropertyChanged("CustomTopBarVisibility");
+                OnPropertyChanged("FramePadding");
+            }
+        }
+
+        public Visibility CustomTopBarVisibility
+        {
+            get
+            {
+                return IsAcrylicEnabled ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public Thickness FramePadding
+        {
+            get
+            {
+                return IsAcrylicEnabled ? new Thickness(0, 30, 0, 0) : new Thickness(0, 0, 0, 0);
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

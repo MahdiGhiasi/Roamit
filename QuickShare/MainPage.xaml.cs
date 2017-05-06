@@ -103,9 +103,7 @@ namespace QuickShare
         {
             Debug.WriteLine("MainPage loaded begin");
 
-            //TODO: Check if supported (Creators + PC)
-            ApplyAcrylicAccent();
-            ApplyAcrylicAppBar();
+            InitAcrylicUI();
 
             ContentFrame.Navigate(typeof(MainActions));
 
@@ -124,6 +122,31 @@ namespace QuickShare
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                                                                                                           DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
             await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)27 : (uint)80);
+        }
+
+        int AcrylicStatus = -1;
+        private void InitAcrylicUI()
+        {
+            DeviceInfo.RefreshFormFactorType();
+            if ((DeviceInfo.SystemVersion > DeviceInfo.CreatorsUpdate) && (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop))
+            {
+                if (AcrylicStatus != 1)
+                {
+                    AcrylicStatus = 1;
+                    ApplyAcrylicAccent();
+                    ApplyAcrylicAppBar();
+                    ViewModel.IsAcrylicEnabled = true;
+                }
+            }
+            else
+            {
+                if (AcrylicStatus != 0)
+                {
+                    AcrylicStatus = 0;
+                    DisableAcrylicAppBar();
+                    ViewModel.IsAcrylicEnabled = false;
+                }
+            }
         }
 
         private void RemoteSystems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -161,9 +184,15 @@ namespace QuickShare
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
             if ((e.Content is MainActions) || (e.Content is MainSend))
+            {
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
+                ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;
+            }
             else
+            {
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Visible;
+                ViewModel.BackButtonPlaceholderVisibility = Visibility.Visible;
+            }
 
             if (e.Content is MainActions)
             {
@@ -198,8 +227,18 @@ namespace QuickShare
         {
             ApplicationViewTitleBar formattableTitleBar = ApplicationView.GetForCurrentView().TitleBar;
             formattableTitleBar.ButtonBackgroundColor = Colors.Transparent;
+            formattableTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
+        }
+
+        private void DisableAcrylicAppBar()
+        {
+            ApplicationViewTitleBar formattableTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+            formattableTitleBar.ButtonBackgroundColor = formattableTitleBar.BackgroundColor;
+            formattableTitleBar.ButtonInactiveBackgroundColor = formattableTitleBar.InactiveBackgroundColor;
+            CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = false;
         }
 
         private void ApplyAcrylicAccent()
@@ -214,5 +253,10 @@ namespace QuickShare
         }
         Compositor _compositor;
         SpriteVisual _hostSprite;
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            InitAcrylicUI();
+        }
     }
 }

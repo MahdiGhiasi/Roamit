@@ -54,6 +54,21 @@ namespace QuickShare.Common
             DeviceManufacturer = eas.SystemManufacturer;
             DeviceModel = eas.SystemProductName;
 
+            RefreshFormFactorType();
+        }
+        
+        public enum DeviceFormFactorType
+        {
+            Phone,
+            Desktop,
+            Tablet,
+            IoT,
+            SurfaceHub,
+            Other
+        }
+
+        internal static void RefreshFormFactorType()
+        {
             switch (AnalyticsInfo.VersionInfo.DeviceFamily)
             {
                 case "Windows.Mobile":
@@ -81,16 +96,6 @@ namespace QuickShare.Common
                     FormFactorType = DeviceFormFactorType.Other;
                     break;
             }
-        }
-        
-        public enum DeviceFormFactorType
-        {
-            Phone,
-            Desktop,
-            Tablet,
-            IoT,
-            SurfaceHub,
-            Other
         }
     }
 }
