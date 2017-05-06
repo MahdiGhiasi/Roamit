@@ -21,6 +21,8 @@ namespace QuickShare.Common
         public static string DeviceModel { get; }
         public static DeviceFormFactorType FormFactorType { get; set; }
 
+        public static Version CreatorsUpdate { get; } = new Version("10.0.15063.0");
+
         static DeviceInfo()
         {
             // get the system family name

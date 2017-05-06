@@ -23,9 +23,7 @@ namespace QuickShare.ToastNotifications
 
             //return;
 
-            Version creators = new Version("10.0.15063.0");
-
-            if (DeviceInfo.SystemVersion >= creators)
+            if (DeviceInfo.SystemVersion >= DeviceInfo.CreatorsUpdate)
             {
                 if (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone)
                     ShowFileReceiveProgressNotificationCreatorsForPhone(hostName, percent, guid);
