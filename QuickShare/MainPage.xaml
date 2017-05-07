@@ -34,7 +34,7 @@
         </ResourceDictionary>
     </Page.Resources>
     
-    <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid">
+    <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" common:SizeChange.IsEnabled="True">
         <Grid x:Name="BlurGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" Background="#B1000000" Padding="{x:Bind ViewModel.FramePadding, Mode=OneWay}" />
         <StackPanel x:Name="TitleBarStackPanel" Height="36" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="{x:Bind ViewModel.CustomTopBarVisibility, Mode=OneWay}">
@@ -69,7 +69,14 @@
                 </ContentControl>
                 <!--<Polygon Points="0,20 30,0, 30,20" Stroke="LightGray" Fill="LightGray" VerticalAlignment="Bottom" HorizontalAlignment="Right" />-->
             </Grid>
-            <ListView x:Name="devicesList" ItemsSource="{x:Bind ViewModel.DevicesList, Mode=OneWay}" Margin="0,0,0,0" SelectionChanged="devicesList_SelectionChanged" Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" Height="108" VerticalAlignment="Bottom" Opacity="0.9">
+            <ListView x:Name="devicesList" 
+                      ItemsSource="{x:Bind ViewModel.DevicesList, Mode=OneWay}" 
+                      Margin="0,0,0,0" 
+                      SelectionChanged="devicesList_SelectionChanged" 
+                      Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" 
+                      Height="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=108v(x-440)}" 
+                      VerticalAlignment="Bottom" 
+                      Opacity="0.9">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>

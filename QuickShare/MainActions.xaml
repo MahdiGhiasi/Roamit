@@ -166,7 +166,7 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Background="Transparent" x:Name="MainGrid" common:SizeChange.IsEnabled="True">
+    <Grid Background="Transparent" x:Name="MainGrid" common:SizeChange.IsEnabled="True" MinHeight="540">
         <Grid VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0">
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="dragDropTextTransform" />
