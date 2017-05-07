@@ -133,10 +133,10 @@ namespace QuickShare
                 if (AcrylicStatus != 1)
                 {
                     AcrylicStatus = 1;
-                    ApplyAcrylicAccent();
                     ApplyAcrylicAppBar();
                     ViewModel.IsAcrylicEnabled = true;
                 }
+                ApplyAcrylicAccent();
             }
             else
             {
