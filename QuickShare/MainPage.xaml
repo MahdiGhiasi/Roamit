@@ -74,7 +74,7 @@
                       Margin="0,0,0,0" 
                       SelectionChanged="devicesList_SelectionChanged" 
                       Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" 
-                      Height="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=108v(x-440)}" 
+                      Height="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=(108v(x-440))^70}" 
                       VerticalAlignment="Bottom" 
                       Opacity="0.9">
                 <ListView.ItemTemplate>
