@@ -213,11 +213,9 @@ namespace QuickShare
         private async void DiscoverDevices()
         {
             await PackageManager.InitializeDiscovery();
-            await Task.Delay(TimeSpan.FromSeconds(1));
-            ViewModel.ListManager.SelectHighScoreItem();
-            if (ViewModel.ListManager.SelectedRemoteSystem == null)
+            
+            while (ViewModel.ListManager.SelectedRemoteSystem == null)
             {
-                //Try again
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 ViewModel.ListManager.SelectHighScoreItem();
             }
