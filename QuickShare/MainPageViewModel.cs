@@ -69,6 +69,17 @@ namespace QuickShare
             }
         }
 
+        private bool isContentFrameEnabled = false;
+        public bool IsContentFrameEnabled
+        {
+            get { return isContentFrameEnabled; }
+            set
+            {
+                isContentFrameEnabled = value;
+                OnPropertyChanged("IsContentFrameEnabled");
+            }
+        }
+
         private bool isAcrylicEnabled = false;
         public bool IsAcrylicEnabled
         {

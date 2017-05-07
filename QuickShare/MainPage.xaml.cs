@@ -219,6 +219,8 @@ namespace QuickShare
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 ViewModel.ListManager.SelectHighScoreItem();
             }
+
+            ViewModel.IsContentFrameEnabled = true;
         }
 
         private void ApplyAcrylicAppBar()

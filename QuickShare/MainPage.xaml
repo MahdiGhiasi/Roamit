@@ -36,7 +36,7 @@
     
     <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" common:SizeChange.IsEnabled="True">
         <Grid x:Name="BlurGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" Background="#B1000000" Padding="{x:Bind ViewModel.FramePadding, Mode=OneWay}" />
+        <Frame x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Background="#B1000000" Padding="{x:Bind ViewModel.FramePadding, Mode=OneWay}" />
         <StackPanel x:Name="TitleBarStackPanel" Height="36" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="{x:Bind ViewModel.CustomTopBarVisibility, Mode=OneWay}">
             <Grid Width="40" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.BackButtonPlaceholderVisibility, Mode=OneWay}"  />
             <TextBlock Text="{x:Bind ViewModel.Caption, Mode=OneWay}"  FontSize="12" Foreground="LightGray" x:Name="TitleBarCaption" />
