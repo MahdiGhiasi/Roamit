@@ -22,6 +22,8 @@ namespace QuickShare.Rome
                     case "Mobile":
                     case "Phone":
                         return Char.ConvertFromUtf32(0xE8EA);
+                    case "Unknown":
+                        return Char.ConvertFromUtf32(0xEC64);
                     default:
                         return Char.ConvertFromUtf32(0xE7F8);
                 }
