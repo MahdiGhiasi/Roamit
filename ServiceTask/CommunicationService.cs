@@ -120,7 +120,7 @@ namespace QuickShare.ServiceTask
                         }
                 }
             }
-            /* else if (args.Request.Message.ContainsKey("Test"))
+             else if (args.Request.Message.ContainsKey("Test"))
              {
                  string s = args.Request.Message["Test"] as string;
 
@@ -133,16 +133,28 @@ namespace QuickShare.ServiceTask
 
                  await System.Threading.Tasks.Task.Delay(1500);
 
-                 ToastFunctions.SendToast(s);
+                 SendToast(s);
              }
              else if (args.Request.Message.ContainsKey("TestLongRunning"))
              {
                  for (int i = 0; i < 10000; i++)
                  {
-                     ToastFunctions.SendToast((i * 5).ToString() + " seconds");
-                     await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5));
+                     SendToast((i).ToString() + " seconds");
+                     await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1));
                  }
-             }*/
+             }
+        }
+
+        public static void SendToast(string text)
+        {
+            const Windows.UI.Notifications.ToastTemplateType toastTemplate = Windows.UI.Notifications.ToastTemplateType.ToastText01;
+            var toastXml = Windows.UI.Notifications.ToastNotificationManager.GetTemplateContent(toastTemplate);
+
+            var toastTextElements = toastXml.GetElementsByTagName("text");
+            toastTextElements[0].AppendChild(toastXml.CreateTextNode(text));
+
+            var toast = new Windows.UI.Notifications.ToastNotification(toastXml);
+            Windows.UI.Notifications.ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
         private AppServiceConnection notificationService = null;

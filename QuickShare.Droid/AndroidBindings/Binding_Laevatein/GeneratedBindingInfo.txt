@@ -1,0 +1,16 @@
+Binding for:
+jp.co.nohana:Laevatein:1.0.4
+
+Dependencies:
+
+Laevatein-1.0.4.aar,    Path=C:\Users\Mahdi\.gradle\caches\modules-2\files-2.1\jp.co.nohana\Laevatein\1.0.4\1e8c8ddca4598a45006f38abe081c3e3de7d8242\Laevatein-1.0.4.aar
+	appcompat-v7-22.0.0.aar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\appcompat-v7\22.0.0\appcompat-v7-22.0.0.aar
+	gridlayout-v7-19.0.0.aar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\gridlayout-v7\19.0.0\gridlayout-v7-19.0.0.aar
+	support-annotations-22.0.0.jar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\22.0.0\support-annotations-22.0.0.jar
+	support-v4-22.0.0.aar,    Path=C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-v4\22.0.0\support-v4-22.0.0.aar
+	CompoundContainers-1.0.0.aar,    Path=C:\Users\Mahdi\.gradle\caches\modules-2\files-2.1\com.github.keithyokoma\CompoundContainers\1.0.0\9f46b0e4ddfb962c58d4ba98c53a6f735fe09407\CompoundContainers-1.0.0.aar
+	picasso-2.5.2.jar,    Path=C:\Users\Mahdi\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar
+	library-1.0.2.aar,    Path=C:\Users\Mahdi\.gradle\caches\modules-2\files-2.1\it.sephiroth.android.library.easing\library\1.0.2\3049309611bd38595c98a69e166b9cf3c1fdc9c5\library-1.0.2.aar
+	library-1.0.4.aar,    Path=C:\Users\Mahdi\.gradle\caches\modules-2\files-2.1\it.sephiroth.android.library.imagezoom\library\1.0.4\807bc0fc99e546691b8c16b54e6c426864cb7602\library-1.0.4.aar
+	Amalgam-0.3.2.aar,    Path=C:\Users\Mahdi\.gradle\caches\modules-2\files-2.1\jp.co.nohana\Amalgam\0.3.2\42fd18725a5955d1d0c0927df35808167714027c\Amalgam-0.3.2.aar
+	AndroidDeviceCompatibility-1.0.0.aar,    Path=C:\Users\Mahdi\.gradle\caches\modules-2\files-2.1\jp.mixi\AndroidDeviceCompatibility\1.0.0\4960e46ea53904d5786cdd35585a57cc509ddf29\AndroidDeviceCompatibility-1.0.0.aar

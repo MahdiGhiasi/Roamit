@@ -11,7 +11,7 @@ namespace QuickShare.Common
         public Uri Url { get; set; }
         public string Host { get; set; }
         public string HttpMethod { get; set; }
-        public IDictionary<string, object> Headers { get; set; }
+        public IDictionary<string, string> Headers { get; set; }
         public Stream InputStream { get; set; }
         public string ProtocolVersion { get; set; }
         public bool KeepAlive { get; set; }

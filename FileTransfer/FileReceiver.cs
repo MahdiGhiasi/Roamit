@@ -21,9 +21,9 @@ namespace QuickShare.FileTransfer
         public static event ReceiveFileProgressEventHandler FileTransferProgress;
 
         static bool isQueue = false;
-        static ulong queueTotalSlices = 0;
-        static uint queueSlicesFinished = 0;
-        static uint queuedSlicesYet = 0;
+        static long queueTotalSlices = 0;
+        static int queueSlicesFinished = 0;
+        static int queuedSlicesYet = 0;
         static List<Dictionary<string, object>> queueItems = null;
         static string queueFinishUrl = "";
         static int filesCount = 0;
@@ -40,7 +40,7 @@ namespace QuickShare.FileTransfer
                 //Queue initialization
 
                 isQueue = true;
-                queueTotalSlices = (ulong)request["TotalSlices"];
+                queueTotalSlices = (long)request["TotalSlices"];
                 queueSlicesFinished = 0;
                 queuedSlicesYet = 0;
                 queueItems = new List<Dictionary<string, object>>();
@@ -51,7 +51,7 @@ namespace QuickShare.FileTransfer
                 returnVal = new Dictionary<string, object>();
                 returnVal.Add("QueueInitialized", "1");
 
-                requestGuid = (Guid)request["Guid"];
+                requestGuid = Guid.Parse(request["Guid"] as string);
                 senderName = (string)request["SenderName"];
 
                 /* TODO: Do this from outside of this function */
@@ -62,7 +62,7 @@ namespace QuickShare.FileTransfer
             else if (isQueue)
             {
                 //Queue data details
-                queuedSlicesYet += (uint)request["SlicesCount"];
+                queuedSlicesYet += (int)request["SlicesCount"];
                 queueItems.Add(request);
 
                 filesCount++;
@@ -79,7 +79,7 @@ namespace QuickShare.FileTransfer
             {
                 //Singular file
                 filesCount = 1;
-                requestGuid = (Guid)request["Guid"];
+                requestGuid = Guid.Parse(request["Guid"] as string);
                 senderName = (string)request["SenderName"];
 
                 DataStorageProviders.HistoryManager.Open();
@@ -144,7 +144,7 @@ namespace QuickShare.FileTransfer
                 await DownloadFile(item, downloadFolder);
             }
 
-            FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = queueTotalSlices, Total = queueTotalSlices, State = FileTransferState.Finished, Guid = requestGuid, SenderName = senderName, TotalFiles = filesCount });
+            FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = (ulong)queueTotalSlices, Total = (ulong)queueTotalSlices, State = FileTransferState.Finished, Guid = requestGuid, SenderName = senderName, TotalFiles = filesCount });
 
             DataStorageProviders.HistoryManager.Open();
             DataStorageProviders.HistoryManager.ChangeCompletedStatus(requestGuid, true);
@@ -175,7 +175,7 @@ namespace QuickShare.FileTransfer
 
             Debug.WriteLine("Receive begin");
 
-            var slicesCount = (uint)message["SlicesCount"];
+            var slicesCount = (int)message["SlicesCount"];
             var fileName = (string)message["FileName"];
             var dateModifiedMilliseconds = (long)message["DateModified"];
             var dateCreatedMilliseconds = (long)message["DateCreated"];
@@ -213,7 +213,7 @@ namespace QuickShare.FileTransfer
 
                     await stream.WriteAsync(buffer, 0, buffer.Length);
 
-                    InvokeProgressEvent(slicesCount, i, FileTransferState.DataTransfer);
+                    InvokeProgressEvent((uint)slicesCount, i, FileTransferState.DataTransfer);
                 }
 
                 await stream.FlushAsync();
@@ -227,7 +227,7 @@ namespace QuickShare.FileTransfer
 
             downloading.Remove(key);
 
-            InvokeFinishedEvent(slicesCount);
+            InvokeFinishedEvent((uint)slicesCount);
             await ReceiveSuccessful(serverIP, key);
         }
 
@@ -236,7 +236,7 @@ namespace QuickShare.FileTransfer
             if (!isQueue)
                 FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = currentFileSlicesCount, Total = currentFileSlicesCount, State = FileTransferState.Finished, Guid = requestGuid, SenderName = senderName, TotalFiles = filesCount });
             else
-                queueSlicesFinished += currentFileSlicesCount;
+                queueSlicesFinished += (int)currentFileSlicesCount;
         }
 
         private static void InvokeProgressEvent(uint currentFileSlicesCount, uint currentFileSlice, FileTransferState state)
@@ -257,7 +257,7 @@ namespace QuickShare.FileTransfer
             }
             else
             {
-                ea = new FileTransferProgressEventArgs { CurrentPart = queueSlicesFinished + currentFileSlice + 1, Total = queueTotalSlices, State = FileTransferState.QueueList, Guid = requestGuid, SenderName = senderName, TotalFiles = filesCount };
+                ea = new FileTransferProgressEventArgs { CurrentPart = (ulong)(queueSlicesFinished + currentFileSlice + 1), Total = (ulong)queueTotalSlices, State = FileTransferState.QueueList, Guid = requestGuid, SenderName = senderName, TotalFiles = filesCount };
                 System.Diagnostics.Debug.WriteLine(ea.CurrentPart + " / " + ea.Total);
             }
 

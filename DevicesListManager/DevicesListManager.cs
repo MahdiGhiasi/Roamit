@@ -108,7 +108,7 @@ namespace QuickShare.DevicesListManager
             foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
             {
                 if (item.Id != selected?.Id)
-                    RemoteSystems.Add(item);
+                    output.Add(item);
             }
 
             return output;
@@ -116,11 +116,14 @@ namespace QuickShare.DevicesListManager
 
         public void Sort()
         {
-            RemoteSystems.Clear();
-            foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
+            lock (RemoteSystems)
             {
-                if (item.Id != SelectedRemoteSystem?.Id)
-                    RemoteSystems.Add(item);
+                RemoteSystems.Clear();
+                foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
+                {
+                    if (item.Id != SelectedRemoteSystem?.Id)
+                        RemoteSystems.Add(item);
+                }
             }
         }
 

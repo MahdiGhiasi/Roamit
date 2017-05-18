@@ -79,41 +79,10 @@ namespace QuickShare
             base.OnNavigatedTo(e);
 
             var rs = MainPage.Current.GetSelectedSystem();
-            var result = await MainPage.Current.PackageManager.Connect(rs, true, new Uri("quickshare://wake"));
-            
-            if (result != RomeAppServiceConnectionStatus.Success)
-            {
-                await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
-                Frame.GoBack();
-                return;
-            }
 
             string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
             var mode = e.Parameter.ToString();
-            ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
-
-            if (mode == "text")
-            {
-                TextSender ts = new TextSender(MainPage.Current.PackageManager, deviceName);
-
-                ts.TextSendProgress += (ee) =>
-                {
-                    ViewModel.ProgressMaximum = ee.TotalParts;
-                    ViewModel.ProgressValue = ee.SentParts;
-                };
-
-                ViewModel.SendStatus = "Sending...";
-
-                bool sendResult = await ts.Send(SendDataTemporaryStorage.Text, ContentType.ClipboardContent);
-
-                if (sendResult)
-                    ViewModel.SendStatus = "Finished.";
-                else
-                    ViewModel.SendStatus = "Failed :(";
-
-                ViewModel.ProgressValue = ViewModel.ProgressMaximum;
-            }
-            else if (mode == "launchUri")
+            if (mode == "launchUri")
             {
                 var launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri);
 
@@ -122,90 +91,125 @@ namespace QuickShare
                 else
                     ViewModel.SendStatus = launchResult.ToString();
             }
-            else if (mode == "file")
+            else
             {
-                string sendingText = (SendDataTemporaryStorage.Files.Count == 1) ? "Sending file..." : "Sending files...";
-                ViewModel.SendStatus = "Preparing...";
+                var result = await MainPage.Current.PackageManager.Connect(rs, true, new Uri("quickshare://wake"));
 
-                bool failed = false;
-                string message = "";
-
-                using (FileSender fs = new FileSender(rs, 
-                                                      new QuickShare.UWP.WebServerGenerator(), 
-                                                      QuickShare.UWP.Rome.RomePackageManager.Instance, 
-                                                      FindMyIPAddresses(),
-                                                      deviceName))
+                if (result != RomeAppServiceConnectionStatus.Success)
                 {
-                    ViewModel.ProgressMaximum = 1;
-                    fs.FileTransferProgress += async (ss, ee) =>
+                    await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
+                    Frame.GoBack();
+                    return;
+                }
+
+                ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+
+                if (mode == "text")
+                {
+                    TextSender ts = new TextSender(MainPage.Current.PackageManager, deviceName);
+
+                    ts.TextSendProgress += (ee) =>
                     {
-                        if (ee.State == FileTransferState.Error)
-                        {
-                            failed = true;
-                            message = ee.Message;
-                        }
-                        else
-                        {
-                            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
-                            {
-                                ViewModel.SendStatus = sendingText;
-                                ViewModel.ProgressMaximum = (int)ee.Total + 1;
-                                ViewModel.ProgressValue = (int)ee.CurrentPart;
-                                ViewModel.ProgressIsIndeterminate = false;
-                            }, false);
-                        }
+                        ViewModel.ProgressMaximum = ee.TotalParts;
+                        ViewModel.ProgressValue = ee.SentParts;
                     };
 
-                    if (SendDataTemporaryStorage.Files.Count == 0)
-                    {
-                        ViewModel.SendStatus = "No files.";
-                        ViewModel.ProgressIsIndeterminate = false;
-                        return;
-                    }
-                    else if (SendDataTemporaryStorage.Files.Count == 1)
-                    {
-                        await Task.Run(async () =>
-                        {
-                            if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0])))
-                                failed = true;
-                        });
-                    }
+                    ViewModel.SendStatus = "Sending...";
+
+                    bool sendResult = await ts.Send(SendDataTemporaryStorage.Text, ContentType.ClipboardContent);
+
+                    if (sendResult)
+                        ViewModel.SendStatus = "Finished.";
                     else
-                    {
-                        await Task.Run(async () =>
-                        {
-                            if (!await fs.SendFiles(from x in SendDataTemporaryStorage.Files
-                                                    select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
-                                failed = true;
-                        });
-                    }
+                        ViewModel.SendStatus = "Failed :(";
 
                     ViewModel.ProgressValue = ViewModel.ProgressMaximum;
                 }
-
-                Dictionary<string, object> vs = new Dictionary<string, object>();
-                vs.Add("Receiver", "System");
-                vs.Add("FinishService", "FinishService");
-                await MainPage.Current.PackageManager.Send(vs);
-
-                if (failed)
+                else if (mode == "file")
                 {
-                    ViewModel.SendStatus = "Failed.";
-                    await (new MessageDialog("Send failed.\r\n\r\n" + message)).ShowAsync();
+                    string sendingText = (SendDataTemporaryStorage.Files.Count == 1) ? "Sending file..." : "Sending files...";
+                    ViewModel.SendStatus = "Preparing...";
+
+                    bool failed = false;
+                    string message = "";
+
+                    using (FileSender fs = new FileSender(rs,
+                                                          new QuickShare.UWP.WebServerGenerator(),
+                                                          QuickShare.UWP.Rome.RomePackageManager.Instance,
+                                                          FindMyIPAddresses(),
+                                                          deviceName))
+                    {
+                        ViewModel.ProgressMaximum = 1;
+                        fs.FileTransferProgress += async (ss, ee) =>
+                        {
+                            if (ee.State == FileTransferState.Error)
+                            {
+                                failed = true;
+                                message = ee.Message;
+                            }
+                            else
+                            {
+                                await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
+                                {
+                                    ViewModel.SendStatus = sendingText;
+                                    ViewModel.ProgressMaximum = (int)ee.Total + 1;
+                                    ViewModel.ProgressValue = (int)ee.CurrentPart;
+                                    ViewModel.ProgressIsIndeterminate = false;
+                                }, false);
+                            }
+                        };
+
+                        if (SendDataTemporaryStorage.Files.Count == 0)
+                        {
+                            ViewModel.SendStatus = "No files.";
+                            ViewModel.ProgressIsIndeterminate = false;
+                            return;
+                        }
+                        else if (SendDataTemporaryStorage.Files.Count == 1)
+                        {
+                            await Task.Run(async () =>
+                            {
+                                if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0])))
+                                    failed = true;
+                            });
+                        }
+                        else
+                        {
+                            await Task.Run(async () =>
+                            {
+                                if (!await fs.SendFiles(from x in SendDataTemporaryStorage.Files
+                                                        select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
+                                    failed = true;
+                            });
+                        }
+
+                        ViewModel.ProgressValue = ViewModel.ProgressMaximum;
+                    }
+
+                    Dictionary<string, object> vs = new Dictionary<string, object>();
+                    vs.Add("Receiver", "System");
+                    vs.Add("FinishService", "FinishService");
+                    await MainPage.Current.PackageManager.Send(vs);
+
+                    if (failed)
+                    {
+                        ViewModel.SendStatus = "Failed.";
+                        await (new MessageDialog("Send failed.\r\n\r\n" + message)).ShowAsync();
+                    }
+                    else
+                    {
+                        ViewModel.SendStatus = "Finished.";
+                    }
+                }
+                else if (mode == "folder")
+                {
+
                 }
                 else
                 {
-                    ViewModel.SendStatus = "Finished.";
+                    await (new MessageDialog("MainSend::Invalid parameter.")).ShowAsync();
+                    Frame.GoBack();
                 }
-            }
-            else if (mode == "folder")
-            {
-
-            }
-            else
-            {
-                await (new MessageDialog("MainSend::Invalid parameter.")).ShowAsync();
-                Frame.GoBack();
             }
         }
     }

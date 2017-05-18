@@ -70,5 +70,79 @@ namespace QuickShare.Droid.RomeComponent
             else
                 return NormalizedRemoteSystemStatus.Unknown;
         }
+
+        public static RomeAppServiceConnectionStatus ConvertToRomeAppServiceConnectionStatus(this AppServiceClientConnectionStatus status)
+        {
+            if (status.Value == AppServiceClientConnectionStatus.AppNotInstalled.Value)
+                return RomeAppServiceConnectionStatus.AppNotInstalled;
+            else if (status.Value == AppServiceClientConnectionStatus.AppserviceUnavailable.Value)
+                return RomeAppServiceConnectionStatus.AppServiceUnavailable;
+            else if (status.Value == AppServiceClientConnectionStatus.AppUnavailable.Value)
+                return RomeAppServiceConnectionStatus.AppUnavailable;
+            else if (status.Value == AppServiceClientConnectionStatus.NotAuthorized.Value)
+                return RomeAppServiceConnectionStatus.NotAuthorized;
+            else if (status.Value == AppServiceClientConnectionStatus.RemoteSystemNotSupportedbyapp.Value)
+                return RomeAppServiceConnectionStatus.RemoteSystemNotSupportedByApp;
+            else if (status.Value == AppServiceClientConnectionStatus.RemoteSystemUnavailable.Value)
+                return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
+            else if (status.Value == AppServiceClientConnectionStatus.Success.Value)
+                return RomeAppServiceConnectionStatus.Success;
+            else if (status.Value == AppServiceClientConnectionStatus.Unknown.Value)
+                return RomeAppServiceConnectionStatus.Unknown;
+            else
+                return RomeAppServiceConnectionStatus.Unknown;
+        }
+
+        public static Bundle ConvertToBundle(this Dictionary<string, object> data)
+        {
+            var bundle = new Bundle();
+            foreach (var item in data)
+            {
+                if (item.Value.GetType() == typeof(int))
+                    bundle.PutInt(item.Key, (int)item.Value);
+                else if (item.Value.GetType() == typeof(long))
+                    bundle.PutLong(item.Key, (long)item.Value);
+                else if (item.Value.GetType() == typeof(string))
+                    bundle.PutString(item.Key, (string)item.Value);
+                else
+                    throw new NotSupportedException($"Adding data {item.Value.ToString()} with type {item.Value.GetType().Name} to Bundle is not supported.");
+            }
+
+            return bundle;
+        }
+
+        public static RomeAppServiceResponse ConvertToRomeAppServiceResponse(this AppServiceClientResponse response)
+        {
+            var output = new RomeAppServiceResponse();
+
+            if (response.Status.Value == AppServiceResponseStatus.Failure.Value)
+                output.Status = RomeAppServiceResponseStatus.Failure;
+            else if (response.Status.Value == AppServiceResponseStatus.MessageSizeTooLarge.Value)
+                output.Status = RomeAppServiceResponseStatus.MessageSizeTooLarge;
+            else if (response.Status.Value == AppServiceResponseStatus.RemoteSystemUnavailable.Value)
+                output.Status = RomeAppServiceResponseStatus.RemoteSystemUnavailable;
+            else if (response.Status.Value == AppServiceResponseStatus.ResourceLimitsExceeded.Value)
+                output.Status = RomeAppServiceResponseStatus.ResourceLimitsExceeded;
+            else if (response.Status.Value == AppServiceResponseStatus.Success.Value)
+                output.Status = RomeAppServiceResponseStatus.Success;
+            else if (response.Status.Value == AppServiceResponseStatus.Unknown.Value)
+                output.Status = RomeAppServiceResponseStatus.Unknown;
+            else 
+                output.Status = RomeAppServiceResponseStatus.Unknown;
+
+            foreach (var key in response.Message.KeySet())
+            {
+                var item = response.Message.Get(key);
+
+                if (item.Class.Name == "int")
+                    output.Message.Add(key, (int)item);
+                else if (item.Class.Name == "string")
+                    output.Message.Add(key, (string)item);
+                else
+                    throw new NotSupportedException($"Reading data type {item.Class.Name} from Bundle is not supported.");
+            }
+
+            return output;
+        }
     }
 }

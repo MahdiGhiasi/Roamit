@@ -267,10 +267,10 @@ namespace QuickShare.FileTransfer
             Dictionary<string, object> qInit = new Dictionary<string, object>();
             qInit.Add("Receiver", "FileReceiver");
             qInit.Add("Type", "QueueInit");
-            qInit.Add("TotalSlices", totalSlices);
+            qInit.Add("TotalSlices", (long)totalSlices);
             qInit.Add("QueueFinishKey", queueFinishKey);
             qInit.Add("ServerIP", ipFinderResult.MyIP);
-            qInit.Add("Guid", Guid.NewGuid());
+            qInit.Add("Guid", Guid.NewGuid().ToString());
             qInit.Add("SenderName", deviceName);
             qInit.Add("parentDirectoryName", parentDirectoryName);
 
@@ -290,7 +290,7 @@ namespace QuickShare.FileTransfer
             Dictionary<string, object> vs = new Dictionary<string, object>();
             vs.Add("Receiver", "FileReceiver");
             vs.Add("DownloadKey", key);
-            vs.Add("SlicesCount", slicesCount);
+            vs.Add("SlicesCount", (int)slicesCount);
             vs.Add("FileName", fileName);
             vs.Add("DateModified", properties.LastWriteTime.ToUnixTimeMilliseconds());
             vs.Add("DateCreated", properties.CreationTime.ToUnixTimeMilliseconds());
@@ -300,7 +300,7 @@ namespace QuickShare.FileTransfer
 
             if (!isQueue)
             {
-                vs.Add("Guid", Guid.NewGuid());
+                vs.Add("Guid", Guid.NewGuid().ToString());
                 vs.Add("SenderName", deviceName);
             }
 

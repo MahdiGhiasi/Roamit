@@ -90,7 +90,10 @@ namespace QuickShare.FileTransfer
                 };
             }
 
-            IPDetectionCompleted?.Invoke(this, ea);
+            Task.Run(() =>
+            {
+                IPDetectionCompleted?.Invoke(this, ea);
+            });
 
             return "success";
         }

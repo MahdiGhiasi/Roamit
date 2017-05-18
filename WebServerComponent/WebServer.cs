@@ -79,7 +79,7 @@ namespace QuickShare.UWP
             {
                 RequestDetails rd = new RequestDetails
                 {
-                    Headers = new Dictionary<string, object>(e.Request.Headers),
+                    Headers = new Dictionary<string, string>(e.Request.Headers.Select(x => new KeyValuePair<string, string>(x.Key, x.Value.ToString())).ToDictionary(x => x.Key, x => x.Value)),
                     Host = e.Request.Host,
                     HttpMethod = e.Request.HttpMethod,
                     InputStream = e.Request.InputStream,

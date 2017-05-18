@@ -9,7 +9,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Java.Lang;
 using Microsoft.ConnectedDevices;
+using QuickShare.DevicesListManager;
 
 namespace QuickShare.Droid
 {
@@ -20,7 +22,24 @@ namespace QuickShare.Droid
 
         public override string this[int position]
         {
-            get { return listManager.RemoteSystems[position].DisplayName; }
+            get
+            {
+                try
+                {
+                    string s;
+                    lock (listManager.RemoteSystems)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Fetching item #{position}");
+                        s = listManager.RemoteSystems[position].DisplayName;
+                        System.Diagnostics.Debug.WriteLine($"Fetched item # {position}.");
+                    }
+                    return s;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
         }
 
         public override int Count
@@ -47,6 +66,11 @@ namespace QuickShare.Droid
         public override long GetItemId(int position)
         {
             return position;
+        }
+
+        public NormalizedRemoteSystem GetItemFromId(long id)
+        {
+            return listManager.RemoteSystems[(int)id];
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)

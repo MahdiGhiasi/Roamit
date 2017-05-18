@@ -44,30 +44,75 @@
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ConnectedDevices.Xamarin.Droid, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ConnectedDevices.Xamarin.Droid.0.2.2\lib\monoandroid44\Microsoft.ConnectedDevices.Xamarin.Droid.dll</HintPath>
+    <Reference Include="LiteDB, Version=3.1.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.3.1.0\lib\netstandard1.4\LiteDB.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.WebUtilities, Version=1.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.WebUtilities.1.1.2-rtm-201704210746\lib\netstandard1.3\Microsoft.AspNetCore.WebUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ConnectedDevices.Xamarin.Droid, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ConnectedDevices.Xamarin.Droid.0.4.0\lib\MonoAndroid44\Microsoft.ConnectedDevices.Xamarin.Droid.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.Primitives, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.1.1.1\lib\netstandard1.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Net.Http.Headers, Version=1.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.Headers.1.1.2\lib\netstandard1.1\Microsoft.Net.Http.Headers.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage">
+      <HintPath>..\PCLStorageEx-NetStandard1.2\Android\PCLStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage.Abstractions">
+      <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.FilePicker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xam.Plugin.FilePicker.1.1.0\lib\MonoAndroid10\Plugin.FilePicker.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.FilePicker.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xam.Plugin.FilePicker.1.1.0\lib\MonoAndroid10\Plugin.FilePicker.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.3.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.3.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.4.3.1\lib\netstandard1.0\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common.cs" />
     <Compile Include="DevicesListAdapter.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MsaWebViewClient.cs" />
+    <Compile Include="NetworkHelper.cs" />
     <Compile Include="RemoteSystemNormalizer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SendPageActivity.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\layout\SendPage.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml">
@@ -84,6 +129,14 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Binding_Filepicker\Binding_Filepicker.csproj">
+      <Project>{d1ef6f83-0ff5-49c9-9b93-d206522a68fb}</Project>
+      <Name>Binding_Filepicker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{E9E7916C-D4FD-4B08-B904-3BCAE5DE1AF0}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Droid.RomeComponent\Droid.RomeComponent.csproj">
       <Project>{2894cf75-2ea2-4b83-9238-06525eee443d}</Project>
       <Name>Droid.RomeComponent</Name>
@@ -91,6 +144,18 @@
     <ProjectReference Include="..\DevicesListManager\DevicesListManager.csproj">
       <Project>{3085ef40-87c7-4b3b-929c-50e6a15fc42b}</Project>
       <Name>DevicesListManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Droid.WebServerComponent\Droid.WebServerComponent.csproj">
+      <Project>{a05c876f-9767-48a4-817d-8e19551a6db6}</Project>
+      <Name>Droid.WebServerComponent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileTransfer\FileTransfer.csproj">
+      <Project>{d78fdfff-e82c-4e9c-b78f-54e1d924d49f}</Project>
+      <Name>FileTransfer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TextTransfer\TextTransfer.csproj">
+      <Project>{7B9A3000-AAA1-4EBC-8AEE-68B24E1C1543}</Project>
+      <Name>TextTransfer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

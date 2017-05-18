@@ -7,17 +7,34 @@
         android:text="Send file"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button2" />
+        android:id="@+id/mainSendFile" />
+    <Button
+        android:text="Send picture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/mainSendPicture" />
     <Button
         android:text="send clipboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button1" />
+        android:id="@+id/mainSendClipboard" />
     <Button
-        android:text="Button"
+        android:text="Launch test Url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/button3" />
+    <TextView
+        android:text="Selected Device:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2" />
+    <TextView
+        android:text="Nothing"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/selectedDeviceName" />
     <TextView
         android:text="Devices:"
         android:textAppearance="?android:attr/textAppearanceMedium"
