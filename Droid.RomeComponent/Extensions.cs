@@ -130,16 +130,26 @@ namespace QuickShare.Droid.RomeComponent
             else 
                 output.Status = RomeAppServiceResponseStatus.Unknown;
 
+            output.Message = new Dictionary<string, object>();
             foreach (var key in response.Message.KeySet())
             {
                 var item = response.Message.Get(key);
-
-                if (item.Class.Name == "int")
+                if (item == null)
+                    continue;
+                
+                if (item.Class.Name == "java.lang.Integer")
                     output.Message.Add(key, (int)item);
-                else if (item.Class.Name == "string")
+                else if (item.Class.Name == "java.lang.String")
                     output.Message.Add(key, (string)item);
+                else if (item.Class.Name == "java.lang.Long")
+                    output.Message.Add(key, (long)item);
+                else if (item.Class.Name == "java.lang.Float")
+                    output.Message.Add(key, (float)item);
+                else if (item.Class.Name == "java.lang.Double")
+                    output.Message.Add(key, (double)item);
                 else
                     throw new NotSupportedException($"Reading data type {item.Class.Name} from Bundle is not supported.");
+                
             }
 
             return output;
