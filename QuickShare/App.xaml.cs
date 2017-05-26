@@ -227,6 +227,9 @@ namespace QuickShare
         private AppServiceConnection appServiceConnection;
         private BackgroundTaskDeferral appServiceDeferral;
 
+        private AppServiceConnection messageCarrierAppServiceConnection;
+        private BackgroundTaskDeferral messageCarrierAppServiceDeferral;
+
         protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
             base.OnBackgroundActivated(args);
@@ -241,6 +244,14 @@ namespace QuickShare
                 appServiceConnection = appService.AppServiceConnection;
                 appServiceConnection.RequestReceived += OnAppServiceRequestReceived;
                 appServiceConnection.ServiceClosed += AppServiceConnection_ServiceClosed;
+            }
+            else if (appService?.Name == "com.quickshare.messagecarrierservice")
+            {
+                messageCarrierAppServiceDeferral = taskInstance.GetDeferral();
+                taskInstance.Canceled += OnMessageCarrierAppServicesCanceled;
+                messageCarrierAppServiceConnection = appService.AppServiceConnection;
+                messageCarrierAppServiceConnection.RequestReceived += OnMessageCarrierAppServiceRequestReceived;
+                messageCarrierAppServiceConnection.ServiceClosed += MessageCarrierAppServiceConnection_ServiceClosed;
             }
         }
 
@@ -279,6 +290,25 @@ namespace QuickShare
         private void AppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             appServiceDeferral.Complete();
+        }
+
+        private void MessageCarrierAppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+        {
+            messageCarrierAppServiceDeferral.Complete();
+        }
+
+        private void OnMessageCarrierAppServicesCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            messageCarrierAppServiceDeferral.Complete();
+        }
+
+        private async void OnMessageCarrierAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+            
+            await MainPage.Current.PackageManager.MessageCarrierReceivedAsync(args.Request);
+
+            deferral.Complete();
         }
     }
 }
