@@ -13,6 +13,7 @@ using Android.Content;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using QuickShare.Droid.Services;
 
 namespace QuickShare.Droid
 {
@@ -34,6 +35,10 @@ namespace QuickShare.Droid
 
             Common.PackageManager = new RomePackageManager(this);
             Common.PackageManager.Initialize("com.quickshare.service");
+
+            Common.MessageCarrierPackageManager = new RomePackageManager(this);
+            Common.MessageCarrierPackageManager.Initialize("com.quickshare.messagecarrierservice");
+            
             Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
             devicesAdapter = new DevicesListAdapter(this, Common.ListManager);
@@ -45,10 +50,16 @@ namespace QuickShare.Droid
             InitDiscovery();
 
             FindViewById<Button>(Resource.Id.button3).Click += Button3_Click;
+            FindViewById<Button>(Resource.Id.mainSendMessageCarrier).Click += SendMessageCarrier_Click;
             FindViewById<Button>(Resource.Id.mainSendClipboard).Click += SendClipboard_Click;
             FindViewById<Button>(Resource.Id.mainSendFile).Click += SendFile_Click;
 
             //InitWebServer();
+        }
+
+        private void SendMessageCarrier_Click(object sender, EventArgs e)
+        {
+            StartService(new Intent(this, typeof(MessageCarrierService)));
         }
 
         private void SendFile_Click(object sender, EventArgs e)
@@ -133,6 +144,7 @@ namespace QuickShare.Droid
         {
             Platform.FetchAuthCode += Platform_FetchAuthCode;
             await Common.PackageManager.InitializeDiscovery();
+            await Common.MessageCarrierPackageManager.InitializeDiscovery();
         }
 
         private void RemoteSystems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -152,6 +164,11 @@ namespace QuickShare.Droid
 
         private void Platform_FetchAuthCode(string oauthUrl)
         {
+            if (!oauthUrl.ToLower().Contains("user.read"))
+                oauthUrl = oauthUrl.Replace("&scope=", "&scope=User.Read+");
+            if (!oauthUrl.ToLower().Contains("device.read"))
+                oauthUrl = oauthUrl.Replace("&scope=", "&scope=Device.Read+");
+
             _authDialog = new Dialog(this);
 
             var linearLayout = new LinearLayout(_authDialog.Context);
@@ -163,7 +180,7 @@ namespace QuickShare.Droid
             _webView.Settings.JavaScriptEnabled = true;
             _webView.Settings.DomStorageEnabled = true;
             _webView.LoadUrl(oauthUrl);
-
+            
             _webView.SetWebViewClient(new MsaWebViewClient(this));
             _authDialog.Show();
             _authDialog.SetCancelable(true);

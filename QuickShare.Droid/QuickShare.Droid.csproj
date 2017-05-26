@@ -103,6 +103,7 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendPageActivity.cs" />
+    <Compile Include="Services\MessageCarrierService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -136,6 +137,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{E9E7916C-D4FD-4B08-B904-3BCAE5DE1AF0}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataStore\DataStore.csproj">
+      <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
+      <Name>DataStore</Name>
     </ProjectReference>
     <ProjectReference Include="..\Droid.RomeComponent\Droid.RomeComponent.csproj">
       <Project>{2894cf75-2ea2-4b83-9238-06525eee443d}</Project>

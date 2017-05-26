@@ -23,6 +23,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/button3" />
+    <Button
+        android:text="Send message carrier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/mainSendMessageCarrier" />
     <TextView
         android:text="Selected Device:"
         android:textAppearance="?android:attr/textAppearanceMedium"

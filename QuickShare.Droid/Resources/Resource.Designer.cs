@@ -207,8 +207,8 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f090009
 			public const int linearLayout = 2131296265;
 			
-			// aapt resource value: 0x7f09001a
-			public const int listView1 = 2131296282;
+			// aapt resource value: 0x7f09001b
+			public const int listView1 = 2131296283;
 			
 			// aapt resource value: 0x7f090015
 			public const int mainSendClipboard = 2131296277;
@@ -216,35 +216,38 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f090013
 			public const int mainSendFile = 2131296275;
 			
+			// aapt resource value: 0x7f090017
+			public const int mainSendMessageCarrier = 2131296279;
+			
 			// aapt resource value: 0x7f090014
 			public const int mainSendPicture = 2131296276;
 			
 			// aapt resource value: 0x7f090000
 			public const int multi_mode = 2131296256;
 			
-			// aapt resource value: 0x7f09001d
-			public const int previewImageView = 2131296285;
+			// aapt resource value: 0x7f09001e
+			public const int previewImageView = 2131296286;
 			
 			// aapt resource value: 0x7f09000b
 			public const int select = 2131296267;
 			
-			// aapt resource value: 0x7f090018
-			public const int selectedDeviceName = 2131296280;
+			// aapt resource value: 0x7f090019
+			public const int selectedDeviceName = 2131296281;
+			
+			// aapt resource value: 0x7f09001d
+			public const int sendProgress = 2131296285;
 			
 			// aapt resource value: 0x7f09001c
-			public const int sendProgress = 2131296284;
-			
-			// aapt resource value: 0x7f09001b
-			public const int sendStatus = 2131296283;
+			public const int sendStatus = 2131296284;
 			
 			// aapt resource value: 0x7f090001
 			public const int single_mode = 2131296257;
 			
-			// aapt resource value: 0x7f090019
-			public const int textView1 = 2131296281;
+			// aapt resource value: 0x7f09001a
+			public const int textView1 = 2131296282;
 			
-			// aapt resource value: 0x7f090017
-			public const int textView2 = 2131296279;
+			// aapt resource value: 0x7f090018
+			public const int textView2 = 2131296280;
 			
 			// aapt resource value: 0x7f09000e
 			public const int title = 2131296270;

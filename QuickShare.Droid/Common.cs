@@ -18,12 +18,20 @@ namespace QuickShare.Droid
     internal static class Common
     {
         internal static RomePackageManager PackageManager { get; set; }
+        internal static RomePackageManager MessageCarrierPackageManager { get; set; }
         internal static DevicesListManager.DevicesListManager ListManager { get; } = new DevicesListManager.DevicesListManager("", new RemoteSystemNormalizer());
 
         internal static RemoteSystem GetCurrentRemoteSystem()
         {
             var nrs = Common.ListManager.SelectedRemoteSystem;
             var rs = Common.PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == nrs?.Id);
+            return rs;
+        }
+
+        internal static RemoteSystem GetCurrentRemoteSystemForMessageCarrier()
+        {
+            var nrs = Common.ListManager.SelectedRemoteSystem;
+            var rs = Common.MessageCarrierPackageManager.RemoteSystems.FirstOrDefault(x => x.Id == nrs?.Id);
             return rs;
         }
 
