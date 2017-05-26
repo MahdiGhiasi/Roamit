@@ -108,6 +108,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DispatcherEx.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="PackageManagerSendQueueItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteSystemKindToIconConverter.cs" />
     <Compile Include="RemoteSystemProximityToIconConverter.cs" />

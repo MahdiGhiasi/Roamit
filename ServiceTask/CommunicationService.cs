@@ -107,6 +107,7 @@ namespace QuickShare.ServiceTask
                 else if (receiver == "System")
                 {
                     if (args.Request.Message.ContainsKey("FinishService"))
+                    {
                         if (_deferral != null)
                         {
                             System.Diagnostics.Debug.WriteLine("Let's say goodbye");
@@ -118,6 +119,11 @@ namespace QuickShare.ServiceTask
                             _appServiceconnection.Dispose();
                             _deferral.Complete();
                         }
+                    }
+                    else if ((args.Request.Message.ContainsKey("Task")) && (args.Request.Message["Task"] as string == "MessageCarrier"))
+                    {
+                        
+                    }
                 }
             }
              else if (args.Request.Message.ContainsKey("Test"))
