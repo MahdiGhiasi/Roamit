@@ -86,7 +86,7 @@
                                         <TextBlock FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
                                         <TextBlock FontFamily="Segoe MDL2 Assets" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
                                     </Grid>
-                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"></TextBlock>
+                                    <TextBlock Text="{Binding Id}" VerticalAlignment="Center"></TextBlock>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -103,5 +103,47 @@
                 </ListView.ItemsPanel>
             </ListView>
         </StackPanel>
+
+        <Grid x:Name="Overlay" 
+              Background="{Binding Source={ThemeResource ApplicationPageBackgroundThemeBrush}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.5}">
+            <Grid x:Name="SignInNotice" 
+                  Background="{Binding Source={ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.7}"
+                  MaxWidth="500" 
+                  Padding="16,24,16,24"
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Center">
+                <StackPanel>
+                    <Grid Height="100">
+                        <!-- Will put Android+Windows logos here -->
+                    </Grid>
+                    <TextBlock TextWrapping="Wrap" 
+                               Text="We've noticed that you have one or more Android devices connected to your Microsoft account." />
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="0,8,0,0"
+                               Text="Would you like QuickShare to be able to send and receive content between your Windows and Android devices?" />
+
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="0,32,0,0"
+                               Opacity="0.7"
+                               Text="QuickShare will use your Microsoft ID to connect your Android and Windows devices through its servers." />
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="0,8,0,0"
+                               Opacity="0.7"
+                               Text="See our privacy policy in the Settings page for more information." />
+
+                    <Grid Margin="0,40,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Yes" Tapped="Authenticate_Tapped" Margin="2" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
+                        <Button Content="No" Margin="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    </Grid>
+                    <!--<Button Content="No, and don't ask again" Margin="2,8,2,2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />-->
+                    <TextBlock Text="You can enable this later in settings" Opacity="0.4" TextAlignment="Center" Margin="0,4,0,0" />
+
+                </StackPanel>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>

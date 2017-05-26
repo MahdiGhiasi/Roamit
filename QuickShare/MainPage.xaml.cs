@@ -20,6 +20,8 @@ using System.Numerics;
 using Windows.UI.ViewManagement;
 using Windows.UI;
 using Windows.ApplicationModel.Core;
+using QuickShare.MicrosoftGraphFunctions;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -254,9 +256,20 @@ namespace QuickShare
         Compositor _compositor;
         SpriteVisual _hostSprite;
 
+        private void ApplyFlyoutBlurEffect()
+        {
+
+        }
+
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             InitAcrylicUI();
+        }
+
+        private async void Authenticate_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var graph = new Graph(await MSAAuthenticator.GetAccessTokenAsync("User.Read"));
+            await (new MessageDialog(await graph.GetUserUniqueIdAsync())).ShowAsync();
         }
     }
 }

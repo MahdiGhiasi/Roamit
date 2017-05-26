@@ -16,10 +16,11 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>QuickShare_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>QuickShare_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>A5BB95FAF6C7FAD857E22AA5229FBA06320009B8</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -98,6 +99,7 @@
       <DependentUpon>ClipboardReceive.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelperClasses\LaunchOperations.cs" />
+    <Compile Include="HelperClasses\MSAAuthenticator.cs" />
     <Compile Include="HelperClasses\VisualChildFinder.cs" />
     <Compile Include="MainPageViewModel.cs" />
     <Compile Include="MainSendViewModel.cs" />
@@ -144,9 +146,11 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="QuickShare_StoreKey.pfx" />
     <None Include="QuickShare_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -202,6 +206,10 @@
     <ProjectReference Include="..\FileTransfer\FileTransfer.csproj">
       <Project>{d78fdfff-e82c-4e9c-b78f-54e1d924d49f}</Project>
       <Name>FileTransfer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MicrosoftGraphFunctions\MicrosoftGraphFunctions.csproj">
+      <Project>{a636d1d4-eaf4-434c-a443-c7580f51a97f}</Project>
+      <Name>MicrosoftGraphFunctions</Name>
     </ProjectReference>
     <ProjectReference Include="..\RomeComponent\RomeComponent.csproj">
       <Project>{dbf6ee00-7c48-4e1d-baba-5be9b42b186b}</Project>
