@@ -89,10 +89,19 @@ namespace QuickShare
 
         private void PasteToClipboard()
         {
-            DataPackage content = new DataPackage();
-            content.SetText(viewModel["ClipboardContent"] as string);
+            try
+            {
+                DataPackage content = new DataPackage();
+                content.SetText(viewModel["ClipboardContent"] as string);
 
-            Clipboard.SetContent(content);
+                Clipboard.SetContent(content);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                //Clipboard access is denied. will try again when app activated.
+                pendingPaste = true;
+                return;
+            }
 
             Debug.WriteLine($"clipboard set to {viewModel["ClipboardContent"] as string}");
 
