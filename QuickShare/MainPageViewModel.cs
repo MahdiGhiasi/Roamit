@@ -69,6 +69,29 @@ namespace QuickShare
             }
         }
 
+        private Visibility signInNoticeVisibility = Visibility.Collapsed;
+        public Visibility SignInNoticeVisibility
+        {
+            get { return signInNoticeVisibility; }
+            set
+            {
+                signInNoticeVisibility = value;
+                OnPropertyChanged("SignInNoticeVisibility");
+                OnPropertyChanged("OverlayVisibility");
+            }
+        }
+
+        public Visibility OverlayVisibility
+        {
+            get
+            {
+                if (signInNoticeVisibility == Visibility.Visible)
+                    return Visibility.Visible;
+
+                return Visibility.Collapsed;
+            }
+        }
+
         private bool isContentFrameEnabled = false;
         public bool IsContentFrameEnabled
         {

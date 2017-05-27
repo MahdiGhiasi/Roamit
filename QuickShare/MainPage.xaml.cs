@@ -22,6 +22,7 @@ using Windows.UI;
 using Windows.ApplicationModel.Core;
 using QuickShare.MicrosoftGraphFunctions;
 using Windows.UI.Popups;
+using Microsoft.Graphics.Canvas.Effects;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -222,7 +223,17 @@ namespace QuickShare
                 ViewModel.ListManager.SelectHighScoreItem();
             }
 
+            CheckIfMSAPermissionIsNecessary();
+
             ViewModel.IsContentFrameEnabled = true;
+        }
+
+        private void CheckIfMSAPermissionIsNecessary()
+        {
+            if (ViewModel.ListManager.IsAndroidDevicePresent)
+            {
+                ShowSignInFlyout();
+            }
         }
 
         private void ApplyAcrylicAppBar()
@@ -256,20 +267,22 @@ namespace QuickShare
         Compositor _compositor;
         SpriteVisual _hostSprite;
 
-        private void ApplyFlyoutBlurEffect()
-        {
-
-        }
-
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             InitAcrylicUI();
         }
 
-        private async void Authenticate_Tapped(object sender, TappedRoutedEventArgs e)
+        private void ShowSignInFlyout()
         {
-            var graph = new Graph(await MSAAuthenticator.GetAccessTokenAsync("User.Read"));
-            await (new MessageDialog(await graph.GetUserUniqueIdAsync())).ShowAsync();
+            ViewModel.SignInNoticeVisibility = Visibility.Visible;
+            overlayShowStoryboard.Begin();
+        }
+
+        private async void SignInNoticeFlyout_FlyoutCloseRequest(EventArgs e)
+        {
+            overlayHideStoryboard.Begin();
+            await Task.Delay(250);
+            ViewModel.SignInNoticeVisibility = Visibility.Collapsed;
         }
     }
 }

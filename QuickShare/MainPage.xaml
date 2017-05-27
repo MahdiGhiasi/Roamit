@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:QuickShare"
     xmlns:common="using:QuickShare.Common"
+    xmlns:flyouts="using:QuickShare.Flyouts"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"  
+    xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -31,11 +34,37 @@
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
             </Storyboard>
+            <Storyboard x:Name="overlayShowStoryboard">
+                <DoubleAnimation Storyboard.TargetName="Overlay" 
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 Duration="0:0:0.3" From="0" To="1">
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="FlyoutContainer" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 Duration="0:0:0.3" From="50" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+            <Storyboard x:Name="overlayHideStoryboard">
+                <DoubleAnimation Storyboard.TargetName="Overlay" 
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 Duration="0:0:0.25" From="1" To="0">
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="FlyoutContainer" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 Duration="0:0:0.25" From="0" To="-50">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
         </ResourceDictionary>
     </Page.Resources>
-    
+
     <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" common:SizeChange.IsEnabled="True">
-        <Grid x:Name="BlurGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <Grid x:Name="BlurGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5" />
         <Frame x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Background="#B1000000" Padding="{x:Bind ViewModel.FramePadding, Mode=OneWay}" />
         <StackPanel x:Name="TitleBarStackPanel" Height="36" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="{x:Bind ViewModel.CustomTopBarVisibility, Mode=OneWay}">
             <Grid Width="40" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.BackButtonPlaceholderVisibility, Mode=OneWay}"  />
@@ -104,45 +133,22 @@
             </ListView>
         </StackPanel>
 
-        <Grid x:Name="Overlay" 
-              Background="{Binding Source={ThemeResource ApplicationPageBackgroundThemeBrush}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.5}">
-            <Grid x:Name="SignInNotice" 
-                  Background="{Binding Source={ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.7}"
-                  MaxWidth="500" 
-                  Padding="16,24,16,24"
-                  HorizontalAlignment="Stretch" 
-                  VerticalAlignment="Center">
-                <StackPanel>
-                    <Grid Height="100">
-                        <!-- Will put Android+Windows logos here -->
-                    </Grid>
-                    <TextBlock TextWrapping="Wrap" 
-                               Text="We've noticed that you have one or more Android devices connected to your Microsoft account." />
-                    <TextBlock TextWrapping="Wrap"
-                               Margin="0,8,0,0"
-                               Text="Would you like QuickShare to be able to send and receive content between your Windows and Android devices?" />
-
-                    <TextBlock TextWrapping="Wrap"
-                               Margin="0,32,0,0"
-                               Opacity="0.7"
-                               Text="QuickShare will use your Microsoft ID to connect your Android and Windows devices through its servers." />
-                    <TextBlock TextWrapping="Wrap"
-                               Margin="0,8,0,0"
-                               Opacity="0.7"
-                               Text="See our privacy policy in the Settings page for more information." />
-
-                    <Grid Margin="0,40,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Button Content="Yes" Tapped="Authenticate_Tapped" Margin="2" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
-                        <Button Content="No" Margin="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                    </Grid>
-                    <!--<Button Content="No, and don't ask again" Margin="2,8,2,2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />-->
-                    <TextBlock Text="You can enable this later in settings" Opacity="0.4" TextAlignment="Center" Margin="0,4,0,0" />
-
-                </StackPanel>
+        <Grid x:Name="Overlay" Background="#00FFFFFF" Visibility="{x:Bind ViewModel.OverlayVisibility, Mode=OneWay}">
+            <Grid>
+                <interactivity:Interaction.Behaviors>
+                    <behaviors:Blur x:Name="BlurBehavior" 
+                                    Value="10" 
+                                    Duration="0" 
+                                    Delay="0" 
+                                    AutomaticallyStart="True"/>
+                </interactivity:Interaction.Behaviors>
+            </Grid>
+            <Grid x:Name="FlyoutContainer">
+                <Grid.RenderTransform>
+                    <TranslateTransform />
+                </Grid.RenderTransform>
+                <flyouts:SignInNoticeFlyout Visibility="{x:Bind ViewModel.SignInNoticeVisibility, Mode=OneWay}"
+                                            FlyoutCloseRequest="SignInNoticeFlyout_FlyoutCloseRequest" />
             </Grid>
         </Grid>
     </Grid>
