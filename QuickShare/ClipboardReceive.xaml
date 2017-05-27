@@ -24,7 +24,7 @@
     </Page.Resources>
 
     <Grid>
-        <Grid x:Name="WaitingToActivate" Visibility="{Binding WaitingToActivateVisibility}">
+        <Grid x:Name="WaitingToActivate" Visibility="{Binding WaitingToActivateVisibility}" Tapped="WaitingToActivate_Tapped">
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*" />
                 <RowDefinition Height="*" />

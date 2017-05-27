@@ -115,5 +115,10 @@ namespace QuickShare
         {
             Application.Current.Exit();
         }
+
+        private void WaitingToActivate_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            HandleClipboardChanged();
+        }
     }
 }
