@@ -60,6 +60,11 @@ namespace QuickShare
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            InitApplication(e, typeof(MainPage));
+        }
+
+        private void InitApplication(LaunchActivatedEventArgs e, Type defaultPage)
+        {
             Debug.WriteLine("Launched.");
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -89,12 +94,12 @@ namespace QuickShare
 
             if (e?.PrelaunchActivated != true)
             {
-                if (rootFrame.Content == null)
+                if ((rootFrame.Content == null) && (defaultPage != null))
                 {
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(MainPage), e?.Arguments);
+                    rootFrame.Navigate(defaultPage, e?.Arguments);
                 }
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(330, 550));
 
@@ -132,17 +137,17 @@ namespace QuickShare
                 switch (args["action"])
                 {
                     case "clipboardReceive":
-                        LaunchRootFrameIfNecessary(ref rootFrame);
+                        LaunchRootFrameIfNecessary(ref rootFrame, false);
                         rootFrame.Navigate(typeof(ClipboardReceive), args["guid"]);
                         break;
                     case "fileProgress":
-                        LaunchRootFrameIfNecessary(ref rootFrame);
+                        LaunchRootFrameIfNecessary(ref rootFrame, true);
                         if (rootFrame.Content is MainPage)
                             break;
                         rootFrame.Navigate(typeof(MainPage));
                         break;
                     case "fileFinished":
-                        LaunchRootFrameIfNecessary(ref rootFrame);
+                        LaunchRootFrameIfNecessary(ref rootFrame, true);
 
                         //TODO: Open history page
 
@@ -181,12 +186,12 @@ namespace QuickShare
                 }
                 else
                 {
-                    LaunchRootFrameIfNecessary(ref rootFrame);
+                    LaunchRootFrameIfNecessary(ref rootFrame, true);
                 }
             }
             else
             {
-                LaunchRootFrameIfNecessary(ref rootFrame);
+                LaunchRootFrameIfNecessary(ref rootFrame, true);
             }
 
             base.OnActivated(e);
@@ -201,11 +206,11 @@ namespace QuickShare
             return hr;
         }
 
-        private void LaunchRootFrameIfNecessary(ref Frame rootFrame)
+        private void LaunchRootFrameIfNecessary(ref Frame rootFrame, bool launchMainPage)
         {
             if (rootFrame == null)
             {
-                OnLaunched(null);
+                InitApplication(null, launchMainPage ? typeof(MainPage) : null);
                 rootFrame = Window.Current.Content as Frame;
             }
         }
