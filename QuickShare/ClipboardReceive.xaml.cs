@@ -113,7 +113,14 @@ namespace QuickShare
 
         private void circleReverseStoryboard_Completed(object sender, object e)
         {
-            Application.Current.Exit();
+            if ((Frame.BackStackDepth > 0) && (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop))
+            {
+                Frame.GoBack();
+            }
+            else
+            {
+                Application.Current.Exit();
+            }
         }
 
         private void WaitingToActivate_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
