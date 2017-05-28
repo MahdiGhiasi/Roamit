@@ -63,7 +63,7 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" common:SizeChange.IsEnabled="True">
+    <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" common:SizeChange.IsEnabled="True" AllowDrop="True" DragOver="MainGrid_DragOver" Drop="MainGrid_Drop">
         <Grid x:Name="BlurGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5" />
         <Frame x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Background="#B1000000" Padding="{x:Bind ViewModel.FramePadding, Mode=OneWay}" />
         <StackPanel x:Name="TitleBarStackPanel" Height="36" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="{x:Bind ViewModel.CustomTopBarVisibility, Mode=OneWay}">

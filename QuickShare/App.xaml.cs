@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using QuickShare.Common;
 using QuickShare.DataStore;
 using QuickShare.FileTransfer;
+using QuickShare.HelperClasses;
 using QuickShare.TextTransfer;
 using System;
 using System.Collections.Generic;
@@ -323,33 +324,10 @@ namespace QuickShare
         public static ShareOperation ShareOperation;
         protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
-            string type;
-
             ShareOperation = args.ShareOperation;
-
-            if (ShareOperation.Data.Contains(StandardDataFormats.StorageItems))
-            {
-                SendDataTemporaryStorage.Files = (await ShareOperation.Data.GetStorageItemsAsync()).Where(x => x is StorageFile).Select(x => x as StorageFile).ToList();
-                type = StandardDataFormats.StorageItems;
-            }
-            else if (ShareOperation.Data.Contains(StandardDataFormats.WebLink))
-            {
-                SendDataTemporaryStorage.LaunchUri = await ShareOperation.Data.GetWebLinkAsync();
-                SendDataTemporaryStorage.Text = SendDataTemporaryStorage.LaunchUri.OriginalString;
-                type = StandardDataFormats.WebLink;
-            }
-            else if (ShareOperation.Data.Contains(StandardDataFormats.ApplicationLink))
-            {
-                SendDataTemporaryStorage.LaunchUri = await ShareOperation.Data.GetApplicationLinkAsync();
-                SendDataTemporaryStorage.Text = SendDataTemporaryStorage.LaunchUri.OriginalString;
-                type = StandardDataFormats.ApplicationLink;
-            }
-            else if (ShareOperation.Data.Contains(StandardDataFormats.Text))
-            {
-                SendDataTemporaryStorage.Text = await ShareOperation.Data.GetTextAsync();
-                type = StandardDataFormats.Text;
-            }
-            else
+            string type = await ExternalContentHelper.SetData(ShareOperation.Data);
+            
+            if (type == "")
             {
                 ShareOperation.ReportError("Unknown data type received.");
                 return;

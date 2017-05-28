@@ -23,6 +23,7 @@ using Windows.ApplicationModel.Core;
 using QuickShare.MicrosoftGraphFunctions;
 using Windows.UI.Popups;
 using Microsoft.Graphics.Canvas.Effects;
+using Windows.ApplicationModel.DataTransfer;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -296,6 +297,33 @@ namespace QuickShare
             overlayHideStoryboard.Begin();
             await Task.Delay(250);
             ViewModel.SignInNoticeVisibility = Visibility.Collapsed;
+        }
+
+        private void MainGrid_DragOver(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+            e.DragUIOverride.Caption = $"Drop here to send to {ViewModel.ListManager.SelectedRemoteSystem.DisplayName}";
+            e.DragUIOverride.IsCaptionVisible = true; 
+            e.DragUIOverride.IsContentVisible = true; 
+            e.DragUIOverride.IsGlyphVisible = false; 
+        }
+
+        private async void MainGrid_Drop(object sender, DragEventArgs e)
+        {
+            string type = await ExternalContentHelper.SetData(e.DataView);
+
+            if (type == StandardDataFormats.StorageItems)
+            {
+                Frame.Navigate(typeof(MainSend), "file");
+            }
+            else if ((type == StandardDataFormats.WebLink) || (type == StandardDataFormats.ApplicationLink))
+            {
+                Frame.Navigate(typeof(MainSend), "launchUri");
+            }
+            else if (type == StandardDataFormats.Text)
+            {
+                Frame.Navigate(typeof(MainSend), "text");
+            }
         }
     }
 }

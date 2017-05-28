@@ -35,20 +35,21 @@ namespace QuickShare
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             shareDetails = e.Parameter as ShareTargetDetails;
-            if (shareDetails.Type == StandardDataFormats.Text)
+
+            if (shareDetails.Type == StandardDataFormats.StorageItems)
             {
-                ViewModel.PreviewText = SendDataTemporaryStorage.Text;
-                ViewModel.ShowShareText();
+                ViewModel.PreviewText = SendDataTemporaryStorage.Files?.Count().ToString() ?? "???";
+                ViewModel.ShowShareStorageItem();
             }
             else if ((shareDetails.Type == StandardDataFormats.WebLink) || (shareDetails.Type == StandardDataFormats.ApplicationLink))
             {
                 ViewModel.PreviewText = SendDataTemporaryStorage.LaunchUri.OriginalString;
                 ViewModel.ShowShareUrl();
             }
-            else if (shareDetails.Type == StandardDataFormats.StorageItems)
+            else if (shareDetails.Type == StandardDataFormats.Text)
             {
-                ViewModel.PreviewText = SendDataTemporaryStorage.Files?.Count().ToString() ?? "???";
-                ViewModel.ShowShareStorageItem();
+                ViewModel.PreviewText = SendDataTemporaryStorage.Text;
+                ViewModel.ShowShareText();
             }
 
             base.OnNavigatedTo(e);

@@ -90,6 +90,9 @@ namespace QuickShare
                     ViewModel.SendStatus = "Finished.";
                 else
                     ViewModel.SendStatus = launchResult.ToString();
+
+                ViewModel.ProgressIsIndeterminate = false;
+                ViewModel.ProgressValue = ViewModel.ProgressMaximum;
             }
             else
             {
@@ -110,6 +113,7 @@ namespace QuickShare
 
                     ts.TextSendProgress += (ee) =>
                     {
+                        ViewModel.ProgressIsIndeterminate = false;
                         ViewModel.ProgressMaximum = ee.TotalParts;
                         ViewModel.ProgressValue = ee.SentParts;
                     };
@@ -123,6 +127,7 @@ namespace QuickShare
                     else
                         ViewModel.SendStatus = "Failed :(";
 
+                    ViewModel.ProgressIsIndeterminate = false;
                     ViewModel.ProgressValue = ViewModel.ProgressMaximum;
                 }
                 else if (mode == "file")
