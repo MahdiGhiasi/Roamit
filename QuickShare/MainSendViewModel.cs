@@ -74,7 +74,21 @@ namespace QuickShare
                 OnPropertyChanged("UnlockNoticeVisibility");
             }
         }
-        
+
+        Visibility progressPercentIndicatorVisibility = Visibility.Visible;
+        public Visibility ProgressPercentIndicatorVisibility
+        {
+            get
+            {
+                return progressPercentIndicatorVisibility;
+            }
+            set
+            {
+                progressPercentIndicatorVisibility = value;
+                OnPropertyChanged("ProgressPercentIndicatorVisibility");
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

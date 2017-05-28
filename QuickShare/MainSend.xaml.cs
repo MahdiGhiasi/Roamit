@@ -84,6 +84,8 @@ namespace QuickShare
             var mode = e.Parameter.ToString();
             if (mode == "launchUri")
             {
+                ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
+
                 var launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs);
 
                 if (launchResult == RomeRemoteLaunchUriStatus.Success)
@@ -92,10 +94,13 @@ namespace QuickShare
                     ViewModel.SendStatus = launchResult.ToString();
 
                 ViewModel.ProgressIsIndeterminate = false;
+                ViewModel.ProgressMaximum = 100;
                 ViewModel.ProgressValue = ViewModel.ProgressMaximum;
             }
             else
             {
+                ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
+
                 var result = await MainPage.Current.PackageManager.Connect(rs, true, new Uri("quickshare://wake"));
 
                 if (result != RomeAppServiceConnectionStatus.Success)
@@ -109,6 +114,7 @@ namespace QuickShare
 
                 if (mode == "text")
                 {
+                    ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
                     TextSender ts = new TextSender(MainPage.Current.PackageManager, deviceName);
 
                     ts.TextSendProgress += (ee) =>
