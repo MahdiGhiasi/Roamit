@@ -115,7 +115,7 @@
                                         <TextBlock FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
                                         <TextBlock FontFamily="Segoe MDL2 Assets" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
                                     </Grid>
-                                    <TextBlock Text="{Binding Id}" VerticalAlignment="Center"></TextBlock>
+                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"></TextBlock>
                                 </StackPanel>
                             </Border>
                         </Grid>
