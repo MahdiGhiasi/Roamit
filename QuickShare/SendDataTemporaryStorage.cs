@@ -12,5 +12,7 @@ namespace QuickShare
         public static List<StorageFile> Files { get; set; } = new List<StorageFile>();
         public static string Text { get; set; }
         public static Uri LaunchUri { get; set; }
+
+        public static bool IsSharingTarget { get; set; } = false;
     }
 }

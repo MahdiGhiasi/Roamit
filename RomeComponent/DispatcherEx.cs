@@ -10,13 +10,18 @@ namespace QuickShare.Common
 {
     public static class DispatcherEx
     {
+        public static CoreDispatcher CustomDispatcher { get; set; } = null;
+
         public static async Task RunOnCoreDispatcherIfPossible(Action action, bool runAnyway = true)
         {
             CoreDispatcher dispatcher = null;
 
             try
             {
-                dispatcher = CoreApplication.MainView?.CoreWindow?.Dispatcher;
+                if (CustomDispatcher == null)
+                    dispatcher = CoreApplication.MainView?.CoreWindow?.Dispatcher;
+                else
+                    dispatcher = CustomDispatcher;
             }
             catch { }
 
@@ -36,7 +41,10 @@ namespace QuickShare.Common
 
             try
             {
-                dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+                if (CustomDispatcher == null)
+                    dispatcher = CoreApplication.MainView?.CoreWindow?.Dispatcher;
+                else
+                    dispatcher = CustomDispatcher;
             }
             catch { }
 

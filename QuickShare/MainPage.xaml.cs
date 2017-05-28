@@ -88,7 +88,7 @@ namespace QuickShare
 
         private void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
         {
-            if (ContentFrame.Content is MainActions)
+            if ((ContentFrame.Content is MainActions) || (ContentFrame.Content is MainShareTarget))
                 return;
 
             if (ContentFrame.Content is MainSend)
@@ -102,16 +102,26 @@ namespace QuickShare
                 ContentFrame.GoBack();
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Debug.WriteLine("MainPage loaded begin");
-
             InitAcrylicUI();
-
-            ContentFrame.Navigate(typeof(MainActions));
-
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
+            if (e.Parameter is ShareTargetDetails)
+            {
+                ContentFrame.Navigate(typeof(MainShareTarget), e.Parameter);
+                DispatcherEx.CustomDispatcher = Dispatcher;
+            }
+            else
+            {
+                ContentFrame.Navigate(typeof(MainActions));
+            }
+
+            base.OnNavigatedTo(e);
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
             DiscoverDevices();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
@@ -152,23 +162,26 @@ namespace QuickShare
             }
         }
 
-        private void RemoteSystems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private async void RemoteSystems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.NewItems != null)
-                foreach (var item in e.NewItems)
-                {
-                    ViewModel.ListManager.AddDevice(item);
-                }
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
+            {
+                if (e.NewItems != null)
+                    foreach (var item in e.NewItems)
+                    {
+                        ViewModel.ListManager.AddDevice(item);
+                    }
 
-            if (e.OldItems != null)
-                foreach (var item in e.OldItems)
-                {
-                    ViewModel.ListManager.RemoveDevice(item);
-                }
+                if (e.OldItems != null)
+                    foreach (var item in e.OldItems)
+                    {
+                        ViewModel.ListManager.RemoveDevice(item);
+                    }
 
-            var selItem = PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == ViewModel.ListManager.SelectedRemoteSystem?.Id);
-            if ((selItem != null) && (ViewModel.ListManager.SelectedRemoteSystem.IsAvailableByProximity != selItem.IsAvailableByProximity))
-                ViewModel.ListManager.Select(selItem);
+                var selItem = PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == ViewModel.ListManager.SelectedRemoteSystem?.Id);
+                if ((selItem != null) && (ViewModel.ListManager.SelectedRemoteSystem.IsAvailableByProximity != selItem.IsAvailableByProximity))
+                    ViewModel.ListManager.Select(selItem);
+            });
         }
 
         private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -186,7 +199,7 @@ namespace QuickShare
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            if ((e.Content is MainActions) || (e.Content is MainSend))
+            if ((e.Content is MainActions) || (e.Content is MainSend) || (e.Content is MainShareTarget))
             {
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;
@@ -197,7 +210,7 @@ namespace QuickShare
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Visible;
             }
 
-            if (e.Content is MainActions)
+            if ((e.Content is MainActions) || (e.Content is MainShareTarget))
             {
                 if (BottomBar.Visibility == Visibility.Collapsed) //Don't play animation on app startup
                 {

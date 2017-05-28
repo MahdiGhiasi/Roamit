@@ -211,6 +211,13 @@ namespace QuickShare
                     Frame.GoBack();
                 }
             }
+
+            if (SendDataTemporaryStorage.IsSharingTarget)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1.5));
+                
+                App.ShareOperation.ReportCompleted();
+            }
         }
     }
 }

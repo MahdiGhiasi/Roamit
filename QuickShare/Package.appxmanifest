@@ -21,6 +21,18 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
+        <uap:Extension Category="windows.shareTarget">
+          <uap:ShareTarget>
+            <uap:SupportedFileTypes>
+              <uap:SupportsAnyFileType />
+            </uap:SupportedFileTypes>
+            <uap:DataFormat>Text</uap:DataFormat>
+            <uap:DataFormat>URI</uap:DataFormat>
+            <uap:DataFormat>WebLink</uap:DataFormat>
+            <uap:DataFormat>ApplicationLink</uap:DataFormat>
+            <uap:DataFormat>StorageItems</uap:DataFormat>
+          </uap:ShareTarget>
+        </uap:Extension>
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="quickshare">
             <uap:Logo>Assets\Logo.png</uap:Logo>

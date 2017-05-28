@@ -106,7 +106,12 @@
     <Compile Include="HelperClasses\VisualChildFinder.cs" />
     <Compile Include="MainPageViewModel.cs" />
     <Compile Include="MainSendViewModel.cs" />
+    <Compile Include="MainShareTarget.xaml.cs">
+      <DependentUpon>MainShareTarget.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainShareTargetViewModel.cs" />
     <Compile Include="RemoteSystemNormalizer.cs" />
+    <Compile Include="ShareTargetDetails.cs" />
     <Compile Include="ToastNotifications\Toaster.ClipboardTextReceived.cs" />
     <Compile Include="ToastNotifications\Toaster.cs" />
     <Compile Include="ToastNotifications\Toaster.FileReceiveFinished.cs" />
@@ -185,6 +190,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainSend.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainShareTarget.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

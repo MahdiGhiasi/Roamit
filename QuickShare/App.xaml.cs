@@ -10,12 +10,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -314,6 +318,52 @@ namespace QuickShare
             await MainPage.Current.PackageManager.MessageCarrierReceivedAsync(args.Request);
 
             deferral.Complete();
+        }
+
+        public static ShareOperation ShareOperation;
+        protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        {
+            string type;
+
+            ShareOperation = args.ShareOperation;
+
+            if (ShareOperation.Data.Contains(StandardDataFormats.StorageItems))
+            {
+                SendDataTemporaryStorage.Files = (await ShareOperation.Data.GetStorageItemsAsync()).Where(x => x is StorageFile).Select(x => x as StorageFile).ToList();
+                type = StandardDataFormats.StorageItems;
+            }
+            else if (ShareOperation.Data.Contains(StandardDataFormats.WebLink))
+            {
+                SendDataTemporaryStorage.LaunchUri = await ShareOperation.Data.GetWebLinkAsync();
+                SendDataTemporaryStorage.Text = SendDataTemporaryStorage.LaunchUri.OriginalString;
+                type = StandardDataFormats.WebLink;
+            }
+            else if (ShareOperation.Data.Contains(StandardDataFormats.ApplicationLink))
+            {
+                SendDataTemporaryStorage.LaunchUri = await ShareOperation.Data.GetApplicationLinkAsync();
+                SendDataTemporaryStorage.Text = SendDataTemporaryStorage.LaunchUri.OriginalString;
+                type = StandardDataFormats.ApplicationLink;
+            }
+            else if (ShareOperation.Data.Contains(StandardDataFormats.Text))
+            {
+                SendDataTemporaryStorage.Text = await ShareOperation.Data.GetTextAsync();
+                type = StandardDataFormats.Text;
+            }
+            else
+            {
+                ShareOperation.ReportError("Unknown data type received.");
+                return;
+            }
+
+            ShareOperation.ReportDataRetrieved();
+            SendDataTemporaryStorage.IsSharingTarget = true;
+
+            Frame rootFrame = null;
+            LaunchRootFrameIfNecessary(ref rootFrame, false);
+            rootFrame.Navigate(typeof(MainPage), new ShareTargetDetails
+            {
+                Type = type,
+            });
         }
     }
 }
