@@ -285,7 +285,7 @@ namespace QuickShare.UWP.Rome
 
         public async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri uri, object remoteSystemOverride)
         {
-            RemoteSystem rs = null;
+            RemoteSystem rs = remoteSystem as RemoteSystem;
             if (remoteSystemOverride != null)
             {
                 rs = remoteSystemOverride as RemoteSystem;
