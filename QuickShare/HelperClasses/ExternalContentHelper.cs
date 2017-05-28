@@ -18,7 +18,7 @@ namespace QuickShare.HelperClasses
                 var files = (await data.GetStorageItemsAsync()).Where(x => x is StorageFile).Select(x => x as StorageFile).ToList();
                 string url = "";
                 if ((files.Count == 1) &&
-                    ((files[0].FileType == ".html") /* Edge */ || (files[0].FileType == ".url") /* Chrome */) &&
+                    ((files[0].FileType.ToLower() == ".html") /* Edge */ || (files[0].FileType.ToLower() == ".url") /* Chrome + Firefox */) &&
                     ((url = await IsALink(files[0])) != ""))
                 {
                     SendDataTemporaryStorage.LaunchUri = new Uri(url);
