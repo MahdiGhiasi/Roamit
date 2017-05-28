@@ -142,6 +142,10 @@
       <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
       <Name>DataStore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Droid.Config\Droid.Config.csproj">
+      <Project>{444ad5bf-95fc-46f3-98bc-0268518ca569}</Project>
+      <Name>Droid.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Droid.RomeComponent\Droid.RomeComponent.csproj">
       <Project>{2894cf75-2ea2-4b83-9238-06525eee443d}</Project>
       <Name>Droid.RomeComponent</Name>

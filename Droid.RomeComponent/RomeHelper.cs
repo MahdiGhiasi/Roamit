@@ -33,7 +33,7 @@ namespace QuickShare.Droid.RomeComponent
             appContext = _appContext;
 
             //Assumed Platform.FetchAuthCode is already handled.
-            var result = await Platform.InitializeAsync(_appContext, Secrets.CLIENT_ID);
+            var result = await Platform.InitializeAsync(_appContext, Config.Secrets.ClientId);
             
             if (result == true)
             {

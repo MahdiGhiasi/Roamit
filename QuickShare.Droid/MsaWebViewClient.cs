@@ -97,7 +97,7 @@ namespace QuickShare.Droid
                 new KeyValuePair<string, string>("code", code),
                 new KeyValuePair<string, string>("redirect_uri", "https://login.live.com/oauth20_desktop.srf"),
                 new KeyValuePair<string, string>("scope", "User.Read Device.Read"),
-                new KeyValuePair<string, string>("client_id", RomeComponent.Secrets.CLIENT_ID),
+                new KeyValuePair<string, string>("client_id", Config.Secrets.CLIENT_ID),
             });
 
             var myHttpClient = new HttpClient();
