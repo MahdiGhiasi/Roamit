@@ -15,8 +15,21 @@ namespace QuickShare.HelperClasses
             string type = "";
             if (data.Contains(StandardDataFormats.StorageItems))
             {
-                SendDataTemporaryStorage.Files = (await data.GetStorageItemsAsync()).Where(x => x is StorageFile).Select(x => x as StorageFile).ToList();
-                type = StandardDataFormats.StorageItems;
+                var files = (await data.GetStorageItemsAsync()).Where(x => x is StorageFile).Select(x => x as StorageFile).ToList();
+                string url = "";
+                if ((files.Count == 1) &&
+                    ((files[0].FileType == ".html") /* Edge */ || (files[0].FileType == ".url") /* Chrome */) &&
+                    ((url = await IsALink(files[0])) != ""))
+                {
+                    SendDataTemporaryStorage.LaunchUri = new Uri(url);
+                    SendDataTemporaryStorage.Text = url;
+                    type = StandardDataFormats.WebLink;
+                }
+                else
+                {
+                    SendDataTemporaryStorage.Files = files;
+                    type = StandardDataFormats.StorageItems;
+                }
             }
             else if (data.Contains(StandardDataFormats.WebLink))
             {
@@ -37,6 +50,29 @@ namespace QuickShare.HelperClasses
             }
 
             return type;
+        }
+
+        private static async Task<string> IsALink(StorageFile file)
+        {
+            var properties = await file.GetBasicPropertiesAsync();
+            if (properties.Size > 10*1024)
+                return "";
+
+            var text = await FileIO.ReadLinesAsync(file);
+
+            if (text.Contains("[InternetShortcut]"))
+            {
+                int isId = text.IndexOf("[InternetShortcut]");
+                for (int i = isId + 1; i < text.Count; i++)
+                {
+                    if (text[i].Substring(0, 4) == "URL=")
+                    {
+                        return text[i].Substring(4);
+                    }
+                }
+            }
+
+            return "";
         }
     }
 }

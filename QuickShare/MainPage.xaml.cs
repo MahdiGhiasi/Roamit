@@ -301,6 +301,9 @@ namespace QuickShare
 
         private void MainGrid_DragOver(object sender, DragEventArgs e)
         {
+            if (ViewModel.ListManager.SelectedRemoteSystem == null)
+                return;
+
             e.AcceptedOperation = DataPackageOperation.Copy;
             e.DragUIOverride.Caption = $"Drop here to send to {ViewModel.ListManager.SelectedRemoteSystem.DisplayName}";
             e.DragUIOverride.IsCaptionVisible = true; 
@@ -310,6 +313,9 @@ namespace QuickShare
 
         private async void MainGrid_Drop(object sender, DragEventArgs e)
         {
+            if (ViewModel.ListManager.SelectedRemoteSystem == null)
+                return;
+
             string type = await ExternalContentHelper.SetData(e.DataView);
 
             if (type == StandardDataFormats.StorageItems)
