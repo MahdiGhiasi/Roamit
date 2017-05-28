@@ -84,7 +84,7 @@ namespace QuickShare
             var mode = e.Parameter.ToString();
             if (mode == "launchUri")
             {
-                var launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri);
+                var launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs);
 
                 if (launchResult == RomeRemoteLaunchUriStatus.Success)
                     ViewModel.SendStatus = "Finished.";
