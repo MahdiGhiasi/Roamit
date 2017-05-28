@@ -96,6 +96,7 @@ namespace QuickShare
                 ViewModel.ProgressIsIndeterminate = false;
                 ViewModel.ProgressMaximum = 100;
                 ViewModel.ProgressValue = ViewModel.ProgressMaximum;
+                ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
             }
             else
             {
