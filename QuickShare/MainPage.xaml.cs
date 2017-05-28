@@ -320,15 +320,15 @@ namespace QuickShare
 
             if (type == StandardDataFormats.StorageItems)
             {
-                Frame.Navigate(typeof(MainSend), "file");
+                ContentFrame.Navigate(typeof(MainSend), "file");
             }
             else if ((type == StandardDataFormats.WebLink) || (type == StandardDataFormats.ApplicationLink))
             {
-                Frame.Navigate(typeof(MainSend), "launchUri");
+                ContentFrame.Navigate(typeof(MainSend), "launchUri");
             }
             else if (type == StandardDataFormats.Text)
             {
-                Frame.Navigate(typeof(MainSend), "text");
+                ContentFrame.Navigate(typeof(MainSend), "text");
             }
         }
     }
