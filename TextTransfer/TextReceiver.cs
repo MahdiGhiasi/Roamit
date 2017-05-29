@@ -50,16 +50,10 @@ namespace QuickShare.TextTransfer
                 }
 
                 DataStorageProviders.TextReceiveContentManager.Add(guid, DataStorageProviders.TextReceiveContentManager.GetItemContent(guid) + (string)data["Content"]);
+                DataStorageProviders.TextReceiveContentManager.Close();
 
                 if (partNumber == (totalParts - 1)) //Finished receiving data.
                 {
-                    TextReceiveFinished?.Invoke(new TextReceiveEventArgs
-                    {
-                        Success = true,
-                        Guid = guid,
-                        HostName = (string)data["SenderName"],
-                    });
-
                     DataStorageProviders.HistoryManager.Open();
                     DataStorageProviders.HistoryManager.Add(guid, 
                         DateTime.Now,
@@ -67,9 +61,14 @@ namespace QuickShare.TextTransfer
                         new ReceivedText(),
                         true);
                     DataStorageProviders.HistoryManager.Close();
-                }
 
-                DataStorageProviders.TextReceiveContentManager.Close();
+                    TextReceiveFinished?.Invoke(new TextReceiveEventArgs
+                    {
+                        Success = true,
+                        Guid = guid,
+                        HostName = (string)data["SenderName"],
+                    });
+                }
             }
             
             return true;
