@@ -14,7 +14,7 @@ namespace QuickShare.Droid.RomeComponent
 {
     public class RomePackageManager : IRomePackageManager
     {
-        readonly string appIdentifier = "quickshare8495-4705-4bf5-acea-c9e944fedbb9_ptfyvcvtjwmsj";
+        readonly string appIdentifier = "36835MahdiGhiasi.QuickSharePreview_yddpmccgg2mz2";
         string appServiceName = "";
 
         AppServiceClientConnection appService;
