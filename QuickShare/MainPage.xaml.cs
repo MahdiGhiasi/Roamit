@@ -40,13 +40,15 @@ namespace QuickShare
         public MainPageViewModel ViewModel { get; set; } = new MainPageViewModel();
         public IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem> PicturePickerItems { get; internal set; }
 
+        bool isUserSelectedRemoteSystemManually = false;
+        int remoteSystemPrevCount = 0;
+        bool isAskedAboutMSAPermission = false;
+
         public MainPage()
         {
             this.InitializeComponent();
 
             Current = this;
-
-            Debug.WriteLine("MainPage created.");
         }
 
         public async Task FileTransferProgress(FileTransferProgressEventArgs e)
@@ -182,6 +184,16 @@ namespace QuickShare
                 var selItem = PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == ViewModel.ListManager.SelectedRemoteSystem?.Id);
                 if ((selItem != null) && (ViewModel.ListManager.SelectedRemoteSystem.IsAvailableByProximity != selItem.IsAvailableByProximity))
                     ViewModel.ListManager.Select(selItem);
+
+                if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (ViewModel.ListManager.RemoteSystems.Count > remoteSystemPrevCount))
+                {
+                    remoteSystemPrevCount = ViewModel.ListManager.RemoteSystems.Count;
+                    ViewModel.ListManager.SelectHighScoreItem();
+                }
+
+                ViewModel.IsContentFrameEnabled = (ViewModel.ListManager.RemoteSystems.Count > 0);
+
+                CheckIfMSAPermissionIsNecessary();
             });
         }
 
@@ -189,6 +201,8 @@ namespace QuickShare
         {
             if (devicesList.SelectedItem == null)
                 return;
+
+            isUserSelectedRemoteSystemManually = true;
 
             var s = devicesList.SelectedItem as NormalizedRemoteSystem;
 
@@ -229,23 +243,28 @@ namespace QuickShare
 
         private async void DiscoverDevices()
         {
+            DiscoverOtherDevices();
+
             await PackageManager.InitializeDiscovery();
-            
-            while (ViewModel.ListManager.SelectedRemoteSystem == null)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                ViewModel.ListManager.SelectHighScoreItem();
-            }
+        }
 
-            CheckIfMSAPermissionIsNecessary();
+        private async void DiscoverOtherDevices()
+        {
+            if (!SecureKeyStorage.IsUserIdStored())
+                return;
 
-            ViewModel.IsContentFrameEnabled = true;
+            var userId = SecureKeyStorage.GetUserId();
+            var devices = await Common.Service.DevicesLoader.GetAndroidDevices(userId);
+
+            foreach (var item in devices)
+                ViewModel.ListManager.AddDevice(item);
         }
 
         private void CheckIfMSAPermissionIsNecessary()
         {
-            if (ViewModel.ListManager.IsAndroidDevicePresent)
+            if ((ViewModel.ListManager.IsAndroidDevicePresent) && (!isAskedAboutMSAPermission))
             {
+                isAskedAboutMSAPermission = true;
                 ShowSignInFlyout();
             }
         }
@@ -294,6 +313,8 @@ namespace QuickShare
 
         private async void SignInNoticeFlyout_FlyoutCloseRequest(EventArgs e)
         {
+            DiscoverOtherDevices();
+
             overlayHideStoryboard.Begin();
             await Task.Delay(250);
             ViewModel.SignInNoticeVisibility = Visibility.Collapsed;
