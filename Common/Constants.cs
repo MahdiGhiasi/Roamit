@@ -11,5 +11,7 @@ namespace QuickShare.Common
         public static int CommunicationPort = 8081;
 
         public static ulong FileSliceMaxLength = 512 * 1024; // 512 Kilobytes
+
+        public static readonly string ServerAddress = "http://localhost:14100";
     }
 }
