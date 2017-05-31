@@ -104,6 +104,7 @@
     <Compile Include="HelperClasses\ExternalContentHelper.cs" />
     <Compile Include="HelperClasses\LaunchOperations.cs" />
     <Compile Include="HelperClasses\MSAAuthenticator.cs" />
+    <Compile Include="HelperClasses\SecureKeyStorage.cs" />
     <Compile Include="HelperClasses\VisualChildFinder.cs" />
     <Compile Include="MainPageViewModel.cs" />
     <Compile Include="MainSendViewModel.cs" />
