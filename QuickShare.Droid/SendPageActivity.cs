@@ -276,7 +276,8 @@ namespace QuickShare.Droid
 
             sendStatus.Text = "Sending...";
 
-            bool sendResult = await textSender.Send("Here's some text to send :)", ContentType.ClipboardContent);
+            ClipboardManager clipboard = (ClipboardManager)GetSystemService(Context.ClipboardService);
+            bool sendResult = await textSender.Send(clipboard.Text, ContentType.ClipboardContent);
 
             if (sendResult)
                 sendStatus.Text = "Finished.";
