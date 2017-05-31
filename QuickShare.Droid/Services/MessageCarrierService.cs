@@ -40,6 +40,8 @@ namespace QuickShare.Droid.Services
             {
                 TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
                 Log.Debug(TAG, $"This service was already started, it's been running for {runtime:c}.");
+
+                SendCarrier();
             }
             else
             {
@@ -157,7 +159,10 @@ namespace QuickShare.Droid.Services
             }
             else if (receiver == "FileReceiver")
             {
-                IFolder downloadFolder = new FileSystemFolder(System.IO.Path.Combine(Android.OS.Environment.DirectoryDownloads, "QuickShare"));
+                string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "QuickShare");
+                System.IO.Directory.CreateDirectory(downloadPath); //Make sure download folder exists.
+                IFolder downloadFolder = new FileSystemFolder(downloadPath);
+
                 await FileTransfer.FileReceiver.ReceiveRequest(message, downloadFolder);
             }
             else if (receiver == "TextReceiver")

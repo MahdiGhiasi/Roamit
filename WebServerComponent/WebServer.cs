@@ -83,7 +83,6 @@ namespace QuickShare.UWP
                     Host = e.Request.Host,
                     HttpMethod = e.Request.HttpMethod,
                     InputStream = e.Request.InputStream,
-                    KeepAlive = e.Request.KeepAlive,
                     ProtocolVersion = e.Request.ProtocolVersion,
                     RemoteEndpointAddress = e.Request.RemoteEndpoint.Address.ToString(),
                     Url = e.Request.Url,

@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using QuickShare.Droid.Services;
+using QuickShare.Droid.OnlineServiceHelpers;
 
 namespace QuickShare.Droid
 {
