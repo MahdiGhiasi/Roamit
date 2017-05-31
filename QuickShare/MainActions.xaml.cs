@@ -66,6 +66,9 @@ namespace QuickShare
 
         private async Task InitPicturePicker()
         {
+            if (MainPage.Current.PicturePickerItems == null)
+                await Task.Delay(500);
+
             var thumbnails = MainPage.Current.PicturePickerItems;
 
             while (thumbnails.Count == 0)
