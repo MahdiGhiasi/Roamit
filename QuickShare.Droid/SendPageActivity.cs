@@ -17,6 +17,7 @@ using Com.Github.Angads25.Filepicker.Model;
 using Com.Github.Angads25.Filepicker.View;
 using QuickShare.FileTransfer;
 using System.Threading;
+using Plugin.DeviceInfo;
 
 namespace QuickShare.Droid
 {
@@ -171,7 +172,7 @@ namespace QuickShare.Droid
                                                   new WebServerComponent.WebServerGenerator(),
                                                   Common.PackageManager,
                                                   FindMyIPAddresses(),
-                                                  "Android device"))
+                                                  CrossDeviceInfo.Current.Model))
             {
                 sendProgress.Max = 1;
                 fs.FileTransferProgress += (ss, ee) =>
@@ -265,7 +266,7 @@ namespace QuickShare.Droid
                 return;
             }
 
-            TextSender textSender = new TextSender(Common.PackageManager, "Android device");
+            TextSender textSender = new TextSender(Common.PackageManager, CrossDeviceInfo.Current.Model);
 
             textSender.TextSendProgress += (ee) =>
             {
