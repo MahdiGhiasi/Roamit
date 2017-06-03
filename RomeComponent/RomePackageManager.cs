@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Threading;
 using QuickShare.Rome;
 using System.Diagnostics;
+using QuickShare.Common;
 
 namespace QuickShare.UWP.Rome
 {
@@ -36,9 +37,6 @@ namespace QuickShare.UWP.Rome
         RemoteSystem remoteSystem;
         RemoteSystemConnectionRequest connectionRequest;
         bool keepCurrentConnectionAlive = false;
-
-        List<PackageManagerSendQueueItem> sendQueue = new List<PackageManagerSendQueueItem>();
-        static SemaphoreSlim sendQueueSemaphore = new SemaphoreSlim(1, 1);
 
         internal int tryCountProximity = 6;
         internal int tryCountCloud = 3;
@@ -243,7 +241,7 @@ namespace QuickShare.UWP.Rome
 
         private async Task<RemoteSystem> RediscoverRemoteSystem(RemoteSystem rs)
         {
-            await ReinitializeDiscovery();
+            await ReinitializeDiscovery(); //TODO: Fix this (causes 'marshalled for different bullshit' at recreating DispatcherTimer.
 
             int count = 0;
             RemoteSystem rsNew = null;
@@ -342,76 +340,6 @@ namespace QuickShare.UWP.Rome
 
         public async Task<RomeAppServiceResponse> Send(Dictionary<string, object> data)
         {
-            if (IsWindowsDevice(remoteSystem))
-                return await SendToWindowsDevice(data);
-            else
-                return await SendToAndroidDevice(data);
-        }
-
-        private async Task<RomeAppServiceResponse> SendToAndroidDevice(Dictionary<string, object> data)
-        {
-            var item = new PackageManagerSendQueueItem
-            {
-                RemoteSystemId = remoteSystem.Id,
-                Data = data,
-            };
-
-            await sendQueueSemaphore.WaitAsync();
-            sendQueue.Add(item);
-            sendQueueSemaphore.Release();
-
-            TaskCompletionSource<RomeAppServiceResponseStatus> tcs = new TaskCompletionSource<RomeAppServiceResponseStatus>();
-
-            item.SendFinished += (e) =>
-            {
-                tcs.SetResult(e.ResponseStatus);
-            };
-
-            Debug.WriteLine("Waiting for Message Carrier to arrive...");
-            var result = await tcs.Task;
-            Debug.WriteLine("Message Carrier arrived.");
-
-            sendQueue.Remove(item);
-            return new RomeAppServiceResponse
-            {
-                Message = new Dictionary<string, object>(),
-                Status = result,
-            };
-        }
-
-        public async Task MessageCarrierReceivedAsync(AppServiceRequest request)
-        {
-            int counter = 0;
-
-            while (true)
-            {
-                await sendQueueSemaphore.WaitAsync();
-
-                var queueItem = sendQueue.FirstOrDefault(); // (x => x.RemoteSystemId == ???);
-
-                if (queueItem == null)
-                {
-                    sendQueueSemaphore.Release();
-                    Debug.WriteLine($"Queue is empty. Message Carrier is waiting for some message to arrive... {counter}");
-                    await Task.Delay(1000);
-                    counter++;
-                    continue;
-                }
-
-                var vs = queueItem.Data.ToValueSet();
-
-                var result = await request.SendResponseAsync(vs);
-
-                queueItem.SetSendResult((RomeAppServiceResponseStatus)result);
-
-                sendQueueSemaphore.Release();
-
-                break;
-            }
-        }
-
-        private async Task<RomeAppServiceResponse> SendToWindowsDevice(Dictionary<string, object> data)
-        {
             var res = await Connect(remoteSystem, keepCurrentConnectionAlive);
 
             ValueSet sendData = data.ToValueSet();
@@ -420,7 +348,7 @@ namespace QuickShare.UWP.Rome
             int tryCount = getTryCount();
             for (int i = 0; i < tryCount; i++)
             {
-                response = await SendToWindowsDevice(sendData, i);
+                response = await Send(sendData, i);
                 if (response != null)
                     break;
 
@@ -441,7 +369,7 @@ namespace QuickShare.UWP.Rome
             }
         }
 
-        private async Task<AppServiceResponse> SendToWindowsDevice(ValueSet data, int tryi)
+        private async Task<AppServiceResponse> Send(ValueSet data, int tryi)
         {
             try
             {

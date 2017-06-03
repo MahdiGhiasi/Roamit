@@ -95,12 +95,12 @@ namespace QuickShare
         private bool isContentFrameEnabled = false;
         public bool IsContentFrameEnabled
         {
-            get { return isContentFrameEnabled; }
-            set
-            {
-                isContentFrameEnabled = value;
-                OnPropertyChanged("IsContentFrameEnabled");
-            }
+            get { return ListManager.SelectedRemoteSystem != null; }
+        }
+
+        public void RefreshIsContentFrameEnabled()
+        {
+            OnPropertyChanged("IsContentFrameEnabled");
         }
 
         private bool isAcrylicEnabled = false;

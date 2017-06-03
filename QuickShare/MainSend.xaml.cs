@@ -1,6 +1,8 @@
 ﻿using QuickShare.Common;
 using QuickShare.Common.Rome;
+using QuickShare.DevicesListManager;
 using QuickShare.FileTransfer;
+using QuickShare.HelperClasses;
 using QuickShare.TextTransfer;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
 using Windows.Storage;
+using Windows.System.RemoteSystems;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -80,6 +83,12 @@ namespace QuickShare
 
             var rs = MainPage.Current.GetSelectedSystem();
 
+            IRomePackageManager packageManager;
+            if (rs is NormalizedRemoteSystem)
+                packageManager = MainPage.Current.AndroidPackageManager;
+            else
+                packageManager = MainPage.Current.PackageManager;
+
             string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
             var mode = e.Parameter.ToString();
             if (mode == "launchUri")
@@ -101,8 +110,7 @@ namespace QuickShare
             else
             {
                 ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
-
-                var result = await MainPage.Current.PackageManager.Connect(rs, true, new Uri("quickshare://wake"));
+                RomeAppServiceConnectionStatus result = await Connect(rs);
 
                 if (result != RomeAppServiceConnectionStatus.Success)
                 {
@@ -116,7 +124,7 @@ namespace QuickShare
                 if (mode == "text")
                 {
                     ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
-                    TextSender ts = new TextSender(MainPage.Current.PackageManager, deviceName);
+                    TextSender ts = new TextSender(packageManager, deviceName);
 
                     ts.TextSendProgress += (ee) =>
                     {
@@ -147,7 +155,7 @@ namespace QuickShare
 
                     using (FileSender fs = new FileSender(rs,
                                                           new QuickShare.UWP.WebServerGenerator(),
-                                                          QuickShare.UWP.Rome.RomePackageManager.Instance,
+                                                          packageManager,
                                                           FindMyIPAddresses(),
                                                           deviceName))
                     {
@@ -198,10 +206,12 @@ namespace QuickShare
                         ViewModel.ProgressValue = ViewModel.ProgressMaximum;
                     }
 
-                    Dictionary<string, object> vs = new Dictionary<string, object>();
-                    vs.Add("Receiver", "System");
-                    vs.Add("FinishService", "FinishService");
-                    await MainPage.Current.PackageManager.Send(vs);
+                    Dictionary<string, object> vs = new Dictionary<string, object>
+                    {
+                        { "Receiver", "System" },
+                        { "FinishService", "FinishService" }
+                    };
+                    await packageManager.Send(vs);
 
                     if (failed)
                     {
@@ -230,6 +240,16 @@ namespace QuickShare
                 
                 App.ShareOperation.ReportCompleted();
             }
+        }
+
+        private static async Task<RomeAppServiceConnectionStatus> Connect(object rs)
+        {
+            if (rs is NormalizedRemoteSystem)
+                return await MainPage.Current.AndroidPackageManager.Connect(rs as NormalizedRemoteSystem, 
+                    SecureKeyStorage.GetUserId(), 
+                    MainPage.Current.PackageManager.RemoteSystems.Where(x => x.Kind != "Unknown").Select(x => x.Id));
+            else
+                return await MainPage.Current.PackageManager.Connect(rs, true, new Uri("quickshare://wake"));
         }
     }
 }

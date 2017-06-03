@@ -316,7 +316,7 @@ namespace QuickShare
         {
             var deferral = args.GetDeferral();
             
-            await MainPage.Current.PackageManager.MessageCarrierReceivedAsync(args.Request);
+            await MainPage.Current.AndroidPackageManager.MessageCarrierReceivedAsync(args.Request);
 
             deferral.Complete();
         }

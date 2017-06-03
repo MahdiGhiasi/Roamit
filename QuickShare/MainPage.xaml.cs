@@ -37,6 +37,7 @@ namespace QuickShare
         public static MainPage Current;
 
         public RomePackageManager PackageManager { get; } = RomePackageManager.Instance;
+        public AndroidRomePackageManager AndroidPackageManager { get; } = AndroidRomePackageManager.Instance;
         public MainPageViewModel ViewModel { get; set; } = new MainPageViewModel();
         public IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem> PicturePickerItems { get; internal set; }
 
@@ -84,9 +85,12 @@ namespace QuickShare
             }
         }
 
-        internal RemoteSystem GetSelectedSystem()
+        internal object GetSelectedSystem()
         {
-            return PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == ViewModel.ListManager.SelectedRemoteSystem.Id);
+            var rs = PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == ViewModel.ListManager.SelectedRemoteSystem.Id);
+            if (rs == null)
+                return ViewModel.ListManager.SelectedRemoteSystem;
+            return rs;
         }
 
         private void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
@@ -191,7 +195,7 @@ namespace QuickShare
                     ViewModel.ListManager.SelectHighScoreItem();
                 }
 
-                ViewModel.IsContentFrameEnabled = (ViewModel.ListManager.RemoteSystems.Count > 0);
+                ViewModel.RefreshIsContentFrameEnabled();
 
                 CheckIfMSAPermissionIsNecessary();
             });
@@ -262,6 +266,7 @@ namespace QuickShare
 
             if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually))
                 ViewModel.ListManager.SelectHighScoreItem();
+            ViewModel.RefreshIsContentFrameEnabled();
 
             await Common.Service.DevicesLoader.WakeAndroidDevices(userId);
         }

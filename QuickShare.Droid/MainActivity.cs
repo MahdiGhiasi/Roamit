@@ -55,7 +55,7 @@ namespace QuickShare.Droid
                 return;
             IsInitialized = true;
 
-            var firebaseToken = FirebaseInstanceId.Instance.Token;
+            //var firebaseToken = FirebaseInstanceId.Instance.Token;
 
             Common.PackageManager = new RomePackageManager(this);
             Common.PackageManager.Initialize("com.quickshare.service");
@@ -69,6 +69,10 @@ namespace QuickShare.Droid
 
             Task.Run(async () =>
             {
+#if DEBUG
+                FirebaseInstanceId.Instance.DeleteInstanceId();
+#endif
+
                 await ServiceFunctions.RegisterDevice();
             });
         }
