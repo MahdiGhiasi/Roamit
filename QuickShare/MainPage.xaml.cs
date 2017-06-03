@@ -257,7 +257,13 @@ namespace QuickShare
             var devices = await Common.Service.DevicesLoader.GetAndroidDevices(userId);
 
             foreach (var item in devices)
-                ViewModel.ListManager.AddDevice(item);
+                if (ViewModel.ListManager.RemoteSystems.FirstOrDefault(x => x.Id == item.Id) == null) //if not already exists
+                    ViewModel.ListManager.AddDevice(item);
+
+            if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually))
+                ViewModel.ListManager.SelectHighScoreItem();
+
+            await Common.Service.DevicesLoader.WakeAndroidDevices(userId);
         }
 
         private void CheckIfMSAPermissionIsNecessary()

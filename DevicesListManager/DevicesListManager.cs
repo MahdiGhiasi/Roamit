@@ -105,7 +105,7 @@ namespace QuickShare.DevicesListManager
         public List<NormalizedRemoteSystem> GetSortedList(NormalizedRemoteSystem selected)
         {
             var output = new List<NormalizedRemoteSystem>();
-            foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown1").OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
+            foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown").OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
             {
                 if (item.Id != selected?.Id)
                     output.Add(item);
@@ -119,7 +119,7 @@ namespace QuickShare.DevicesListManager
             lock (RemoteSystems)
             {
                 RemoteSystems.Clear();
-                foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown1").OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
+                foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown").OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
                 {
                     if (item.Id != SelectedRemoteSystem?.Id)
                         RemoteSystems.Add(item);

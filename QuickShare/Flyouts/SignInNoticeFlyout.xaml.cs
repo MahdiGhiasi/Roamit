@@ -36,7 +36,9 @@ namespace QuickShare.Flyouts
             progressRing.Visibility = Visibility.Visible;
 
             var graph = new Graph(await MSAAuthenticator.GetAccessTokenAsync("User.Read"));
-            await (new MessageDialog(await graph.GetUserUniqueIdAsync())).ShowAsync();
+            //await (new MessageDialog(await graph.GetUserUniqueIdAsync())).ShowAsync();
+            var userId = await graph.GetUserUniqueIdAsync();
+            SecureKeyStorage.SetUserId(userId);
 
             this.IsEnabled = true;
             FlyoutCloseRequest?.Invoke(new EventArgs());

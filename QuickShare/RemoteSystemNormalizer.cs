@@ -12,9 +12,13 @@ namespace QuickShare
     {
         public NormalizedRemoteSystem Normalize(object o)
         {
+            if (o is NormalizedRemoteSystem)
+                return (NormalizedRemoteSystem)o;
+
             var rs = o as RemoteSystem;
-            if (rs == null)
+            if (rs == null)            
                 throw new InvalidCastException();
+            
 
             return new NormalizedRemoteSystem
             {

@@ -13,41 +13,96 @@ using Plugin.DeviceInfo;
 using System.Security.Cryptography;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Firebase.Iid;
+using System.Json;
+using Firebase;
+using Newtonsoft.Json;
 
 namespace QuickShare.Droid.OnlineServiceHelpers
 {
     internal static class ServiceFunctions
     {
-        internal static async Task<bool> RegisterDevice()
+        static string userId = "";
+        internal static async Task<bool> RegisterWinDeviceIds(IEnumerable<string> Ids)
         {
-            var userId = await MSAAuthenticator.GetUserUniqueIdAsync();
-            var deviceName = CrossDeviceInfo.Current.Model;
-            var deviceName2 = Android.OS.Build.Model;
-            var osVersion = CrossDeviceInfo.Current.Version;
-            var deviceUniqueId = GetHashString(CrossDeviceInfo.Current.Id);
-
-            var formContent = new FormUrlEncodedContent(new[]
+            try
             {
-                new KeyValuePair<string, string>("UserId", userId),
-                new KeyValuePair<string, string>("DeviceName", deviceName),
-                new KeyValuePair<string, string>("OSVersion", osVersion),
-                new KeyValuePair<string, string>("DeviceId", deviceUniqueId),
-            });
+                await FindUserId();
 
-            var myHttpClient = new HttpClient();
-            var response = await myHttpClient.PostAsync(QuickShare.Common.Constants.ServerAddress + "/api/User/RegisterDevice", formContent);
-            var responseText = await response.Content.ReadAsStringAsync();
+                var jsonData = JsonConvert.SerializeObject(Ids);
+                var httpClient = new HttpClient();
+                var result = await httpClient.PostAsync($"{QuickShare.Common.Constants.ServerAddress}/api/User/{userId}/WIDS", new StringContent(jsonData, Encoding.UTF8, "application/json"));
+                var resultString = await result.Content.ReadAsStringAsync();
 
-            if ((responseText == "1, REGISTERED") || (responseText == "2, UPDATED"))
-            {
-                System.Diagnostics.Debug.WriteLine($"RegisterDevice Succeeded. Response was '{responseText}'");
+                if (resultString != "1, success")
+                    return false;
+
                 return true;
             }
-            else
+            catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"RegisterDevice Failed. Response was '{responseText}'");
                 return false;
             }
+        }
+
+        internal static async Task<bool> RegisterDevice()
+        {
+            try
+            {
+                var firebaseToken = FirebaseInstanceId.Instance.Token;
+
+                if (firebaseToken == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("firebaseToken is null. Device registration failed.");
+                    return false;
+                }
+
+                await FindUserId();
+
+                var deviceName = CrossDeviceInfo.Current.Model;
+                var deviceName2 = Android.OS.Build.Model;
+                var osVersion = CrossDeviceInfo.Current.Version;
+                var deviceUniqueId = GetDeviceUniqueId();
+
+                var formContent = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("name", deviceName),
+                    new KeyValuePair<string, string>("osVersion", osVersion),
+                    new KeyValuePair<string, string>("deviceId", deviceUniqueId),
+                    new KeyValuePair<string, string>("type", "Android"),
+                    new KeyValuePair<string, string>("token", firebaseToken),
+                });
+
+                var myHttpClient = new HttpClient();
+                var response = await myHttpClient.PostAsync($"{QuickShare.Common.Constants.ServerAddress}/api/User/{userId}/RegisterDevice", formContent);
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                if ((responseText == "1, registered") || (responseText == "2, updated"))
+                {
+                    System.Diagnostics.Debug.WriteLine($"RegisterDevice Succeeded. Response was '{responseText}'");
+                    return true;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"RegisterDevice Failed. Response was '{responseText}'");
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static async Task FindUserId()
+        {
+            if (userId == "")
+                userId = await MSAAuthenticator.GetUserUniqueIdAsync();
+        }
+
+        internal static string GetDeviceUniqueId()
+        {
+            return GetHashString(CrossDeviceInfo.Current.Id);
         }
 
         private static byte[] GetHash(string inputString)

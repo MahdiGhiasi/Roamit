@@ -39,6 +39,30 @@ namespace QuickShare.Droid.OnlineServiceHelpers
             var json = await response.Content.ReadAsStringAsync();
             var results = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
+            if (!results.ContainsKey("access_token"))
+            {
+                //Code is probably expired. Try using refresh_token instead.
+                var refreshToken = CrossSecureStorage.Current.GetValue("refreshToken");
+
+                if (refreshToken == null)
+                    throw new Exception("No refresh token.");
+
+                var formContent2 = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                    new KeyValuePair<string, string>("refresh_token", refreshToken),
+                    new KeyValuePair<string, string>("redirect_uri", "https://login.live.com/oauth20_desktop.srf"),
+                    new KeyValuePair<string, string>("scope", "User.Read Device.Read"),
+                    new KeyValuePair<string, string>("client_id", Config.Secrets.ClientId),
+                });
+
+                var myHttpClient2 = new HttpClient();
+                var response2 = await myHttpClient2.PostAsync("https://login.live.com/oauth20_token.srf", formContent2);
+                var json2 = await response2.Content.ReadAsStringAsync();
+                results = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json2);
+            }
+
+            CrossSecureStorage.Current.SetValue("refreshToken", results["refresh_token"]);
             return results["access_token"];
         }
 
@@ -66,8 +90,19 @@ namespace QuickShare.Droid.OnlineServiceHelpers
 
         internal static async Task<string> GetUserUniqueIdAsync()
         {
-            var graph = new Graph(await GetAccessToken());
-            return await graph.GetUserUniqueIdAsync();
+            if (CrossSecureStorage.Current.HasKey("UserUniqueId"))
+            {
+                return CrossSecureStorage.Current.GetValue("UserUniqueId");
+            }
+            else
+            {
+                var graph = new Graph(await GetAccessToken());
+                var id = await graph.GetUserUniqueIdAsync();
+
+                CrossSecureStorage.Current.SetValue("UserUniqueId", id);
+
+                return id;
+            }
         }
     }
 }

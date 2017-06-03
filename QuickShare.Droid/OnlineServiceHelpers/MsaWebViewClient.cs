@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Util;
 using Android.Webkit;
+using Firebase.Iid;
 using Microsoft.ConnectedDevices;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
             _parentActivity = activity;
         }
 
-        public override void OnPageFinished(WebView view, string url)
+        public override async void OnPageFinished(WebView view, string url)
         {
             base.OnPageFinished(view, url);
             if (url.Contains("?code=") && !authComplete)
@@ -33,6 +34,8 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 _parentActivity._authDialog.Dismiss();
 
                 MSAAuthenticator.SaveAuthenticationCode(authCode);
+
+                await ServiceFunctions.RegisterDevice();
 
                 Platform.SetAuthCode(authCode);
             }

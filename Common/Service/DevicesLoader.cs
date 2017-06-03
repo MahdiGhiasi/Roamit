@@ -32,5 +32,20 @@ namespace QuickShare.Common.Service
 
             return output;
         }
+
+        public static async Task<bool> WakeAndroidDevices(string userId)
+        {
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync($"{Constants.ServerAddress}/api/User/{userId}/TryWakeAll");
+            var responseText = await response.Content.ReadAsStringAsync();
+
+            if (responseText != "1, done")
+            {
+                System.Diagnostics.Debug.WriteLine($"Received unexpected message from TryWakeAll: '{responseText}'");
+                return false;
+            }
+
+            return true;
+        }
     }
 }

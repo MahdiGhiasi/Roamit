@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
 using Android.Widget;
 using Android.Util;
 using System.Threading;
@@ -16,16 +12,21 @@ using QuickShare.Common.Rome;
 using System.Threading.Tasks;
 using PCLStorage;
 using QuickShare.DataStore;
+using QuickShare.Droid.RomeComponent;
+using QuickShare.Droid.OnlineServiceHelpers;
 
 namespace QuickShare.Droid.Services
 {
     [Service]
     public class MessageCarrierService : Service
     {
+        readonly TimeSpan _maxIdleLifeSpan = TimeSpan.FromMinutes(2);
+
         static readonly string TAG = "X:" + typeof(MessageCarrierService).Name;
         static readonly int TimerWait = 4000;
         Timer timer;
         DateTime startTime;
+        DateTime lastActiveTime;
         bool isStarted = false;
 
         public override void OnCreate()
@@ -35,27 +36,48 @@ namespace QuickShare.Droid.Services
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+            InitService(intent, flags, startId);
+            return StartCommandResult.Sticky;
+        }
+
+        private async void InitService(Intent intent, StartCommandFlags flags, int startId)
+        {
             Log.Debug(TAG, $"OnStartCommand called at {startTime}, flags={flags}, startid={startId}");
             if (isStarted)
             {
                 TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
                 Log.Debug(TAG, $"This service was already started, it's been running for {runtime:c}.");
-
-                SendCarrier();
             }
             else
             {
+                isStarted = true;
                 startTime = DateTime.UtcNow;
                 Log.Debug(TAG, $"Starting the service, at {startTime}.");
+                timer = new Timer(HandleTimerCallback, startTime, 0, TimerWait);
 
                 DataStore.DataStorageProviders.Init(PCLStorage.FileSystem.Current.LocalStorage.Path);
                 TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
-                SendCarrier();
-
-                timer = new Timer(HandleTimerCallback, startTime, 0, TimerWait);
-                isStarted = true;
             }
-            return StartCommandResult.Sticky;
+
+            lastActiveTime = DateTime.UtcNow;
+
+            await InitMessageCarrierPackageManagerIfNecessary();
+
+            if (intent.GetStringExtra("Action") == "SendCarrier")
+            {
+                SendCarrier(intent.GetStringExtra("DeviceId"));
+            }
+        }
+
+        private async Task InitMessageCarrierPackageManagerIfNecessary()
+        {
+            if (Common.MessageCarrierPackageManager != null)
+                return;
+
+            Common.MessageCarrierPackageManager = new RomePackageManager(this);
+            Common.MessageCarrierPackageManager.Initialize("com.quickshare.messagecarrierservice");
+
+            await Common.MessageCarrierPackageManager.InitializeDiscovery();
         }
 
         private void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)
@@ -90,15 +112,38 @@ namespace QuickShare.Droid.Services
             return null;
         }
 
-        private async void SendCarrier()
+        private async void SendCarrier(string deviceId)
         {
-            var files = (await PCLStorage.FileSystem.Current.LocalStorage.GetFilesAsync()).ToList();
+            RemoteSystem rs = null;
+
+            //try finding remote system for 15 seconds
+            for (int i = 0; i < 30; i++)
+            {
+                rs = Common.MessageCarrierPackageManager.RemoteSystems.FirstOrDefault(x => x.Id == deviceId);
+
+                if (rs != null)
+                    break;
+
+                await Task.Delay(TimeSpan.FromSeconds(0.5));
+            }
+
+            if (rs == null)
+            {
+                System.Diagnostics.Debug.WriteLine($"Couldn't find device {deviceId}");
+                StopSelf();
+                return;
+            }
+
+            string thisDeviceUniqueId = ServiceFunctions.GetDeviceUniqueId();
+
             try
             {
                 while (true)
                 {
+                    lastActiveTime = DateTime.Now;
+
                     System.Diagnostics.Debug.WriteLine("Connecting to message carrier service...");
-                    var c = await Common.MessageCarrierPackageManager.Connect(Common.GetCurrentRemoteSystemForMessageCarrier(), false);
+                    var c = await Common.MessageCarrierPackageManager.Connect(rs, false);
                     //Fix Rome Android bug (receiver app service closes after 5 seconds in first connection)
                     //Common.PackageManager.CloseAppService();
                     //c = await Common.PackageManager.Connect(rs, false);
@@ -113,9 +158,9 @@ namespace QuickShare.Droid.Services
                     System.Diagnostics.Debug.WriteLine("Sending message carrier...");
 
                     var data = new Dictionary<string, object>()
-                {
-                    {"SenderId", ":)" },
-                };
+                    {
+                        {"SenderId", thisDeviceUniqueId },
+                    };
 
                     var response = await Common.MessageCarrierPackageManager.Send(data);
 
@@ -141,7 +186,6 @@ namespace QuickShare.Droid.Services
                 Log.Debug(TAG, ex.Message);
                 Log.Debug(TAG, ex.ToString());
             }
-
 
             StopSelf();
         }
@@ -188,7 +232,7 @@ namespace QuickShare.Droid.Services
             isStarted = false;
 
             TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
-            Log.Debug(TAG, $"Simple Service destroyed at {DateTime.UtcNow} after running for {runtime:c}.");
+            Log.Debug(TAG, $"Service destroyed at {DateTime.UtcNow} after running for {runtime:c}.");
             base.OnDestroy();
         }
 
@@ -196,6 +240,13 @@ namespace QuickShare.Droid.Services
         {
             TimeSpan runTime = DateTime.UtcNow.Subtract(startTime);
             Log.Debug(TAG, $"This service has been running for {runTime:c} (since ${state}).");
+
+            TimeSpan timeElapsedSinceLastActivity = DateTime.UtcNow.Subtract(lastActiveTime);
+            if (timeElapsedSinceLastActivity > _maxIdleLifeSpan)
+            {
+                Log.Debug(TAG, $"Service is idle for {timeElapsedSinceLastActivity:c}, will shut down.");
+                StopSelf();
+            }
         }
     }
 }

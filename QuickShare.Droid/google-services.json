@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "56239991381",
+    "firebase_url": "https://xamarintest-c951a.firebaseio.com",
+    "project_id": "xamarintest-c951a",
+    "storage_bucket": "xamarintest-c951a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56239991381:android:518673fb3c4c3c2e",
+        "android_client_info": {
+          "package_name": "QuickShare.Droid.QuickShare.Droid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "56239991381-uoo48cl2ff835egocg986ij40nqd9pug.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6maT8plXCYr0V5RKVu_doIljJbyyIOJY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56239991381:android:756d281fce7189eb",
+        "android_client_info": {
+          "package_name": "com.ghiasi.quickshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "56239991381-uoo48cl2ff835egocg986ij40nqd9pug.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6maT8plXCYr0V5RKVu_doIljJbyyIOJY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

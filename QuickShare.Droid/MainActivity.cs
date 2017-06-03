@@ -15,6 +15,9 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using QuickShare.Droid.Services;
 using QuickShare.Droid.OnlineServiceHelpers;
+using Firebase.Iid;
+using Firebase;
+using System.Threading;
 
 namespace QuickShare.Droid
 {
@@ -27,6 +30,8 @@ namespace QuickShare.Droid
         private WebView _webView;
         internal Dialog _authDialog;
 
+        static bool IsInitialized = false;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -34,28 +39,38 @@ namespace QuickShare.Droid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            Common.PackageManager = new RomePackageManager(this);
-            Common.PackageManager.Initialize("com.quickshare.service");
-
-            Common.MessageCarrierPackageManager = new RomePackageManager(this);
-            Common.MessageCarrierPackageManager.Initialize("com.quickshare.messagecarrierservice");
-            
-            Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
-
             devicesAdapter = new DevicesListAdapter(this, Common.ListManager);
             listView = FindViewById<ListView>(Resource.Id.listView1);
             listView.Adapter = devicesAdapter;
             listView.ItemClick += ListView_ItemClick;
             listView.ItemSelected += ListView_ItemSelected;
 
-            InitDiscovery();
-
             FindViewById<Button>(Resource.Id.button3).Click += Button3_Click;
             FindViewById<Button>(Resource.Id.mainSendMessageCarrier).Click += SendMessageCarrier_Click;
             FindViewById<Button>(Resource.Id.mainSendClipboard).Click += SendClipboard_Click;
             FindViewById<Button>(Resource.Id.mainSendFile).Click += SendFile_Click;
 
-            //InitWebServer();
+
+            if (IsInitialized)
+                return;
+            IsInitialized = true;
+
+            var firebaseToken = FirebaseInstanceId.Instance.Token;
+
+            Common.PackageManager = new RomePackageManager(this);
+            Common.PackageManager.Initialize("com.quickshare.service");
+
+            Common.MessageCarrierPackageManager = new RomePackageManager(this);
+            Common.MessageCarrierPackageManager.Initialize("com.quickshare.messagecarrierservice");
+
+            Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
+
+            InitDiscovery();
+
+            Task.Run(async () =>
+            {
+                await ServiceFunctions.RegisterDevice();
+            });
         }
 
         private void SendMessageCarrier_Click(object sender, EventArgs e)
@@ -148,6 +163,8 @@ namespace QuickShare.Droid
             await Common.MessageCarrierPackageManager.InitializeDiscovery();
         }
 
+        System.Timers.Timer finishLoadingTimer = null;
+        Object finishLoadingLock = new Object();
         private void RemoteSystems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -161,6 +178,48 @@ namespace QuickShare.Droid
                 {
                     Common.ListManager.RemoveDevice(item);
                 }
+
+            try
+            {
+                lock (finishLoadingLock)
+                {
+                    if (finishLoadingTimer?.Enabled == true)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Timer stopped!");
+                        finishLoadingTimer.Stop();
+                        finishLoadingTimer = null;
+                    }
+                    if (finishLoadingTimer == null)
+                    {
+                        finishLoadingTimer = new System.Timers.Timer()
+                        {
+                            AutoReset = false,
+                            Interval = 5000,
+                        };
+                        finishLoadingTimer.Elapsed += FinishLoadingTimer_Elapsed;
+                    }
+
+                    System.Diagnostics.Debug.WriteLine("Timer started.......");
+                    finishLoadingTimer.Start();
+                }
+            }
+            catch { }
+
+            //finishCheckCtr++;
+            //MaybeFinishedLoadingDevices(finishCheckCtr);
+        }
+
+        private void FinishLoadingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("Timer has done its job :]");
+            finishLoadingTimer.Enabled = false;
+            FinishedLoadingDevices();
+        }
+
+        private async void FinishedLoadingDevices()
+        {
+            var Ids = Common.PackageManager.RemoteSystems.Where(x => x.Kind.Value != RemoteSystemKinds.Unknown.Value).Select(x => x.Id);
+            await ServiceFunctions.RegisterWinDeviceIds(Ids);
         }
 
         private void Platform_FetchAuthCode(string oauthUrl)
@@ -170,21 +229,24 @@ namespace QuickShare.Droid
             if (!oauthUrl.ToLower().Contains("device.read"))
                 oauthUrl = oauthUrl.Replace("&scope=", "&scope=Device.Read+");
 
-            _authDialog = new Dialog(this);
+            RunOnUiThread(() =>
+            {
+                _authDialog = new Dialog(this);
 
-            var linearLayout = new LinearLayout(_authDialog.Context);
-            _webView = new WebView(_authDialog.Context);
-            linearLayout.AddView(_webView);
-            _authDialog.SetContentView(linearLayout);
+                var linearLayout = new LinearLayout(_authDialog.Context);
+                _webView = new WebView(_authDialog.Context);
+                linearLayout.AddView(_webView);
+                _authDialog.SetContentView(linearLayout);
 
-            _webView.SetWebChromeClient(new WebChromeClient());
-            _webView.Settings.JavaScriptEnabled = true;
-            _webView.Settings.DomStorageEnabled = true;
-            _webView.LoadUrl(oauthUrl);
-            
-            _webView.SetWebViewClient(new MsaWebViewClient(this));
-            _authDialog.Show();
-            _authDialog.SetCancelable(true);
+                _webView.SetWebChromeClient(new WebChromeClient());
+                _webView.Settings.JavaScriptEnabled = true;
+                _webView.Settings.DomStorageEnabled = true;
+                _webView.LoadUrl(oauthUrl);
+
+                _webView.SetWebViewClient(new MsaWebViewClient(this));
+                _authDialog.Show();
+                _authDialog.SetCancelable(true);
+            });
         }
     }
 }
