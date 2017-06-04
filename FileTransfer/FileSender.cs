@@ -303,6 +303,10 @@ namespace QuickShare.FileTransfer
                 vs.Add("Guid", Guid.NewGuid().ToString());
                 vs.Add("SenderName", deviceName);
             }
+            else
+            {
+                vs.Add("IsQueueItem", "true");
+            }
 
             var result = await packageManager.Send(vs);
 

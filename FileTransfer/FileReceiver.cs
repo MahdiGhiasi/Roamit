@@ -59,7 +59,7 @@ namespace QuickShare.FileTransfer
 
                 InvokeProgressEvent(0, 0, FileTransferState.QueueList);
             }
-            else if (isQueue)
+            else if ((request.ContainsKey("IsQueueItem")) && (request["IsQueueItem"] as string == "true"))
             {
                 //Queue data details
                 queuedSlicesYet += (int)request["SlicesCount"];
