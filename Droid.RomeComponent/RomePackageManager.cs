@@ -89,6 +89,14 @@ namespace QuickShare.Droid.RomeComponent
                 }
             }
 
+            try
+            {
+                if (sendSemaphore.CurrentCount == 0)
+                    sendSemaphore.Release();
+            }
+            catch
+            { }
+
             connectionRequest = new RemoteSystemConnectionRequest(rs);
             appService = new AppServiceClientConnection(appServiceName, appIdentifier, connectionRequest);
             var result = await appService.OpenRemoteAsync();
@@ -153,7 +161,11 @@ namespace QuickShare.Droid.RomeComponent
             Bundle bundle = data.ConvertToBundle();
             var result = await appService.SendMessageAsync(bundle);
 
-            sendSemaphore.Release();
+            try
+            {
+                sendSemaphore.Release();
+            }
+            catch { }
 
             return result.ConvertToRomeAppServiceResponse();
         }
