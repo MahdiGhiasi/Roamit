@@ -165,7 +165,7 @@ namespace QuickShare.UWP.Rome
                 {
                     workDone = false;
 
-                    if ((i == 0) && (wakeUri != null) && (!rs.IsAvailableByProximity))
+                    if ((i == 0) && (wakeUri != null) && (!rs.IsAvailableByProximity) && ((rs.Kind == "Phone") || (rs.Kind == "Mobile")))
                     {
                         //Wake device first
                         var wakeResult = await LaunchUri(wakeUri, rs);

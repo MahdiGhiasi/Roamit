@@ -73,7 +73,7 @@ namespace QuickShare.Droid.RomeComponent
 
             remoteSystem = rs;
 
-            if ((wakeUri != null) && (!rs.IsAvailableByProximity))
+            if ((wakeUri != null) && (!rs.IsAvailableByProximity) && (rs.Kind.Value == RemoteSystemKinds.Phone.Value))
             {
                 //Wake device first
                 var wakeResult = await LaunchUri(wakeUri, rs);
