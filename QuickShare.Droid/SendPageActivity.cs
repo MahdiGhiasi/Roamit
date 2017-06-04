@@ -18,6 +18,7 @@ using Com.Github.Angads25.Filepicker.View;
 using QuickShare.FileTransfer;
 using System.Threading;
 using Plugin.DeviceInfo;
+using QuickShare.Droid.Helpers;
 
 namespace QuickShare.Droid
 {

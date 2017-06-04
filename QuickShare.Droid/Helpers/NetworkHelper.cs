@@ -12,7 +12,7 @@ using Android.Widget;
 using System.Net;
 using System.Net.Sockets;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Helpers
 {
     internal class NetworkHelper
     {
