@@ -156,7 +156,12 @@ namespace QuickShare.Droid.RomeComponent
         static SemaphoreSlim sendSemaphore = new SemaphoreSlim(1, 1);
         public async Task<RomeAppServiceResponse> Send(Dictionary<string, object> data)
         {
+            if (sendSemaphore.CurrentCount == 0)
+                System.Diagnostics.Debug.WriteLine("RomePackageManager.Send() -> Waiting for semaphore to get released...");
+
             await sendSemaphore.WaitAsync();
+
+            System.Diagnostics.Debug.WriteLine("RomePackageManager.Send() -> Sending message...");
 
             Bundle bundle = data.ConvertToBundle();
             var result = await appService.SendMessageAsync(bundle);
@@ -166,6 +171,8 @@ namespace QuickShare.Droid.RomeComponent
                 sendSemaphore.Release();
             }
             catch { }
+
+            System.Diagnostics.Debug.WriteLine("RomePackageManager.Send() -> Response received.");
 
             return result.ConvertToRomeAppServiceResponse();
         }
