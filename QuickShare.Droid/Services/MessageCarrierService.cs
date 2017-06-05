@@ -237,7 +237,7 @@ namespace QuickShare.Droid.Services
             if (receiver == "ServerIPFinder")
             {
                 progressNotifier = new ProgressNotifier(this);
-                progressNotifier.SendInitialNotification("Receiving...", "Connecting to remote device...");
+                progressNotifier.SendInitialNotification("Receiving...", "");
 
                 await FileTransfer.ServerIPFinder.ReceiveRequest(message);
             }
