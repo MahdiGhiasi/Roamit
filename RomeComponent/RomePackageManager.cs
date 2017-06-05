@@ -173,7 +173,7 @@ namespace QuickShare.UWP.Rome
                         if (wakeResult == RomeRemoteLaunchUriStatus.Success)
                         {
                             RemoteSystem rsNew = await RediscoverRemoteSystem(rs);
-                            System.Diagnostics.Debug.WriteLine(rsNew.IsAvailableByProximity);
+                            
                             if (rsNew == null)
                                 return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
                             else
