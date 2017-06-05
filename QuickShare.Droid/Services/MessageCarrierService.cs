@@ -80,11 +80,21 @@ namespace QuickShare.Droid.Services
             await Common.MessageCarrierPackageManager.InitializeDiscovery();
         }
 
+        private void ShowToast(string text, ToastLength length)
+        {
+            var context = this;
+            Handler handler = new Handler(Looper.MainLooper);
+            handler.Post(() =>
+            {
+                Toast.MakeText(context, text, length).Show();
+            });
+        }
+
         private void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)
         {
             if (!e.Success)
             {
-                Toast.MakeText(this, "Failed to receive text.", ToastLength.Long).Show();
+                ShowToast("Failed to receive text.", ToastLength.Long);
                 return;
             }
 
@@ -103,7 +113,7 @@ namespace QuickShare.Droid.Services
             ClipData clip = ClipData.NewPlainText(text, text);
             clipboard.PrimaryClip = clip;
 
-            Toast.MakeText(this, "Copied text to clipboard.", ToastLength.Long).Show();
+            ShowToast("Text copied to clipboard.", ToastLength.Long);
         }
 
         public override IBinder OnBind(Intent intent)
