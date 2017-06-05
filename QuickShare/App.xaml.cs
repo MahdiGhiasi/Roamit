@@ -315,8 +315,16 @@ namespace QuickShare
         private async void OnMessageCarrierAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var deferral = args.GetDeferral();
-            
-            await MainPage.Current.AndroidPackageManager.MessageCarrierReceivedAsync(args.Request);
+
+            try
+            {
+                await MainPage.Current.AndroidPackageManager.MessageCarrierReceivedAsync(args.Request);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error while processing MessageCarrier.");
+                Debug.WriteLine(ex.ToString());
+            }
 
             deferral.Complete();
         }
