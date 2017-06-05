@@ -14,6 +14,7 @@ using PCLStorage;
 using QuickShare.DataStore;
 using QuickShare.Droid.RomeComponent;
 using QuickShare.Droid.OnlineServiceHelpers;
+using QuickShare.Droid.Helpers;
 
 namespace QuickShare.Droid.Services
 {
@@ -28,6 +29,8 @@ namespace QuickShare.Droid.Services
         DateTime startTime;
         DateTime lastActiveTime;
         bool isStarted = false;
+
+        ProgressNotifier progressNotifier;
 
         public override void OnCreate()
         {
@@ -56,7 +59,12 @@ namespace QuickShare.Droid.Services
                 timer = new Timer(HandleTimerCallback, startTime, 0, TimerWait);
 
                 DataStore.DataStorageProviders.Init(PCLStorage.FileSystem.Current.LocalStorage.Path);
+
+                TextTransfer.TextReceiver.ClearEventRegistrations();
                 TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
+
+                FileTransfer.FileReceiver.ClearEventRegistrations();
+                FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
             }
 
             lastActiveTime = DateTime.UtcNow;
@@ -92,6 +100,7 @@ namespace QuickShare.Droid.Services
 
         private void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)
         {
+            lastActiveTime = DateTime.UtcNow;
             if (!e.Success)
             {
                 ShowToast("Failed to receive text.", ToastLength.Long);
@@ -114,6 +123,24 @@ namespace QuickShare.Droid.Services
             clipboard.PrimaryClip = clip;
 
             ShowToast("Text copied to clipboard.", ToastLength.Long);
+        }
+
+        private void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
+        {
+            lastActiveTime = DateTime.UtcNow;
+
+            if (e.State == FileTransfer.FileTransferState.Error)
+            {
+                progressNotifier?.FinishProgress("Receive failed.", "");
+            }
+            else if (e.State == FileTransfer.FileTransferState.Finished)
+            {
+                progressNotifier?.FinishProgress("Receive completed.", "Tap to view");
+            }
+            else if (e.State == FileTransfer.FileTransferState.DataTransfer)
+            {
+                progressNotifier?.SetProgressValue((int)e.Total, (int)e.CurrentPart);
+            }
         }
 
         public override IBinder OnBind(Intent intent)
@@ -209,6 +236,9 @@ namespace QuickShare.Droid.Services
 
             if (receiver == "ServerIPFinder")
             {
+                progressNotifier = new ProgressNotifier(this);
+                progressNotifier.SendInitialNotification("Receiving...", "Connecting to remote device...");
+
                 await FileTransfer.ServerIPFinder.ReceiveRequest(message);
             }
             else if (receiver == "FileReceiver")
@@ -240,6 +270,8 @@ namespace QuickShare.Droid.Services
             timer.Dispose();
             timer = null;
             isStarted = false;
+            TextTransfer.TextReceiver.TextReceiveFinished -= TextReceiver_TextReceiveFinished;
+            FileTransfer.FileReceiver.FileTransferProgress -= FileReceiver_FileTransferProgress;
 
             TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
             Log.Debug(TAG, $"Service destroyed at {DateTime.UtcNow} after running for {runtime:c}.");

@@ -154,6 +154,7 @@
     <Compile Include="Firebase\MyFirebaseInstanceIdService.cs" />
     <Compile Include="Firebase\MyFirebaseListenerService.cs" />
     <Compile Include="Helpers\Notification.cs" />
+    <Compile Include="Helpers\ProgressNotifier.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="OnlineServiceHelpers\ServiceFunctions.cs" />
