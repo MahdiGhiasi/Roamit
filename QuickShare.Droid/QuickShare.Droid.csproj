@@ -153,12 +153,13 @@
     <Compile Include="DevicesListAdapter.cs" />
     <Compile Include="Firebase\MyFirebaseInstanceIdService.cs" />
     <Compile Include="Firebase\MyFirebaseListenerService.cs" />
+    <Compile Include="Helpers\Notification.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="OnlineServiceHelpers\ServiceFunctions.cs" />
     <Compile Include="OnlineServiceHelpers\MSAAuthenticator.cs" />
     <Compile Include="OnlineServiceHelpers\MsaWebViewClient.cs" />
-    <Compile Include="NetworkHelper.cs" />
+    <Compile Include="Helpers\NetworkHelper.cs" />
     <Compile Include="RemoteSystemNormalizer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
