@@ -21,6 +21,14 @@ namespace QuickShare.Droid
             base.OnCreate();
             RegisterActivityLifecycleCallbacks(this);
             //A great place to initialize Xamarin.Insights and Dependency Services!
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "QuickShare");
+            System.IO.File.WriteAllText(System.IO.Path.Combine(downloadPath, "Log.txt"), DateTime.Now + "\n\n" + e.ExceptionObject.ToString(), System.Text.Encoding.UTF8);
         }
 
         public override void OnTerminate()
