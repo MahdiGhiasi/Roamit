@@ -45,11 +45,25 @@ namespace QuickShare.Droid
             listView.ItemClick += ListView_ItemClick;
             listView.ItemSelected += ListView_ItemSelected;
 
-            FindViewById<Button>(Resource.Id.button3).Click += Button3_Click;
-            FindViewById<Button>(Resource.Id.mainSendMessageCarrier).Click += SendMessageCarrier_Click;
-            FindViewById<Button>(Resource.Id.mainSendClipboard).Click += SendClipboard_Click;
-            FindViewById<Button>(Resource.Id.mainSendFile).Click += SendFile_Click;
+            //FindViewById<Button>(Resource.Id.button3).Click += Button3_Click;
+            //FindViewById<Button>(Resource.Id.mainSendMessageCarrier).Click += SendMessageCarrier_Click;
+            var mainLayout = FindViewById<LinearLayout>(Resource.Id.mainLayout);
+            var clipboardButton = FindViewById<Button>(Resource.Id.clipboardButton);
+            var sendFileButton = FindViewById<Button>(Resource.Id.sendFileButton);
+            var sendPictureButton = FindViewById<Button>(Resource.Id.sendPictureButton);
 
+            clipboardButton.Click += SendClipboard_Click;
+            sendFileButton.Click += SendFile_Click;
+
+            mainLayout.ViewTreeObserver.GlobalLayout += (ss, ee) =>
+            {
+                sendFileButton.SetWidth((int)(mainLayout.Width * 0.5));
+                sendFileButton.SetHeight((int)(mainLayout.Width * 0.5));
+                clipboardButton.SetWidth((int)(mainLayout.Width * 0.25));
+                clipboardButton.SetHeight((int)(mainLayout.Width * 0.25));
+                sendPictureButton.SetWidth((int)(mainLayout.Width * 0.25));
+                sendPictureButton.SetHeight((int)(mainLayout.Width * 0.25));
+            };
 
             if (IsInitialized)
                 return;

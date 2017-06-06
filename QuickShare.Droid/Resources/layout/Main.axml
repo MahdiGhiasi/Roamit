@@ -2,57 +2,96 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <Button
-        android:text="Send file"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/mainSendFile" />
-    <Button
-        android:text="Send picture"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/mainSendPicture" />
-    <Button
-        android:text="send clipboard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/mainSendClipboard" />
-    <Button
-        android:text="Launch test Url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/button3" />
-    <Button
-        android:text="Send message carrier"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/mainSendMessageCarrier" />
-    <TextView
-        android:text="Selected Device:"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2" />
-    <TextView
-        android:text="Nothing"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/selectedDeviceName" />
-    <TextView
-        android:text="Devices:"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView1" />
-    <ListView
+    android:layout_height="match_parent"
+    android:id="@+id/mainLayout">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
         android:minWidth="25px"
         android:minHeight="25px"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/listView1"
-        android:layout_marginTop="0.0dp"
-        android:layout_marginBottom="0.0dp"
-        android:layout_marginRight="0.0dp" />
+        android:id="@+id/relativeLayout1">
+        <Button
+            android:text="Send File"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:background="@drawable/circle_button"
+            android:id="@+id/sendFileButton"
+            android:layout_centerInParent="false"
+            android:height="200dp"
+            android:width="200dp"
+            android:translationY="10dp"
+            android:translationX="-5dp"
+            android:layout_centerVertical="false"
+            android:layout_centerHorizontal="true" />
+        <Button
+            android:text="Send Clipboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_button"
+            android:id="@+id/clipboardButton"
+            android:layout_centerInParent="false"
+            android:layout_centerVertical="false"
+            android:translationY="-30dp"
+            android:height="100dp"
+            android:width="100dp"
+            android:translationX="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true" />
+        <Button
+            android:text="Send Picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_button"
+            android:id="@+id/sendPictureButton"
+            android:layout_centerInParent="false"
+            android:layout_centerVertical="false"
+            android:translationY="-50dp"
+            android:height="100dp"
+            android:width="100dp"
+            android:translationX="-20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout1"
+        android:background="@android:color/holo_green_dark">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout2"
+            android:padding="16dp"
+            android:background="#556677">
+            <TextView
+                android:text="Nothing"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/selectedDeviceName" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#334455"
+            android:id="@+id/linearLayout3"
+            android:paddingBottom="0dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
+            <ListView
+                android:minWidth="25px"
+                android:minHeight="25px"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/listView1"
+                android:layout_marginTop="0.0dp"
+                android:layout_marginBottom="0.0dp"
+                android:layout_marginRight="0.0dp" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

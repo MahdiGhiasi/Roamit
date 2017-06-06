@@ -153,7 +153,10 @@ namespace QuickShare.Droid
 			public const int bottom_shadow = 2130837504;
 			
 			// aapt resource value: 0x7f020001
-			public const int Icon = 2130837505;
+			public const int circle_button = 2130837505;
+			
+			// aapt resource value: 0x7f020002
+			public const int Icon = 2130837506;
 			
 			static Drawable()
 			{
@@ -174,11 +177,11 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0a0001
 			public const int adjust_width = 2131361793;
 			
-			// aapt resource value: 0x7f0a0019
-			public const int button3 = 2131361817;
-			
 			// aapt resource value: 0x7f0a000d
 			public const int cancel = 2131361805;
+			
+			// aapt resource value: 0x7f0a0019
+			public const int clipboardButton = 2131361817;
 			
 			// aapt resource value: 0x7f0a0012
 			public const int dir_path = 2131361810;
@@ -222,20 +225,20 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0a000c
 			public const int linearLayout = 2131361804;
 			
-			// aapt resource value: 0x7f0a001e
-			public const int listView1 = 2131361822;
+			// aapt resource value: 0x7f0a001b
+			public const int linearLayout1 = 2131361819;
 			
-			// aapt resource value: 0x7f0a0018
-			public const int mainSendClipboard = 2131361816;
+			// aapt resource value: 0x7f0a001c
+			public const int linearLayout2 = 2131361820;
+			
+			// aapt resource value: 0x7f0a001e
+			public const int linearLayout3 = 2131361822;
+			
+			// aapt resource value: 0x7f0a001f
+			public const int listView1 = 2131361823;
 			
 			// aapt resource value: 0x7f0a0016
-			public const int mainSendFile = 2131361814;
-			
-			// aapt resource value: 0x7f0a001a
-			public const int mainSendMessageCarrier = 2131361818;
-			
-			// aapt resource value: 0x7f0a0017
-			public const int mainSendPicture = 2131361815;
+			public const int mainLayout = 2131361814;
 			
 			// aapt resource value: 0x7f0a0003
 			public const int multi_mode = 2131361795;
@@ -243,29 +246,32 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0a0002
 			public const int none = 2131361794;
 			
-			// aapt resource value: 0x7f0a0021
-			public const int previewImageView = 2131361825;
+			// aapt resource value: 0x7f0a0022
+			public const int previewImageView = 2131361826;
+			
+			// aapt resource value: 0x7f0a0017
+			public const int relativeLayout1 = 2131361815;
 			
 			// aapt resource value: 0x7f0a000e
 			public const int select = 2131361806;
 			
-			// aapt resource value: 0x7f0a001c
-			public const int selectedDeviceName = 2131361820;
+			// aapt resource value: 0x7f0a001d
+			public const int selectedDeviceName = 2131361821;
+			
+			// aapt resource value: 0x7f0a0018
+			public const int sendFileButton = 2131361816;
+			
+			// aapt resource value: 0x7f0a001a
+			public const int sendPictureButton = 2131361818;
+			
+			// aapt resource value: 0x7f0a0021
+			public const int sendProgress = 2131361825;
 			
 			// aapt resource value: 0x7f0a0020
-			public const int sendProgress = 2131361824;
-			
-			// aapt resource value: 0x7f0a001f
-			public const int sendStatus = 2131361823;
+			public const int sendStatus = 2131361824;
 			
 			// aapt resource value: 0x7f0a0004
 			public const int single_mode = 2131361796;
-			
-			// aapt resource value: 0x7f0a001d
-			public const int textView1 = 2131361821;
-			
-			// aapt resource value: 0x7f0a001b
-			public const int textView2 = 2131361819;
 			
 			// aapt resource value: 0x7f0a0011
 			public const int title = 2131361809;
