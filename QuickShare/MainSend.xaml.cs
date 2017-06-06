@@ -147,7 +147,7 @@ namespace QuickShare
                 }
                 else if (mode == "file")
                 {
-                    string sendingText = (SendDataTemporaryStorage.Files.Count == 1) ? "Sending file..." : "Sending files...";
+                    string sendingText = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Sending file..." : "Sending files...";
                     ViewModel.SendStatus = "Preparing...";
 
                     bool failed = false;
@@ -185,11 +185,19 @@ namespace QuickShare
                             ViewModel.ProgressIsIndeterminate = false;
                             return;
                         }
-                        else if (SendDataTemporaryStorage.Files.Count == 1)
+                        else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile))
                         {
                             await Task.Run(async () =>
                             {
-                                if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0])))
+                                if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0] as StorageFile)))
+                                    failed = true;
+                            });
+                        }
+                        else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFolder))
+                        {
+                            await Task.Run(async () =>
+                            {
+                                if (!await fs.SendFolder(new PCLStorage.WinRTFolder(SendDataTemporaryStorage.Files[0] as StorageFolder), ""))
                                     failed = true;
                             });
                         }
@@ -198,7 +206,8 @@ namespace QuickShare
                             await Task.Run(async () =>
                             {
                                 if (!await fs.SendFiles(from x in SendDataTemporaryStorage.Files
-                                                        select new PCLStorage.WinRTFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
+                                                        where x is StorageFile
+                                                        select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
                                     failed = true;
                             });
                         }

@@ -247,15 +247,18 @@ namespace QuickShare
 
         private async void DiscoverDevices()
         {
-            DiscoverOtherDevices();
-
             await PackageManager.InitializeDiscovery();
         }
 
-        private async void DiscoverOtherDevices()
+        bool alreadyDiscovered = false;
+        private async Task<bool> DiscoverOtherDevices()
         {
             if (!SecureKeyStorage.IsUserIdStored())
-                return;
+                return false;
+
+            if (alreadyDiscovered)
+                return true;
+            alreadyDiscovered = true;
 
             var userId = SecureKeyStorage.GetUserId();
             var devices = await Common.Service.DevicesLoader.GetAndroidDevices(userId);
@@ -269,11 +272,14 @@ namespace QuickShare
             ViewModel.RefreshIsContentFrameEnabled();
 
             await Common.Service.DevicesLoader.WakeAndroidDevices(userId);
+
+            return true;
         }
 
-        private void CheckIfMSAPermissionIsNecessary()
+        private async void CheckIfMSAPermissionIsNecessary()
         {
-            if ((ViewModel.ListManager.IsAndroidDevicePresent) && (!isAskedAboutMSAPermission))
+            bool discoverResult = await DiscoverOtherDevices();
+            if ((ViewModel.ListManager.IsAndroidDevicePresent) && (!isAskedAboutMSAPermission) && (!discoverResult))
             {
                 isAskedAboutMSAPermission = true;
                 ShowSignInFlyout();

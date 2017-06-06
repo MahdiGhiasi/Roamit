@@ -15,7 +15,8 @@ namespace QuickShare.HelperClasses
             string type = "";
             if (data.Contains(StandardDataFormats.StorageItems))
             {
-                var files = (await data.GetStorageItemsAsync()).Where(x => x is StorageFile).Select(x => x as StorageFile).ToList();
+                var items = await data.GetStorageItemsAsync();
+                var files = items.Where(x => x is StorageFile).Select(x => x as StorageFile).ToList();
                 string url = "";
                 if ((files.Count == 1) &&
                     ((files[0].FileType.ToLower() == ".html") /* Edge */ || (files[0].FileType.ToLower() == ".url") /* Chrome + Firefox */) &&
@@ -25,9 +26,16 @@ namespace QuickShare.HelperClasses
                     SendDataTemporaryStorage.Text = url;
                     type = StandardDataFormats.WebLink;
                 }
+                /**
+                else if ((files.Count == 0) && (items.Count == 1) && (items[0] is StorageFolder))
+                {
+                    SendDataTemporaryStorage.Files = new List<IStorageItem>(items);
+                    type = StandardDataFormats.StorageItems;
+                }
+                /**/
                 else
                 {
-                    SendDataTemporaryStorage.Files = files;
+                    SendDataTemporaryStorage.Files = new List<IStorageItem>(files);
                     type = StandardDataFormats.StorageItems;
                 }
             }

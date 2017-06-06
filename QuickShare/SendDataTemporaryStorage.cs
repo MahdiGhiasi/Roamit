@@ -9,7 +9,7 @@ namespace QuickShare
 {
     internal static class SendDataTemporaryStorage
     {
-        public static List<StorageFile> Files { get; set; } = new List<StorageFile>();
+        public static List<IStorageItem> Files { get; set; } = new List<IStorageItem>();
         public static string Text { get; set; }
         public static Uri LaunchUri { get; set; }
 
