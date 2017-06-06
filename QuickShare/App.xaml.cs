@@ -318,6 +318,7 @@ namespace QuickShare
 
             try
             {
+                Debug.WriteLine("A message carrier received. Processing...");
                 await MainPage.Current.AndroidPackageManager.MessageCarrierReceivedAsync(args.Request);
             }
             catch (Exception ex)

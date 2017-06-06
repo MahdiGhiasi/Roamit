@@ -73,6 +73,7 @@ namespace QuickShare.Droid.Services
 
             if (intent.GetStringExtra("Action") == "SendCarrier")
             {
+                Android.Util.Log.Debug("CARRIER_DEBUG", "2");
                 SendCarrier(intent.GetStringExtra("DeviceId"));
             }
         }
@@ -153,6 +154,8 @@ namespace QuickShare.Droid.Services
         {
             RemoteSystem rs = null;
 
+            Android.Util.Log.Debug("CARRIER_DEBUG", "3 " + deviceId);
+
             //try finding remote system for 15 seconds
             for (int i = 0; i < 30; i++)
             {
@@ -164,6 +167,8 @@ namespace QuickShare.Droid.Services
                 await Task.Delay(TimeSpan.FromSeconds(0.5));
             }
 
+            Android.Util.Log.Debug("CARRIER_DEBUG", "4");
+
             if (rs == null)
             {
                 System.Diagnostics.Debug.WriteLine($"Couldn't find device {deviceId}");
@@ -171,7 +176,11 @@ namespace QuickShare.Droid.Services
                 return;
             }
 
+            Android.Util.Log.Debug("CARRIER_DEBUG", "5");
+
             string thisDeviceUniqueId = ServiceFunctions.GetDeviceUniqueId();
+
+            Android.Util.Log.Debug("CARRIER_DEBUG", "6 " + thisDeviceUniqueId);
 
             try
             {
@@ -179,20 +188,20 @@ namespace QuickShare.Droid.Services
                 {
                     lastActiveTime = DateTime.Now;
 
-                    System.Diagnostics.Debug.WriteLine("Connecting to message carrier service...");
+                    Android.Util.Log.Debug("CARRIER_DEBUG", "Connecting to message carrier service...");
                     var c = await Common.MessageCarrierPackageManager.Connect(rs, false);
                     //Fix Rome Android bug (receiver app service closes after 5 seconds in first connection)
-                    //Common.PackageManager.CloseAppService();
-                    //c = await Common.PackageManager.Connect(rs, false);
+                    //Common.MessageCarrierPackageManager.CloseAppService();
+                    //c = await Common.MessageCarrierPackageManager.Connect(rs, false);
 
                     if (c != RomeAppServiceConnectionStatus.Success)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Connection failed. {c.ToString()}");
-                        continue;
+                        Android.Util.Log.Debug("CARRIER_DEBUG", $"Connection failed. {c.ToString()}");
+                        throw new Exception($"Connection failed. {c.ToString()}");
                     }
 
-                    System.Diagnostics.Debug.WriteLine("Connected.");
-                    System.Diagnostics.Debug.WriteLine("Sending message carrier...");
+                    Android.Util.Log.Debug("CARRIER_DEBUG", "Connected.");
+                    Android.Util.Log.Debug("CARRIER_DEBUG", "Sending message carrier...");
 
                     var data = new Dictionary<string, object>()
                     {
@@ -201,17 +210,18 @@ namespace QuickShare.Droid.Services
 
                     var response = await Common.MessageCarrierPackageManager.Send(data);
 
-                    System.Diagnostics.Debug.WriteLine($"Response received. ({response.Status.ToString()})");
+                    Android.Util.Log.Debug("CARRIER_DEBUG", $"Response received. ({response.Status.ToString()})");
 
-                    if (response.Message == null)
+                    if ((response.Message == null) || (response.Message.Count == 0))
                     {
-                        System.Diagnostics.Debug.WriteLine("Response is empty.");
+                        Android.Util.Log.Debug("CARRIER_DEBUG", "Response is empty.");
+                        await Task.Delay(TimeSpan.FromSeconds(1));
                         continue;
                     }
 
                     var isFinished = await ProcessReceivedMessage(response.Message);
 
-                    System.Diagnostics.Debug.WriteLine("Finished.");
+                    Android.Util.Log.Debug("CARRIER_DEBUG", "Finished.");
 
                     if (isFinished)
                         break;
@@ -231,6 +241,9 @@ namespace QuickShare.Droid.Services
         {
             foreach (var item in message)
                 System.Diagnostics.Debug.WriteLine($"Key = {item.Key} , Value = {item.Value.ToString()}");
+
+            if (!message.ContainsKey("Receiver"))
+                return false;
 
             string receiver = message["Receiver"] as string;
 

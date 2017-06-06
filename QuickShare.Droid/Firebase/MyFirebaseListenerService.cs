@@ -35,6 +35,9 @@ namespace QuickShare.Droid.Firebase
                 var intent = new Intent(this, typeof(MessageCarrierService));
                 intent.PutExtra("Action", "SendCarrier");
                 intent.PutExtra("DeviceId", message.Data["WakerDeviceId"]);
+
+                Android.Util.Log.Debug("CARRIER_DEBUG", "1");
+
                 StartService(intent);
             }
             else

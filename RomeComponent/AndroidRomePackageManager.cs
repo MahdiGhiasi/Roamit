@@ -30,7 +30,7 @@ namespace QuickShare.UWP.Rome
         }
 
         readonly int _maxRetryCount = 2;
-        readonly double _maxSecondsForCarrier = 10.0;
+        readonly double _maxSecondsForCarrier = 5.0;
 
         List<PackageManagerSendQueueItem> sendQueue = new List<PackageManagerSendQueueItem>();
         static SemaphoreSlim sendQueueSemaphore = new SemaphoreSlim(1, 1);
@@ -41,19 +41,30 @@ namespace QuickShare.UWP.Rome
 
         private AndroidRomePackageManager() { }
 
+        static Guid latestCarrierCode;
+
         public async Task MessageCarrierReceivedAsync(AppServiceRequest request)
         {
+            Guid guid = Guid.NewGuid();
+            latestCarrierCode = guid;
             int counter = 0;
 
             while (true)
             {
                 await sendQueueSemaphore.WaitAsync();
-
+                
                 var queueItem = sendQueue.FirstOrDefault(x => x.RemoteSystemId == (string)request.Message["SenderId"]);
 
                 if (queueItem == null)
                 {
                     sendQueueSemaphore.Release();
+
+                    if (latestCarrierCode != guid)
+                    {
+                        Debug.WriteLine($"A newer carrier is here. I will retire now. I was waiting for {counter} cycles.");
+                        break;
+                    }
+
                     Debug.WriteLine($"Queue is empty. Message Carrier is waiting for some message to arrive... {counter}");
                     await Task.Delay(1000);
                     counter++;
@@ -61,11 +72,9 @@ namespace QuickShare.UWP.Rome
                 }
 
                 var vs = queueItem.Data.ToValueSet();
-
                 var result = await request.SendResponseAsync(vs);
-
                 queueItem.SetSendResult((RomeAppServiceResponseStatus)result);
-
+                sendQueue.Remove(queueItem);
                 sendQueueSemaphore.Release();
 
                 break;
@@ -74,11 +83,8 @@ namespace QuickShare.UWP.Rome
 
         public async Task<RomeAppServiceResponse> Send(Dictionary<string, object> data)
         {
-            return await Send(data, 0);
-        }
+            int tryCount = 0;
 
-        private async Task<RomeAppServiceResponse> Send(Dictionary<string, object> data, int tryCount)
-        {
             var item = new PackageManagerSendQueueItem
             {
                 RemoteSystemId = nrs.Id,
@@ -96,26 +102,44 @@ namespace QuickShare.UWP.Rome
                 tcs.SetResult(e.ResponseStatus);
             };
 
-            Debug.WriteLine("Waiting for Message Carrier to arrive...");
-            var result = await tcs.Task.WithTimeout(TimeSpan.FromSeconds(_maxSecondsForCarrier), RomeAppServiceResponseStatus.Unknown);
+            RomeAppServiceResponseStatus result = RomeAppServiceResponseStatus.RemoteSystemUnavailable;
 
-            //Timeout
-            if (result == RomeAppServiceResponseStatus.Unknown)
+            Debug.WriteLine("Waiting for Message Carrier to arrive...");
+            while (tryCount < _maxRetryCount)
             {
-                if (tryCount < _maxRetryCount)
+                result = await tcs.Task.WithTimeout(TimeSpan.FromSeconds(_maxSecondsForCarrier), RomeAppServiceResponseStatus.Unknown);
+
+                //Timeout
+                if (result == RomeAppServiceResponseStatus.Unknown)
                 {
-                    Debug.WriteLine("Message Carrier timeout, will retry...");
-                    return await Send(data, tryCount + 1);
+                    if (tryCount < _maxRetryCount)
+                    {
+                        Debug.WriteLine("Message Carrier timeout, will retry...");
+                        var connectResult = await Connect();
+
+                        if (connectResult != RomeAppServiceConnectionStatus.Success)
+                        {
+                            Debug.WriteLine("Can't connect.");
+                            result = RomeAppServiceResponseStatus.RemoteSystemUnavailable;
+                        }
+                        else
+                        {
+                            tryCount++;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        result = RomeAppServiceResponseStatus.RemoteSystemUnavailable;
+                        Debug.WriteLine("Message Carrier didn't arrive :(");
+                    }
                 }
                 else
                 {
-                    result = RomeAppServiceResponseStatus.RemoteSystemUnavailable;
-                    Debug.WriteLine("Message Carrier didn't arrive :(");
+                    Debug.WriteLine("Message Carrier arrived.");
                 }
-            }
-            else
-            {
-                Debug.WriteLine("Message Carrier arrived.");
+
+                break;
             }
 
             sendQueue.Remove(item);
