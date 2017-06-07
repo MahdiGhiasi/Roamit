@@ -23,7 +23,7 @@ using Android.Views.Animations;
 
 namespace QuickShare.Droid
 {
-    [Activity(Label = "SendPageActivity")]
+    [Activity(Label = "SendPageActivity", Name = "com.ghiasi.quickshare.sendpage")]
     public class SendPageActivity : Activity
     {
         TextView sendStatus, sendProgressPercent;
@@ -45,13 +45,12 @@ namespace QuickShare.Droid
             sendProgress = FindViewById<ProgressBar>(Resource.Id.sendProgress);
             sendProgressIndeterminate = FindViewById<ProgressBar>(Resource.Id.sendProgressIndeterminate);
             sendProgressPercent = FindViewById<TextView>(Resource.Id.sendProgressPercent);
-            InitSpinner();
 
             if (IsInitialized)
                 return;
             IsInitialized = true;
 
-
+            InitSpinner();
             ProcessRequest(contentType);
         }
 
@@ -166,7 +165,7 @@ namespace QuickShare.Droid
 
             sendStatus.Text = "Connecting...";
 
-            
+
             var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
 
             if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)

@@ -68,7 +68,7 @@
             android:padding="16dp"
             android:background="#556677">
             <TextView
-                android:text="Nothing"
+                android:text="Searching for devices..."
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -60,13 +60,16 @@ namespace QuickShare.Droid
 
             mainLayout.ViewTreeObserver.GlobalLayout += (ss, ee) =>
             {
-                sendFileButton.SetWidth((int)(mainLayout.Width * 0.5));
-                sendFileButton.SetHeight((int)(mainLayout.Width * 0.5));
-                clipboardButton.SetWidth((int)(mainLayout.Width * 0.25));
-                clipboardButton.SetHeight((int)(mainLayout.Width * 0.25));
-                sendPictureButton.SetWidth((int)(mainLayout.Width * 0.25));
-                sendPictureButton.SetHeight((int)(mainLayout.Width * 0.25));
+                int x = Math.Min(mainLayout.Width, mainLayout.Height);
+                sendFileButton.SetWidth((int)(x * 0.5));
+                sendFileButton.SetHeight((int)(x * 0.5));
+                clipboardButton.SetWidth((int)(x * 0.25));
+                clipboardButton.SetHeight((int)(x * 0.25));
+                sendPictureButton.SetWidth((int)(x * 0.25));
+                sendPictureButton.SetHeight((int)(x * 0.25));
             };
+
+            UpdateSelectedRemoteSystem();
 
             if (IsInitialized)
                 return;
@@ -150,6 +153,9 @@ namespace QuickShare.Droid
 
         private void UpdateSelectedRemoteSystem()
         {
+            if (Common.ListManager.SelectedRemoteSystem == null)
+                return;
+
             RunOnUiThread(() =>
             {
                 FindViewById<TextView>(Resource.Id.selectedDeviceName).Text = Common.ListManager.SelectedRemoteSystem.DisplayName;

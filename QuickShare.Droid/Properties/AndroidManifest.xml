@@ -12,5 +12,7 @@
 				<category android:name="${applicationId}" />
 			</intent-filter>
 		</receiver>
+    <activity android:name="com.ghiasi.quickshare.sendpage"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
 	</application>
 </manifest>
