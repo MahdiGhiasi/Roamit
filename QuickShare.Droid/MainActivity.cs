@@ -32,6 +32,9 @@ namespace QuickShare.Droid
 
         static bool IsInitialized = false;
 
+        bool isUserSelectedRemoteSystemManually = false;
+        int remoteSystemPrevCount = 0;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -137,10 +140,19 @@ namespace QuickShare.Droid
 
         private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            Common.ListManager.Select(Common.ListManager.RemoteSystems[e.Position]);
+            isUserSelectedRemoteSystemManually = true;
 
-            FindViewById<TextView>(Resource.Id.selectedDeviceName).Text = Common.ListManager.SelectedRemoteSystem.DisplayName;
-            System.Diagnostics.Debug.WriteLine(Common.ListManager.SelectedRemoteSystem.DisplayName + " is selected.");
+            Common.ListManager.Select(Common.ListManager.RemoteSystems[e.Position]);
+            UpdateSelectedRemoteSystem();
+        }
+
+        private void UpdateSelectedRemoteSystem()
+        {
+            RunOnUiThread(() =>
+            {
+                FindViewById<TextView>(Resource.Id.selectedDeviceName).Text = Common.ListManager.SelectedRemoteSystem.DisplayName;
+                System.Diagnostics.Debug.WriteLine(Common.ListManager.SelectedRemoteSystem.DisplayName + " is selected.");
+            });
         }
 
         private void ListView_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
@@ -196,6 +208,13 @@ namespace QuickShare.Droid
                 {
                     Common.ListManager.RemoveDevice(item);
                 }
+
+            if ((Common.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (Common.ListManager.RemoteSystems.Count > remoteSystemPrevCount))
+            {
+                remoteSystemPrevCount = Common.ListManager.RemoteSystems.Count;
+                Common.ListManager.SelectHighScoreItem();
+                UpdateSelectedRemoteSystem();
+            }
 
             try
             {
