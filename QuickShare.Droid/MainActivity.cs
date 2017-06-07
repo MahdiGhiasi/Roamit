@@ -101,6 +101,7 @@ namespace QuickShare.Droid
 
         private void SendFile_Click(object sender, EventArgs e)
         {
+            SendPageActivity.IsInitialized = false;
             var intent = new Intent(this, typeof(SendPageActivity));
             intent.PutExtra("ContentType", "File");
             StartActivity(intent);
@@ -117,6 +118,7 @@ namespace QuickShare.Droid
 
         private void SendClipboard_Click(object sender, EventArgs e)
         {
+            SendPageActivity.IsInitialized = false;
             var intent = new Intent(this, typeof(SendPageActivity));
             intent.PutExtra("ContentType", "Clipboard");
             StartActivity(intent);

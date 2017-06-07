@@ -31,7 +31,7 @@ namespace QuickShare.Droid
 
         public static readonly int PickImageId = 1000;
 
-        static bool IsInitialized = false;
+        internal static bool IsInitialized = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
