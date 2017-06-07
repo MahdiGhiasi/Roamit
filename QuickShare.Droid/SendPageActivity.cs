@@ -31,6 +31,8 @@ namespace QuickShare.Droid
 
         public static readonly int PickImageId = 1000;
 
+        static bool IsInitialized = false;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -44,6 +46,11 @@ namespace QuickShare.Droid
             sendProgressIndeterminate = FindViewById<ProgressBar>(Resource.Id.sendProgressIndeterminate);
             sendProgressPercent = FindViewById<TextView>(Resource.Id.sendProgressPercent);
             InitSpinner();
+
+            if (IsInitialized)
+                return;
+            IsInitialized = true;
+
 
             ProcessRequest(contentType);
         }
