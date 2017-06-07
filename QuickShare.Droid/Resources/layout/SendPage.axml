@@ -2,22 +2,44 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:text="Large Text"
+  <ProgressBar
+      android:id="@+id/sendProgressIndeterminate"
+      android:layout_width="200dp"
+      android:layout_height="200dp"
+      android:indeterminate="false"
+      android:progressDrawable="@drawable/circular_progress_bar"
+      android:background="@drawable/circle_shape"
+      style="?android:attr/progressBarStyleHorizontal"
+      android:max="100"
+      android:progress="20"
+      android:layout_centerInParent="true" />
+  <ProgressBar
+      android:id="@+id/sendProgress"
+      android:layout_width="200dp"
+      android:layout_height="200dp"
+      android:indeterminate="false"
+      android:progressDrawable="@drawable/circular_progress_bar"
+      android:background="@drawable/circle_shape"
+      style="?android:attr/progressBarStyleHorizontal"
+      android:max="100"
+      android:progress="65"
+      android:layout_centerInParent="true" />
+  <TextView
+      android:text="0%"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:gravity="center"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/sendProgressPercent"
+      android:layout_centerInParent="true"
+      android:visibility="visible" />
+  <TextView
+        android:text="Connecting..."
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/sendStatus" />
-    <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/sendProgress"
-        android:max="100"
-        android:progress="50" />
-    <ImageView
-        android:src="@android:drawable/ic_menu_gallery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/previewImageView" />
+        android:id="@+id/sendStatus"
+        android:layout_above="@id/sendProgress"
+        android:paddingBottom="20dp" />
 </RelativeLayout>

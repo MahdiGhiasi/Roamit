@@ -19,14 +19,15 @@ using QuickShare.FileTransfer;
 using System.Threading;
 using Plugin.DeviceInfo;
 using QuickShare.Droid.Helpers;
+using Android.Views.Animations;
 
 namespace QuickShare.Droid
 {
     [Activity(Label = "SendPageActivity")]
     public class SendPageActivity : Activity
     {
-        TextView sendStatus;
-        ProgressBar sendProgress;
+        TextView sendStatus, sendProgressPercent;
+        ProgressBar sendProgress, sendProgressIndeterminate;
 
         public static readonly int PickImageId = 1000;
 
@@ -40,8 +41,22 @@ namespace QuickShare.Droid
 
             sendStatus = FindViewById<TextView>(Resource.Id.sendStatus);
             sendProgress = FindViewById<ProgressBar>(Resource.Id.sendProgress);
+            sendProgressIndeterminate = FindViewById<ProgressBar>(Resource.Id.sendProgressIndeterminate);
+            sendProgressPercent = FindViewById<TextView>(Resource.Id.sendProgressPercent);
+            InitSpinner();
 
             ProcessRequest(contentType);
+        }
+
+        private void InitSpinner()
+        {
+            var rotation = AnimationUtils.LoadAnimation(this, Resource.Animation.rotate);
+            rotation.FillAfter = true;
+            sendProgressIndeterminate.StartAnimation(rotation);
+
+            sendProgress.Visibility = ViewStates.Invisible;
+            sendProgressPercent.Visibility = ViewStates.Invisible;
+            sendProgressIndeterminate.Visibility = ViewStates.Visible;
         }
 
         private async void ProcessRequest(string contentType)
@@ -188,9 +203,8 @@ namespace QuickShare.Droid
                         RunOnUiThread(() =>
                         {
                             sendStatus.Text = sendingText;
-                            sendProgress.Max = (int)ee.Total + 1;
-                            sendProgress.Progress = (int)ee.CurrentPart;
-                            //ViewModel.ProgressIsIndeterminate = false;
+
+                            SetProgressBarValue((int)ee.CurrentPart, (int)ee.Total + 1);
                         });
                     }
                 };
@@ -228,6 +242,8 @@ namespace QuickShare.Droid
                 { "FinishService", "FinishService" },
             };
             await Common.PackageManager.Send(vs);
+
+            SetProgressBarValueToMax();
 
             if (failed)
             {
@@ -271,8 +287,7 @@ namespace QuickShare.Droid
 
             textSender.TextSendProgress += (ee) =>
             {
-                sendProgress.Max = ee.TotalParts;
-                sendProgress.Progress = ee.SentParts;
+                SetProgressBarValue(ee.SentParts, ee.TotalParts);
             };
 
             sendStatus.Text = "Sending...";
@@ -280,12 +295,32 @@ namespace QuickShare.Droid
             ClipboardManager clipboard = (ClipboardManager)GetSystemService(Context.ClipboardService);
             bool sendResult = await textSender.Send(clipboard.Text, ContentType.ClipboardContent);
 
+            SetProgressBarValueToMax();
+
             if (sendResult)
                 sendStatus.Text = "Finished.";
             else
                 sendStatus.Text = "Send failed.";
 
             sendProgress.Progress = sendProgress.Max;
+        }
+
+        private void SetProgressBarValue(int val, int max)
+        {
+            sendProgress.Max = max;
+            sendProgress.Progress = val;
+
+            int percent = (100 * val) / max;
+            sendProgressPercent.Text = $"{percent}%";
+
+            sendProgress.Visibility = ViewStates.Visible;
+            sendProgressPercent.Visibility = ViewStates.Visible;
+            sendProgressIndeterminate.Visibility = ViewStates.Invisible;
+        }
+
+        private void SetProgressBarValueToMax()
+        {
+            SetProgressBarValue(sendProgress.Max, sendProgress.Max);
         }
     }
 }

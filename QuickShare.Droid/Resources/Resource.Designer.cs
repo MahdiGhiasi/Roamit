@@ -41,7 +41,10 @@ namespace QuickShare.Droid
 			public const int marked_item_animation = 2131034112;
 			
 			// aapt resource value: 0x7f050001
-			public const int unmarked_item_animation = 2131034113;
+			public const int rotate = 2131034113;
+			
+			// aapt resource value: 0x7f050002
+			public const int unmarked_item_animation = 2131034114;
 			
 			static Animation()
 			{
@@ -156,7 +159,16 @@ namespace QuickShare.Droid
 			public const int circle_button = 2130837505;
 			
 			// aapt resource value: 0x7f020002
-			public const int Icon = 2130837506;
+			public const int circle_shape = 2130837506;
+			
+			// aapt resource value: 0x7f020003
+			public const int circle_spinner_custom = 2130837507;
+			
+			// aapt resource value: 0x7f020004
+			public const int circular_progress_bar = 2130837508;
+			
+			// aapt resource value: 0x7f020005
+			public const int Icon = 2130837509;
 			
 			static Drawable()
 			{
@@ -246,9 +258,6 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0a0002
 			public const int none = 2131361794;
 			
-			// aapt resource value: 0x7f0a0022
-			public const int previewImageView = 2131361826;
-			
 			// aapt resource value: 0x7f0a0017
 			public const int relativeLayout1 = 2131361815;
 			
@@ -268,7 +277,13 @@ namespace QuickShare.Droid
 			public const int sendProgress = 2131361825;
 			
 			// aapt resource value: 0x7f0a0020
-			public const int sendStatus = 2131361824;
+			public const int sendProgressIndeterminate = 2131361824;
+			
+			// aapt resource value: 0x7f0a0022
+			public const int sendProgressPercent = 2131361826;
+			
+			// aapt resource value: 0x7f0a0023
+			public const int sendStatus = 2131361827;
 			
 			// aapt resource value: 0x7f0a0004
 			public const int single_mode = 2131361796;
