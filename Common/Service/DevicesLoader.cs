@@ -91,5 +91,32 @@ namespace QuickShare.Common.Service
 
             return true;
         }
+
+        public static async Task<bool> LaunchUri(string userId, string deviceId, Uri uri)
+        {
+            try
+            {
+                var httpClient = new HttpClient();
+                var formContent = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("Url", uri.OriginalString),
+                });
+                var response = await httpClient.PostAsync($"{Constants.ServerAddress}/api/User/{userId}/{deviceId}/LaunchUrl", formContent);
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                if (responseText != "1, done")
+                {
+                    Debug.WriteLine($"Received unexpected message from StartCarrierService: '{responseText}'");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An exception was thrown in LaunchUri: {ex.Message}");
+                return false;
+            }
+
+            return true;
+        }
     }
 }

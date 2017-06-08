@@ -169,14 +169,19 @@ namespace QuickShare.UWP.Rome
                 return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
         }
 
-        public static async Task<RomeRemoteLaunchUriStatus> LaunchStoreForApp(NormalizedRemoteSystem remoteSystem)
+        public static async Task<RomeRemoteLaunchUriStatus> LaunchStoreForApp(NormalizedRemoteSystem remoteSystem, string _userId)
         {
-            return await LaunchUri(new Uri(Common.Constants.GooglePlayAppUrl), remoteSystem);
+            return await LaunchUri(new Uri(Common.Constants.GooglePlayAppUrl), remoteSystem, _userId);
         }
 
-        public static async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri uri, NormalizedRemoteSystem remoteSystem)
+        public static async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri _uri, NormalizedRemoteSystem _remoteSystem, string _userId)
         {
-            throw new NotImplementedException();
+            bool result = await Common.Service.DevicesLoader.LaunchUri(_userId, _remoteSystem.Id, _uri);
+
+            if (result)
+                return RomeRemoteLaunchUriStatus.Success;
+            else
+                return RomeRemoteLaunchUriStatus.RemoteSystemUnavailable;
         }
     }
 }

@@ -95,7 +95,12 @@ namespace QuickShare
             {
                 ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
 
-                var launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs);
+                RomeRemoteLaunchUriStatus launchResult;
+
+                if (rs is NormalizedRemoteSystem)
+                    launchResult = await UWP.Rome.AndroidRomePackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs as NormalizedRemoteSystem, SecureKeyStorage.GetUserId());
+                else
+                    launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs);
 
                 if (launchResult == RomeRemoteLaunchUriStatus.Success)
                     ViewModel.SendStatus = "Finished.";

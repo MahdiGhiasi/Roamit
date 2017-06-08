@@ -40,6 +40,15 @@ namespace QuickShare.Droid.Firebase
 
                 StartService(intent);
             }
+            else if ((message.Data["Action"] == "LaunchUrl") && (message.Data.ContainsKey("Url")))
+            {
+                string url = message.Data["Url"];
+
+                Intent i = new Intent(Intent.ActionView);
+                i.SetData(Android.Net.Uri.Parse(url));
+                i.SetFlags(ActivityFlags.NewTask);
+                StartActivity(i);
+            }
             else
             {
                 SendNotification("Invalid action", message.Data["Action"]);
