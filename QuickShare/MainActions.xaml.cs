@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -94,11 +95,33 @@ namespace QuickShare
             base.OnNavigatingFrom(e);
         }
 
-        private void ClipboardButton_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void ClipboardButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            SendDataTemporaryStorage.Text = clipboardTextContent;
+            try
+            {
+                if (currentContent == ClipboardContentType.Text)
+                {
+                    SendDataTemporaryStorage.Text = clipboardTextContent;
 
-            Frame.Navigate(typeof(MainSend), "text");
+                    Frame.Navigate(typeof(MainSend), "text");
+                }
+                else if (currentContent == ClipboardContentType.StorageItem)
+                {
+                    SendDataTemporaryStorage.Files.Clear();
+                    SendDataTemporaryStorage.Files.AddRange(await GetStorageItemsFromClipboardAsync());
+                    Frame.Navigate(typeof(MainSend), "file");
+                }
+                else if (currentContent == ClipboardContentType.Bitmap)
+                {
+                    SendDataTemporaryStorage.Files.Clear();
+                    SendDataTemporaryStorage.Files.Add(await GetBitmapFromClipboardAsync());
+                    Frame.Navigate(typeof(MainSend), "file");
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         private async void SelectFile_Tapped(object sender, TappedRoutedEventArgs e)

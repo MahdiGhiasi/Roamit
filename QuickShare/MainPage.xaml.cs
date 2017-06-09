@@ -142,6 +142,10 @@ namespace QuickShare
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                                                                                                           DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
             await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)27 : (uint)80);
+
+            StorageFolder clipboardTempFolder = (await ApplicationData.Current.LocalFolder.TryGetItemAsync("ClipboardTemp")) as StorageFolder;
+            if (clipboardTempFolder != null)
+                await clipboardTempFolder.DeleteAsync();
         }
 
         int AcrylicStatus = -1;

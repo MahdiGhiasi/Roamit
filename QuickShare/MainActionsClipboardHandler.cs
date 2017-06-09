@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -62,11 +65,11 @@ namespace QuickShare
 
                     SetClipboardPreviewText("(image)");
                 }
-                else if (content.Contains(StandardDataFormats.StorageItems))
+                else if ((content.Contains(StandardDataFormats.StorageItems)) && ((await content.GetStorageItemsAsync()).FirstOrDefault(x => x is StorageFile) != null))
                 {
                     currentContent = ClipboardContentType.StorageItem;
 
-                    SetClipboardPreviewText("(file or folder)");
+                    SetClipboardPreviewText("(file)");
                 }
                 else if (content.Contains(StandardDataFormats.Text))
                 {
@@ -135,6 +138,54 @@ namespace QuickShare
         private async void Clipboard_ContentChanged(object sender, object e)
         {
             await HandleClipboardChangedAsync();
+        }
+
+        public async Task<IEnumerable<IStorageItem>> GetStorageItemsFromClipboardAsync()
+        {
+            List<IStorageItem> output = new List<IStorageItem>();
+            var content = Clipboard.GetContent();
+            if (!content.Contains(StandardDataFormats.StorageItems))
+                return output;
+
+            var items = await content.GetStorageItemsAsync();
+            output.AddRange(items.Where(x => x is StorageFile));
+            return output;
+        }
+
+        public async Task<StorageFile> GetBitmapFromClipboardAsync()
+        {
+            var content = Clipboard.GetContent();
+            if (!content.Contains(StandardDataFormats.Bitmap))
+                return null;
+
+            IRandomAccessStreamReference imageReceived = null;
+            imageReceived = await content.GetBitmapAsync();
+
+            if (imageReceived == null)
+                return null;
+
+            string name = $"Screenshot {DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}.png";
+            StorageFolder folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("ClipboardTemp", CreationCollisionOption.OpenIfExists);
+
+            return await SaveToPngTaskFile(imageReceived, folder, name);
+        }
+
+        //From https://stackoverflow.com/a/25661877/942659
+        public static async Task<StorageFile> SaveToPngTaskFile(IRandomAccessStreamReference rndAccessStreamReference, StorageFolder storageFolder, string storageFileName)
+        {
+            IRandomAccessStreamWithContentType rndAccessStreamWithContentType = await rndAccessStreamReference.OpenReadAsync();
+            StorageFile storageFile = await storageFolder.CreateFileAsync(storageFileName, CreationCollisionOption.GenerateUniqueName);
+            var decoder = await BitmapDecoder.CreateAsync(rndAccessStreamWithContentType);
+            var pixels = await decoder.GetPixelDataAsync();
+            var outStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite);
+            var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, outStream);
+            encoder.SetPixelData(decoder.BitmapPixelFormat, BitmapAlphaMode.Ignore,
+                decoder.OrientedPixelWidth, decoder.OrientedPixelHeight,
+                decoder.DpiX, decoder.DpiY,
+                pixels.DetachPixelData());
+            await encoder.FlushAsync();
+            outStream.Dispose();
+            return storageFile;
         }
     }
 }
