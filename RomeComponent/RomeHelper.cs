@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Core;
@@ -17,10 +18,11 @@ namespace QuickShare.UWP.Rome
 {
     public class RomeHelper : IDisposable
     {
-        private readonly TimeSpan refreshInterval = TimeSpan.FromSeconds(3);
+        private readonly TimeSpan refreshInterval = TimeSpan.FromSeconds(2);
+        private readonly TimeSpan delayBeforeTimerBegin = TimeSpan.FromSeconds(5); //First Tick of timer will happen 5 seconds after init, NOT 5+2=7.
 
         private RemoteSystemWatcher _remoteSystemWatcher;
-        private DispatcherTimer timer = new DispatcherTimer();
+        private Timer timer;
 
         private ObservableCollection<RemoteSystem> _remoteSystems = new ObservableCollection<RemoteSystem>();
         public ObservableCollection<RemoteSystem> RemoteSystems
@@ -46,13 +48,11 @@ namespace QuickShare.UWP.Rome
                 _remoteSystemWatcher.RemoteSystemUpdated += RemoteSystemWatcher_RemoteSystemUpdated;
                 _remoteSystemWatcher.Start();
 
-                timer.Interval = refreshInterval;
-                timer.Tick += Timer_Tick;
-                timer.Start();
+                timer = new Timer(Timer_Tick, null, (int)delayBeforeTimerBegin.TotalMilliseconds, (int)refreshInterval.TotalMilliseconds);
             }
         }
 
-        private void Timer_Tick(object sender, object e)
+        private void Timer_Tick(object state)
         {
             _remoteSystemWatcher.Stop();
             _remoteSystemWatcher.Start();

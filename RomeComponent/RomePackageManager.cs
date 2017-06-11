@@ -241,7 +241,7 @@ namespace QuickShare.UWP.Rome
 
         private async Task<RemoteSystem> RediscoverRemoteSystem(RemoteSystem rs)
         {
-            await ReinitializeDiscovery(); //TODO: Fix this (causes 'marshalled for different bullshit' at recreating DispatcherTimer.
+            await ReinitializeDiscovery(); //UPDATE: Probably fixed. [TODO: Fix this (causes 'marshalled for different bullshit' at recreating DispatcherTimer.)]
 
             int count = 0;
             RemoteSystem rsNew = null;
