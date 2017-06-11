@@ -167,6 +167,9 @@
     </Page.Resources>
 
     <Grid Background="Transparent" x:Name="MainGrid" common:SizeChange.IsEnabled="True" MinHeight="540">
+        <Grid.RenderTransform>
+            <TranslateTransform Y="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=-(((580-x)v24)^0)}" />
+        </Grid.RenderTransform>
         <Grid VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0">
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="dragDropTextTransform" />

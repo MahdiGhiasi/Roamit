@@ -72,7 +72,7 @@
             <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
         </StackPanel>
 
-        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" x:Name="BottomBar">
+        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" x:Name="BottomBar" Margin="0,0,0,24">
             <StackPanel.RenderTransform>
                 <TranslateTransform />
             </StackPanel.RenderTransform>
@@ -103,7 +103,7 @@
                       Margin="0,0,0,0" 
                       SelectionChanged="devicesList_SelectionChanged" 
                       Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" 
-                      Height="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=(108v(x-440))^70}" 
+                      Height="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=(108v(x-464))^44}" 
                       VerticalAlignment="Bottom" 
                       Opacity="0.9">
                 <ListView.ItemTemplate>
@@ -132,6 +132,9 @@
                 </ListView.ItemsPanel>
             </ListView>
         </StackPanel>
+        <CommandBar VerticalAlignment="Bottom" 
+                    Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.4}"
+                    ClosedDisplayMode="Minimal"></CommandBar>
 
         <Grid x:Name="Overlay" Background="#00FFFFFF" Visibility="{x:Bind ViewModel.OverlayVisibility, Mode=OneWay}">
             <Grid>
