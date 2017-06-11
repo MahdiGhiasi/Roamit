@@ -13,13 +13,16 @@ using Microsoft.ConnectedDevices;
 using Android.Webkit;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace QuickShare.Droid.RomeComponent
 {
     public class RomeHelper : IDisposable
     {
-        Dialog authDialog;
-        WebView webView;
+        private readonly TimeSpan refreshInterval = TimeSpan.FromSeconds(15);
+        private readonly TimeSpan delayBeforeTimerBegin = TimeSpan.FromSeconds(20); //First Tick of timer will happen 5 seconds after init, NOT 5+2=7.
+        private Timer timer;
+
         Context appContext;
         RemoteSystemWatcher remoteSystemWatcher;
 
@@ -39,11 +42,19 @@ namespace QuickShare.Droid.RomeComponent
             {
                 System.Diagnostics.Debug.WriteLine("Initialized platform successfully");
                 RefreshDevices();
+
+                timer = new Timer(Timer_Tick, null, (int)delayBeforeTimerBegin.TotalMilliseconds, (int)refreshInterval.TotalMilliseconds);
             }
             else
             {
                 System.Diagnostics.Debug.WriteLine("ConnectedDevices Platform initialization failed");
             }
+        }
+
+        private void Timer_Tick(object state)
+        {
+            remoteSystemWatcher.Stop();
+            remoteSystemWatcher.Start();
         }
 
         private void RefreshDevices()
