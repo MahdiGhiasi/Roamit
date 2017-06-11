@@ -235,7 +235,7 @@ namespace QuickShare
 
             if ((e.Content is MainActions) || (e.Content is MainShareTarget))
             {
-                if (BottomBar.Visibility == Visibility.Collapsed) //Don't play animation on app startup
+                if ((BottomBar.Visibility == Visibility.Collapsed) || (Frame.BackStackDepth != 0)) //Don't play animation on app startup, except after Intro.
                 {
                     BottomCommandBar.Visibility = Visibility.Visible;
                     BottomBar.Visibility = Visibility.Visible;
