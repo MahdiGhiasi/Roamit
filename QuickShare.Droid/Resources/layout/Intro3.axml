@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#ffAC193D"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp">
+  <LinearLayout
+      android:orientation="vertical"
+      android:minWidth="25px"
+      android:minHeight="25px"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/linearLayout1"
+      android:layout_centerInParent="true">
+    <TextView
+        android:text="Clipboard, Pictures, Files, ..."
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1"
+        android:gravity="center_horizontal" />
+    <TextView
+        android:text="You can also send contents of your clipboard to your PC, or from your PC to your phone, with just one tap."
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearLayout1"
+        android:id="@+id/textView2"
+        android:gravity="center_horizontal"
+        android:paddingTop="30dp" />
+    <TextView
+        android:text="Furthermore, you can also transfer pictures and files between your devices, via local WiFi. (So it's fast, and it uses no data bandwidth)"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3"
+        android:gravity="center_horizontal"
+        android:paddingTop="10dp" />
+  </LinearLayout>
+</RelativeLayout>

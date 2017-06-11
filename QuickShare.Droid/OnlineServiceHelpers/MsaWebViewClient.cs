@@ -1,4 +1,5 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.Util;
 using Android.Webkit;
 using Firebase.Iid;
@@ -15,14 +16,17 @@ namespace QuickShare.Droid.OnlineServiceHelpers
     {
         bool authComplete = false;
 
-        private readonly MainActivity _parentActivity;
-        public MsaWebViewClient(MainActivity activity)
+        readonly MsaAuthPurpose purpose;
+        readonly Context context;
+        public MsaWebViewClient(Context _context,MsaAuthPurpose _purpose)
         {
-            _parentActivity = activity;
+            purpose = _purpose;
+            context = _context;
         }
 
         public override async void OnPageFinished(WebView view, string url)
         {
+            System.Diagnostics.Debug.WriteLine(url);
             base.OnPageFinished(view, url);
             if (url.Contains("?code=") && !authComplete)
             {
@@ -31,22 +35,45 @@ namespace QuickShare.Droid.OnlineServiceHelpers
 
                 var uri = Android.Net.Uri.Parse(url);
                 string authCode = uri.GetQueryParameter("code");
-                _parentActivity._authDialog.Dismiss();
+                AuthenticateDialog.authDialog.Dismiss();
 
-                MSAAuthenticator.SaveAuthenticationCode(authCode);
+                if (purpose == MsaAuthPurpose.App)
+                {
+                    MSAAuthenticator.SaveAuthenticationCode(authCode);
+                    var result = await ServiceFunctions.RegisterDevice();
 
-                await ServiceFunctions.RegisterDevice();
-
-                Platform.SetAuthCode(authCode);
+                    if (result)
+                        AuthenticateDialog.authenticateTcs.SetResult(MsaAuthResult.Success);
+                    else
+                        AuthenticateDialog.authenticateTcs.SetResult(MsaAuthResult.FailedToRegister);
+                }
+                else if (purpose == MsaAuthPurpose.ProjectRomePlatform)
+                {
+                    Platform.SetAuthCode(authCode);
+                    AuthenticateDialog.authenticateTcs.SetResult(MsaAuthResult.Success);
+                }                
             }
             else if (url.Contains("error=access_denied"))
             {
                 authComplete = true;
                 System.Diagnostics.Debug.WriteLine("Page finished failed with ACCESS_DENIED_HERE");
                 Intent resultIntent = new Intent();
-                _parentActivity.SetResult(0, resultIntent);
-                _parentActivity._authDialog.Dismiss();
+                AuthenticateDialog.authDialog.Dismiss();
+                AuthenticateDialog.authenticateTcs.SetResult(MsaAuthResult.CancelledByUser);
             }
         }
+    }
+
+    internal enum MsaAuthPurpose
+    {
+        ProjectRomePlatform,
+        App,
+    }
+
+    internal enum MsaAuthResult
+    {
+        CancelledByUser,
+        FailedToRegister,
+        Success,
     }
 }

@@ -30,8 +30,8 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 new KeyValuePair<string, string>("grant_type", "authorization_code"),
                 new KeyValuePair<string, string>("code", code),
                 new KeyValuePair<string, string>("redirect_uri", "https://login.live.com/oauth20_desktop.srf"),
-                new KeyValuePair<string, string>("scope", "User.Read Device.Read"),
-                new KeyValuePair<string, string>("client_id", Config.Secrets.ClientId),
+                new KeyValuePair<string, string>("scope", "User.Read"),
+                new KeyValuePair<string, string>("client_id", Config.Secrets.ClientId2),
             });
 
             var myHttpClient = new HttpClient();
@@ -52,8 +52,8 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                     new KeyValuePair<string, string>("grant_type", "refresh_token"),
                     new KeyValuePair<string, string>("refresh_token", refreshToken),
                     new KeyValuePair<string, string>("redirect_uri", "https://login.live.com/oauth20_desktop.srf"),
-                    new KeyValuePair<string, string>("scope", "User.Read Device.Read"),
-                    new KeyValuePair<string, string>("client_id", Config.Secrets.ClientId),
+                    new KeyValuePair<string, string>("scope", "User.Read"),
+                    new KeyValuePair<string, string>("client_id", Config.Secrets.ClientId2),
                 });
 
                 var myHttpClient2 = new HttpClient();
@@ -103,6 +103,13 @@ namespace QuickShare.Droid.OnlineServiceHelpers
 
                 return id;
             }
+        }
+
+        internal static bool HasUserUniqueId()
+        {
+            if (CrossSecureStorage.Current.HasKey("UserUniqueId"))
+                return true;
+            return false;
         }
     }
 }

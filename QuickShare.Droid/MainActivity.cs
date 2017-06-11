@@ -21,14 +21,11 @@ using System.Threading;
 
 namespace QuickShare.Droid
 {
-    [Activity(Label = "QuickShare.Droid", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "QuickShare.Droid", Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
         DevicesListAdapter devicesAdapter;
         ListView listView;
-
-        private WebView _webView;
-        internal Dialog _authDialog;
 
         static bool IsInitialized = false;
 
@@ -269,28 +266,20 @@ namespace QuickShare.Droid
 
         private void Platform_FetchAuthCode(string oauthUrl)
         {
-            if (!oauthUrl.ToLower().Contains("user.read"))
+            /*if (!oauthUrl.ToLower().Contains("user.read"))
                 oauthUrl = oauthUrl.Replace("&scope=", "&scope=User.Read+");
             if (!oauthUrl.ToLower().Contains("device.read"))
-                oauthUrl = oauthUrl.Replace("&scope=", "&scope=Device.Read+");
+                oauthUrl = oauthUrl.Replace("&scope=", "&scope=Device.Read+");*/
 
-            RunOnUiThread(() =>
+            RunOnUiThread(async () =>
             {
-                _authDialog = new Dialog(this);
+                System.Diagnostics.Debug.WriteLine(oauthUrl);
+                var result = await AuthenticateDialog.ShowAsync(this, MsaAuthPurpose.ProjectRomePlatform, oauthUrl);
 
-                var linearLayout = new LinearLayout(_authDialog.Context);
-                _webView = new WebView(_authDialog.Context);
-                linearLayout.AddView(_webView);
-                _authDialog.SetContentView(linearLayout);
-
-                _webView.SetWebChromeClient(new WebChromeClient());
-                _webView.Settings.JavaScriptEnabled = true;
-                _webView.Settings.DomStorageEnabled = true;
-                _webView.LoadUrl(oauthUrl);
-
-                _webView.SetWebViewClient(new MsaWebViewClient(this));
-                _authDialog.Show();
-                _authDialog.SetCancelable(true);
+                if (result != MsaAuthResult.Success)
+                {
+                    Toast.MakeText(this, "The app can't work without your permission.", ToastLength.Long);
+                }
             });
         }
     }

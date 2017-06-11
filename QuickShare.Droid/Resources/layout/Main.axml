@@ -19,8 +19,8 @@
             android:background="@drawable/circle_button"
             android:id="@+id/sendFileButton"
             android:layout_centerInParent="false"
-            android:height="200dp"
-            android:width="200dp"
+            android:height="180dp"
+            android:width="180dp"
             android:translationY="10dp"
             android:translationX="-5dp"
             android:layout_centerVertical="false"
@@ -33,7 +33,7 @@
             android:id="@+id/clipboardButton"
             android:layout_centerInParent="false"
             android:layout_centerVertical="false"
-            android:translationY="-30dp"
+            android:translationY="-40dp"
             android:height="100dp"
             android:width="100dp"
             android:translationX="20dp"
@@ -47,12 +47,21 @@
             android:id="@+id/sendPictureButton"
             android:layout_centerInParent="false"
             android:layout_centerVertical="false"
-            android:translationY="-50dp"
+            android:translationY="-70dp"
             android:height="100dp"
             android:width="100dp"
             android:translationX="-20dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true" />
+        <TextView
+            android:text="Hello world!"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/clipboardButton"
+            android:id="@+id/clipboardPreviewText"
+            android:layout_alignBottom="@id/clipboardButton"
+            android:translationY="-28dp" />
     </RelativeLayout>
     <LinearLayout
         android:layout_width="fill_parent"
