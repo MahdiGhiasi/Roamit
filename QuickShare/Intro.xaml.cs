@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
+using QuickShare.Common;
 
 namespace QuickShare
 {
@@ -27,6 +28,13 @@ namespace QuickShare
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            DeviceInfo.RefreshFormFactorType();
+            if ((DeviceInfo.SystemVersion > DeviceInfo.CreatorsUpdate) && (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop))
+            {
+                WindowTopBarFunctions.ApplyAcrylic();
+                TitleBarStackPanel.Visibility = Visibility.Visible;
+            }
+
             HideFlipViewButton("PreviousButtonHorizontal");
             HideFlipViewButton("NextButtonHorizontal");
 

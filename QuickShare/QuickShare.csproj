@@ -106,6 +106,7 @@
     <Compile Include="HelperClasses\MSAAuthenticator.cs" />
     <Compile Include="HelperClasses\SecureKeyStorage.cs" />
     <Compile Include="HelperClasses\VisualChildFinder.cs" />
+    <Compile Include="HelperClasses\WindowTopBarFunctions.cs" />
     <Compile Include="Intro.xaml.cs">
       <DependentUpon>Intro.xaml</DependentUpon>
     </Compile>

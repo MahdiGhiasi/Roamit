@@ -157,7 +157,7 @@ namespace QuickShare
                 if (AcrylicStatus != 1)
                 {
                     AcrylicStatus = 1;
-                    ApplyAcrylicAppBar();
+                    WindowTopBarFunctions.ApplyAcrylic();
                     ViewModel.IsAcrylicEnabled = true;
                 }
                 ApplyAcrylicAccent();
@@ -167,7 +167,7 @@ namespace QuickShare
                 if (AcrylicStatus != 0)
                 {
                     AcrylicStatus = 0;
-                    DisableAcrylicAppBar();
+                    WindowTopBarFunctions.DisableAcrylic();
                     ViewModel.IsAcrylicEnabled = false;
                 }
             }
@@ -290,24 +290,6 @@ namespace QuickShare
                 isAskedAboutMSAPermission = true;
                 ShowSignInFlyout();
             }
-        }
-
-        private void ApplyAcrylicAppBar()
-        {
-            ApplicationViewTitleBar formattableTitleBar = ApplicationView.GetForCurrentView().TitleBar;
-            formattableTitleBar.ButtonBackgroundColor = Colors.Transparent;
-            formattableTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            coreTitleBar.ExtendViewIntoTitleBar = true;
-        }
-
-        private void DisableAcrylicAppBar()
-        {
-            ApplicationViewTitleBar formattableTitleBar = ApplicationView.GetForCurrentView().TitleBar;
-            formattableTitleBar.ButtonBackgroundColor = formattableTitleBar.BackgroundColor;
-            formattableTitleBar.ButtonInactiveBackgroundColor = formattableTitleBar.InactiveBackgroundColor;
-            CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            coreTitleBar.ExtendViewIntoTitleBar = false;
         }
 
         private void ApplyAcrylicAccent()

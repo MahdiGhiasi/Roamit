@@ -65,7 +65,7 @@ namespace QuickShare
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            if ((ApplicationData.Current.LocalSettings.Values.ContainsKey("FirstRun")) && (ApplicationData.Current.LocalSettings.Values["FirstRun"].ToString() == "false"))
+            if ((ApplicationData.Current.LocalSettings.Values.ContainsKey("FirstRun")) && (ApplicationData.Current.LocalSettings.Values["FirstRun"].ToString() == "false1"))
             {
                 InitApplication(e, typeof(MainPage));
             }
@@ -78,7 +78,7 @@ namespace QuickShare
         private void InitApplication(LaunchActivatedEventArgs e, Type defaultPage)
         {
             Debug.WriteLine("Launched.");
-#if DEBUG
+#if DEBUG && false
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 this.DebugSettings.EnableFrameRateCounter = true;

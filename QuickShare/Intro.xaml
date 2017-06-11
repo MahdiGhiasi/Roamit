@@ -107,6 +107,9 @@
                         HorizontalAlignment="Center" />
             </Grid>
         </FlipView>
+        <StackPanel x:Name="TitleBarStackPanel" Height="36" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="Collapsed">
+            <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
+        </StackPanel>
         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
             <StackPanel x:Name="PageIndicators" HorizontalAlignment="Center" Orientation="Horizontal" />
             <Button x:Name="SkipButton"
