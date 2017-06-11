@@ -30,7 +30,7 @@
         android:paddingTop="30dp"
         android:gravity="center_horizontal" />
     <TextView
-        android:text="You can send the webpage you're reading to your PC, it'll open immediately."
+        android:text="You can send the webpage you're reading to your PC or your Xbox, it'll open immediately."
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
