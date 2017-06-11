@@ -18,8 +18,9 @@ namespace QuickShare.UWP.Rome
 {
     public class RomeHelper : IDisposable
     {
-        private readonly TimeSpan refreshInterval = TimeSpan.FromSeconds(2);
+        private readonly TimeSpan refreshInterval = TimeSpan.FromSeconds(3);
         private readonly TimeSpan delayBeforeTimerBegin = TimeSpan.FromSeconds(5); //First Tick of timer will happen 5 seconds after init, NOT 5+2=7.
+        private bool firstTimeRefresh = true;
 
         private RemoteSystemWatcher _remoteSystemWatcher;
         private Timer timer;
@@ -54,6 +55,13 @@ namespace QuickShare.UWP.Rome
 
         private void Timer_Tick(object state)
         {
+            if (firstTimeRefresh)
+            {
+                firstTimeRefresh = false;
+                if (_remoteSystems.Count == 0)
+                    return;
+            }
+
             _remoteSystemWatcher.Stop();
             _remoteSystemWatcher.Start();
         }
