@@ -106,6 +106,9 @@
     <Compile Include="HelperClasses\MSAAuthenticator.cs" />
     <Compile Include="HelperClasses\SecureKeyStorage.cs" />
     <Compile Include="HelperClasses\VisualChildFinder.cs" />
+    <Compile Include="Intro.xaml.cs">
+      <DependentUpon>Intro.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPageViewModel.cs" />
     <Compile Include="MainSendViewModel.cs" />
     <Compile Include="MainShareTarget.xaml.cs">
@@ -185,6 +188,10 @@
     <Page Include="Flyouts\SignInNoticeFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Intro.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainActions.xaml">
       <SubType>Designer</SubType>

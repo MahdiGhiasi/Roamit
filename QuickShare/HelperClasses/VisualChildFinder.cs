@@ -28,5 +28,24 @@ namespace QuickShare.HelperClasses
             }
             return null;
         }
+
+        public static childItemType FindVisualChild<childItemType>(DependencyObject obj, string name) 
+        where childItemType : FrameworkElement
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                if (child is childItemType && ((FrameworkElement)child).Name == name)
+                    return (childItemType)child;
+                else
+                {
+                    childItemType childOfChild = FindVisualChild<childItemType>(child, name);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
+        }
     }
 }
+

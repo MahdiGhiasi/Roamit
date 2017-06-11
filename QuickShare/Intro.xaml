@@ -1,0 +1,136 @@
+﻿<Page
+    x:Class="QuickShare.Intro"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <Grid Background="Transparent">
+        <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged">
+            <Grid Background="#FF8C0095">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
+                    <TextBlock FontSize="24"
+                               Text="Welcome to QuickShare!" 
+                               FontWeight="Light"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center" />
+                    <TextBlock FontSize="16"
+                               Text="Swipe or click next to continue, or tap skip to skip the tutorial."
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                </StackPanel>
+            </Grid>
+            <Grid Background="#ff2672EC">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
+                    <TextBlock FontSize="24"
+                               Text="Connect your experience across devices!" 
+                               FontWeight="Light"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center" />
+                    <TextBlock FontSize="16"
+                               Text="QuickShare brings your Windows 10 and Android devices a lot closer."
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                    <TextBlock FontSize="16"
+                               Text="You can send the webpage you're reading to your PC, mobile or your Xbox, it'll open immediately."
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                </StackPanel>
+            </Grid>
+            <Grid Background="#ffAC193D">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
+                    <TextBlock FontSize="24"
+                               Text="Clipboard, Pictures, Files, ..." 
+                               FontWeight="Light"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center" />
+                    <TextBlock FontSize="16"
+                               Text="You can also send contents of your clipboard to your PC, or from your PC to your phone, with just one tap."
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                    <TextBlock FontSize="16"
+                               Text="Furthermore, you can also transfer pictures and files between your devices, via local WiFi. (So it's fast, and it uses no data bandwidth)"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                </StackPanel>
+            </Grid>
+            <Grid Background="#ff008A00">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
+                    <TextBlock FontSize="24"
+                               Text="Share anything from everywhere" 
+                               FontWeight="Light"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center" />
+                    <TextBlock FontSize="16"
+                               Text="No need to open the app manually. Just share the content from any app, and choose QuickShare as destination."
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                </StackPanel>
+            </Grid>
+            <Grid Background="#ff5133AB">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
+                    <TextBlock FontSize="24"
+                               Text="Welcome!" 
+                               FontWeight="Light"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center" />
+                    <TextBlock FontSize="16"
+                               Text="We hope you enjoy your experience."
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                </StackPanel>
+                <Button x:Name="FinishButton"
+                        Content="Let's Begin"
+                        Tapped="FinishButton_Tapped"
+                        Width="180"
+                        Height="40"
+                        Background="#aa777777"
+                        Margin="0,0,0,100"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Center" />
+            </Grid>
+        </FlipView>
+        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+            <StackPanel x:Name="PageIndicators" HorizontalAlignment="Center" Orientation="Horizontal" />
+            <Button x:Name="SkipButton"
+                    Content="Skip"
+                    Tapped="SkipButton_Tapped"
+                    Background="#aa777777"
+                    Width="96"
+                    HorizontalAlignment="Left"
+                    Margin="16,0,0,16" />
+            <Button x:Name="PrevButton"
+                    Content="Previous"
+                    Tapped="PrevButton_Tapped"
+                    Visibility="Collapsed"
+                    Background="#aa777777"
+                    Width="96"
+                    HorizontalAlignment="Left"
+                    Margin="16,0,0,16" />
+            <Button x:Name="NextButton"
+                    Content="Next"
+                    Tapped="NextButton_Tapped"
+                    Background="#aa777777"
+                    Width="96"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,16,16" />
+        </Grid>
+    </Grid>
+</Page>
