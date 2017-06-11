@@ -237,6 +237,7 @@ namespace QuickShare
             {
                 if (BottomBar.Visibility == Visibility.Collapsed) //Don't play animation on app startup
                 {
+                    BottomCommandBar.Visibility = Visibility.Visible;
                     BottomBar.Visibility = Visibility.Visible;
                     bottomBarShowStoryboard.Begin();
                 }
@@ -246,6 +247,7 @@ namespace QuickShare
                 bottomBarHideStoryboard.Begin();
                 await Task.Delay(400);
                 BottomBar.Visibility = Visibility.Collapsed;
+                BottomCommandBar.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -372,6 +374,11 @@ namespace QuickShare
             {
                 ContentFrame.Navigate(typeof(MainSend), "text");
             }
+        }
+
+        private void SettingsButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ContentFrame.Navigate(typeof(Settings));
         }
     }
 }

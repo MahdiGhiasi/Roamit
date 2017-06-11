@@ -113,6 +113,9 @@
     </Compile>
     <Compile Include="MainShareTargetViewModel.cs" />
     <Compile Include="RemoteSystemNormalizer.cs" />
+    <Compile Include="Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ShareTargetDetails.cs" />
     <Compile Include="ToastNotifications\Toaster.ClipboardTextReceived.cs" />
     <Compile Include="ToastNotifications\Toaster.cs" />
@@ -200,6 +203,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PicturePicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

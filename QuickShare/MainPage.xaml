@@ -21,7 +21,15 @@
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
                                  Duration="0:0:0.3" From="170" To="0">
                     <DoubleAnimation.EasingFunction>
-                        <BackEase EasingMode="EaseOut" Amplitude="0" /> <!-- Because ExponentialEase animation is Mobile is buggy -->
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                        <!-- Because ExponentialEase animation is Mobile is buggy -->
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="BottomCommandBar" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 Duration="0:0:0.3" From="24" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="1" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
             </Storyboard>
@@ -29,6 +37,13 @@
                 <DoubleAnimation Storyboard.TargetName="BottomBar" 
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
                                  Duration="0:0:0.4" From="0" To="250">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="BottomCommandBar" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 Duration="0:0:0.3" From="0" To="24">
                     <DoubleAnimation.EasingFunction>
                         <ExponentialEase EasingMode="EaseOut" />
                     </DoubleAnimation.EasingFunction>
@@ -72,7 +87,7 @@
             <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
         </StackPanel>
 
-        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" x:Name="BottomBar" Margin="0,0,0,24">
+        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" x:Name="BottomBar">
             <StackPanel.RenderTransform>
                 <TranslateTransform />
             </StackPanel.RenderTransform>
@@ -131,10 +146,21 @@
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>
+            <Grid Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}"
+                  Height="24"
+                  VerticalAlignment="Bottom"
+                  HorizontalAlignment="Stretch" />
         </StackPanel>
-        <CommandBar VerticalAlignment="Bottom" 
+
+        <CommandBar x:Name="BottomCommandBar" 
+                    VerticalAlignment="Bottom" 
                     Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.4}"
-                    ClosedDisplayMode="Minimal"></CommandBar>
+                    ClosedDisplayMode="Minimal">
+            <CommandBar.RenderTransform>
+                <TranslateTransform />
+            </CommandBar.RenderTransform>
+            <AppBarButton Icon="Setting" Label="Settings" Tapped="SettingsButton_Tapped" />
+        </CommandBar>
 
         <Grid x:Name="Overlay" Background="#00FFFFFF" Visibility="{x:Bind ViewModel.OverlayVisibility, Mode=OneWay}">
             <Grid>
