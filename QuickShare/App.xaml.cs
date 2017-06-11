@@ -65,7 +65,7 @@ namespace QuickShare
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            if ((ApplicationData.Current.LocalSettings.Values.ContainsKey("FirstRun")) && (ApplicationData.Current.LocalSettings.Values["FirstRun"].ToString() == "false1"))
+            if ((ApplicationData.Current.LocalSettings.Values.ContainsKey("FirstRun")) && (ApplicationData.Current.LocalSettings.Values["FirstRun"].ToString() == "false"))
             {
                 InitApplication(e, typeof(MainPage));
             }
