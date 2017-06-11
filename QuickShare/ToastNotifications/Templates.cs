@@ -41,7 +41,7 @@ namespace QuickShare.ToastNotifications
     </binding>
   </visual>
   <actions>
-    <action content='Open containing folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
+    <action content='Open folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
     <action content='Open file' activationType='foreground' arguments='action=openSingleFile&amp;guid={guid}'/>
   </actions>
 </toast>";
@@ -55,7 +55,7 @@ namespace QuickShare.ToastNotifications
     </binding>
   </visual>
   <actions>
-    <action content='Open containing folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
+    <action content='Open folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
   </actions>
 </toast>";
 
@@ -68,7 +68,7 @@ namespace QuickShare.ToastNotifications
     </binding>
   </visual>
   <actions>
-    <action content='Open containing folder' activationType='foreground' arguments='action=openFolder&amp;guid={guid}'/>
+    <action content='Open folder' activationType='foreground' arguments='action=openFolder&amp;guid={guid}'/>
   </actions>
 </toast>";
 
