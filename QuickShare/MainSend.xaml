@@ -11,7 +11,7 @@
     x:Name="page">
 
     <Grid Background="Transparent" x:Name="parentGrid">
-        <Button Content="Back" Margin="10,0,0,0" Tapped="BackButton_Tapped" />
+        <Button Content="Back" Margin="10,0,0,0" Tapped="BackButton_Tapped" Visibility="Collapsed" />
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="{x:Bind ViewModel.SendStatus, Mode=OneWay}" 
                        x:Name="StatusText" 

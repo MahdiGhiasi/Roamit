@@ -98,12 +98,6 @@ namespace QuickShare
             if ((ContentFrame.Content is MainActions) || (ContentFrame.Content is MainShareTarget))
                 return;
 
-            if (ContentFrame.Content is MainSend)
-            {
-                e.Handled = true;
-                return;
-            }
-
             e.Handled = true;
             if (ContentFrame.CanGoBack)
                 ContentFrame.GoBack();
@@ -222,7 +216,7 @@ namespace QuickShare
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            if ((e.Content is MainActions) || (e.Content is MainSend) || (e.Content is MainShareTarget))
+            if ((e.Content is MainActions) || (e.Content is MainShareTarget))
             {
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;
