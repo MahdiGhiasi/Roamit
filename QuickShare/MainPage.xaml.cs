@@ -126,12 +126,7 @@ namespace QuickShare
             DiscoverDevices();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
-            var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
-            if (!futureAccessList.ContainsItem("downloadMainFolder"))
-            {
-                var myfolder = await DownloadsFolder.CreateFolderAsync("QuickShare" + DateTime.Now.Millisecond);
-                futureAccessList.AddOrReplace("downloadMainFolder", myfolder);
-            }
+            await InitDownloadFolder();
 
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                                                                                                           DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
@@ -140,6 +135,30 @@ namespace QuickShare
             StorageFolder clipboardTempFolder = (await ApplicationData.Current.LocalFolder.TryGetItemAsync("ClipboardTemp")) as StorageFolder;
             if (clipboardTempFolder != null)
                 await clipboardTempFolder.DeleteAsync();
+        }
+
+        private static async Task InitDownloadFolder()
+        {
+            var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
+            if (!futureAccessList.ContainsItem("downloadMainFolder"))
+            {
+                bool created = false;
+                int i = 1;
+                do
+                {
+                    try
+                    {
+                        var myfolder = await DownloadsFolder.CreateFolderAsync((i == 1) ? "Received" : $"Received ({i})");
+                        futureAccessList.AddOrReplace("downloadMainFolder", myfolder);
+                        created = true;
+                    }
+                    catch
+                    {
+                        i++;
+                    }
+                }
+                while (!created);
+            }
         }
 
         int AcrylicStatus = -1;
