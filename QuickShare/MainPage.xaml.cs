@@ -140,7 +140,7 @@ namespace QuickShare
         private static async Task InitDownloadFolder()
         {
             var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
-            if (!futureAccessList.ContainsItem("downloadMainFolder"))
+            if (!(await DownloadFolderExists()))
             {
                 bool created = false;
                 int i = 1;
@@ -158,6 +158,25 @@ namespace QuickShare
                     }
                 }
                 while (!created);
+            }
+        }
+
+        private static async Task<bool> DownloadFolderExists()
+        {
+            var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
+
+            try
+            {
+                if (!futureAccessList.ContainsItem("downloadMainFolder"))
+                    return false;
+
+                await futureAccessList.GetItemAsync("downloadMainFolder");
+                return true;
+            }
+            catch
+            {
+                futureAccessList.Remove("downloadMainFolder");
+                return false;
             }
         }
 
