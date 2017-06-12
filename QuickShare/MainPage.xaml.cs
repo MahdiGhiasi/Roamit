@@ -126,7 +126,7 @@ namespace QuickShare
             DiscoverDevices();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
-            await InitDownloadFolder();
+            await DownloadFolderHelper.InitDownloadFolder();
 
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                                                                                                           DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
@@ -135,49 +135,6 @@ namespace QuickShare
             StorageFolder clipboardTempFolder = (await ApplicationData.Current.LocalFolder.TryGetItemAsync("ClipboardTemp")) as StorageFolder;
             if (clipboardTempFolder != null)
                 await clipboardTempFolder.DeleteAsync();
-        }
-
-        private static async Task InitDownloadFolder()
-        {
-            var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
-            if (!(await DownloadFolderExists()))
-            {
-                bool created = false;
-                int i = 1;
-                do
-                {
-                    try
-                    {
-                        var myfolder = await DownloadsFolder.CreateFolderAsync((i == 1) ? "Received" : $"Received ({i})");
-                        futureAccessList.AddOrReplace("downloadMainFolder", myfolder);
-                        created = true;
-                    }
-                    catch
-                    {
-                        i++;
-                    }
-                }
-                while (!created);
-            }
-        }
-
-        private static async Task<bool> DownloadFolderExists()
-        {
-            var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
-
-            try
-            {
-                if (!futureAccessList.ContainsItem("downloadMainFolder"))
-                    return false;
-
-                await futureAccessList.GetItemAsync("downloadMainFolder");
-                return true;
-            }
-            catch
-            {
-                futureAccessList.Remove("downloadMainFolder");
-                return false;
-            }
         }
 
         int AcrylicStatus = -1;
