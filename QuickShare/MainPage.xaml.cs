@@ -260,12 +260,12 @@ namespace QuickShare
         }
 
         bool alreadyDiscovered = false;
-        private async Task<bool> DiscoverOtherDevices()
+        internal async Task<bool> DiscoverOtherDevices(bool force = false)
         {
             if (!SecureKeyStorage.IsUserIdStored())
                 return false;
 
-            if (alreadyDiscovered)
+            if (alreadyDiscovered && !force)
                 return true;
             alreadyDiscovered = true;
 

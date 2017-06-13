@@ -54,7 +54,10 @@ namespace QuickShare
 
             FindOtherDevicesProgressRingActive = false;
             FindOtherDevicesEnabled = true;
-            MainPage.Current.Discover
+
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            MainPage.Current.DiscoverOtherDevices(true);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         private bool findOtherDevicesProgressRingActive = false;
