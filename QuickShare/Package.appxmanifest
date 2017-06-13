@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap mp uap3">
-  <Identity Name="36835MahdiGhiasi.QuickSharePreview" Publisher="CN=980F2E87-1831-4300-B1DC-4FDADD353F32" Version="1.1.0.1" />
+  <Identity Name="36835MahdiGhiasi.QuickSharePreview" Publisher="CN=980F2E87-1831-4300-B1DC-4FDADD353F32" Version="0.9.0.1" />
   <mp:PhoneIdentity PhoneProductId="a260aa5d-e1df-4122-aeff-b8e1a26f3f4f" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>QuickShare Preview</DisplayName>
@@ -21,6 +21,15 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="com.quickshare.notificationservice" />
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="quickshare">
+            <uap:Logo>Assets\Logo.png</uap:Logo>
+            <uap:DisplayName>QuickShare</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
         <uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:SupportedFileTypes>
@@ -32,21 +41,6 @@
             <uap:DataFormat>ApplicationLink</uap:DataFormat>
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
-        </uap:Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="quickshare">
-            <uap:Logo>Assets\Logo.png</uap:Logo>
-            <uap:DisplayName>QuickShare</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
-        <uap:Extension Category="windows.appService" EntryPoint="QuickShare.ServiceTask.CommunicationService">
-          <uap3:AppService Name="com.quickshare.service" SupportsRemoteSystems="true"/>
-        </uap:Extension>
-        <uap:Extension Category="windows.appService">
-          <uap3:AppService Name="com.quickshare.messagecarrierservice" SupportsRemoteSystems="true"/>
-        </uap:Extension>
-        <uap:Extension Category="windows.appService">
-          <uap:AppService Name="com.quickshare.notificationservice" />
         </uap:Extension>
       </Extensions>
     </Application>
