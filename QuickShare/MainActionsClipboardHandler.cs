@@ -112,10 +112,18 @@ namespace QuickShare
 
             clipboardTextContent = text;
 
+            //truncate text preview if it's too long
             if (text.Length > 61)
-                ClipboardTextPreview.Text = text.Substring(0, 60).Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ") + "...";
-            else
-                ClipboardTextPreview.Text = text.Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ");
+                text = text.Substring(0, 60) + "...";
+            
+            // remove newlines
+            text = text.Replace("\r", " ").Replace("\n", " ");
+
+            // remove multiple spaces
+            while (text.Contains("  "))
+                text = text.Replace("  ", " ");
+
+            ClipboardTextPreview.Text = text;
 
             bool isValidUri = Uri.TryCreate(text, UriKind.Absolute, out _);
             if (isValidUri)
