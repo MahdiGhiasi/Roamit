@@ -2,11 +2,32 @@
 using System.ComponentModel;
 using System;
 using QuickShare.MicrosoftGraphFunctions;
+using Windows.ApplicationModel;
 
 namespace QuickShare
 {
     public class SettingsModel : INotifyPropertyChanged
     {
+        public string PackageName
+        {
+            get
+            {
+                return Package.Current.DisplayName + " for Windows 10";
+            }
+        }
+
+        public string PackageVersion
+        {
+            get
+            {
+                return string.Format("{0}.{1}.{2}.{3}",
+                    Package.Current.Id.Version.Major,
+                    Package.Current.Id.Version.Minor,
+                    Package.Current.Id.Version.Build,
+                    Package.Current.Id.Version.Revision);
+            }
+        }
+
         private bool findOtherDevices = SecureKeyStorage.IsUserIdStored();
         public bool FindOtherDevices
         {

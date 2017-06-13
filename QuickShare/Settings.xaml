@@ -39,8 +39,11 @@
                         </RelativePanel>
                     </StackPanel>
                     <StackPanel Margin="0,24,0,8">
-                        <TextBlock Text="QuickShare for Windows 10" FontWeight="Bold" />
-                        <TextBlock Text="Version X.Y Preview" Margin="0,4,0,0" Opacity="0.7" />
+                        <TextBlock Text="{x:Bind Model.PackageName, Mode=OneTime}" FontWeight="Bold" />
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0" >
+                            <TextBlock Text="Version " Opacity="0.7" />
+                            <TextBlock Text="{x:Bind Model.PackageVersion, Mode=OneTime}" Margin="4,0,0,0" Opacity="0.7" />
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
