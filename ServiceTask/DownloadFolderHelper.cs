@@ -3,13 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 
-namespace QuickShare.HelperClasses
+namespace QuickShare.ServiceTask.HelperClasses
 {
     public static class DownloadFolderHelper
     {
-        public static async Task InitDownloadFolder()
+        public static IAsyncAction InitDownloadFolderAsync()
+        {
+            return InitDownloadFolder().AsAsyncAction();
+        }
+
+        /**
+        public static IAsyncOperation<bool> DownloadFolderExistsAsync()
+        {
+            return DownloadFolderExists().AsAsyncOperation();
+        }
+        /**/
+
+        private static async Task InitDownloadFolder()
         {
             var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
             if (!(await DownloadFolderExists()))

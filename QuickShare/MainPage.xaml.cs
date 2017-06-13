@@ -24,6 +24,7 @@ using QuickShare.MicrosoftGraphFunctions;
 using Windows.UI.Popups;
 using Microsoft.Graphics.Canvas.Effects;
 using Windows.ApplicationModel.DataTransfer;
+using QuickShare.ServiceTask.HelperClasses;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -43,7 +44,21 @@ namespace QuickShare
 
         bool isUserSelectedRemoteSystemManually = false;
         int remoteSystemPrevCount = 0;
-        bool isAskedAboutMSAPermission = false;
+
+        public bool IsAskedAboutMSAPermission
+        {
+            get
+            {
+                if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("IsAskedAboutMSAPermission"))
+                    ApplicationData.Current.LocalSettings.Values["IsAskedAboutMSAPermission"] = false;
+
+                return (bool)ApplicationData.Current.LocalSettings.Values["IsAskedAboutMSAPermission"];
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["IsAskedAboutMSAPermission"] = value;
+            }
+        }
 
         public MainPage()
         {
@@ -124,9 +139,10 @@ namespace QuickShare
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             DiscoverDevices();
+            CheckIfMSAPermissionIsNecessary();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
-            await DownloadFolderHelper.InitDownloadFolder();
+            await DownloadFolderHelper.InitDownloadFolderAsync();
 
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                                                                                                           DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
@@ -189,8 +205,6 @@ namespace QuickShare
                 }
 
                 ViewModel.RefreshIsContentFrameEnabled();
-
-                CheckIfMSAPermissionIsNecessary();
             });
         }
 
@@ -274,9 +288,9 @@ namespace QuickShare
         private async void CheckIfMSAPermissionIsNecessary()
         {
             bool discoverResult = await DiscoverOtherDevices();
-            if ((ViewModel.ListManager.IsAndroidDevicePresent) && (!isAskedAboutMSAPermission) && (!discoverResult))
+            if ((ViewModel.ListManager.IsAndroidDevicePresent) && (!IsAskedAboutMSAPermission) && (!discoverResult))
             {
-                isAskedAboutMSAPermission = true;
+                IsAskedAboutMSAPermission = true;
                 ShowSignInFlyout();
             }
         }
@@ -321,9 +335,9 @@ namespace QuickShare
 
             e.AcceptedOperation = DataPackageOperation.Copy;
             e.DragUIOverride.Caption = $"Drop here to send to {ViewModel.ListManager.SelectedRemoteSystem.DisplayName}";
-            e.DragUIOverride.IsCaptionVisible = true; 
-            e.DragUIOverride.IsContentVisible = true; 
-            e.DragUIOverride.IsGlyphVisible = false; 
+            e.DragUIOverride.IsCaptionVisible = true;
+            e.DragUIOverride.IsContentVisible = true;
+            e.DragUIOverride.IsGlyphVisible = false;
         }
 
         private async void MainGrid_Drop(object sender, DragEventArgs e)

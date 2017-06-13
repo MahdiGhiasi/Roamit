@@ -38,5 +38,11 @@ namespace QuickShare.HelperClasses
             var cred = new PasswordCredential("userId", "user", userId);
             vault.Add(cred);
         }
+
+        internal static void DeleteUserId()
+        {
+            var vault = new PasswordVault();
+            vault.Remove(vault.RetrieveAll().FirstOrDefault(x => x.Resource == "userId"));
+        }
     }
 }

@@ -80,7 +80,7 @@ namespace QuickShare.ServiceTask
                 if (!futureAccessList.ContainsItem("downloadMainFolder"))
                     return;
 
-                await HelperClasses.DownloadFolderHelper.InitDownloadFolder();
+                await HelperClasses.DownloadFolderHelper.InitDownloadFolderAsync();
                 IFolder downloadFolder = new WinRTFolder(await futureAccessList.GetFolderAsync("downloadMainFolder"));
 
                 string receiver = args.Request.Message["Receiver"] as string;

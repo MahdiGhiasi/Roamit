@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.HelperClasses;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace QuickShare
     /// </summary>
     public sealed partial class Settings : Page
     {
+        public SettingsModel Model { get; set; } = new SettingsModel();
+
         public Settings()
         {
             this.InitializeComponent();

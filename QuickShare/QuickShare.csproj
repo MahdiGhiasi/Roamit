@@ -120,6 +120,7 @@
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingsModel.cs" />
     <Compile Include="ShareTargetDetails.cs" />
     <Compile Include="ToastNotifications\Toaster.ClipboardTextReceived.cs" />
     <Compile Include="ToastNotifications\Toaster.cs" />

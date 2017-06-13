@@ -28,8 +28,19 @@
             <ScrollViewer Grid.Row="1">
                 <StackPanel Padding="16,12,16,0">
                     <StackPanel Margin="0,8,0,8">
-                        <TextBlock Text="QuickShare for Windows 10" />
-                        <TextBlock Text="Version 1.0" Margin="0,4,0,0" Opacity="0.7" />
+                        <TextBlock Text="Show my Android devices" TextWrapping="Wrap" />
+                        <RelativePanel>
+                            <ToggleSwitch x:Name="ConnectToOtherDevicesToggle" 
+                                          IsOn="{x:Bind Model.FindOtherDevices, Mode=TwoWay}" 
+                                          IsEnabled="{x:Bind Model.FindOtherDevicesEnabled, Mode=OneWay}" />
+                            <ProgressRing IsActive="{x:Bind Model.FindOtherDevicesProgressRingActive, Mode=OneWay}"
+                                          RelativePanel.RightOf="ConnectToOtherDevicesToggle" 
+                                          RelativePanel.AlignVerticalCenterWithPanel="True" />
+                        </RelativePanel>
+                    </StackPanel>
+                    <StackPanel Margin="0,24,0,8">
+                        <TextBlock Text="QuickShare for Windows 10" FontWeight="Bold" />
+                        <TextBlock Text="Version X.Y Preview" Margin="0,4,0,0" Opacity="0.7" />
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

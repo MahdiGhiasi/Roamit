@@ -75,6 +75,16 @@ namespace QuickShare.DevicesListManager
             }
         }
 
+        public void RemoveAndroidDevices()
+        {
+            devices.RemoveAll(x => ((x is NormalizedRemoteSystem) && ((x as NormalizedRemoteSystem).Kind == "QS_Android")));
+
+            if (SelectedRemoteSystem.Kind == "QS_Android")
+            {
+                SelectHighScoreItem();
+            }
+        }
+
         public void Select(object o)
         {
             if (o is NormalizedRemoteSystem)
