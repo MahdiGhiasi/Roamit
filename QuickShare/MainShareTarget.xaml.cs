@@ -38,7 +38,13 @@ namespace QuickShare
 
             if (shareDetails.Type == StandardDataFormats.StorageItems)
             {
-                ViewModel.PreviewText = SendDataTemporaryStorage.Files?.Count().ToString() ?? "???";
+                string s = "???";
+
+                if (SendDataTemporaryStorage.Files != null)
+                    s = SendDataTemporaryStorage.Files.Count.ToString() + 
+                        " file" + (SendDataTemporaryStorage.Files.Count > 1 ? "s" : "");
+
+                ViewModel.PreviewText = s; 
                 ViewModel.ShowShareStorageItem();
             }
             else if ((shareDetails.Type == StandardDataFormats.WebLink) || (shareDetails.Type == StandardDataFormats.ApplicationLink))
