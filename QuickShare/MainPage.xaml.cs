@@ -170,6 +170,8 @@ namespace QuickShare
                 ViewModel.UpgradeButtonVisibility = Visibility.Visible;
             }
 
+            if (SecureKeyStorage.IsUserIdStored())
+                await Common.Service.UpgradeDetails.SetUpgradeStatus(SecureKeyStorage.GetUserId(), isFullVersion);
         }
 
         int AcrylicStatus = -1;
