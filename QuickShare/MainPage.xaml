@@ -107,7 +107,6 @@
                 <Grid Width="40" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.BackButtonPlaceholderVisibility, Mode=OneWay}"  />
                 <TextBlock Text="{x:Bind ViewModel.Caption, Mode=OneWay}"  FontSize="12" Foreground="LightGray" x:Name="TitleBarCaption" />
                 <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
-                <TextBlock Text=", " FontSize="12" Foreground="LightGray" x:Name="SIZE" />
             </StackPanel>
             <Grid Grid.Row="1" x:Name="AdFrame" Background="#111111" Height="50">
 

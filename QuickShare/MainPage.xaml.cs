@@ -332,7 +332,6 @@ namespace QuickShare
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SIZE.Text = e.NewSize.Width + ", " + e.NewSize.Height;
             InitAcrylicUI();
         }
 
