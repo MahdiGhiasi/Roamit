@@ -7,10 +7,25 @@
     xmlns:controls="using:QuickShare.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
     mc:Ignorable="d"
     x:Name="page">
 
     <Grid Background="Transparent" x:Name="parentGrid">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <userinterfacetriggers:WindowHeightTrigger Condition="600" ConditionModifier="{StaticResource LessThanModifier}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Progress.Width" Value="150" />
+                        <Setter Target="Progress.Height" Value="150" />
+                        <Setter Target="Progress.FontSize" Value="22" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Button Content="Back" Margin="10,0,0,0" Tapped="BackButton_Tapped" Visibility="Collapsed" />
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="{x:Bind ViewModel.SendStatus, Mode=OneWay}" 
