@@ -15,5 +15,7 @@ namespace QuickShare.Common
         public static readonly string ServerAddress = "https://qs.services.ghiasi.net";
 
         public static readonly string GooglePlayAppUrl = "http://www.ghiasi.net"; //TODO: enter correct url here
+
+        public static readonly double MaxSizeForTrialVersion = 5.0; //In Megabytes
     }
 }

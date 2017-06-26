@@ -279,7 +279,7 @@ namespace QuickShare
                 var properties = await file.GetBasicPropertiesAsync();
                 totalSize += properties.Size / (1024.0 * 1024.0);
 
-                if (totalSize > TrialSettings.MaxSizeForTrialVersion)
+                if (totalSize > Constants.MaxSizeForTrialVersion)
                     return false;
             }
 

@@ -8,8 +8,6 @@ namespace QuickShare.HelperClasses.VersionHelpers
 {
     static class TrialSettings
     {
-        public static readonly double MaxSizeForTrialVersion = 5.0;
-
         private static bool isTrial = false;
 
         public static bool IsTrial

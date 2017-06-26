@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace QuickShare.HelperClasses.VersionHelpers
     {
         internal static async Task AskForUpgradeWhileSending()
         {
-            var md = new MessageDialog("You can upgrade to full version to unlock this capability and remove the ads.", $"The free version is limited to sending at most {TrialSettings.MaxSizeForTrialVersion} MB of files each time.");
+            var md = new MessageDialog("You can upgrade to full version to unlock this capability and remove the ads.", $"The free version is limited to sending at most {Constants.MaxSizeForTrialVersion} MB of files each time.");
 
             md.Commands.Add(new UICommand("Upgrade") { Id = 0 });
             md.Commands.Add(new UICommand("No, thanks") { Id = 1 });
@@ -28,7 +29,7 @@ namespace QuickShare.HelperClasses.VersionHelpers
 
         internal static async Task AskForUpgrade()
         {
-            var md = new MessageDialog($"The free version is limited to sending at most {TrialSettings.MaxSizeForTrialVersion} MB of files each time.\r\nYou can upgrade to full version to unlock this capability and remove the ads.", $"Upgrade to full version");
+            var md = new MessageDialog($"The free version is limited to sending at most {Constants.MaxSizeForTrialVersion} MB of files each time.\r\nYou can upgrade to full version to unlock this capability and remove the ads.", $"Upgrade to full version");
         
             md.Commands.Add(new UICommand("Upgrade") { Id = 0 });
             md.Commands.Add(new UICommand("No, thanks") { Id = 1 });
