@@ -151,6 +151,25 @@ namespace QuickShare
             StorageFolder clipboardTempFolder = (await ApplicationData.Current.LocalFolder.TryGetItemAsync("ClipboardTemp")) as StorageFolder;
             if (clipboardTempFolder != null)
                 await clipboardTempFolder.DeleteAsync();
+
+            CheckTrialStatus();
+        }
+
+        internal async void CheckTrialStatus()
+        {
+            bool isFullVersion = await TrialHelper.IsFullVersion();
+
+            if (isFullVersion)
+            {
+                App.IsTrial = false;
+                ViewModel.UpgradeButtonVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                App.IsTrial = true;
+                ViewModel.UpgradeButtonVisibility = Visibility.Visible;
+            }
+
         }
 
         int AcrylicStatus = -1;
@@ -364,6 +383,11 @@ namespace QuickShare
         private void SettingsButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ContentFrame.Navigate(typeof(Settings));
+        }
+
+        private async void UpgradeButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await TrialHelper.AskForUpgrade();
         }
     }
 }

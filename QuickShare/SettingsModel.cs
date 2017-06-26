@@ -3,11 +3,22 @@ using System.ComponentModel;
 using System;
 using QuickShare.MicrosoftGraphFunctions;
 using Windows.ApplicationModel;
+using Windows.UI.Xaml;
 
 namespace QuickShare
 {
     public class SettingsModel : INotifyPropertyChanged
     {
+        public SettingsModel()
+        {
+            CheckTrialStatus();
+        }
+
+        public void CheckTrialStatus()
+        {
+            IsFullVersion = !App.IsTrial;
+        }
+
         public string PackageName
         {
             get
@@ -94,6 +105,47 @@ namespace QuickShare
                 OnPropertyChanged("FindOtherDevicesProgressRingActive");
             }
         }
+
+        private Visibility fullVersionBoxVisibility = Visibility.Visible;
+        public Visibility FullVersionBoxVisibility
+        {
+            get { return fullVersionBoxVisibility; }
+        }
+
+        private Visibility freeVersionBoxVisibility = Visibility.Collapsed;
+        public Visibility FreeVersionBoxVisibility
+        {
+            get { return freeVersionBoxVisibility; }
+        }
+
+        private bool isFullVersion;
+        public bool IsFullVersion
+        {
+            get
+            {
+                return isFullVersion;
+            }
+            set
+            {
+                isFullVersion = value;
+
+                if (isFullVersion)
+                {
+                    fullVersionBoxVisibility = Visibility.Visible;
+                    freeVersionBoxVisibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    fullVersionBoxVisibility = Visibility.Collapsed;
+                    freeVersionBoxVisibility = Visibility.Visible;
+                }
+
+                OnPropertyChanged("FullVersionBoxVisibility");
+                OnPropertyChanged("FreeVersionBoxVisibility");
+                OnPropertyChanged("IsFullVersion");
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

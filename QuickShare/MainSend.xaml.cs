@@ -155,6 +155,13 @@ namespace QuickShare
                     string sendingText = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Sending file..." : "Sending files...";
                     ViewModel.SendStatus = "Preparing...";
 
+                    if (!(await IsAllowedToSendAsync()))
+                    {
+                        await TrialHelper.AskForUpgradeWhileSending();
+                        Frame.GoBack();
+                        return;
+                    }
+
                     bool failed = false;
                     string message = "";
 
@@ -254,6 +261,28 @@ namespace QuickShare
                 
                 App.ShareOperation.ReportCompleted();
             }
+        }
+
+        private async Task<bool> IsAllowedToSendAsync()
+        {
+            if (!App.IsTrial)
+                return true;
+
+            double totalSize = 0;
+            foreach (var item in SendDataTemporaryStorage.Files)
+            {
+                var file = item as StorageFile;
+                if (file == null)
+                    continue;
+
+                var properties = await file.GetBasicPropertiesAsync();
+                totalSize += properties.Size / (1024.0 * 1024.0);
+
+                if (totalSize > App.MaxSizeForTrialVersion)
+                    return false;
+            }
+
+            return true;
         }
 
         private static async Task<RomeAppServiceConnectionStatus> Connect(object rs)

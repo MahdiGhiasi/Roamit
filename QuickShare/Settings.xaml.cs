@@ -29,5 +29,13 @@ namespace QuickShare
         {
             this.InitializeComponent();
         }
+
+        private async void UpgradeButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await TrialHelper.AskForUpgrade();
+
+            Model.CheckTrialStatus();
+            MainPage.Current.CheckTrialStatus();
+        }
     }
 }
