@@ -146,7 +146,7 @@
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>
-            <Grid Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}"
+            <Grid Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.4}"
                   Height="24"
                   VerticalAlignment="Bottom"
                   HorizontalAlignment="Stretch" />
@@ -154,7 +154,7 @@
 
         <CommandBar x:Name="BottomCommandBar" 
                     VerticalAlignment="Bottom" 
-                    Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.4}"
+                    Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=1}"
                     ClosedDisplayMode="Minimal">
             <CommandBar.RenderTransform>
                 <TranslateTransform />

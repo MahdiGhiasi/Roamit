@@ -12,14 +12,16 @@ namespace QuickShare.Common
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            Brush brush = value as Brush;
+            SolidColorBrush originalBrush = value as SolidColorBrush;
 
-            if (brush == null)
+            if (originalBrush == null)
                 throw new Exception();
 
-            brush.Opacity = double.Parse(parameter.ToString());
-
-            return brush;
+            Brush newBrush = new SolidColorBrush(originalBrush.Color)
+            {
+                Opacity = double.Parse(parameter.ToString()),
+            };
+            return newBrush;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
