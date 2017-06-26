@@ -52,7 +52,7 @@ namespace QuickShare
             DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
         }
 
-        private async void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             e.Handled = true;
             LogExceptionMessage(e.Message + "\r\n\r\n" + e.Exception.ToString());           
