@@ -54,7 +54,13 @@ namespace QuickShare
 
         private async void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var message = new MessageDialog(e.Message + "\r\n\r\n" + e.Exception.ToString(), "Unhandled exception occured.");
+            e.Handled = true;
+            LogExceptionMessage(e.Message + "\r\n\r\n" + e.Exception.ToString());           
+        }
+
+        private async void LogExceptionMessage(string msg)
+        {
+            var message = new MessageDialog(msg, "Unhandled exception occured.");
             await message.ShowAsync();
         }
 
