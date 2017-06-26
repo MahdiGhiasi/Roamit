@@ -6,6 +6,9 @@
     xmlns:common="using:QuickShare.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:logicaltriggers="using:AdaptiveTriggerLibrary.Triggers.LogicalTriggers"
+    xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
+    xmlns:versionhelpers="using:QuickShare.HelperClasses.VersionHelpers"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
@@ -167,6 +170,88 @@
     </Page.Resources>
 
     <Grid Background="Transparent" x:Name="MainGrid" common:SizeChange.IsEnabled="True" MinHeight="540">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
+                            <logicaltriggers:MultiTrigger.Triggers>
+                                <userinterfacetriggers:WindowHeightTrigger Condition="530" ConditionModifier="{StaticResource LessThanModifier}" />
+                                <versionhelpers:AdDisplayTrigger Condition="False" />
+                            </logicaltriggers:MultiTrigger.Triggers>
+                        </logicaltriggers:MultiTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentScaleTransform.ScaleX" Value="0.95" />
+                        <Setter Target="ContentScaleTransform.ScaleY" Value="0.95" />
+                        <Setter Target="DragDropText.FontSize" Value="16" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
+                            <logicaltriggers:MultiTrigger.Triggers>
+                                <userinterfacetriggers:WindowHeightTrigger Condition="530" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
+                                <versionhelpers:AdDisplayTrigger Condition="False" />
+                            </logicaltriggers:MultiTrigger.Triggers>
+                        </logicaltriggers:MultiTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentScaleTransform.ScaleX" Value="1" />
+                        <Setter Target="ContentScaleTransform.ScaleY" Value="1" />
+                        <Setter Target="DragDropText.FontSize" Value="20" />
+                    </VisualState.Setters>
+                </VisualState>
+                
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
+                            <logicaltriggers:MultiTrigger.Triggers>
+                                <userinterfacetriggers:WindowHeightTrigger Condition="575" ConditionModifier="{StaticResource LessThanModifier}" />
+                                <versionhelpers:AdDisplayTrigger Condition="True" />
+                            </logicaltriggers:MultiTrigger.Triggers>
+                        </logicaltriggers:MultiTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentScaleTransform.ScaleX" Value="0.8" />
+                        <Setter Target="ContentScaleTransform.ScaleY" Value="0.8" />
+                        <Setter Target="DragDropText.FontSize" Value="14" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
+                            <logicaltriggers:MultiTrigger.Triggers>
+                                <userinterfacetriggers:WindowHeightTrigger Condition="575" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
+                                <userinterfacetriggers:WindowHeightTrigger Condition="612" ConditionModifier="{StaticResource LessThanModifier}" />
+                                <versionhelpers:AdDisplayTrigger Condition="True" />
+                            </logicaltriggers:MultiTrigger.Triggers>
+                        </logicaltriggers:MultiTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentScaleTransform.ScaleX" Value="0.9" />
+                        <Setter Target="ContentScaleTransform.ScaleY" Value="0.9" />
+                        <Setter Target="DragDropText.FontSize" Value="16" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
+                            <logicaltriggers:MultiTrigger.Triggers>
+                                <userinterfacetriggers:WindowHeightTrigger Condition="612" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
+                                <versionhelpers:AdDisplayTrigger Condition="True" />
+                            </logicaltriggers:MultiTrigger.Triggers>
+                        </logicaltriggers:MultiTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentScaleTransform.ScaleX" Value="1" />
+                        <Setter Target="ContentScaleTransform.ScaleY" Value="1" />
+                        <Setter Target="DragDropText.FontSize" Value="20" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RenderTransform>
             <TranslateTransform Y="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=-(((580-x)v24)^0)}" />
         </Grid.RenderTransform>
@@ -176,7 +261,12 @@
             </Grid.RenderTransform>
             <TextBlock Text="Or just drag and drop anything here" FontWeight="Light" FontSize="20" Foreground="LightGray" TextWrapping="Wrap" TextAlignment="Center" x:Name="DragDropText" />
         </Grid>
-        <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x-270}" Margin="0,50,0,0">
+        <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x-270}" 
+              Margin="0,30,0,0"
+              RenderTransformOrigin="0.5,0">
+            <Grid.RenderTransform>
+                <ScaleTransform ScaleX="1" ScaleY="1" x:Name="ContentScaleTransform" />
+            </Grid.RenderTransform>
             <Grid Margin="0,0,0,200" x:Name="buttonsParentGrid" common:SizeChange.IsEnabled="True" MaxWidth="500">
                 <Grid>
                     <Grid.RenderTransform>
@@ -218,7 +308,7 @@
                             <Button.Content>
                                 <StackPanel>
                                     <TextBlock Text="&#xE77F;" FontFamily="Segoe MDL2 Assets" Foreground="LightGray" HorizontalAlignment="Center" FontSize="20" Margin="0,0,0,4" />
-                                    <TextBlock Text="Clipboard" FontWeight="Light" FontSize="16" Foreground="LightGray"  HorizontalAlignment="Center" />
+                                    <TextBlock Text="Clipboard" FontWeight="Light" FontSize="14" Foreground="LightGray"  HorizontalAlignment="Center" />
                                 </StackPanel>
                             </Button.Content>
                         </Button>

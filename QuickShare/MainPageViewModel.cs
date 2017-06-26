@@ -135,14 +135,6 @@ namespace QuickShare
             }
         }
 
-        public Thickness FramePadding
-        {
-            get
-            {
-                return IsAcrylicEnabled ? new Thickness(0, 30, 0, 0) : new Thickness(0, 0, 0, 0);
-            }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         // Create the OnPropertyChanged method to raise the event

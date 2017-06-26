@@ -9,6 +9,9 @@
     xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:logicaltriggers="using:AdaptiveTriggerLibrary.Triggers.LogicalTriggers"
+    xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
+    xmlns:versionhelpers="using:QuickShare.HelperClasses.VersionHelpers"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     SizeChanged="Page_SizeChanged"
@@ -79,21 +82,49 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" common:SizeChange.IsEnabled="True" AllowDrop="True" DragOver="MainGrid_DragOver" Drop="MainGrid_Drop">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <versionhelpers:AdDisplayTrigger Condition="False" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="AdFrame.Height" Value="0" />
+                        <Setter Target="AdFrame.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid x:Name="BlurGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5" />
-        <Frame x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Background="#B1000000" Padding="{x:Bind ViewModel.FramePadding, Mode=OneWay}" />
-        <StackPanel x:Name="TitleBarStackPanel" Height="36" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="{x:Bind ViewModel.CustomTopBarVisibility, Mode=OneWay}">
-            <Grid Width="40" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.BackButtonPlaceholderVisibility, Mode=OneWay}"  />
-            <TextBlock Text="{x:Bind ViewModel.Caption, Mode=OneWay}"  FontSize="12" Foreground="LightGray" x:Name="TitleBarCaption" />
-            <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
-        </StackPanel>
+        <Grid x:Name="Content" Background="#B1000000">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" x:Name="TitleBarStackPanel" Height="32" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="{x:Bind ViewModel.CustomTopBarVisibility, Mode=OneWay}">
+                <Grid Width="40" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.BackButtonPlaceholderVisibility, Mode=OneWay}"  />
+                <TextBlock Text="{x:Bind ViewModel.Caption, Mode=OneWay}"  FontSize="12" Foreground="LightGray" x:Name="TitleBarCaption" />
+                <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
+                <TextBlock Text=", " FontSize="12" Foreground="LightGray" x:Name="SIZE" />
+            </StackPanel>
+            <Grid Grid.Row="1" x:Name="AdFrame" Background="#111111" Height="50">
+
+            </Grid>
+            <Grid Grid.Row="2" RenderTransformOrigin="0.5,0.5">
+                <Frame Grid.Row="2" x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Padding="0,10,0,0" />
+            </Grid>
+        </Grid>
 
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" x:Name="BottomBar">
             <StackPanel.RenderTransform>
                 <TranslateTransform />
             </StackPanel.RenderTransform>
+            
             <Polygon Points="0,15 30,0, 30,15" StrokeThickness="0" Fill="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Stretch="Fill" />
             <Grid x:Name="activeDeviceContainer" Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" Height="50" VerticalAlignment="Bottom" Margin="0,0,0,0">
-                <ContentControl x:Name="activeDevice" Padding="8" Content="{x:Bind ViewModel.SelectedRemoteSystem, Mode=OneWay}" FontSize="22">
+                <ContentControl x:Name="activeDevice" Padding="8" Content="{x:Bind ViewModel.SelectedRemoteSystem, Mode=OneWay}">
                     <ContentControl.ContentTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition />
@@ -101,13 +132,31 @@
                     </ContentControl.ContentTransitions>
                     <ContentControl.ContentTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" >
+                            <UserControl>
                                 <Grid>
-                                    <TextBlock FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
-                                    <TextBlock FontFamily="Segoe MDL2 Assets" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup>
+                                            <VisualState>
+                                                <VisualState.StateTriggers>
+                                                    <userinterfacetriggers:WindowHeightTrigger Condition="575" ConditionModifier="{StaticResource LessThanModifier}" />
+                                                </VisualState.StateTriggers>
+                                                <VisualState.Setters>
+                                                    <Setter Target="CurrentDeviceName.FontSize" Value="18" />
+                                                    <Setter Target="CurrentDeviceProximity.FontSize" Value="14" />
+                                                    <Setter Target="CurrentDeviceIcon.FontSize" Value="22" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <Grid>
+                                            <TextBlock x:Name="CurrentDeviceIcon" FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
+                                            <TextBlock x:Name="CurrentDeviceProximity" FontFamily="Segoe MDL2 Assets" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
+                                        </Grid>
+                                        <TextBlock Text="{Binding DisplayName}" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" x:Name="CurrentDeviceName"></TextBlock>
+                                    </StackPanel>
                                 </Grid>
-                                <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" VerticalAlignment="Center"></TextBlock>
-                            </StackPanel>
+                            </UserControl>
                         </DataTemplate>
                     </ContentControl.ContentTemplate>
                 </ContentControl>
@@ -118,22 +167,41 @@
                       Margin="0,0,0,0" 
                       SelectionChanged="devicesList_SelectionChanged" 
                       Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" 
-                      Height="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=(108v(x-464))^44}" 
+                      Height="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=(108v(x-464))^56}" 
                       VerticalAlignment="Bottom" 
                       Opacity="0.9">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Border VerticalAlignment="Center" HorizontalAlignment="Center" Padding="3">
-                                <StackPanel Orientation="Horizontal" >
-                                    <Grid>
-                                        <TextBlock FontFamily="Segoe MDL2 Assets" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
-                                        <TextBlock FontFamily="Segoe MDL2 Assets" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
-                                    </Grid>
-                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"></TextBlock>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
+                        <UserControl>
+                            <Grid>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup>
+                                        <VisualState>
+                                            <VisualState.StateTriggers>
+                                                <userinterfacetriggers:WindowHeightTrigger Condition="575" ConditionModifier="{StaticResource LessThanModifier}" />
+                                            </VisualState.StateTriggers>
+                                            <VisualState.Setters>
+                                                <Setter Target="DeviceName.FontSize" Value="14" />
+                                                <Setter Target="DeviceProximity.FontSize" Value="14" />
+                                                <Setter Target="DeviceIcon.FontSize" Value="22" />
+                                                <Setter Target="DeviceProximity.Margin" Value="12,12,6,0" />
+                                                <Setter Target="DeviceIcon.Margin" Value="0,0,4,0" />
+                                                <Setter Target="Panel.Padding" Value="0,0,0,0" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Border VerticalAlignment="Center" HorizontalAlignment="Center" Padding="3">
+                                    <StackPanel Orientation="Horizontal" x:Name="Panel" Padding="0,4,0,4">
+                                        <Grid>
+                                            <TextBlock FontFamily="Segoe MDL2 Assets" x:Name="DeviceIcon" Margin="0,0,8,0" VerticalAlignment="Center" FontSize="26" Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}"></TextBlock>
+                                            <TextBlock FontFamily="Segoe MDL2 Assets" x:Name="DeviceProximity" Margin="16,16,8,0" VerticalAlignment="Center" FontSize="18" Text="{Binding IsAvailableByProximity, Converter={StaticResource RemoteSystemProximityToIconConverter}}" Opacity="0.8" Foreground="SkyBlue"></TextBlock>
+                                        </Grid>
+                                        <TextBlock Text="{Binding DisplayName}" x:Name="DeviceName" VerticalAlignment="Center"></TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </UserControl>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.ItemsPanel>
@@ -145,6 +213,11 @@
                         </VirtualizingStackPanel>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="MinHeight" Value="16"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
             </ListView>
             <Grid Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.4}"
                   Height="24"

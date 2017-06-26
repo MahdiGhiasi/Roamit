@@ -4,6 +4,7 @@ using System;
 using QuickShare.MicrosoftGraphFunctions;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
+using QuickShare.HelperClasses.VersionHelpers;
 
 namespace QuickShare
 {
@@ -16,7 +17,7 @@ namespace QuickShare
 
         public void CheckTrialStatus()
         {
-            IsFullVersion = !App.IsTrial;
+            IsFullVersion = !TrialSettings.IsTrial;
         }
 
         public string PackageName

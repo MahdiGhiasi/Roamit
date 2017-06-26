@@ -5,6 +5,8 @@
     xmlns:local="using:QuickShare"
     xmlns:common="using:QuickShare.Common"
     xmlns:rome="using:QuickShare.Rome"
+    xmlns:logicalModifiers="using:AdaptiveTriggerLibrary.ConditionModifiers.LogicalModifiers"
+    xmlns:comparableModifiers="using:AdaptiveTriggerLibrary.ConditionModifiers.ComparableModifiers"
     RequestedTheme="Dark">
     <Application.Resources>
         <ResourceDictionary>
@@ -13,6 +15,12 @@
             <common:MathConverter x:Key="MathConverter"></common:MathConverter>
             <common:BrushAlphaModifier x:Key="BrushAlphaModifier"></common:BrushAlphaModifier>
             <local:SelectedIndexToEnabledConverter x:Key="SelectedIndexToEnabledConverter"></local:SelectedIndexToEnabledConverter>
+
+            <logicalModifiers:OrModifier x:Key="OrModifier" />
+            <logicalModifiers:AndModifier x:Key="AndModifier" />
+            <comparableModifiers:LessThanModifier x:Key="LessThanModifier" />
+            <comparableModifiers:LessThanEqualToModifier x:Key="LessThanEqualToModifier" />
+            <comparableModifiers:GreaterThanEqualToModifier x:Key="GreaterThanEqualToModifier" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

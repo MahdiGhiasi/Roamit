@@ -3,6 +3,7 @@ using QuickShare.Common.Rome;
 using QuickShare.DevicesListManager;
 using QuickShare.FileTransfer;
 using QuickShare.HelperClasses;
+using QuickShare.HelperClasses.VersionHelpers;
 using QuickShare.TextTransfer;
 using System;
 using System.Collections.Generic;
@@ -265,7 +266,7 @@ namespace QuickShare
 
         private async Task<bool> IsAllowedToSendAsync()
         {
-            if (!App.IsTrial)
+            if (!TrialSettings.IsTrial)
                 return true;
 
             double totalSize = 0;
@@ -278,7 +279,7 @@ namespace QuickShare
                 var properties = await file.GetBasicPropertiesAsync();
                 totalSize += properties.Size / (1024.0 * 1024.0);
 
-                if (totalSize > App.MaxSizeForTrialVersion)
+                if (totalSize > TrialSettings.MaxSizeForTrialVersion)
                     return false;
             }
 
