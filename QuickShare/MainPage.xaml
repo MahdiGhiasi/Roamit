@@ -110,9 +110,7 @@
                 <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
             </StackPanel>
             <Grid Grid.Row="1" x:Name="AdFrame">
-                <ads:AdControl ApplicationId="3f83fe91-d6be-434d-a0ae-7351c5a997f1"
-                               AdUnitId="test"
-                               x:Name="TopAd"
+                <ads:AdControl x:Name="AdBanner"
                                HorizontalAlignment="Center"
                                Height="50"
                                VerticalAlignment="Top"

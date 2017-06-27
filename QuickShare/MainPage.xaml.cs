@@ -66,6 +66,14 @@ namespace QuickShare
             this.InitializeComponent();
 
             Current = this;
+
+#if DEBUG
+            AdBanner.ApplicationId = "3f83fe91-d6be-434d-a0ae-7351c5a997f1";
+            AdBanner.AdUnitId = "test";
+#else
+            AdBanner.ApplicationId = "";
+            AdBanner.AdUnitId = "mainBanner";
+#endif
         }
 
         public async Task FileTransferProgress(FileTransferProgressEventArgs e)
@@ -140,7 +148,7 @@ namespace QuickShare
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (!TrialSettings.IsTrial)
-                TopAd.Suspend();
+                AdBanner.Suspend();
 
             DiscoverDevices();
             CheckIfMSAPermissionIsNecessary();
@@ -163,9 +171,9 @@ namespace QuickShare
         private void TrialSettings_IsTrialChanged()
         {
             if (TrialSettings.IsTrial)
-                TopAd.Resume();
+                AdBanner.Resume();
             else
-                TopAd.Suspend();
+                AdBanner.Suspend();
         }
 
     internal async void CheckTrialStatus()
