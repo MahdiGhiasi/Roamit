@@ -12,6 +12,7 @@
     xmlns:logicaltriggers="using:AdaptiveTriggerLibrary.Triggers.LogicalTriggers"
     xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
     xmlns:versionhelpers="using:QuickShare.HelperClasses.VersionHelpers"
+    xmlns:ads="using:Microsoft.Advertising.WinRT.UI"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     SizeChanged="Page_SizeChanged"
@@ -108,8 +109,14 @@
                 <TextBlock Text="{x:Bind ViewModel.Caption, Mode=OneWay}"  FontSize="12" Foreground="LightGray" x:Name="TitleBarCaption" />
                 <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
             </StackPanel>
-            <Grid Grid.Row="1" x:Name="AdFrame" Background="#111111" Height="50">
-
+            <Grid Grid.Row="1" x:Name="AdFrame">
+                <ads:AdControl ApplicationId="3f83fe91-d6be-434d-a0ae-7351c5a997f1"
+                               AdUnitId="test"
+                               x:Name="TopAd"
+                               HorizontalAlignment="Center"
+                               Height="50"
+                               VerticalAlignment="Top"
+                               Width="320"/>
             </Grid>
             <Grid Grid.Row="2" RenderTransformOrigin="0.5,0.5">
                 <Frame Grid.Row="2" x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Padding="0,10,0,0" />

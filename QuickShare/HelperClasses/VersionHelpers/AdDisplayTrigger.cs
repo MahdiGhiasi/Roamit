@@ -15,7 +15,7 @@ namespace QuickShare.HelperClasses.VersionHelpers
         {
             TrialSettings.IsTrialChanged += TrialSettings_IsTrialChanged;
 
-            CurrentValue = true;// TrialSettings.IsTrial;
+            CurrentValue = TrialSettings.IsTrial;
         }
 
         private void TrialSettings_IsTrialChanged()

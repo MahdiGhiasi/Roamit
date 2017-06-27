@@ -8,6 +8,12 @@ namespace QuickShare.HelperClasses.VersionHelpers
 {
     static class TrialSettings
     {
+        static TrialSettings()
+        {
+            if (Windows.Storage.ApplicationData.Current.LocalSettings.Values.ContainsKey("IsTrialCache"))
+                isTrial = (Windows.Storage.ApplicationData.Current.LocalSettings.Values["IsTrialCache"] as bool?) ?? false;
+        }
+
         private static bool isTrial = false;
 
         public static bool IsTrial
@@ -19,6 +25,7 @@ namespace QuickShare.HelperClasses.VersionHelpers
             set
             {
                 isTrial = value;
+                Windows.Storage.ApplicationData.Current.LocalSettings.Values["IsTrialCache"] = value;
                 IsTrialChanged?.Invoke();
             }
         }

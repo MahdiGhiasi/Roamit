@@ -139,6 +139,9 @@ namespace QuickShare
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            if (!TrialSettings.IsTrial)
+                TopAd.Suspend();
+
             DiscoverDevices();
             CheckIfMSAPermissionIsNecessary();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
@@ -153,10 +156,19 @@ namespace QuickShare
             if (clipboardTempFolder != null)
                 await clipboardTempFolder.DeleteAsync();
 
+            TrialSettings.IsTrialChanged += TrialSettings_IsTrialChanged;
             CheckTrialStatus();
         }
 
-        internal async void CheckTrialStatus()
+        private void TrialSettings_IsTrialChanged()
+        {
+            if (TrialSettings.IsTrial)
+                TopAd.Resume();
+            else
+                TopAd.Suspend();
+        }
+
+    internal async void CheckTrialStatus()
         {
             bool isFullVersion = await TrialHelper.IsFullVersion();
 
