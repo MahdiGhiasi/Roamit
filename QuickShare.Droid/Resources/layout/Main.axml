@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/main_actions"
-            android:visibility="invisible">
+            android:visibility="visible">
             <Button
                 android:text="Send File"
                 android:layout_width="wrap_content"
@@ -71,15 +71,27 @@
                 android:layout_toRightOf="@id/clipboardButton"
                 android:id="@+id/clipboardPreviewText"
                 android:layout_alignBottom="@id/clipboardButton"
-                android:translationY="-28dp" />
+                android:translationY="-28dp"
+                android:translationX="4dp" />
+            <Button
+                android:text="Open this link on the device"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/main_btn_openUrl"
+                android:layout_alignLeft="@id/clipboardPreviewText"
+                android:layout_alignParentBottom="true"
+                android:translationX="-8dp"
+                android:translationY="8dp" />
         </RelativeLayout>
         <RelativeLayout
             android:minWidth="25px"
             android:minHeight="25px"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="10dp"
             android:id="@+id/main_share"
-            android:padding="20dp">
+            android:padding="20dp"
+            android:visibility="invisible">
             <TextView
                 android:text="Content"
                 android:textAppearance="?android:attr/textAppearanceMedium"

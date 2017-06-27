@@ -309,7 +309,7 @@ namespace QuickShare.Droid
         private async Task OpenUrl(string url)
         {
             sendStatus.Text = "Connecting...";
-            var result = await Common.PackageManager.LaunchUri(new Uri(url));
+            var result = await Common.PackageManager.LaunchUri(new Uri(url), Common.GetCurrentRemoteSystem());
 
             SetProgressBarValueToMax();
             if (result == QuickShare.Common.Rome.RomeRemoteLaunchUriStatus.Success)

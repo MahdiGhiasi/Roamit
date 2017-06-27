@@ -42,7 +42,7 @@ namespace QuickShare.Droid
 
         RelativeLayout mainActions, mainShare;
         Button shareFileBtn, shareUrlBtn, shareTextBtn;
-        Button clipboardButton, sendFileButton, sendPictureButton;
+        Button clipboardButton, sendFileButton, sendPictureButton, sendUrlButton;
         TextView clipboardPreviewText;
 
         bool clipboardButtonEnabled = true;
@@ -107,6 +107,8 @@ namespace QuickShare.Droid
                 sendFileButton.Enabled = enabled;
             if (sendPictureButton != null)
                 sendPictureButton.Enabled = enabled;
+            if (sendUrlButton != null)
+                sendUrlButton.Enabled = enabled;
         }
 
         private void OnCreate_Share()
@@ -221,11 +223,13 @@ namespace QuickShare.Droid
             //FindViewById<Button>(Resource.Id.mainSendMessageCarrier).Click += SendMessageCarrier_Click;
             var mainLayout = FindViewById<LinearLayout>(Resource.Id.mainLayout);
             clipboardButton = FindViewById<Button>(Resource.Id.clipboardButton);
+            sendUrlButton = FindViewById<Button>(Resource.Id.main_btn_openUrl);
             sendFileButton = FindViewById<Button>(Resource.Id.sendFileButton);
             sendPictureButton = FindViewById<Button>(Resource.Id.sendPictureButton);
             clipboardPreviewText = FindViewById<TextView>(Resource.Id.clipboardPreviewText);
 
             clipboardButton.Click += SendClipboard_Click;
+            sendUrlButton.Click += SendUrlButton_Click;
             sendFileButton.Click += SendFile_Click;
             sendPictureButton.Click += SendPictureButton_Click;
 
@@ -248,7 +252,6 @@ namespace QuickShare.Droid
 #if DEBUG
                 FirebaseInstanceId.Instance.DeleteInstanceId();
 #endif
-
                 await ServiceFunctions.RegisterDevice();
             });
         }
@@ -269,12 +272,29 @@ namespace QuickShare.Droid
                 {
                     clipboardButtonEnabled = false;
                     clipboardButton.Enabled = false;
+                    sendUrlButton.Visibility = ViewStates.Gone;
                 }
                 else
                 {
                     clipboardButtonEnabled = true;
                     if (Common.ListManager.SelectedRemoteSystem != null)
+                    {
                         clipboardButton.Enabled = true;
+
+                        bool isValidUri = System.Uri.TryCreate(content, UriKind.Absolute, out _);
+                        if (isValidUri)
+                        {
+                            sendUrlButton.Visibility = ViewStates.Visible;
+                        }
+                        else
+                        {
+                            sendUrlButton.Visibility = ViewStates.Gone;
+                        }
+                    }
+                    else
+                    {
+                        sendUrlButton.Visibility = ViewStates.Gone;
+                    }
                 }
             });
         }
@@ -318,6 +338,15 @@ namespace QuickShare.Droid
 
         //    web.StartWebServer(ip, 8081);
         //}
+
+
+        private void SendUrlButton_Click(object sender, EventArgs e)
+        {
+            SendPageActivity.IsInitialized = false;
+            var intent = new Intent(this, typeof(SendPageActivity));
+            intent.PutExtra("ContentType", "Url");
+            StartActivity(intent);
+        }
 
         private void SendClipboard_Click(object sender, EventArgs e)
         {
