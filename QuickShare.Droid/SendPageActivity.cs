@@ -20,6 +20,7 @@ using System.Threading;
 using Plugin.DeviceInfo;
 using QuickShare.Droid.Helpers;
 using Android.Views.Animations;
+using Android.Util;
 
 namespace QuickShare.Droid
 {
@@ -74,7 +75,7 @@ namespace QuickShare.Droid
                     await SendText(ClipboardHelper.GetClipboardText(this));
                     break;
                 case "Picture":
-                    await PickAndSendPicture();
+                    PickAndSendPicture();
                     break;
                 case "File":
                     await PickAndSendFile();
@@ -93,18 +94,8 @@ namespace QuickShare.Droid
                     break;
                 case "Unknown":
                 default:
-
                     break;
             }
-        }
-
-        private string GetFilePath(Android.Net.Uri uri)
-        {
-            string[] proj = { MediaStore.Images.ImageColumns.Data };
-            var cursor = ManagedQuery(uri, proj, null, null, null);
-            var colIndex = cursor.GetColumnIndex(MediaStore.Images.ImageColumns.Data);
-            cursor.MoveToFirst();
-            return cursor.GetString(colIndex);
         }
 
         private string GetRealPathFromURI(Android.Net.Uri contentURI)
@@ -125,25 +116,55 @@ namespace QuickShare.Droid
             return path;
         }
 
-        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        protected override async void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
             if ((requestCode == PickImageId) && (resultCode == Result.Ok) && (data != null))
             {
-                Android.Net.Uri uri = data.Data;
-                Toast.MakeText(this, uri.Path, ToastLength.Long);
+                InitSpinner();
+                sendStatus.Text = "Connecting...";
 
-                //FindViewById<ImageView>(Resource.Id.previewImageView).SetImageURI(uri);
-                //System.Diagnostics.Debug.WriteLine(GetFilePath(uri));
-                //System.Diagnostics.Debug.WriteLine(GetRealPathFromURI(uri));
+                List<string> files = new List<string>();
+
+                ClipData clipData = data.ClipData;
+                if (clipData != null)
+                {
+                    for (int i = 0; i < clipData.ItemCount; i++)
+                    {
+                        ClipData.Item item = clipData.GetItemAt(i);
+                        var uri = item.Uri;
+                        files.Add(FilePathHelper.GetPath(this, uri));
+                    }
+                }
+                else
+                {
+                    Android.Net.Uri uri = data.Data;
+                    var file = FilePathHelper.GetPath(this, uri);
+                    files.Add(file);
+                }
+
+                await SendFiles(files.ToArray());
             }
         }
 
-        private async Task PickAndSendPicture()
+        private void PickAndSendPicture()
         {
-            Intent = new Intent();
-            Intent.SetType("*/*");
-            Intent.SetAction(Intent.ActionGetContent);
-            StartActivityForResult(Intent.CreateChooser(Intent, "Select Picture"), PickImageId);
+            sendProgressIndeterminate.Visibility = ViewStates.Gone;
+            sendStatus.Text = "";
+
+            Intent getIntent = new Intent(Intent.ActionGetContent);
+            getIntent.SetType("image/*");
+            getIntent.PutExtra(Intent.ExtraAllowMultiple, true);
+            getIntent.PutExtra(Intent.ExtraLocalOnly, true);
+
+            Intent pickIntent = new Intent(Intent.ActionPick, Android.Provider.MediaStore.Images.Media.ExternalContentUri);
+            pickIntent.SetType("image/*");
+            pickIntent.PutExtra(Intent.ExtraAllowMultiple, true);
+            pickIntent.PutExtra(Intent.ExtraLocalOnly, true);
+
+            Intent chooserIntent = Intent.CreateChooser(getIntent, "Select Picture");
+            chooserIntent.PutExtra(Intent.ExtraInitialIntents, new Intent[] { pickIntent });
+
+            StartActivityForResult(chooserIntent, PickImageId);
         }
 
         private async Task PickAndSendFile()

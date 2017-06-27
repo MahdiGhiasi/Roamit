@@ -227,6 +227,7 @@ namespace QuickShare.Droid
 
             clipboardButton.Click += SendClipboard_Click;
             sendFileButton.Click += SendFile_Click;
+            sendPictureButton.Click += SendPictureButton_Click;
 
             mainLayout.ViewTreeObserver.GlobalLayout += (ss, ee) =>
             {
@@ -298,6 +299,14 @@ namespace QuickShare.Droid
             SendPageActivity.IsInitialized = false;
             var intent = new Intent(this, typeof(SendPageActivity));
             intent.PutExtra("ContentType", "File");
+            StartActivity(intent);
+        }
+
+        private void SendPictureButton_Click(object sender, EventArgs e)
+        {
+            SendPageActivity.IsInitialized = false;
+            var intent = new Intent(this, typeof(SendPageActivity));
+            intent.PutExtra("ContentType", "Picture");
             StartActivity(intent);
         }
 

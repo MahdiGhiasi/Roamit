@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-  <ProgressBar
-      android:id="@+id/sendProgressIndeterminate"
-      android:layout_width="200dp"
-      android:layout_height="200dp"
-      android:indeterminate="false"
-      android:progressDrawable="@drawable/circular_progress_bar"
-      android:background="@drawable/circle_shape"
-      style="?android:attr/progressBarStyleHorizontal"
-      android:max="100"
-      android:progress="20"
-      android:layout_centerInParent="true" />
-  <ProgressBar
-      android:id="@+id/sendProgress"
-      android:layout_width="200dp"
-      android:layout_height="200dp"
-      android:indeterminate="false"
-      android:progressDrawable="@drawable/circular_progress_bar"
-      android:background="@drawable/circle_shape"
-      style="?android:attr/progressBarStyleHorizontal"
-      android:max="100"
-      android:progress="65"
-      android:layout_centerInParent="true" />
-  <TextView
-      android:text="0%"
-      android:textAppearance="?android:attr/textAppearanceMedium"
-      android:gravity="center"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/sendProgressPercent"
-      android:layout_centerInParent="true"
-      android:visibility="visible" />
-  <TextView
+    android:layout_height="match_parent"
+    android:background="#111111">
+    <ProgressBar
+        android:id="@+id/sendProgressIndeterminate"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:indeterminate="false"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        android:background="@drawable/circle_shape"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:max="100"
+        android:progress="20"
+        android:layout_centerInParent="true" />
+    <ProgressBar
+        android:id="@+id/sendProgress"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:indeterminate="false"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        android:background="@drawable/circle_shape"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:max="100"
+        android:progress="65"
+        android:layout_centerInParent="true" />
+    <TextView
+        android:text="0%"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sendProgressPercent"
+        android:layout_centerInParent="true"
+        android:visibility="visible" />
+    <TextView
         android:text="Connecting..."
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center_horizontal"
