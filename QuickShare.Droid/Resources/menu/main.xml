@@ -3,10 +3,10 @@
 	  xmlns:local="http://schemas.android.com/apk/res-auto">
   <item
        android:id="@+id/menu_settings"
-       local:showAsAction="ifRoom"
+       local:showAsAction="never"
        android:icon="@drawable/ic_settings_white"
        android:title="Settings" />
-  <!--local:showAsAction="never"-->
+  <!--local:showAsAction="ifRoom"-->
   <!--<item
      android:id="@+id/menu_rate"
      local:showAsAction="never"
