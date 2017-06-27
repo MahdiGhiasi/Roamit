@@ -181,6 +181,8 @@ namespace QuickShare.Droid
             var intent = new Intent(this, typeof(SendPageActivity));
             intent.PutExtra("ContentType", "Share_File");
             StartActivity(intent);
+
+            FinishAffinity();
         }
 
         private void ShareUrlBtn_Click(object sender, EventArgs e)
@@ -189,6 +191,8 @@ namespace QuickShare.Droid
             var intent = new Intent(this, typeof(SendPageActivity));
             intent.PutExtra("ContentType", "Share_Url");
             StartActivity(intent);
+
+            FinishAffinity();
         }
 
         private void ShareTextBtn_Click(object sender, EventArgs e)
@@ -197,6 +201,8 @@ namespace QuickShare.Droid
             var intent = new Intent(this, typeof(SendPageActivity));
             intent.PutExtra("ContentType", "Share_Text");
             StartActivity(intent);
+
+            FinishAffinity();
         }
 
         private void OnCreate_Main()
