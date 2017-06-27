@@ -71,7 +71,7 @@ namespace QuickShare.Droid
             switch (contentType)
             {
                 case "Clipboard":
-                    await SendText(GetClipboardText());
+                    await SendText(ClipboardHelper.GetClipboardText(this));
                     break;
                 case "Picture":
                     await PickAndSendPicture();
@@ -80,7 +80,7 @@ namespace QuickShare.Droid
                     await PickAndSendFile();
                     break;
                 case "Url":
-                    await OpenUrl(GetClipboardText());
+                    await OpenUrl(ClipboardHelper.GetClipboardText(this));
                     break;
                 case "Share_File":
                     await SendFiles(Common.ShareFiles);
@@ -283,12 +283,6 @@ namespace QuickShare.Droid
         private IEnumerable<string> FindMyIPAddresses()
         {
             return new string[] { NetworkHelper.GetLocalIPAddress() };
-        }
-
-        private string GetClipboardText()
-        {
-            ClipboardManager clipboard = (ClipboardManager)GetSystemService(Context.ClipboardService);
-            return clipboard.Text;
         }
 
         private async Task OpenUrl(string url)

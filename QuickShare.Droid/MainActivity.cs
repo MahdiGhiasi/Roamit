@@ -43,6 +43,11 @@ namespace QuickShare.Droid
         RelativeLayout mainActions, mainShare;
         Button shareFileBtn, shareUrlBtn, shareTextBtn;
         Button clipboardButton, sendFileButton, sendPictureButton;
+        TextView clipboardPreviewText;
+
+        bool clipboardButtonEnabled = true;
+
+        private Timer clipboardUpdateTimer;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -97,7 +102,7 @@ namespace QuickShare.Droid
             if (shareTextBtn != null)
                 shareTextBtn.Enabled = enabled;
             if (clipboardButton != null)
-                clipboardButton.Enabled = enabled;
+                clipboardButton.Enabled = enabled && clipboardButtonEnabled;
             if (sendFileButton != null)
                 sendFileButton.Enabled = enabled;
             if (sendPictureButton != null)
@@ -212,6 +217,7 @@ namespace QuickShare.Droid
             clipboardButton = FindViewById<Button>(Resource.Id.clipboardButton);
             sendFileButton = FindViewById<Button>(Resource.Id.sendFileButton);
             sendPictureButton = FindViewById<Button>(Resource.Id.sendPictureButton);
+            clipboardPreviewText = FindViewById<TextView>(Resource.Id.clipboardPreviewText);
 
             clipboardButton.Click += SendClipboard_Click;
             sendFileButton.Click += SendFile_Click;
@@ -227,6 +233,9 @@ namespace QuickShare.Droid
                 sendPictureButton.SetHeight((int)(x * 0.25));
             };
 
+            SetClipboardPreviewText();
+            clipboardUpdateTimer = new Timer(ClipboardUpdateTimer_Tick, null, 0, 1000);
+
             Task.Run(async () =>
             {
 #if DEBUG
@@ -234,6 +243,32 @@ namespace QuickShare.Droid
 #endif
 
                 await ServiceFunctions.RegisterDevice();
+            });
+        }
+
+        private void ClipboardUpdateTimer_Tick(object state)
+        {
+            SetClipboardPreviewText();
+        }
+
+        private void SetClipboardPreviewText()
+        {
+            string content = ClipboardHelper.GetClipboardText(this);
+            RunOnUiThread(() =>
+            {
+                clipboardPreviewText.Text = content;
+
+                if (content.Length == 0)
+                {
+                    clipboardButtonEnabled = false;
+                    clipboardButton.Enabled = false;
+                }
+                else
+                {
+                    clipboardButtonEnabled = true;
+                    if (Common.ListManager.SelectedRemoteSystem != null)
+                        clipboardButton.Enabled = true;
+                }
             });
         }
 

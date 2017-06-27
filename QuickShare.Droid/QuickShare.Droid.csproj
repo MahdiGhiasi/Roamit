@@ -173,6 +173,7 @@
     <Compile Include="DevicesListAdapter.cs" />
     <Compile Include="Firebase\MyFirebaseInstanceIdService.cs" />
     <Compile Include="Firebase\MyFirebaseListenerService.cs" />
+    <Compile Include="Helpers\ClipboardHelper.cs" />
     <Compile Include="Helpers\FilePathHelper.cs" />
     <Compile Include="Helpers\Notification.cs" />
     <Compile Include="Helpers\ProgressNotifier.cs" />
