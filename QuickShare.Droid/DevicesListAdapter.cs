@@ -19,6 +19,7 @@ namespace QuickShare.Droid
     {
         Activity context;
         DevicesListManager.DevicesListManager listManager;
+        List<NormalizedRemoteSystem> systems = new List<NormalizedRemoteSystem>();
 
         public override string this[int position]
         {
@@ -27,11 +28,9 @@ namespace QuickShare.Droid
                 try
                 {
                     string s;
-                    lock (listManager.RemoteSystems)
+                    lock (systems)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Fetching item #{position}");
-                        s = listManager.RemoteSystems[position].DisplayName;
-                        System.Diagnostics.Debug.WriteLine($"Fetched item # {position}.");
+                        s = systems[position].DisplayName;
                     }
                     return s;
                 }
@@ -44,7 +43,7 @@ namespace QuickShare.Droid
 
         public override int Count
         {
-            get { return listManager.RemoteSystems.Count; }
+            get { return systems.Count; }
         }
 
         public DevicesListAdapter(Activity _context, DevicesListManager.DevicesListManager _listManager) : base()
@@ -59,7 +58,39 @@ namespace QuickShare.Droid
         {
             context.RunOnUiThread(() =>
             {
-                this.NotifyDataSetChanged();
+                lock (systems)
+                {
+                    if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+                    {
+                        systems.Clear();
+                        this.NotifyDataSetChanged();
+                    }
+
+                    if (e.NewItems != null)
+                        foreach (var item in e.NewItems)
+                        {
+                            if (item is NormalizedRemoteSystem nItem)
+                            {
+                                if (systems.FirstOrDefault(x => x.Id == nItem.Id) == null)
+                                {
+                                    systems.Add(item as NormalizedRemoteSystem);
+                                    this.NotifyDataSetChanged();
+                                }
+                            }
+                        }
+
+                    if (e.OldItems != null)
+                        foreach (var item in e.OldItems)
+                            if (item is NormalizedRemoteSystem nItem)
+                            {
+                                var sysItem = systems.FirstOrDefault(x => x.Id == nItem.Id);
+                                if (sysItem != null)
+                                {
+                                    systems.Remove(sysItem);
+                                    this.NotifyDataSetChanged();
+                                }
+                            }
+                }
             });
         }
 
@@ -70,7 +101,7 @@ namespace QuickShare.Droid
 
         public NormalizedRemoteSystem GetItemFromId(long id)
         {
-            return listManager.RemoteSystems[(int)id];
+            return systems[(int)id];
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)
