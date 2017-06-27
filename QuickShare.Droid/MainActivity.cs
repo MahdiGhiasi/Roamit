@@ -20,11 +20,12 @@ using Firebase;
 using System.Threading;
 using Android.Support.V7.App;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Android.Views;
 
 namespace QuickShare.Droid
 {
-    [Activity(Icon = "@drawable/icon")]
-    public class MainActivity : ActionBarActivity
+    [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.mainpage")]
+    public class MainActivity : AppCompatActivity
     {
         DevicesListAdapter devicesAdapter;
         ListView listView;
@@ -99,6 +100,13 @@ namespace QuickShare.Droid
 
                 await ServiceFunctions.RegisterDevice();
             });
+        }
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            MenuInflater.Inflate(Resource.Menu.main, menu);
+
+            return base.OnCreateOptionsMenu(menu);
         }
 
         private void SendMessageCarrier_Click(object sender, EventArgs e)

@@ -2029,6 +2029,9 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c0089
 			public const int media_actions = 2131493001;
 			
+			// aapt resource value: 0x7f0c009e
+			public const int menu_settings = 2131493022;
+			
 			// aapt resource value: 0x7f0c001e
 			public const int middle = 2131492894;
 			
@@ -2472,6 +2475,22 @@ namespace QuickShare.Droid
 			}
 			
 			private Layout()
+			{
+			}
+		}
+		
+		public partial class Menu
+		{
+			
+			// aapt resource value: 0x7f0d0000
+			public const int main = 2131558400;
+			
+			static Menu()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Menu()
 			{
 			}
 		}
