@@ -18,11 +18,13 @@ using QuickShare.Droid.OnlineServiceHelpers;
 using Firebase.Iid;
 using Firebase;
 using System.Threading;
+using Android.Support.V7.App;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace QuickShare.Droid
 {
-    [Activity(Label = "QuickShare.Droid", Icon = "@drawable/icon")]
-    public class MainActivity : Activity
+    [Activity(Icon = "@drawable/icon")]
+    public class MainActivity : ActionBarActivity
     {
         DevicesListAdapter devicesAdapter;
         ListView listView;
@@ -38,6 +40,11 @@ namespace QuickShare.Droid
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
+
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            //Toolbar will now take on default actionbar characteristics
+            SetSupportActionBar(toolbar);
+            SupportActionBar.Title = "QuickShare";
 
             devicesAdapter = new DevicesListAdapter(this, Common.ListManager);
             listView = FindViewById<ListView>(Resource.Id.listView1);
