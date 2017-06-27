@@ -51,6 +51,7 @@ namespace QuickShare.Droid
             IsInitialized = true;
 
             InitSpinner();
+
             ProcessRequest(contentType);
         }
 
@@ -70,7 +71,7 @@ namespace QuickShare.Droid
             switch (contentType)
             {
                 case "Clipboard":
-                    await SendClipboard();
+                    await SendText(GetClipboardText());
                     break;
                 case "Picture":
                     await PickAndSendPicture();
@@ -78,11 +79,32 @@ namespace QuickShare.Droid
                 case "File":
                     await PickAndSendFile();
                     break;
+                case "Url":
+                    await OpenUrl(GetClipboardText());
+                    break;
+                case "Share_File":
+                    await SendFiles(Common.ShareFiles);
+                    break;
+                case "Share_Url":
+                    await OpenUrl(Common.ShareText);
+                    break;
+                case "Share_Text":
+                    await SendText(Common.ShareText);
+                    break;
                 case "Unknown":
                 default:
 
                     break;
             }
+        }
+
+        private string GetFilePath(Android.Net.Uri uri)
+        {
+            string[] proj = { MediaStore.Images.ImageColumns.Data };
+            var cursor = ManagedQuery(uri, proj, null, null, null);
+            var colIndex = cursor.GetColumnIndex(MediaStore.Images.ImageColumns.Data);
+            cursor.MoveToFirst();
+            return cursor.GetString(colIndex);
         }
 
         private string GetRealPathFromURI(Android.Net.Uri contentURI)
@@ -101,15 +123,6 @@ namespace QuickShare.Droid
             cursor.Close();
 
             return path;
-        }
-
-        private string GetFilePath(Android.Net.Uri uri)
-        {
-            string[] proj = { MediaStore.Images.ImageColumns.Data };
-            var cursor = ManagedQuery(uri, proj, null, null, null);
-            var colIndex = cursor.GetColumnIndex(MediaStore.Images.ImageColumns.Data);
-            cursor.MoveToFirst();
-            return cursor.GetString(colIndex);
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -163,8 +176,12 @@ namespace QuickShare.Droid
 
             string[] files = await filePickerTask.Task;
 
-            sendStatus.Text = "Connecting...";
+            await SendFiles(files);
+        }
 
+        private async Task SendFiles(string[] files)
+        {
+            sendStatus.Text = "Connecting...";
 
             var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
 
@@ -268,7 +285,29 @@ namespace QuickShare.Droid
             return new string[] { NetworkHelper.GetLocalIPAddress() };
         }
 
-        private async Task SendClipboard()
+        private string GetClipboardText()
+        {
+            ClipboardManager clipboard = (ClipboardManager)GetSystemService(Context.ClipboardService);
+            return clipboard.Text;
+        }
+
+        private async Task OpenUrl(string url)
+        {
+            sendStatus.Text = "Connecting...";
+            var result = await Common.PackageManager.LaunchUri(new Uri(url));
+
+            SetProgressBarValueToMax();
+            if (result == QuickShare.Common.Rome.RomeRemoteLaunchUriStatus.Success)
+            {
+                sendStatus.Text = "Finished.";
+            }
+            else
+            {
+                sendStatus.Text = result.ToString();
+            }
+        }
+
+        private async Task SendText(string text)
         {
             sendStatus.Text = "Connecting...";
             var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
@@ -298,8 +337,7 @@ namespace QuickShare.Droid
 
             sendStatus.Text = "Sending...";
 
-            ClipboardManager clipboard = (ClipboardManager)GetSystemService(Context.ClipboardService);
-            bool sendResult = await textSender.Send(clipboard.Text, ContentType.ClipboardContent);
+            bool sendResult = await textSender.Send(text, ContentType.ClipboardContent);
 
             SetProgressBarValueToMax();
 
@@ -326,6 +364,8 @@ namespace QuickShare.Droid
 
         private void SetProgressBarValueToMax()
         {
+            if (sendProgress.Max == 0)
+                sendProgress.Max = 1;
             SetProgressBarValue(sendProgress.Max, sendProgress.Max);
         }
     }

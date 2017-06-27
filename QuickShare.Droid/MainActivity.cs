@@ -21,10 +21,13 @@ using System.Threading;
 using Android.Support.V7.App;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Android.Views;
+using Android.Net;
+using QuickShare.Droid.Helpers;
 
 namespace QuickShare.Droid
 {
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.mainpage")]
+    [IntentFilter(new[] { Intent.ActionSend }, Categories = new[] { Intent.CategoryDefault }, DataMimeType = "*/*", Label = "QuickShare")]
     public class MainActivity : AppCompatActivity
     {
         DevicesListAdapter devicesAdapter;
@@ -35,6 +38,12 @@ namespace QuickShare.Droid
         bool isUserSelectedRemoteSystemManually = false;
         int remoteSystemPrevCount = 0;
 
+        bool showToolbarMenu = true;
+
+        RelativeLayout mainActions, mainShare;
+        Button shareFileBtn, shareUrlBtn, shareTextBtn;
+        Button clipboardButton, sendFileButton, sendPictureButton;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -42,23 +51,167 @@ namespace QuickShare.Droid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            //Toolbar will now take on default actionbar characteristics
-            SetSupportActionBar(toolbar);
-            SupportActionBar.Title = "QuickShare";
-
             devicesAdapter = new DevicesListAdapter(this, Common.ListManager);
             listView = FindViewById<ListView>(Resource.Id.listView1);
             listView.Adapter = devicesAdapter;
             listView.ItemClick += ListView_ItemClick;
             listView.ItemSelected += ListView_ItemSelected;
 
+            mainActions = FindViewById<RelativeLayout>(Resource.Id.main_actions);
+            mainShare = FindViewById<RelativeLayout>(Resource.Id.main_share);
+
+            if ((Intent.Action == Intent.ActionSend) || (Intent.Action == Intent.ActionSendMultiple))
+            {
+                OnCreate_Share();
+            }
+            else
+            {
+                OnCreate_Main();
+            }
+
+            SetButtonsEnableStatus(false);
+
+            UpdateSelectedRemoteSystem();
+
+            if (IsInitialized)
+                return;
+            IsInitialized = true;
+
+            Common.PackageManager = new RomePackageManager(this);
+            Common.PackageManager.Initialize("com.quickshare.service");
+
+            Common.MessageCarrierPackageManager = new RomePackageManager(this);
+            Common.MessageCarrierPackageManager.Initialize("com.quickshare.messagecarrierservice");
+
+            Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
+
+            InitDiscovery();
+        }
+
+        private void SetButtonsEnableStatus(bool enabled)
+        {
+            if (shareFileBtn != null)
+                shareFileBtn.Enabled = enabled;
+            if (shareUrlBtn != null)
+                shareUrlBtn.Enabled = enabled;
+            if (shareTextBtn != null)
+                shareTextBtn.Enabled = enabled;
+            if (clipboardButton != null)
+                clipboardButton.Enabled = enabled;
+            if (sendFileButton != null)
+                sendFileButton.Enabled = enabled;
+            if (sendPictureButton != null)
+                sendPictureButton.Enabled = enabled;
+        }
+
+        private void OnCreate_Share()
+        {
+            showToolbarMenu = false;
+
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            //Toolbar will now take on default actionbar characteristics
+            SetSupportActionBar(toolbar);
+            SupportActionBar.Title = "Share to device";
+
+            mainActions.Visibility = ViewStates.Gone;
+            mainShare.Visibility = ViewStates.Visible;
+
+            var contentPreview = FindViewById<TextView>(Resource.Id.main_txt_shareContent);
+            shareFileBtn = FindViewById<Button>(Resource.Id.main_btn_share_file);
+            shareUrlBtn = FindViewById<Button>(Resource.Id.main_btn_share_url);
+            shareTextBtn = FindViewById<Button>(Resource.Id.main_btn_share_text);
+
+            shareFileBtn.Visibility = ViewStates.Gone;
+            shareUrlBtn.Visibility = ViewStates.Gone;
+            shareTextBtn.Visibility = ViewStates.Gone;
+
+            if ((Intent.Action == Intent.ActionSend) && (Intent.Extras.ContainsKey(Intent.ExtraStream)))
+            {
+                var fileUrl = FilePathHelper.GetPath(this, (Android.Net.Uri)Intent.Extras.GetParcelable(Intent.ExtraStream));
+
+                contentPreview.Text = fileUrl;
+                Common.ShareFiles = new string[] { fileUrl };
+
+                shareFileBtn.Visibility = ViewStates.Visible;
+            }
+            else if (Intent.Action == Intent.ActionSendMultiple && Intent.Extras.ContainsKey(Intent.ExtraStream))
+            {
+                string[] urls = Intent.Extras.GetParcelableArrayList(Intent.ExtraStream)
+                    .Cast<Android.Net.Uri>()
+                    .Select(x => FilePathHelper.GetPath(this, x))
+                    .ToArray();
+
+                contentPreview.Text = urls.Length + " files";
+                Common.ShareFiles = urls;
+
+                shareFileBtn.Visibility = ViewStates.Visible;
+            }
+            else if ((Intent.Action == Intent.ActionSend) && (Intent.Type == "text/plain"))
+            {
+                string sharedText = Intent.GetStringExtra(Intent.ExtraText);
+
+                contentPreview.Text = sharedText;
+                Common.ShareFiles = null;
+                Common.ShareText = sharedText;
+
+                shareTextBtn.Visibility = ViewStates.Visible;
+
+                bool isValidUri = System.Uri.TryCreate(sharedText, UriKind.Absolute, out _);
+                if (isValidUri)
+                    shareUrlBtn.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                contentPreview.Text = "Unsupported content";
+            }
+
+            shareFileBtn.Click += ShareFileBtn_Click;
+            shareUrlBtn.Click += ShareUrlBtn_Click;
+            shareTextBtn.Click += ShareTextBtn_Click;
+        }
+
+        private void ShareFileBtn_Click(object sender, EventArgs e)
+        {
+            SendPageActivity.IsInitialized = false;
+            var intent = new Intent(this, typeof(SendPageActivity));
+            intent.PutExtra("ContentType", "Share_File");
+            StartActivity(intent);
+        }
+
+        private void ShareUrlBtn_Click(object sender, EventArgs e)
+        {
+            SendPageActivity.IsInitialized = false;
+            var intent = new Intent(this, typeof(SendPageActivity));
+            intent.PutExtra("ContentType", "Share_Url");
+            StartActivity(intent);
+        }
+
+        private void ShareTextBtn_Click(object sender, EventArgs e)
+        {
+            SendPageActivity.IsInitialized = false;
+            var intent = new Intent(this, typeof(SendPageActivity));
+            intent.PutExtra("ContentType", "Share_Text");
+            StartActivity(intent);
+        }
+
+        private void OnCreate_Main()
+        {
+            showToolbarMenu = true;
+
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            //Toolbar will now take on default actionbar characteristics
+            SetSupportActionBar(toolbar);
+            SupportActionBar.Title = "QuickShare";
+
+            FindViewById<RelativeLayout>(Resource.Id.main_actions).Visibility = ViewStates.Visible;
+            FindViewById<RelativeLayout>(Resource.Id.main_share).Visibility = ViewStates.Gone;
+
             //FindViewById<Button>(Resource.Id.button3).Click += Button3_Click;
             //FindViewById<Button>(Resource.Id.mainSendMessageCarrier).Click += SendMessageCarrier_Click;
             var mainLayout = FindViewById<LinearLayout>(Resource.Id.mainLayout);
-            var clipboardButton = FindViewById<Button>(Resource.Id.clipboardButton);
-            var sendFileButton = FindViewById<Button>(Resource.Id.sendFileButton);
-            var sendPictureButton = FindViewById<Button>(Resource.Id.sendPictureButton);
+            clipboardButton = FindViewById<Button>(Resource.Id.clipboardButton);
+            sendFileButton = FindViewById<Button>(Resource.Id.sendFileButton);
+            sendPictureButton = FindViewById<Button>(Resource.Id.sendPictureButton);
 
             clipboardButton.Click += SendClipboard_Click;
             sendFileButton.Click += SendFile_Click;
@@ -74,24 +227,6 @@ namespace QuickShare.Droid
                 sendPictureButton.SetHeight((int)(x * 0.25));
             };
 
-            UpdateSelectedRemoteSystem();
-
-            if (IsInitialized)
-                return;
-            IsInitialized = true;
-
-            //var firebaseToken = FirebaseInstanceId.Instance.Token;
-
-            Common.PackageManager = new RomePackageManager(this);
-            Common.PackageManager.Initialize("com.quickshare.service");
-
-            Common.MessageCarrierPackageManager = new RomePackageManager(this);
-            Common.MessageCarrierPackageManager.Initialize("com.quickshare.messagecarrierservice");
-
-            Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
-
-            InitDiscovery();
-
             Task.Run(async () =>
             {
 #if DEBUG
@@ -104,7 +239,10 @@ namespace QuickShare.Droid
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
-            MenuInflater.Inflate(Resource.Menu.main, menu);
+            if (showToolbarMenu)
+            {
+                MenuInflater.Inflate(Resource.Menu.main, menu);
+            }
 
             return base.OnCreateOptionsMenu(menu);
         }
@@ -166,12 +304,17 @@ namespace QuickShare.Droid
         private void UpdateSelectedRemoteSystem()
         {
             if (Common.ListManager.SelectedRemoteSystem == null)
+            {
+                SetButtonsEnableStatus(false);
                 return;
+            }
 
             RunOnUiThread(() =>
             {
-                FindViewById<TextView>(Resource.Id.selectedDeviceName).Text = Common.ListManager.SelectedRemoteSystem.DisplayName;
-                System.Diagnostics.Debug.WriteLine(Common.ListManager.SelectedRemoteSystem.DisplayName + " is selected.");
+                FindViewById<TextView>(Resource.Id.selectedDeviceName).Text = (Common.ListManager.SelectedRemoteSystem?.DisplayName) ?? "";
+                System.Diagnostics.Debug.WriteLine(Common.ListManager.SelectedRemoteSystem?.DisplayName ?? "NULL" + " is selected.");
+
+                SetButtonsEnableStatus(true);
             });
         }
 
@@ -190,7 +333,7 @@ namespace QuickShare.Droid
                 return;
             }
 
-            var result = await Common.PackageManager.LaunchUri(new Uri("http://www.ghiasi.net"), rs);
+            var result = await Common.PackageManager.LaunchUri(new System.Uri("http://www.ghiasi.net"), rs);
             Toast.MakeText(this, result.ToString(), ToastLength.Long).Show();
 
             var c = await Common.PackageManager.Connect(rs, false);

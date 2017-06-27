@@ -21,6 +21,9 @@ namespace QuickShare.Droid
         internal static RomePackageManager MessageCarrierPackageManager { get; set; }
         internal static DevicesListManager.DevicesListManager ListManager { get; } = new DevicesListManager.DevicesListManager("", new RemoteSystemNormalizer());
 
+        internal static string ShareText { get; set; }
+        internal static string[] ShareFiles { get; set; }
+
         internal static RemoteSystem GetCurrentRemoteSystem()
         {
             var nrs = Common.ListManager.SelectedRemoteSystem;
