@@ -18,8 +18,9 @@ namespace QuickShare
 
         private void ListManager_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedRemoteSystem")
-                SelectedRemoteSystem = ListManager.SelectedRemoteSystem;
+            if ((e.PropertyName == "SelectedRemoteSystem") && (ListManager.SelectedRemoteSystem != null))
+                if ((selectedRemoteSystem == null) || (selectedRemoteSystem.Id != ListManager.SelectedRemoteSystem.Id))
+                    SelectedRemoteSystem = ListManager.SelectedRemoteSystem;
         }
 
         ObservableCollection<NormalizedRemoteSystem> devicesList;
