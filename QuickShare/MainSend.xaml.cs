@@ -167,6 +167,8 @@ namespace QuickShare
 
                     ViewModel.ProgressIsIndeterminate = false;
                     ViewModel.ProgressValue = ViewModel.ProgressMaximum;
+
+                    await SendFinishService(packageManager);
                 }
                 else if (mode == "file")
                 {
@@ -238,12 +240,7 @@ namespace QuickShare
                         ViewModel.ProgressValue = ViewModel.ProgressMaximum;
                     }
 
-                    Dictionary<string, object> vs = new Dictionary<string, object>
-                    {
-                        { "Receiver", "System" },
-                        { "FinishService", "FinishService" }
-                    };
-                    await packageManager.Send(vs);
+                    await SendFinishService(packageManager);
 
                     if (failed)
                     {
@@ -272,6 +269,16 @@ namespace QuickShare
 
                 App.ShareOperation.ReportCompleted();
             }
+        }
+
+        private static async Task SendFinishService(IRomePackageManager packageManager)
+        {
+            Dictionary<string, object> vs = new Dictionary<string, object>
+                    {
+                        { "Receiver", "System" },
+                        { "FinishService", "FinishService" }
+                    };
+            await packageManager.Send(vs);
         }
 
         private async Task<bool> IsAllowedToSendAsync()
