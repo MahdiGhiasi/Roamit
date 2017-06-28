@@ -65,6 +65,7 @@
                 android:layout_alignParentRight="true" />
             <TextView
                 android:text="Hello world!"
+                android:maxLines="1"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

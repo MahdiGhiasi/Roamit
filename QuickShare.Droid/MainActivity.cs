@@ -266,16 +266,31 @@ namespace QuickShare.Droid
             string content = ClipboardHelper.GetClipboardText(this);
             RunOnUiThread(() =>
             {
-                clipboardPreviewText.Text = content;
-
                 if (content.Length == 0)
                 {
                     clipboardButtonEnabled = false;
                     clipboardButton.Enabled = false;
                     sendUrlButton.Visibility = ViewStates.Gone;
+
+                    clipboardPreviewText.Text = "";
                 }
                 else
                 {
+                    string contentPreview = content;
+
+                    //truncate text preview if it's too long
+                    if (contentPreview.Length > 61)
+                        contentPreview = contentPreview.Substring(0, 60) + "...";
+
+                    // remove newlines
+                    contentPreview = contentPreview.Replace("\r", " ").Replace("\n", " ");
+
+                    // remove multiple spaces
+                    while (contentPreview.Contains("  "))
+                        contentPreview = contentPreview.Replace("  ", " ");
+
+                    clipboardPreviewText.Text = contentPreview;
+
                     clipboardButtonEnabled = true;
                     if (Common.ListManager.SelectedRemoteSystem != null)
                     {
