@@ -280,29 +280,38 @@ namespace QuickShare
 
         private async void OnAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            AppServiceDeferral messageDeferral = args.GetDeferral();
-            ValueSet message = args.Request.Message;
-
-            if (message["Type"].ToString() == "FileTransferProgress")
+            try
             {
-                await DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
+                AppServiceDeferral messageDeferral = args.GetDeferral();
+                ValueSet message = args.Request.Message;
+
+                if (message["Type"].ToString() == "FileTransferProgress")
                 {
-                    await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<FileTransferProgressEventArgs>(message["Data"] as string));
-                });
+                    await DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
+                    {
+                        await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<FileTransferProgressEventArgs>(message["Data"] as string));
+                    });
+                }
+                else if (message["Type"].ToString() == "TextReceive")
+                {
+                    await DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
+                    {
+                        await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<TextReceiveEventArgs>(message["Data"] as string));
+                    });
+                }
+
+                ValueSet returnMessage = new ValueSet();
+                returnMessage.Add("Status", "OK");
+                await args.Request.SendResponseAsync(returnMessage);
+
+                messageDeferral.Complete();
             }
-            else if (message["Type"].ToString() == "TextReceive")
+            catch (Exception ex)
             {
-                await DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
-                {
-                    await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<TextReceiveEventArgs>(message["Data"] as string));
-                });
+                Debug.WriteLine("Unhandled exception in OnAppServiceRequestReceived():");
+                Debug.WriteLine(ex.ToString());
+                await (new MessageDialog(ex.ToString(), "Unhandled exception in OnAppServiceRequestReceived()")).ShowAsync();
             }
-
-            ValueSet returnMessage = new ValueSet();
-            returnMessage.Add("Status", "OK");
-            await args.Request.SendResponseAsync(returnMessage);
-
-            messageDeferral.Complete();
         }
 
         private void OnAppServicesCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
