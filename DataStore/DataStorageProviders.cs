@@ -34,12 +34,26 @@ namespace QuickShare.DataStore
             }
         }
 
+        private static SettingsManager _settingsManager = null;
+        public static SettingsManager SettingsManager
+        {
+            get
+            {
+                if (_settingsManager == null)
+                {
+                    throw new Exception("DataStore is not initialized yet.");
+                }
+                return _settingsManager;
+            }
+        }
+
         public static void Init(string workingDirectory)
         {
             _workingDirectory = workingDirectory;
 
             _textReceiveContentManager = new TextReceiveContentManager(System.IO.Path.Combine(_workingDirectory, "TextReceive.db"));
             _historyManager = new HistoryManager(System.IO.Path.Combine(_workingDirectory, "History.db"));
+            _settingsManager = new SettingsManager(System.IO.Path.Combine(_workingDirectory, "Settings.db"));
         }
     }
 }

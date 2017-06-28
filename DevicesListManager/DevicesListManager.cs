@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QuickShare.DataStore;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -18,7 +20,7 @@ namespace QuickShare.DevicesListManager
         public ObservableCollection<NormalizedRemoteSystem> RemoteSystems { get; private set; } = new ObservableCollection<NormalizedRemoteSystem>();
 
         public event PropertyChangedEventHandler PropertyChanged;
-        Dictionary<string, uint> selectCounts = new Dictionary<string, uint>();
+        Dictionary<string, uint> selectCounts;
 
         NormalizedRemoteSystem selectedRemoteSystem;
         public NormalizedRemoteSystem SelectedRemoteSystem
@@ -38,6 +40,21 @@ namespace QuickShare.DevicesListManager
         {
             dataFileLocation = _dataFileLocation;
             attrNormalizer = _attributesNormalizer;
+
+            selectCounts = new Dictionary<string, uint>();
+            try
+            {
+                DataStorageProviders.SettingsManager.Open();
+                if (DataStorageProviders.SettingsManager.ContainsKey("selectCounts"))
+                {
+                    selectCounts = new Dictionary<string, uint>(JsonConvert.DeserializeObject<Dictionary<string, uint>>(DataStorageProviders.SettingsManager.GetItemContent("selectCounts")));
+                }
+                DataStorageProviders.SettingsManager.Close();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Can't read selectCounts: " + ex.ToString());
+            }
         }
 
         // Create the OnPropertyChanged method to raise the event
@@ -87,21 +104,37 @@ namespace QuickShare.DevicesListManager
 
         public void Select(object o)
         {
-            if (o is NormalizedRemoteSystem)
+            Select(o, true);
+        }
+
+        Object dbLock = new Object();
+        private void Select(object o, bool updateHistory)
+        {
+            if (!(o is NormalizedRemoteSystem))
             {
-                var rs = o as NormalizedRemoteSystem;
+                Select(attrNormalizer.Normalize(o), updateHistory);
+                return;
+            }
+
+            var rs = o as NormalizedRemoteSystem;
+
+            if (updateHistory)
+            {
                 if (selectCounts.ContainsKey(rs.Id))
                     selectCounts[rs.Id]++;
                 else
                     selectCounts[rs.Id] = _initialCountValue;
 
-                SelectedRemoteSystem = rs;
-                Sort();
+                lock (dbLock)
+                {
+                    DataStorageProviders.SettingsManager.Open();
+                    DataStorageProviders.SettingsManager.Add("selectCounts", JsonConvert.SerializeObject(selectCounts));
+                    DataStorageProviders.SettingsManager.Close();
+                }
             }
-            else
-            {
-                Select(attrNormalizer.Normalize(o));
-            }
+
+            SelectedRemoteSystem = rs;
+            Sort();
         }
 
         private double CalculateScore(NormalizedRemoteSystem rs)
@@ -109,7 +142,14 @@ namespace QuickShare.DevicesListManager
             if (!selectCounts.ContainsKey(rs.Id))
                 return 0;
 
-            return Math.Ceiling(((double)selectCounts[rs.Id]) / 10.0);
+            uint maximum = selectCounts.Values.Max();
+
+            if (maximum < 10)
+                return selectCounts[rs.Id];
+            else if (maximum < 20)
+                return Math.Ceiling(((double)selectCounts[rs.Id]) / 3.0);
+            else
+                return Math.Ceiling(((double)selectCounts[rs.Id]) / 5.0);
         }
 
         public List<NormalizedRemoteSystem> GetSortedList(NormalizedRemoteSystem selected)
@@ -154,7 +194,7 @@ namespace QuickShare.DevicesListManager
             Sort();
 
             NormalizedRemoteSystem output = RemoteSystems[0];
-            Select(output);
+            Select(output, false);
             return output;
         }
     }
