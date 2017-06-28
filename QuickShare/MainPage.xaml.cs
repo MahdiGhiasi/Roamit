@@ -171,28 +171,23 @@ namespace QuickShare
         private void TrialSettings_IsTrialChanged()
         {
             if (TrialSettings.IsTrial)
+            {
                 AdBanner.Resume();
-            else
-                AdBanner.Suspend();
-        }
-
-    internal async void CheckTrialStatus()
-        {
-            bool isFullVersion = await TrialHelper.IsFullVersion();
-
-            if (isFullVersion)
-            {
-                TrialSettings.IsTrial = false;
-                ViewModel.UpgradeButtonVisibility = Visibility.Collapsed;
-            }
-            else
-            {
-                TrialSettings.IsTrial = true;
                 ViewModel.UpgradeButtonVisibility = Visibility.Visible;
             }
+            else
+            {
+                AdBanner.Suspend();
+                ViewModel.UpgradeButtonVisibility = Visibility.Collapsed;
+            }
+        }
+
+        internal async void CheckTrialStatus()
+        {
+            TrialHelper.CheckIfFullVersion();
 
             if (SecureKeyStorage.IsUserIdStored())
-                await Common.Service.UpgradeDetails.SetUpgradeStatus(SecureKeyStorage.GetUserId(), isFullVersion);
+                await Common.Service.UpgradeDetails.SetUpgradeStatus(SecureKeyStorage.GetUserId(), !TrialSettings.IsTrial);
         }
 
         int AcrylicStatus = -1;
@@ -411,8 +406,6 @@ namespace QuickShare
         private async void UpgradeButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await TrialHelper.AskForUpgrade();
-
-            TrialSettings.IsTrial = !TrialSettings.IsTrial;
         }
     }
 }

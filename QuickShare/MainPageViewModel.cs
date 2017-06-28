@@ -69,7 +69,7 @@ namespace QuickShare
             }
         }
 
-        private Visibility upgradeButtonVisibility = Visibility.Visible;
+        private Visibility upgradeButtonVisibility = Visibility.Collapsed;
         public Visibility UpgradeButtonVisibility
         {
             get { return upgradeButtonVisibility; }

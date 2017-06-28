@@ -34,7 +34,7 @@ namespace QuickShare
     /// </summary>
     public sealed partial class MainSend : Page
     {
-        public MainSendViewModel ViewModel { get; set; } 
+        public MainSendViewModel ViewModel { get; set; }
 
         public MainSend()
         {
@@ -92,6 +92,23 @@ namespace QuickShare
 
             string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
             var mode = e.Parameter.ToString();
+
+
+            if ((mode == "file") && (!(await IsAllowedToSendAsync())))
+            {
+                ViewModel.SendStatus = "";
+
+                await TrialHelper.AskForUpgradeWhileSending();
+
+                if (!(await IsAllowedToSendAsync()))
+                {
+                    Frame.GoBack();
+                    return;
+                }
+                ViewModel.SendStatus = "Connecting...";
+            }
+
+
             if (mode == "launchUri")
             {
                 ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
@@ -155,13 +172,6 @@ namespace QuickShare
                 {
                     string sendingText = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Sending file..." : "Sending files...";
                     ViewModel.SendStatus = "Preparing...";
-
-                    if (!(await IsAllowedToSendAsync()))
-                    {
-                        await TrialHelper.AskForUpgradeWhileSending();
-                        Frame.GoBack();
-                        return;
-                    }
 
                     bool failed = false;
                     string message = "";
@@ -259,7 +269,7 @@ namespace QuickShare
             if (SendDataTemporaryStorage.IsSharingTarget)
             {
                 await Task.Delay(TimeSpan.FromSeconds(1.5));
-                
+
                 App.ShareOperation.ReportCompleted();
             }
         }
@@ -289,8 +299,8 @@ namespace QuickShare
         private static async Task<RomeAppServiceConnectionStatus> Connect(object rs)
         {
             if (rs is NormalizedRemoteSystem)
-                return await MainPage.Current.AndroidPackageManager.Connect(rs as NormalizedRemoteSystem, 
-                    SecureKeyStorage.GetUserId(), 
+                return await MainPage.Current.AndroidPackageManager.Connect(rs as NormalizedRemoteSystem,
+                    SecureKeyStorage.GetUserId(),
                     MainPage.Current.PackageManager.RemoteSystems.Where(x => x.Kind != "Unknown").Select(x => x.Id));
             else
                 return await MainPage.Current.PackageManager.Connect(rs, true, new Uri("quickshare://wake"));
