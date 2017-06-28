@@ -31,6 +31,7 @@ namespace QuickShare.UWP.Rome
 
         readonly int _maxRetryCount = 3;
         readonly double _maxSecondsForCarrier = 5.0;
+        readonly int _maxWaitTime = 20;
 
         List<PackageManagerSendQueueItem> sendQueue = new List<PackageManagerSendQueueItem>();
         static SemaphoreSlim sendQueueSemaphore = new SemaphoreSlim(1, 1);
@@ -62,7 +63,12 @@ namespace QuickShare.UWP.Rome
                     if (latestCarrierCode != guid)
                     {
                         Debug.WriteLine($"A newer carrier is here. I will retire now. I was waiting for {counter} cycles.");
-                        break;
+                        return;
+                    }
+                    else if (counter > _maxWaitTime)
+                    {
+                        Debug.WriteLine($"Okay I've waited {counter} cycles, that's enough. Bye!");
+                        return;
                     }
 
                     Debug.WriteLine($"Queue is empty. Message Carrier is waiting for some message to arrive... {counter}");
