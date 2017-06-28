@@ -274,7 +274,7 @@ namespace QuickShare.Droid.Services
                 Log.Debug(TAG, ex.ToString());
             }
 
-            StopSelf();
+            //StopSelf();
         }
 
         private async Task<bool> ProcessReceivedMessage(Dictionary<string, object> message)
@@ -310,8 +310,8 @@ namespace QuickShare.Droid.Services
             {
                 if (message.ContainsKey("FinishService"))
                 {
-                     System.Diagnostics.Debug.WriteLine("Goodbye");
-                     return true;
+                    System.Diagnostics.Debug.WriteLine("Finished.");
+                    return true;
                 }
             }
 
