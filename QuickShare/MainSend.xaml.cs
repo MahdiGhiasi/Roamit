@@ -113,7 +113,7 @@ namespace QuickShare
             {
                 await LaunchUri(rs);
             }
-            else
+            else if (mode == "text")
             {
                 ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
                 RomeAppServiceConnectionStatus result = await Connect(rs);
@@ -127,29 +127,35 @@ namespace QuickShare
 
                 ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
 
-                if (mode == "text")
+                await SendText(packageManager, deviceName);
+                await SendFinishService(packageManager);
+            }
+            else if (mode == "file")
+            {
+                ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
+                RomeAppServiceConnectionStatus result = await Connect(rs);
+
+                if (result != RomeAppServiceConnectionStatus.Success)
                 {
-                    await SendText(packageManager, deviceName);
-                    await SendFinishService(packageManager);
-                }
-                else if (mode == "file")
-                {
-                    if ((await SendFile(rs, packageManager, deviceName)) == false)
-                    {
-                        Frame.GoBack();
-                        return;
-                    }
-                    await SendFinishService(packageManager);
-                }
-                else if (mode == "folder")
-                {
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    await (new MessageDialog("MainSend::Invalid parameter.")).ShowAsync();
+                    await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
                     Frame.GoBack();
+                    return;
                 }
+
+                ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+
+                if ((await SendFile(rs, packageManager, deviceName)) == false)
+                {
+                    Frame.GoBack();
+                    return;
+                }
+                await SendFinishService(packageManager);
+            }
+            else
+            {
+                await (new MessageDialog("MainSend::Invalid parameter.")).ShowAsync();
+                Frame.GoBack();
+                return;
             }
 
             if (SendDataTemporaryStorage.IsSharingTarget)
