@@ -29,7 +29,7 @@ namespace QuickShare.UWP.Rome
             }
         }
 
-        readonly int _maxRetryCount = 2;
+        readonly int _maxRetryCount = 3;
         readonly double _maxSecondsForCarrier = 5.0;
 
         List<PackageManagerSendQueueItem> sendQueue = new List<PackageManagerSendQueueItem>();
