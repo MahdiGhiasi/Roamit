@@ -63,12 +63,12 @@ namespace QuickShare.UWP.Rome
                     if (latestCarrierCode != guid)
                     {
                         Debug.WriteLine($"A newer carrier is here. I will retire now. I was waiting for {counter} cycles.");
-                        return;
+                        break;
                     }
                     else if (counter > _maxWaitTime)
                     {
                         Debug.WriteLine($"Okay I've waited {counter} cycles, that's enough. Bye!");
-                        return;
+                        break;
                     }
 
                     Debug.WriteLine($"Queue is empty. Message Carrier is waiting for some message to arrive... {counter}");
