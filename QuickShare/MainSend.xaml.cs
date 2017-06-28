@@ -111,24 +111,7 @@ namespace QuickShare
 
             if (mode == "launchUri")
             {
-                ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
-
-                RomeRemoteLaunchUriStatus launchResult;
-
-                if (rs is NormalizedRemoteSystem)
-                    launchResult = await UWP.Rome.AndroidRomePackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs as NormalizedRemoteSystem, SecureKeyStorage.GetUserId());
-                else
-                    launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs);
-
-                if (launchResult == RomeRemoteLaunchUriStatus.Success)
-                    ViewModel.SendStatus = "Finished.";
-                else
-                    ViewModel.SendStatus = launchResult.ToString();
-
-                ViewModel.ProgressIsIndeterminate = false;
-                ViewModel.ProgressMaximum = 100;
-                ViewModel.ProgressValue = ViewModel.ProgressMaximum;
-                ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+                await LaunchUri(rs);
             }
             else
             {
@@ -146,115 +129,21 @@ namespace QuickShare
 
                 if (mode == "text")
                 {
-                    ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
-                    TextSender ts = new TextSender(packageManager, deviceName);
-
-                    ts.TextSendProgress += (ee) =>
-                    {
-                        ViewModel.ProgressIsIndeterminate = false;
-                        ViewModel.ProgressMaximum = ee.TotalParts;
-                        ViewModel.ProgressValue = ee.SentParts;
-                    };
-
-                    ViewModel.SendStatus = "Sending...";
-
-                    bool sendResult = await ts.Send(SendDataTemporaryStorage.Text, ContentType.ClipboardContent);
-
-                    if (sendResult)
-                        ViewModel.SendStatus = "Finished.";
-                    else
-                        ViewModel.SendStatus = "Failed :(";
-
-                    ViewModel.ProgressIsIndeterminate = false;
-                    ViewModel.ProgressValue = ViewModel.ProgressMaximum;
-
+                    await SendText(packageManager, deviceName);
                     await SendFinishService(packageManager);
                 }
                 else if (mode == "file")
                 {
-                    string sendingText = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Sending file..." : "Sending files...";
-                    ViewModel.SendStatus = "Preparing...";
-
-                    bool failed = false;
-                    string message = "";
-
-                    using (FileSender fs = new FileSender(rs,
-                                                          new QuickShare.UWP.WebServerGenerator(),
-                                                          packageManager,
-                                                          FindMyIPAddresses(),
-                                                          deviceName))
+                    if ((await SendFile(rs, packageManager, deviceName)) == false)
                     {
-                        ViewModel.ProgressMaximum = 1;
-                        fs.FileTransferProgress += async (ss, ee) =>
-                        {
-                            if (ee.State == FileTransferState.Error)
-                            {
-                                failed = true;
-                                message = ee.Message;
-                            }
-                            else
-                            {
-                                await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
-                                {
-                                    ViewModel.SendStatus = sendingText;
-                                    ViewModel.ProgressMaximum = (int)ee.Total + 1;
-                                    ViewModel.ProgressValue = (int)ee.CurrentPart;
-                                    ViewModel.ProgressIsIndeterminate = false;
-                                }, false);
-                            }
-                        };
-
-                        if (SendDataTemporaryStorage.Files.Count == 0)
-                        {
-                            ViewModel.SendStatus = "No files.";
-                            ViewModel.ProgressIsIndeterminate = false;
-                            return;
-                        }
-                        else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile))
-                        {
-                            await Task.Run(async () =>
-                            {
-                                if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0] as StorageFile)))
-                                    failed = true;
-                            });
-                        }
-                        else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFolder))
-                        {
-                            await Task.Run(async () =>
-                            {
-                                if (!await fs.SendFolder(new PCLStorage.WinRTFolder(SendDataTemporaryStorage.Files[0] as StorageFolder), ""))
-                                    failed = true;
-                            });
-                        }
-                        else
-                        {
-                            await Task.Run(async () =>
-                            {
-                                if (!await fs.SendFiles(from x in SendDataTemporaryStorage.Files
-                                                        where x is StorageFile
-                                                        select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
-                                    failed = true;
-                            });
-                        }
-
-                        ViewModel.ProgressValue = ViewModel.ProgressMaximum;
+                        Frame.GoBack();
+                        return;
                     }
-
                     await SendFinishService(packageManager);
-
-                    if (failed)
-                    {
-                        ViewModel.SendStatus = "Failed.";
-                        await (new MessageDialog("Send failed.\r\n\r\n" + message)).ShowAsync();
-                    }
-                    else
-                    {
-                        ViewModel.SendStatus = "Finished.";
-                    }
                 }
                 else if (mode == "folder")
                 {
-
+                    throw new NotImplementedException();
                 }
                 else
                 {
@@ -269,6 +158,135 @@ namespace QuickShare
 
                 App.ShareOperation.ReportCompleted();
             }
+        }
+
+        private async Task<bool> SendFile(object rs, IRomePackageManager packageManager, string deviceName)
+        {
+            string sendingText = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Sending file..." : "Sending files...";
+            ViewModel.SendStatus = "Preparing...";
+
+            bool failed = false;
+            string message = "";
+
+            using (FileSender fs = new FileSender(rs,
+                                                  new QuickShare.UWP.WebServerGenerator(),
+                                                  packageManager,
+                                                  FindMyIPAddresses(),
+                                                  deviceName))
+            {
+                ViewModel.ProgressMaximum = 1;
+                fs.FileTransferProgress += async (ss, ee) =>
+                {
+                    if (ee.State == FileTransferState.Error)
+                    {
+                        failed = true;
+                        message = ee.Message;
+                    }
+                    else
+                    {
+                        await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
+                        {
+                            ViewModel.SendStatus = sendingText;
+                            ViewModel.ProgressMaximum = (int)ee.Total + 1;
+                            ViewModel.ProgressValue = (int)ee.CurrentPart;
+                            ViewModel.ProgressIsIndeterminate = false;
+                        }, false);
+                    }
+                };
+
+                if (SendDataTemporaryStorage.Files.Count == 0)
+                {
+                    ViewModel.SendStatus = "No files.";
+                    ViewModel.ProgressIsIndeterminate = false;
+                    return false;
+                }
+                else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile))
+                {
+                    await Task.Run(async () =>
+                    {
+                        if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0] as StorageFile)))
+                            failed = true;
+                    });
+                }
+                else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFolder))
+                {
+                    await Task.Run(async () =>
+                    {
+                        if (!await fs.SendFolder(new PCLStorage.WinRTFolder(SendDataTemporaryStorage.Files[0] as StorageFolder), ""))
+                            failed = true;
+                    });
+                }
+                else
+                {
+                    await Task.Run(async () =>
+                    {
+                        if (!await fs.SendFiles(from x in SendDataTemporaryStorage.Files
+                                                where x is StorageFile
+                                                select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
+                            failed = true;
+                    });
+                }
+
+                ViewModel.ProgressValue = ViewModel.ProgressMaximum;
+            }
+
+            if (failed)
+            {
+                ViewModel.SendStatus = $"Failed ({message})";
+            }
+            else
+            {
+                ViewModel.SendStatus = "Finished.";
+            }
+
+            return true;
+        }
+
+        private async Task SendText(IRomePackageManager packageManager, string deviceName)
+        {
+            ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
+            TextSender ts = new TextSender(packageManager, deviceName);
+
+            ts.TextSendProgress += (ee) =>
+            {
+                ViewModel.ProgressIsIndeterminate = false;
+                ViewModel.ProgressMaximum = ee.TotalParts;
+                ViewModel.ProgressValue = ee.SentParts;
+            };
+
+            ViewModel.SendStatus = "Sending...";
+
+            bool sendResult = await ts.Send(SendDataTemporaryStorage.Text, ContentType.ClipboardContent);
+
+            if (sendResult)
+                ViewModel.SendStatus = "Finished.";
+            else
+                ViewModel.SendStatus = "Failed :(";
+
+            ViewModel.ProgressIsIndeterminate = false;
+            ViewModel.ProgressValue = ViewModel.ProgressMaximum;
+        }
+
+        private async Task LaunchUri(object rs)
+        {
+            ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
+
+            RomeRemoteLaunchUriStatus launchResult;
+
+            if (rs is NormalizedRemoteSystem)
+                launchResult = await UWP.Rome.AndroidRomePackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs as NormalizedRemoteSystem, SecureKeyStorage.GetUserId());
+            else
+                launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs);
+
+            if (launchResult == RomeRemoteLaunchUriStatus.Success)
+                ViewModel.SendStatus = "Finished.";
+            else
+                ViewModel.SendStatus = launchResult.ToString();
+
+            ViewModel.ProgressIsIndeterminate = false;
+            ViewModel.ProgressMaximum = 100;
+            ViewModel.ProgressValue = ViewModel.ProgressMaximum;
+            ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
         }
 
         private static async Task SendFinishService(IRomePackageManager packageManager)
