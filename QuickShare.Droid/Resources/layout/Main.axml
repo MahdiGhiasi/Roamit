@@ -89,7 +89,7 @@
             android:minWidth="25px"
             android:minHeight="25px"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="match_parent"
             android:id="@+id/main_share"
             android:padding="20dp"
             android:visibility="invisible">
