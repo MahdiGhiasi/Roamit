@@ -45,6 +45,9 @@ namespace QuickShare.Droid.Services
 
         private async void InitService(Intent intent, StartCommandFlags flags, int startId)
         {
+            Platform.FetchAuthCode -= Platform_FetchAuthCode;
+            Platform.FetchAuthCode += Platform_FetchAuthCode;
+
             Log.Debug(TAG, $"OnStartCommand called at {startTime}, flags={flags}, startid={startId}");
             if (isStarted)
             {
@@ -79,6 +82,14 @@ namespace QuickShare.Droid.Services
                     Android.Util.Log.Debug(TAG, "2: SendCarrier");
                     SendCarrier(intent.GetStringExtra("DeviceId"));
                 }
+        }
+
+        private void Platform_FetchAuthCode(string s)
+        {
+            if (!IsApplicationInForeground())
+            {
+                Helpers.Notification.SendLaunchNotification(this, "QuickShare needs your attention", "Open the app to continue receiving data from your other devices");
+            }
         }
 
         private async Task InitMessageCarrierPackageManagerIfNecessary()
@@ -166,6 +177,16 @@ namespace QuickShare.Droid.Services
             for (int i = 0; i < 30; i++)
             {
                 rs = Common.MessageCarrierPackageManager.RemoteSystems.FirstOrDefault(x => x.Id == deviceId);
+                RemoteSystem rs2;
+                try
+                {
+                    rs2 = Common.PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == deviceId);
+                }
+                catch
+                {
+
+                }
+                
 
                 if (rs != null)
                     break;
@@ -308,6 +329,20 @@ namespace QuickShare.Droid.Services
                 Log.Debug(TAG, $"Service is idle for {timeElapsedSinceLastActivity:c}, will shut down.");
                 StopSelf();
             }
+        }
+
+        private bool IsApplicationInForeground()
+        {
+            ActivityManager activityManager = (ActivityManager)GetSystemService(Context.ActivityService);
+            List<ActivityManager.RunningAppProcessInfo> services = activityManager.RunningAppProcesses.ToList();
+            bool isActivityFound = false;
+
+            if (services[0].ProcessName.ToLower() == PackageName.ToLower())
+            {
+                isActivityFound = true;
+            }
+
+            return isActivityFound;
         }
     }
 }
