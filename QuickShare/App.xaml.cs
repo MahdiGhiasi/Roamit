@@ -197,7 +197,17 @@ namespace QuickShare
             {
                 ProtocolActivatedEventArgs pEventArgs = e as ProtocolActivatedEventArgs;
 
-                if ((pEventArgs.Uri.AbsoluteUri.ToLower() == "quickshare://wake") || (pEventArgs.Uri.AbsoluteUri.ToLower() == "quickshare://wake/"))
+                string clipboardData = FastClipboardUri(pEventArgs.Uri.AbsoluteUri);
+
+                if (clipboardData.Length > 0)
+                {
+                    string[] parts = clipboardData.Split('?');
+                    var guid = TextReceiver.QuickTextReceived(parts[0].DecodeBase64(), parts[1].DecodeBase64());
+
+                    LaunchRootFrameIfNecessary(ref rootFrame, false);
+                    rootFrame.Navigate(typeof(ClipboardReceive), guid.ToString());
+                }
+                else if ((pEventArgs.Uri.AbsoluteUri.ToLower() == "quickshare://wake") || (pEventArgs.Uri.AbsoluteUri.ToLower() == "quickshare://wake/"))
                 {
                     Debug.WriteLine("Wake request received");
                     Application.Current.Exit();
@@ -214,7 +224,18 @@ namespace QuickShare
 
             base.OnActivated(e);
         }
-        
+
+        private string FastClipboardUri(string s)
+        {
+            string fastClipboardUri = "quickshare://clipboard/";
+            if (s.Length < fastClipboardUri.Length)
+                return "";
+
+            var command = s.Substring(0, fastClipboardUri.Length).ToLower();
+
+            return (command == fastClipboardUri) ? s.Substring(fastClipboardUri.Length) : "";
+        }
+
         private HistoryRow GetHistoryItemGuid(Guid guid)
         {
             HistoryRow hr;

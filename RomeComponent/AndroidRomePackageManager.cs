@@ -189,5 +189,15 @@ namespace QuickShare.UWP.Rome
             else
                 return RomeRemoteLaunchUriStatus.RemoteSystemUnavailable;
         }
+
+        public static async Task<bool> QuickClipboard(string _text, NormalizedRemoteSystem _remoteSystem, string _userId, string _senderName)
+        {
+            if (_text.Length > 1024)
+                return false;
+
+            bool result = await Common.Service.DevicesLoader.SendClipboard(_userId, _remoteSystem.Id, _text, _senderName);
+
+            return result;
+        }
     }
 }

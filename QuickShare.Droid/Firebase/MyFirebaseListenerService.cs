@@ -5,6 +5,7 @@ using Firebase.Messaging;
 using Android.Media;
 using Android.Support.V4.App;
 using QuickShare.Droid.Services;
+using QuickShare.TextTransfer;
 
 namespace QuickShare.Droid.Firebase
 {
@@ -48,6 +49,15 @@ namespace QuickShare.Droid.Firebase
                 i.SetData(Android.Net.Uri.Parse(url));
                 i.SetFlags(ActivityFlags.NewTask);
                 StartActivity(i);
+            }
+            else if ((message.Data["Action"] == "FastClipboard") && (message.Data.ContainsKey("SenderName")) && (message.Data.ContainsKey("Text")))
+            {
+                string senderName = message.Data["SenderName"];
+                string text = message.Data["Text"];
+
+                Guid guid = TextReceiver.QuickTextReceived(senderName, text);
+
+                MessageCarrierService.CopyTextToClipboard(this, guid);
             }
             else
             {

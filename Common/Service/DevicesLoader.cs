@@ -106,13 +106,41 @@ namespace QuickShare.Common.Service
 
                 if (responseText != "1, done")
                 {
-                    Debug.WriteLine($"Received unexpected message from StartCarrierService: '{responseText}'");
+                    Debug.WriteLine($"Received unexpected message from LaunchUri: '{responseText}'");
                     return false;
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"An exception was thrown in LaunchUri: {ex.Message}");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static async Task<bool> SendClipboard(string userId, string deviceId, string text, string senderName)
+        {
+            try
+            {
+                var httpClient = new HttpClient();
+                var formContent = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("text", text),
+                    new KeyValuePair<string, string>("senderName", senderName),
+                });
+                var response = await httpClient.PostAsync($"{Constants.ServerAddress}/api/User/{userId}/{deviceId}/FastClipboard", formContent);
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                if (responseText != "1, done")
+                {
+                    Debug.WriteLine($"Received unexpected message from SendClipboard: '{responseText}'");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An exception was thrown in SendClipboard: {ex.Message}");
                 return false;
             }
 

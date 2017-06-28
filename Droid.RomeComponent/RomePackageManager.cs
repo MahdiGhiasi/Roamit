@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using QuickShare.Common;
 
 namespace QuickShare.Droid.RomeComponent
 {
@@ -175,6 +176,21 @@ namespace QuickShare.Droid.RomeComponent
             Android.Util.Log.Debug("CARRIER_DEBUG", "RomePackageManager.Send() -> Response received.");
 
             return result.ConvertToRomeAppServiceResponse();
+        }
+
+        public async Task<bool> QuickClipboard(string _text, RemoteSystem _remoteSystem, string _senderName, string _receiveEndpoint)
+        {
+            if ((_text + _senderName).Length > 1024)
+                return false;
+
+            var uri = new Uri(_receiveEndpoint + ((_receiveEndpoint.Last() == '/') ? "" : "/") + _senderName.EncodeToBase64() + "?" + _text.EncodeToBase64());
+            var result = await LaunchUri(uri, _remoteSystem);
+
+            if (result == RomeRemoteLaunchUriStatus.Success)
+                return true;
+
+            System.Diagnostics.Debug.WriteLine(result);
+            return false;
         }
     }
 }

@@ -74,6 +74,25 @@ namespace QuickShare.TextTransfer
             return true;
         }
 
+        public static Guid QuickTextReceived(string sender, string text)
+        {
+            Guid guid = Guid.NewGuid();
+
+            DataStorageProviders.TextReceiveContentManager.Open();
+            DataStorageProviders.TextReceiveContentManager.Add(guid, text);
+            DataStorageProviders.TextReceiveContentManager.Close();
+
+            DataStorageProviders.HistoryManager.Open();
+            DataStorageProviders.HistoryManager.Add(guid,
+                DateTime.Now,
+                sender,
+                new ReceivedText(),
+                true);
+            DataStorageProviders.HistoryManager.Close();
+
+            return guid;
+        }
+
         public static void ClearEventRegistrations()
         {
             TextReceiveFinished = null;

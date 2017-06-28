@@ -325,43 +325,51 @@ namespace QuickShare.Droid
         private async Task SendText(string text)
         {
             sendStatus.Text = "Connecting...";
-            var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
 
-            if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
+            if (!(await Common.PackageManager.QuickClipboard(text, Common.GetCurrentRemoteSystem(), CrossDeviceInfo.Current.Model, "quickshare://clipboard")))
             {
-                sendStatus.Text = $"Connect failed. ({result.ToString()})";
-                return;
+
+                var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
+
+                if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
+                {
+                    sendStatus.Text = $"Connect failed. ({result.ToString()})";
+                    return;
+                }
+
+                //Fix Rome Android bug (receiver app service closes after 5 seconds in first connection)
+                Common.PackageManager.CloseAppService();
+                result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
+
+                if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
+                {
+                    sendStatus.Text = $"Connect failed. ({result.ToString()})";
+                    return;
+                }
+
+                TextSender textSender = new TextSender(Common.PackageManager, CrossDeviceInfo.Current.Model);
+
+                textSender.TextSendProgress += (ee) =>
+                {
+                    SetProgressBarValue(ee.SentParts, ee.TotalParts);
+                };
+
+                sendStatus.Text = "Sending...";
+
+                bool sendResult = await textSender.Send(text, ContentType.ClipboardContent);
+
+                SetProgressBarValueToMax();
+
+                if (!sendResult)
+                {
+                    sendStatus.Text = "Send failed.";
+                    sendProgress.Progress = sendProgress.Max;
+                    return;
+                }
             }
-
-            //Fix Rome Android bug (receiver app service closes after 5 seconds in first connection)
-            Common.PackageManager.CloseAppService();
-            result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
-
-            if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
-            {
-                sendStatus.Text = $"Connect failed. ({result.ToString()})";
-                return;
-            }
-
-            TextSender textSender = new TextSender(Common.PackageManager, CrossDeviceInfo.Current.Model);
-
-            textSender.TextSendProgress += (ee) =>
-            {
-                SetProgressBarValue(ee.SentParts, ee.TotalParts);
-            };
-
-            sendStatus.Text = "Sending...";
-
-            bool sendResult = await textSender.Send(text, ContentType.ClipboardContent);
-
+            
+            sendStatus.Text = "Finished.";
             SetProgressBarValueToMax();
-
-            if (sendResult)
-                sendStatus.Text = "Finished.";
-            else
-                sendStatus.Text = "Send failed.";
-
-            sendProgress.Progress = sendProgress.Max;
         }
 
         private void SetProgressBarValue(int val, int max)

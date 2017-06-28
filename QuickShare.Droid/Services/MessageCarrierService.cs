@@ -119,9 +119,8 @@ namespace QuickShare.Droid.Services
             await Common.MessageCarrierPackageManager.InitializeDiscovery();
         }
 
-        private void ShowToast(string text, ToastLength length)
+        private static void ShowToast(Context context, string text, ToastLength length)
         {
-            var context = this;
             Handler handler = new Handler(Looper.MainLooper);
             handler.Post(() =>
             {
@@ -134,26 +133,35 @@ namespace QuickShare.Droid.Services
             lastActiveTime = DateTime.UtcNow;
             if (!e.Success)
             {
-                ShowToast("Failed to receive text.", ToastLength.Long);
+                ShowToast(this, "Failed to receive text.", ToastLength.Long);
                 return;
             }
 
+            CopyTextToClipboard(this, (Guid)e.Guid);
+        }
+
+        internal static void CopyTextToClipboard(Context context, Guid guid)
+        {
             DataStorageProviders.HistoryManager.Open();
-            var item = DataStorageProviders.HistoryManager.GetItem((Guid)e.Guid);
+            var item = DataStorageProviders.HistoryManager.GetItem(guid);
             DataStorageProviders.HistoryManager.Close();
 
             if (!(item.Data is ReceivedText))
                 throw new Exception("Invalid received item type.");
 
             DataStorageProviders.TextReceiveContentManager.Open();
-            string text = DataStorageProviders.TextReceiveContentManager.GetItemContent((Guid)e.Guid);
+            string text = DataStorageProviders.TextReceiveContentManager.GetItemContent(guid);
             DataStorageProviders.TextReceiveContentManager.Close();
 
-            ClipboardManager clipboard = (ClipboardManager)GetSystemService(Context.ClipboardService);
-            ClipData clip = ClipData.NewPlainText(text, text);
-            clipboard.PrimaryClip = clip;
+            Handler handler = new Handler(Looper.MainLooper);
+            handler.Post(() =>
+            {
+                ClipboardManager clipboard = (ClipboardManager)context.GetSystemService(Context.ClipboardService);
+                ClipData clip = ClipData.NewPlainText(text, text);
+                clipboard.PrimaryClip = clip;
+            });
 
-            ShowToast("Text copied to clipboard.", ToastLength.Long);
+            ShowToast(context, "Text copied to clipboard.", ToastLength.Long);
         }
 
         private void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)

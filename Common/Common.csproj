@@ -57,6 +57,7 @@
     <Compile Include="Service\Models\Device.cs" />
     <Compile Include="Service\DevicesLoader.cs" />
     <Compile Include="Service\UpgradeDetails.cs" />
+    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

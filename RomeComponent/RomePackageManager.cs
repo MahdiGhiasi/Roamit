@@ -173,29 +173,20 @@ namespace QuickShare.UWP.Rome
                         if (wakeResult == RomeRemoteLaunchUriStatus.Success)
                         {
                             RemoteSystem rsNew = await RediscoverRemoteSystem(rs);
-                            
-                            if (rsNew == null)
-                                return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
-                            else
+
+                            if (rsNew != null)
                                 rs = rsNew;
                         }
                     }
-                    
+
                     Task connect = Task.Run(async () =>
                     {
-                        if (romeHelper == null)
+                        remoteSystem = rs;
+                        if (remoteSystem == null)
                         {
-                            remoteSystem = rs;
-                        }
-                        else
-                        {
-                            remoteSystem = romeHelper.RemoteSystems.FirstOrDefault(x => x.Id == rs.Id);
-                            if (remoteSystem == null)
-                            {
-                                result = AppServiceConnectionStatus.RemoteSystemUnavailable;
-                                workDone = true;
-                                return;
-                            }
+                            result = AppServiceConnectionStatus.RemoteSystemUnavailable;
+                            workDone = true;
+                            return;
                         }
 
                         ResetAppService();
@@ -289,7 +280,7 @@ namespace QuickShare.UWP.Rome
                 rs = remoteSystemOverride as RemoteSystem;
                 if (rs == null)
                     throw new InvalidCastException();
-            }            
+            }
 
             RemoteLaunchUriStatus launchStatus = RemoteLaunchUriStatus.RemoteSystemUnavailable;
 
@@ -389,6 +380,21 @@ namespace QuickShare.UWP.Rome
                 System.Diagnostics.Debug.WriteLine("Exception in RomePackageManager.Send(): " + ex.Message);
                 return null;
             }
+        }
+
+        public async Task<bool> QuickClipboard(string _text, RemoteSystem _remoteSystem, string _senderName, string _receiveEndpoint)
+        {
+            if ((_text + _senderName).Length > 1024)
+                return false;
+
+            var uri = new Uri(_receiveEndpoint + ((_receiveEndpoint.Last() == '/') ? "" : "/") + _senderName.EncodeToBase64() + "?" + _text.EncodeToBase64());
+            var result = await LaunchUri(uri, _remoteSystem);
+
+            if (result == RomeRemoteLaunchUriStatus.Success)
+                return true;
+
+            Debug.WriteLine(result);
+            return false;
         }
     }
 }

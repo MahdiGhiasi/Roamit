@@ -5,6 +5,7 @@ using QuickShare.FileTransfer;
 using QuickShare.HelperClasses;
 using QuickShare.HelperClasses.VersionHelpers;
 using QuickShare.TextTransfer;
+using QuickShare.UWP.Rome;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -115,20 +116,30 @@ namespace QuickShare
             }
             else if (mode == "text")
             {
-                ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
-                RomeAppServiceConnectionStatus result = await Connect(rs);
+                string text = SendDataTemporaryStorage.Text;
+                bool fastSendResult = await TrySendFastClipboard(text, rs, deviceName);
 
-                if (result != RomeAppServiceConnectionStatus.Success)
+                if (fastSendResult)
                 {
-                    await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
-                    Frame.GoBack();
-                    return;
+                    SendTextFinished("");
                 }
+                else
+                {
+                    ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
+                    RomeAppServiceConnectionStatus result = await Connect(rs);
 
-                ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+                    if (result != RomeAppServiceConnectionStatus.Success)
+                    {
+                        await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
+                        Frame.GoBack();
+                        return;
+                    }
 
-                await SendText(packageManager, deviceName);
-                await SendFinishService(packageManager);
+                    ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+
+                    await SendText(packageManager, deviceName, text);
+                    await SendFinishService(packageManager);
+                }
             }
             else if (mode == "file")
             {
@@ -248,7 +259,7 @@ namespace QuickShare
             return true;
         }
 
-        private async Task SendText(IRomePackageManager packageManager, string deviceName)
+        private async Task SendText(IRomePackageManager packageManager, string deviceName, string text)
         {
             ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
             TextSender ts = new TextSender(packageManager, deviceName);
@@ -262,7 +273,7 @@ namespace QuickShare
 
             ViewModel.SendStatus = "Sending...";
 
-            bool sendResult = await ts.Send(SendDataTemporaryStorage.Text, ContentType.ClipboardContent);
+            bool sendResult = await ts.Send(text, ContentType.ClipboardContent);
 
             if (sendResult)
                 ViewModel.SendStatus = "Finished.";
@@ -284,11 +295,17 @@ namespace QuickShare
             else
                 launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs);
 
+            string status;
             if (launchResult == RomeRemoteLaunchUriStatus.Success)
-                ViewModel.SendStatus = "Finished.";
+                status = "";
             else
-                ViewModel.SendStatus = launchResult.ToString();
+                status = launchResult.ToString();
+            SendTextFinished(status);
+        }
 
+        private void SendTextFinished(string errorMessage)
+        {
+            ViewModel.SendStatus = (errorMessage.Length == 0) ? "Finished." : errorMessage;
             ViewModel.ProgressIsIndeterminate = false;
             ViewModel.ProgressMaximum = 100;
             ViewModel.ProgressValue = ViewModel.ProgressMaximum;
@@ -327,7 +344,7 @@ namespace QuickShare
             return true;
         }
 
-        private static async Task<RomeAppServiceConnectionStatus> Connect(object rs)
+        private async Task<RomeAppServiceConnectionStatus> Connect(object rs)
         {
             if (rs is NormalizedRemoteSystem)
                 return await MainPage.Current.AndroidPackageManager.Connect(rs as NormalizedRemoteSystem,
@@ -335,6 +352,20 @@ namespace QuickShare
                     MainPage.Current.PackageManager.RemoteSystems.Where(x => x.Kind != "Unknown").Select(x => x.Id));
             else
                 return await MainPage.Current.PackageManager.Connect(rs, true, new Uri("quickshare://wake"));
+        }
+
+        private async Task<bool> TrySendFastClipboard(string text, object rs, string deviceName)
+        {
+            if (rs is NormalizedRemoteSystem)
+                return await AndroidRomePackageManager.QuickClipboard(text,
+                    rs as NormalizedRemoteSystem,
+                    SecureKeyStorage.GetUserId(),
+                    deviceName);
+            else
+                return await MainPage.Current.PackageManager.QuickClipboard(text, 
+                    rs as RemoteSystem, 
+                    deviceName, 
+                    "quickshare://clipboard");
         }
     }
 }
