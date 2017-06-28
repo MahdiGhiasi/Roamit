@@ -72,11 +72,13 @@ namespace QuickShare.Droid.Services
             Log.Debug(TAG, $"InitMessageCarrierPackageManagerIfNecessary()");
             await InitMessageCarrierPackageManagerIfNecessary();
             Log.Debug(TAG, $"InitMessageCarrierPackageManagerIfNecessary() Finished.");
-            if (intent.GetStringExtra("Action") == "SendCarrier")
-            {
-                Android.Util.Log.Debug(TAG, "2: SendCarrier");
-                SendCarrier(intent.GetStringExtra("DeviceId"));
-            }
+
+            if ((intent.HasExtra("Action")) && (intent.HasExtra("DeviceId")))
+                if (intent.GetStringExtra("Action") == "SendCarrier")
+                {
+                    Android.Util.Log.Debug(TAG, "2: SendCarrier");
+                    SendCarrier(intent.GetStringExtra("DeviceId"));
+                }
         }
 
         private async Task InitMessageCarrierPackageManagerIfNecessary()
