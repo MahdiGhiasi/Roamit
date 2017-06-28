@@ -18,12 +18,12 @@ namespace QuickShare.UWP.Rome
 {
     public class RomeHelper : IDisposable
     {
-        private readonly TimeSpan refreshInterval = TimeSpan.FromSeconds(3);
+        private readonly TimeSpan refreshInterval = TimeSpan.FromSeconds(5);
         private readonly TimeSpan delayBeforeTimerBegin = TimeSpan.FromSeconds(5); //First Tick of timer will happen 5 seconds after init, NOT 5+2=7.
         private bool firstTimeRefresh = true;
 
         private RemoteSystemWatcher _remoteSystemWatcher;
-        private Timer timer;
+        private Timer timer = null;
 
         private ObservableCollection<RemoteSystem> _remoteSystems = new ObservableCollection<RemoteSystem>();
         public ObservableCollection<RemoteSystem> RemoteSystems
@@ -49,12 +49,15 @@ namespace QuickShare.UWP.Rome
                 _remoteSystemWatcher.RemoteSystemUpdated += RemoteSystemWatcher_RemoteSystemUpdated;
                 _remoteSystemWatcher.Start();
 
-                timer = new Timer(Timer_Tick, null, (int)delayBeforeTimerBegin.TotalMilliseconds, (int)refreshInterval.TotalMilliseconds);
+                if (timer != null)
+                    timer = new Timer(Timer_Tick, null, (int)delayBeforeTimerBegin.TotalMilliseconds, (int)refreshInterval.TotalMilliseconds);
             }
         }
 
-        private void Timer_Tick(object state)
+        private async void Timer_Tick(object state)
         {
+            Debug.WriteLine("Timer_Tick");
+
             if (firstTimeRefresh)
             {
                 firstTimeRefresh = false;
@@ -62,8 +65,15 @@ namespace QuickShare.UWP.Rome
                     return;
             }
 
+            Debug.WriteLine("Timer_Tick. Stopping watcher...");
             _remoteSystemWatcher.Stop();
+            Debug.WriteLine("Timer_Tick. Stopped watcher...");
+
+            await Task.Delay(500);
+
+            Debug.WriteLine("Timer_Tick. Starting watcher...");
             _remoteSystemWatcher.Start();
+            Debug.WriteLine("Timer_Tick. Started watcher...");
         }
 
         private async void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
