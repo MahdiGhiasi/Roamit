@@ -21,19 +21,13 @@ namespace QuickShare.DataStore
         public void Add(Guid guid, string v)
         {
             if (ContainsKey(guid))
+                Remove(guid);
+
+            data.Insert(new TextReceiveRow
             {
-                var item = GetItem(guid);
-                item.Content = v;
-                data.Update(guid, item);
-            }
-            else
-            {
-                data.Insert(new TextReceiveRow
-                {
-                    Id = guid,
-                    Content = v,
-                });
-            }
+                Id = guid,
+                Content = v,
+            });
         }
 
         public void Remove(Guid guid)
