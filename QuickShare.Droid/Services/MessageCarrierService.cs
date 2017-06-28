@@ -45,43 +45,56 @@ namespace QuickShare.Droid.Services
 
         private async void InitService(Intent intent, StartCommandFlags flags, int startId)
         {
-            Platform.FetchAuthCode -= Platform_FetchAuthCode;
-            Platform.FetchAuthCode += Platform_FetchAuthCode;
-
-            Log.Debug(TAG, $"OnStartCommand called at {startTime}, flags={flags}, startid={startId}");
-            if (isStarted)
+            try
             {
-                TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
-                Log.Debug(TAG, $"This service was already started, it's been running for {runtime:c}.");
+                Platform.FetchAuthCode -= Platform_FetchAuthCode;
+                Platform.FetchAuthCode += Platform_FetchAuthCode;
             }
-            else
+            catch { }
+
+            try
             {
-                isStarted = true;
-                startTime = DateTime.UtcNow;
-                Log.Debug(TAG, $"Starting the service, at {startTime}.");
-                timer = new Timer(HandleTimerCallback, startTime, 0, TimerWait);
-
-                DataStore.DataStorageProviders.Init(PCLStorage.FileSystem.Current.LocalStorage.Path);
-
-                TextTransfer.TextReceiver.ClearEventRegistrations();
-                TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
-
-                FileTransfer.FileReceiver.ClearEventRegistrations();
-                FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
-            }
-
-            lastActiveTime = DateTime.UtcNow;
-
-            Log.Debug(TAG, $"InitMessageCarrierPackageManagerIfNecessary()");
-            await InitMessageCarrierPackageManagerIfNecessary();
-            Log.Debug(TAG, $"InitMessageCarrierPackageManagerIfNecessary() Finished.");
-
-            if ((intent.HasExtra("Action")) && (intent.HasExtra("DeviceId")))
-                if (intent.GetStringExtra("Action") == "SendCarrier")
+                Log.Debug(TAG, $"OnStartCommand called at {startTime}, flags={flags}, startid={startId}");
+                if (isStarted)
                 {
-                    Android.Util.Log.Debug(TAG, "2: SendCarrier");
-                    SendCarrier(intent.GetStringExtra("DeviceId"));
+                    TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
+                    Log.Debug(TAG, $"This service was already started, it's been running for {runtime:c}.");
                 }
+                else
+                {
+                    isStarted = true;
+                    startTime = DateTime.UtcNow;
+                    Log.Debug(TAG, $"Starting the service, at {startTime}.");
+                    timer = new Timer(HandleTimerCallback, startTime, 0, TimerWait);
+
+                    DataStore.DataStorageProviders.Init(PCLStorage.FileSystem.Current.LocalStorage.Path);
+
+                    TextTransfer.TextReceiver.ClearEventRegistrations();
+                    TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
+
+                    FileTransfer.FileReceiver.ClearEventRegistrations();
+                    FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
+                }
+
+                lastActiveTime = DateTime.UtcNow;
+
+                Log.Debug(TAG, $"InitMessageCarrierPackageManagerIfNecessary()");
+                await InitMessageCarrierPackageManagerIfNecessary();
+                Log.Debug(TAG, $"InitMessageCarrierPackageManagerIfNecessary() Finished.");
+
+                if ((intent.HasExtra("Action")) && (intent.HasExtra("DeviceId")))
+                    if (intent.GetStringExtra("Action") == "SendCarrier")
+                    {
+                        Android.Util.Log.Debug(TAG, "2: SendCarrier");
+                        SendCarrier(intent.GetStringExtra("DeviceId"));
+                    }
+
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(TAG, "Unhandled exception occured: " + ex.ToString());
+                StopSelf();
+            }
         }
 
         private void Platform_FetchAuthCode(string s)
