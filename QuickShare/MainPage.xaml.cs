@@ -127,7 +127,7 @@ namespace QuickShare
                 ContentFrame.GoBack();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             InitAcrylicUI();
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
@@ -143,6 +143,10 @@ namespace QuickShare
             }
 
             base.OnNavigatedTo(e);
+
+            StorageFolder clipboardTempFolder = (await ApplicationData.Current.LocalFolder.TryGetItemAsync("ClipboardTemp")) as StorageFolder;
+            if (clipboardTempFolder != null)
+                await clipboardTempFolder.DeleteAsync();
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -159,10 +163,6 @@ namespace QuickShare
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                                                                                                           DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
             await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)27 : (uint)80);
-
-            StorageFolder clipboardTempFolder = (await ApplicationData.Current.LocalFolder.TryGetItemAsync("ClipboardTemp")) as StorageFolder;
-            if (clipboardTempFolder != null)
-                await clipboardTempFolder.DeleteAsync();
 
             TrialSettings.IsTrialChanged += TrialSettings_IsTrialChanged;
             CheckTrialStatus();
