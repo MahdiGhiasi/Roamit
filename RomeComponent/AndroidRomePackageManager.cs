@@ -31,7 +31,7 @@ namespace QuickShare.UWP.Rome
 
         readonly int _maxRetryCount = 3;
         readonly double _maxSecondsForCarrier = 5.0;
-        readonly int _maxWaitTime = 20;
+        readonly int _maxWaitTime = 180;
 
         List<PackageManagerSendQueueItem> sendQueue = new List<PackageManagerSendQueueItem>();
         static SemaphoreSlim sendQueueSemaphore = new SemaphoreSlim(1, 1);
