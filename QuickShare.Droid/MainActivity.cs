@@ -309,10 +309,10 @@ namespace QuickShare.Droid
             return base.OnCreateOptionsMenu(menu);
         }
 
-        private void SendMessageCarrier_Click(object sender, EventArgs e)
-        {
-            StartService(new Intent(this, typeof(MessageCarrierService)));
-        }
+        //private void SendMessageCarrier_Click(object sender, EventArgs e)
+        //{
+        //    StartService(new Intent(this, typeof(MessageCarrierService)));
+        //}
 
         private void SendFile_Click(object sender, EventArgs e)
         {
