@@ -72,7 +72,10 @@ namespace QuickShare.FileTransfer
                 await Handshake().WithTimeout(TimeSpan.FromSeconds(10));
 
                 if (ipFinderResult == null)
-                    ipFinderResult.Success = false;
+                    ipFinderResult = new IPDetectionCompletedEventArgs
+                    {
+                        Success = false,
+                    };
             }
 
             if (ipFinderResult.Success == false)
@@ -168,7 +171,10 @@ namespace QuickShare.FileTransfer
                 await Handshake().WithTimeout(TimeSpan.FromSeconds(10));
 
                 if (ipFinderResult == null)
-                    ipFinderResult.Success = false;
+                    ipFinderResult = new IPDetectionCompletedEventArgs
+                    {
+                        Success = false,
+                    };
             }
 
             if (ipFinderResult.Success == false)
