@@ -152,7 +152,7 @@
         <TextBlock FontSize="24" x:Name="ReferenceTitle" Visibility="Collapsed" />
         <TextBlock FontSize="16" x:Name="ReferenceText" Visibility="Collapsed" />
 
-        <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged">
+        <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged" SelectedIndex="1">
             <Grid Background="#FF8C0095">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
                     <Image x:Name="AppIconImage"
@@ -207,6 +207,21 @@
                                TextWrapping="Wrap"
                                FontWeight="SemiLight"
                                Margin="0,16,0,0" />
+                    <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                               Text="Get Roamit on all your devices from"
+                               Opacity="0.7"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                    <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                               Text="bit.ly/getRoamit"
+                               Opacity="0.7"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               FontStyle="Italic"
+                               Margin="0,0,0,0" />
                 </StackPanel>
             </Grid>
             <Grid Background="#ffAC193D">

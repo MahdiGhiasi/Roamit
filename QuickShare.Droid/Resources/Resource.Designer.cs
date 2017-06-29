@@ -1783,8 +1783,8 @@ namespace QuickShare.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0c008d
-			public const int action0 = 2131493005;
+			// aapt resource value: 0x7f0c008e
+			public const int action0 = 2131493006;
 			
 			// aapt resource value: 0x7f0c004e
 			public const int action_bar = 2131492942;
@@ -1807,17 +1807,17 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c002b
 			public const int action_bar_title = 2131492907;
 			
-			// aapt resource value: 0x7f0c008a
-			public const int action_container = 2131493002;
+			// aapt resource value: 0x7f0c008b
+			public const int action_container = 2131493003;
 			
 			// aapt resource value: 0x7f0c004f
 			public const int action_context_bar = 2131492943;
 			
-			// aapt resource value: 0x7f0c0091
-			public const int action_divider = 2131493009;
+			// aapt resource value: 0x7f0c0092
+			public const int action_divider = 2131493010;
 			
-			// aapt resource value: 0x7f0c008b
-			public const int action_image = 2131493003;
+			// aapt resource value: 0x7f0c008c
+			public const int action_image = 2131493004;
 			
 			// aapt resource value: 0x7f0c0002
 			public const int action_menu_divider = 2131492866;
@@ -1834,11 +1834,11 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c002d
 			public const int action_mode_close_button = 2131492909;
 			
-			// aapt resource value: 0x7f0c008c
-			public const int action_text = 2131493004;
+			// aapt resource value: 0x7f0c008d
+			public const int action_text = 2131493005;
 			
-			// aapt resource value: 0x7f0c009a
-			public const int actions = 2131493018;
+			// aapt resource value: 0x7f0c009b
+			public const int actions = 2131493019;
 			
 			// aapt resource value: 0x7f0c002e
 			public const int activity_chooser_view_content = 2131492910;
@@ -1870,20 +1870,20 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c0062
 			public const int cancel = 2131492962;
 			
-			// aapt resource value: 0x7f0c008e
-			public const int cancel_action = 2131493006;
+			// aapt resource value: 0x7f0c008f
+			public const int cancel_action = 2131493007;
 			
 			// aapt resource value: 0x7f0c0045
 			public const int checkbox = 2131492933;
 			
-			// aapt resource value: 0x7f0c0096
-			public const int chronometer = 2131493014;
+			// aapt resource value: 0x7f0c0097
+			public const int chronometer = 2131493015;
 			
-			// aapt resource value: 0x7f0c007c
-			public const int clipboardButton = 2131492988;
+			// aapt resource value: 0x7f0c007d
+			public const int clipboardButton = 2131492989;
 			
-			// aapt resource value: 0x7f0c007e
-			public const int clipboardPreviewText = 2131492990;
+			// aapt resource value: 0x7f0c007f
+			public const int clipboardPreviewText = 2131492991;
 			
 			// aapt resource value: 0x7f0c0020
 			public const int collapseActionView = 2131492896;
@@ -1921,8 +1921,8 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c001d
 			public const int end = 2131492893;
 			
-			// aapt resource value: 0x7f0c00a0
-			public const int end_padder = 2131493024;
+			// aapt resource value: 0x7f0c00a1
+			public const int end_padder = 2131493025;
 			
 			// aapt resource value: 0x7f0c002f
 			public const int expand_activities_button = 2131492911;
@@ -1963,8 +1963,8 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c0033
 			public const int icon = 2131492915;
 			
-			// aapt resource value: 0x7f0c009b
-			public const int icon_group = 2131493019;
+			// aapt resource value: 0x7f0c009c
+			public const int icon_group = 2131493020;
 			
 			// aapt resource value: 0x7f0c0021
 			public const int ifRoom = 2131492897;
@@ -1978,14 +1978,14 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c005d
 			public const int image_type = 2131492957;
 			
-			// aapt resource value: 0x7f0c0097
-			public const int info = 2131493015;
+			// aapt resource value: 0x7f0c0098
+			public const int info = 2131493016;
 			
-			// aapt resource value: 0x7f0c0074
-			public const int intro5_linearLayout = 2131492980;
+			// aapt resource value: 0x7f0c0075
+			public const int intro5_linearLayout = 2131492981;
 			
-			// aapt resource value: 0x7f0c0077
-			public const int intro_authorizeButton = 2131492983;
+			// aapt resource value: 0x7f0c0078
+			public const int intro_authorizeButton = 2131492984;
 			
 			// aapt resource value: 0x7f0c006d
 			public const int intro_btnNext = 2131492973;
@@ -1999,11 +1999,11 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c006a
 			public const int intro_relativeLayout = 2131492970;
 			
-			// aapt resource value: 0x7f0c0075
-			public const int intro_signInButton = 2131492981;
-			
 			// aapt resource value: 0x7f0c0076
-			public const int intro_signInSpinner = 2131492982;
+			public const int intro_signInButton = 2131492982;
+			
+			// aapt resource value: 0x7f0c0077
+			public const int intro_signInSpinner = 2131492983;
 			
 			// aapt resource value: 0x7f0c006c
 			public const int intro_view = 2131492972;
@@ -2011,11 +2011,11 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c006b
 			public const int intro_viewPager = 2131492971;
 			
-			// aapt resource value: 0x7f0c009c
-			public const int line1 = 2131493020;
+			// aapt resource value: 0x7f0c009d
+			public const int line1 = 2131493021;
 			
-			// aapt resource value: 0x7f0c009e
-			public const int line3 = 2131493022;
+			// aapt resource value: 0x7f0c009f
+			public const int line3 = 2131493023;
 			
 			// aapt resource value: 0x7f0c0061
 			public const int linearLayout = 2131492961;
@@ -2023,53 +2023,53 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c0070
 			public const int linearLayout1 = 2131492976;
 			
-			// aapt resource value: 0x7f0c0086
-			public const int linearLayout2 = 2131492998;
+			// aapt resource value: 0x7f0c0087
+			public const int linearLayout2 = 2131492999;
 			
-			// aapt resource value: 0x7f0c0088
-			public const int linearLayout3 = 2131493000;
+			// aapt resource value: 0x7f0c0089
+			public const int linearLayout3 = 2131493001;
 			
-			// aapt resource value: 0x7f0c0082
-			public const int linearLayout4 = 2131492994;
+			// aapt resource value: 0x7f0c0083
+			public const int linearLayout4 = 2131492995;
 			
 			// aapt resource value: 0x7f0c000c
 			public const int listMode = 2131492876;
 			
-			// aapt resource value: 0x7f0c0089
-			public const int listView1 = 2131493001;
+			// aapt resource value: 0x7f0c008a
+			public const int listView1 = 2131493002;
 			
 			// aapt resource value: 0x7f0c0032
 			public const int list_item = 2131492914;
 			
-			// aapt resource value: 0x7f0c0078
-			public const int mainLayout = 2131492984;
+			// aapt resource value: 0x7f0c0079
+			public const int mainLayout = 2131492985;
 			
-			// aapt resource value: 0x7f0c007a
-			public const int main_actions = 2131492986;
-			
-			// aapt resource value: 0x7f0c007f
-			public const int main_btn_openUrl = 2131492991;
-			
-			// aapt resource value: 0x7f0c0083
-			public const int main_btn_share_file = 2131492995;
-			
-			// aapt resource value: 0x7f0c0084
-			public const int main_btn_share_text = 2131492996;
-			
-			// aapt resource value: 0x7f0c0085
-			public const int main_btn_share_url = 2131492997;
+			// aapt resource value: 0x7f0c007b
+			public const int main_actions = 2131492987;
 			
 			// aapt resource value: 0x7f0c0080
-			public const int main_share = 2131492992;
+			public const int main_btn_openUrl = 2131492992;
+			
+			// aapt resource value: 0x7f0c0084
+			public const int main_btn_share_file = 2131492996;
+			
+			// aapt resource value: 0x7f0c0085
+			public const int main_btn_share_text = 2131492997;
+			
+			// aapt resource value: 0x7f0c0086
+			public const int main_btn_share_url = 2131492998;
 			
 			// aapt resource value: 0x7f0c0081
-			public const int main_txt_shareContent = 2131492993;
+			public const int main_share = 2131492993;
 			
-			// aapt resource value: 0x7f0c0090
-			public const int media_actions = 2131493008;
+			// aapt resource value: 0x7f0c0082
+			public const int main_txt_shareContent = 2131492994;
 			
-			// aapt resource value: 0x7f0c00a5
-			public const int menu_settings = 2131493029;
+			// aapt resource value: 0x7f0c0091
+			public const int media_actions = 2131493009;
+			
+			// aapt resource value: 0x7f0c00a6
+			public const int menu_settings = 2131493030;
 			
 			// aapt resource value: 0x7f0c001e
 			public const int middle = 2131492894;
@@ -2089,14 +2089,14 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c000d
 			public const int normal = 2131492877;
 			
-			// aapt resource value: 0x7f0c0099
-			public const int notification_background = 2131493017;
+			// aapt resource value: 0x7f0c009a
+			public const int notification_background = 2131493018;
+			
+			// aapt resource value: 0x7f0c0094
+			public const int notification_main_column = 2131493012;
 			
 			// aapt resource value: 0x7f0c0093
-			public const int notification_main_column = 2131493011;
-			
-			// aapt resource value: 0x7f0c0092
-			public const int notification_main_column_container = 2131493010;
+			public const int notification_main_column_container = 2131493011;
 			
 			// aapt resource value: 0x7f0c0037
 			public const int parentPanel = 2131492919;
@@ -2110,11 +2110,11 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c0047
 			public const int radio = 2131492935;
 			
-			// aapt resource value: 0x7f0c0098
-			public const int right_icon = 2131493016;
+			// aapt resource value: 0x7f0c0099
+			public const int right_icon = 2131493017;
 			
-			// aapt resource value: 0x7f0c0094
-			public const int right_side = 2131493012;
+			// aapt resource value: 0x7f0c0095
+			public const int right_side = 2131493013;
 			
 			// aapt resource value: 0x7f0c0017
 			public const int screen = 2131492887;
@@ -2164,26 +2164,26 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c005c
 			public const int select_dialog_listview = 2131492956;
 			
-			// aapt resource value: 0x7f0c0087
-			public const int selectedDeviceName = 2131492999;
+			// aapt resource value: 0x7f0c0088
+			public const int selectedDeviceName = 2131493000;
 			
-			// aapt resource value: 0x7f0c007b
-			public const int sendFileButton = 2131492987;
+			// aapt resource value: 0x7f0c007c
+			public const int sendFileButton = 2131492988;
 			
-			// aapt resource value: 0x7f0c007d
-			public const int sendPictureButton = 2131492989;
-			
-			// aapt resource value: 0x7f0c00a2
-			public const int sendProgress = 2131493026;
-			
-			// aapt resource value: 0x7f0c00a1
-			public const int sendProgressIndeterminate = 2131493025;
+			// aapt resource value: 0x7f0c007e
+			public const int sendPictureButton = 2131492990;
 			
 			// aapt resource value: 0x7f0c00a3
-			public const int sendProgressPercent = 2131493027;
+			public const int sendProgress = 2131493027;
+			
+			// aapt resource value: 0x7f0c00a2
+			public const int sendProgressIndeterminate = 2131493026;
 			
 			// aapt resource value: 0x7f0c00a4
-			public const int sendStatus = 2131493028;
+			public const int sendProgressPercent = 2131493028;
+			
+			// aapt resource value: 0x7f0c00a5
+			public const int sendStatus = 2131493029;
 			
 			// aapt resource value: 0x7f0c0046
 			public const int shortcut = 2131492934;
@@ -2215,8 +2215,8 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c001a
 			public const int src_over = 2131492890;
 			
-			// aapt resource value: 0x7f0c008f
-			public const int status_bar_latest_event_content = 2131493007;
+			// aapt resource value: 0x7f0c0090
+			public const int status_bar_latest_event_content = 2131493008;
 			
 			// aapt resource value: 0x7f0c0048
 			public const int submenuarrow = 2131492936;
@@ -2227,11 +2227,11 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c000e
 			public const int tabMode = 2131492878;
 			
-			// aapt resource value: 0x7f0c009f
-			public const int text = 2131493023;
+			// aapt resource value: 0x7f0c00a0
+			public const int text = 2131493024;
 			
-			// aapt resource value: 0x7f0c009d
-			public const int text2 = 2131493021;
+			// aapt resource value: 0x7f0c009e
+			public const int text2 = 2131493022;
 			
 			// aapt resource value: 0x7f0c003c
 			public const int textSpacerNoButtons = 2131492924;
@@ -2248,8 +2248,11 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c0073
 			public const int textView3 = 2131492979;
 			
-			// aapt resource value: 0x7f0c0095
-			public const int time = 2131493013;
+			// aapt resource value: 0x7f0c0074
+			public const int textView4 = 2131492980;
+			
+			// aapt resource value: 0x7f0c0096
+			public const int time = 2131493014;
 			
 			// aapt resource value: 0x7f0c0034
 			public const int title = 2131492916;
@@ -2260,8 +2263,8 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c0041
 			public const int title_template = 2131492929;
 			
-			// aapt resource value: 0x7f0c0079
-			public const int toolbar = 2131492985;
+			// aapt resource value: 0x7f0c007a
+			public const int toolbar = 2131492986;
 			
 			// aapt resource value: 0x7f0c0025
 			public const int top = 2131492901;
@@ -2667,29 +2670,17 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f070028
 			public const int default_dir = 2131165224;
 			
-			// aapt resource value: 0x7f07002d
-			public const int default_web_client_id = 2131165229;
-			
 			// aapt resource value: 0x7f070029
 			public const int error_dir_access = 2131165225;
 			
-			// aapt resource value: 0x7f07002e
-			public const int firebase_database_url = 2131165230;
+			// aapt resource value: 0x7f07002c
+			public const int firebase_database_url = 2131165228;
 			
 			// aapt resource value: 0x7f07002b
 			public const int gcm_defaultSenderId = 2131165227;
 			
-			// aapt resource value: 0x7f07002f
-			public const int google_api_key = 2131165231;
-			
-			// aapt resource value: 0x7f07002c
-			public const int google_app_id = 2131165228;
-			
-			// aapt resource value: 0x7f070030
-			public const int google_crash_reporting_api_key = 2131165232;
-			
-			// aapt resource value: 0x7f070031
-			public const int google_storage_bucket = 2131165233;
+			// aapt resource value: 0x7f07002d
+			public const int google_storage_bucket = 2131165229;
 			
 			// aapt resource value: 0x7f07002a
 			public const int label_parent_dir = 2131165226;

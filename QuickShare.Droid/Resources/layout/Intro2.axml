@@ -42,5 +42,19 @@
             android:id="@+id/textView3"
             android:paddingTop="10dp"
             android:gravity="center_horizontal" />
+        <TextView
+            android:text="Get Roamit on all your devices from"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="20dp" />
+        <TextView
+            android:text="bit.ly/getRoamit"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView4"
+            android:gravity="center_horizontal" />
     </LinearLayout>
 </RelativeLayout>
