@@ -135,6 +135,8 @@ namespace QuickShare
 
                         if (result != RomeAppServiceConnectionStatus.Success)
                         {
+                            HideEverything();
+
                             succeed = false;
                             await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
                             Frame.GoBack();
@@ -154,6 +156,8 @@ namespace QuickShare
 
                     if (result != RomeAppServiceConnectionStatus.Success)
                     {
+                        HideEverything();
+
                         succeed = false;
                         await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
                         Frame.GoBack();
@@ -164,6 +168,8 @@ namespace QuickShare
 
                     if ((await SendFile(rs, packageManager, deviceName)) == false)
                     {
+                        HideEverything();
+
                         succeed = false;
                         Frame.GoBack();
                         return;
@@ -274,15 +280,19 @@ namespace QuickShare
 
             if (failed)
             {
+                HideEverything();
+
+                string title = "Send failed.";
+                string text = message;
                 if (result == FileTransferResult.FailedOnHandshake)
                 {
-                    var dlg = new MessageDialog("Make sure both devices are connected to the same Wi-Fi or LAN network.", "Couldn't reach remote device.");
-                    await dlg.ShowAsync();
+                    title = "Couldn't reach remote device.";
+                    text = "Make sure both devices are connected to the same Wi-Fi or LAN network.";
                 }
-                else
-                {
-                    ViewModel.SendStatus = $"Failed ({message})";
-                }
+
+                var dlg = new MessageDialog(text, title);
+                await dlg.ShowAsync();
+                return false;
             }
             else
             {
@@ -290,6 +300,16 @@ namespace QuickShare
             }
 
             return true;
+        }
+
+        private void HideEverything()
+        {
+            ViewModel.SendStatus = "";
+            ViewModel.ProgressIsIndeterminate = false;
+            ViewModel.ProgressValue = 0;
+            ViewModel.ProgressMaximum = 100;
+            ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
+            ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
         }
 
         private async Task SendText(IRomePackageManager packageManager, string deviceName, string text)
