@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -46,6 +47,22 @@ namespace QuickShare
         {
             App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "PrivacyPolicy").Build());
             Frame.Navigate(typeof(PrivacyPolicy));
+        }
+
+        private async void SendFeedbackButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported())
+            {
+                var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
+                await launcher.LaunchAsync();
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "LaunchedFeedbackHub").Build());
+            }
+            else
+            {
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "FailedToLaunchFeedbackHub").Build());
+                var dlg = new MessageDialog("Try sending feedback from a Windows 10 PC or phone.", "Feedback Hub is not supported on this device");
+                await dlg.ShowAsync();
+            }
         }
     }
 }

@@ -53,6 +53,7 @@
                             <Button Content="Upgrade to full version" Margin="0,8,0,0" Tapped="UpgradeButton_Tapped" />
                         </StackPanel>
                         <StackPanel Margin="0,16,0,0">
+                            <HyperlinkButton Content="Send feedback" Tapped="SendFeedbackButton_Tapped" />
                             <HyperlinkButton Content="Privacy policy" Tapped="PrivacyPolicyButton_Tapped" />
                         </StackPanel>
                     </StackPanel>

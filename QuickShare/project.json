@@ -2,6 +2,7 @@
   "dependencies": {
     "AdaptiveTriggerLibrary": "1.2.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
+    "Microsoft.Services.Store.SDK": "10.1705.16001",
     "Microsoft.Toolkit.Uwp.UI": "1.4.1",
     "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
     "Microsoft.Toolkit.Uwp.UI.Controls": "1.4.1",
