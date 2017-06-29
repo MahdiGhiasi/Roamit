@@ -32,7 +32,7 @@
             <Grid Background="#FF8C0095">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
                     <Image x:Name="AppIconImage"
-                           Source="Assets/Intro/icon-noborder.png" 
+                           Source="ms-appx:///Assets/Intro/icon-noborder.png" 
                            Height="100" />
                     <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
                                Text="Welcome to QuickShare!" 
@@ -49,7 +49,7 @@
             </Grid>
             <Grid Background="#ff2672EC">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
-                    <Image Source="Assets/Intro/p1.png" 
+                    <Image Source="ms-appx:///Assets/Intro/p1.png" 
                            Height="{Binding Height, ElementName=ReferenceImage}"
                            Margin="0,0,0,32" />
                     <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
@@ -73,7 +73,7 @@
             </Grid>
             <Grid Background="#ffAC193D">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
-                    <Image Source="Assets/Intro/p2.png" 
+                    <Image Source="ms-appx:///Assets/Intro/p2.png" 
                            Height="{Binding Height, ElementName=ReferenceImage}"
                            Margin="0,0,0,32" />
                     <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
@@ -97,7 +97,7 @@
             </Grid>
             <Grid Background="#ff008A00">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
-                    <Image Source="Assets/Intro/p3.png" 
+                    <Image Source="ms-appx:///Assets/Intro/p3.png" 
                            Height="{Binding Height, ElementName=ReferenceImage}"
                            Margin="0,0,0,16" />
                     <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
