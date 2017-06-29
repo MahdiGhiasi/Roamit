@@ -46,6 +46,8 @@ namespace QuickShare
         bool isUserSelectedRemoteSystemManually = false;
         int remoteSystemPrevCount = 0;
 
+        bool discoverOtherDevicesResult = true;
+
         public bool IsAskedAboutMSAPermission
         {
             get
@@ -155,7 +157,7 @@ namespace QuickShare
                 AdBanner.Suspend();
 
             DiscoverDevices();
-            CheckIfMSAPermissionIsNecessary();
+            InitDiscoveringOtherDevices();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
             await DownloadFolderHelper.InitDownloadFolderAsync();
@@ -242,6 +244,8 @@ namespace QuickShare
                 }
 
                 ViewModel.RefreshIsContentFrameEnabled();
+
+                CheckIfShouldAskAboutMSAPermission();
             });
         }
 
@@ -322,10 +326,15 @@ namespace QuickShare
             return true;
         }
 
-        private async void CheckIfMSAPermissionIsNecessary()
+        private async void InitDiscoveringOtherDevices()
         {
-            bool discoverResult = await DiscoverOtherDevices();
-            if ((ViewModel.ListManager.IsAndroidDevicePresent) && (!IsAskedAboutMSAPermission) && (!discoverResult))
+            discoverOtherDevicesResult = await DiscoverOtherDevices();
+            CheckIfShouldAskAboutMSAPermission();
+        }
+
+        private void CheckIfShouldAskAboutMSAPermission()
+        {
+            if ((ViewModel.ListManager.IsAndroidDevicePresent) && (!IsAskedAboutMSAPermission) && (!discoverOtherDevicesResult))
             {
                 IsAskedAboutMSAPermission = true;
                 ShowSignInFlyout();
