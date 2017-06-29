@@ -29,7 +29,7 @@ namespace QuickShare.Droid
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "QuickShare");
+            string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "Roamit");
             System.IO.File.WriteAllText(System.IO.Path.Combine(downloadPath, "Log.txt"), DateTime.Now + "\n\n" + e.ExceptionObject.ToString(), System.Text.Encoding.UTF8);
         }
 

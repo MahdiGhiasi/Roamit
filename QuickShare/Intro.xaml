@@ -164,7 +164,7 @@
                     </Image>
                     <TextBlock x:Name="WelcomeTitle"
                                FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
-                               Text="Welcome to QuickShare!" 
+                               Text="Welcome to Roamit!" 
                                FontWeight="Light"
                                TextWrapping="Wrap"
                                TextAlignment="Center">
@@ -196,7 +196,7 @@
                                TextWrapping="Wrap"
                                TextAlignment="Center" />
                     <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
-                               Text="QuickShare brings your Windows 10 and Android devices a lot closer."
+                               Text="Roamit brings your Windows 10 and Android devices a lot closer."
                                TextAlignment="Center"
                                TextWrapping="Wrap"
                                FontWeight="SemiLight"
@@ -244,7 +244,7 @@
                                TextWrapping="Wrap"
                                TextAlignment="Center" />
                     <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
-                               Text="No need to open the app manually. Just share the content from any app, and choose QuickShare as destination."
+                               Text="No need to open the app manually. Just share the content from any app, and choose Roamit as destination."
                                TextAlignment="Center"
                                TextWrapping="Wrap"
                                FontWeight="SemiLight"
@@ -277,7 +277,7 @@
             </Grid>
         </FlipView>
         <StackPanel x:Name="TitleBarStackPanel" Height="36" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="Collapsed">
-            <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
+            <TextBlock Text="Roamit" FontSize="12" Foreground="LightGray" />
         </StackPanel>
         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
             <StackPanel x:Name="PageIndicators" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,4,0,0" />

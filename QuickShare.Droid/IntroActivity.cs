@@ -14,7 +14,7 @@ using QuickShare.Droid.OnlineServiceHelpers;
 
 namespace QuickShare.Droid
 {
-    [Activity(Label = "QuickShare", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "Roamit", MainLauncher = true, Icon = "@drawable/icon")]
     public class IntroActivity : Activity
     {
         private ViewPager viewPager;

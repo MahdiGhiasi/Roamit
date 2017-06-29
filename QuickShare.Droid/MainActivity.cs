@@ -27,7 +27,7 @@ using QuickShare.Droid.Helpers;
 namespace QuickShare.Droid
 {
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.mainpage")]
-    [IntentFilter(new[] { Intent.ActionSend }, Categories = new[] { Intent.CategoryDefault }, DataMimeType = "*/*", Label = "QuickShare")]
+    [IntentFilter(new[] { Intent.ActionSend }, Categories = new[] { Intent.CategoryDefault }, DataMimeType = "*/*", Label = "Roamit")]
     public class MainActivity : AppCompatActivity
     {
         DevicesListAdapter devicesAdapter;
@@ -214,7 +214,7 @@ namespace QuickShare.Droid
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             //Toolbar will now take on default actionbar characteristics
             SetSupportActionBar(toolbar);
-            SupportActionBar.Title = "QuickShare";
+            SupportActionBar.Title = "Roamit";
 
             FindViewById<RelativeLayout>(Resource.Id.main_actions).Visibility = ViewStates.Visible;
             FindViewById<RelativeLayout>(Resource.Id.main_share).Visibility = ViewStates.Gone;

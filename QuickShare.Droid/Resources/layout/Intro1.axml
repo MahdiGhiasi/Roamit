@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="100dp" />
         <TextView
-            android:text="Welcome to QuickShare!!"
+            android:text="Welcome to Roamit!"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

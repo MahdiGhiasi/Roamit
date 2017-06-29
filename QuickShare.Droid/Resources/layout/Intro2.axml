@@ -27,7 +27,7 @@
             android:id="@+id/textView1"
             android:gravity="center_horizontal" />
         <TextView
-            android:text="QuickShare brings your Windows 10 and Android devices a lot closer."
+            android:text="Roamit brings your Windows 10 and Android devices a lot closer."
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

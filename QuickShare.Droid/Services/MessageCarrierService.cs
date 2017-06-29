@@ -101,7 +101,7 @@ namespace QuickShare.Droid.Services
         {
             if (!IsApplicationInForeground())
             {
-                Helpers.Notification.SendLaunchNotification(this, "QuickShare needs your attention", "Open the app to continue receiving data from your other devices");
+                Helpers.Notification.SendLaunchNotification(this, "Roamit needs your attention", "Open the app to continue receiving data from your other devices");
             }
         }
 
@@ -304,7 +304,7 @@ namespace QuickShare.Droid.Services
             }
             else if (receiver == "FileReceiver")
             {
-                string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "QuickShare");
+                string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "Roamit");
                 System.IO.Directory.CreateDirectory(downloadPath); //Make sure download folder exists.
                 IFolder downloadFolder = new FileSystemFolder(downloadPath);
 

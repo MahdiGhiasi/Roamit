@@ -23,12 +23,12 @@
                                    Text="We've noticed that you have one or more Android devices connected to your Microsoft account." />
             <TextBlock TextWrapping="Wrap"
                                    Margin="0,8,0,0"
-                                   Text="Would you like QuickShare to be able to send and receive content between your Windows and Android devices?" />
+                                   Text="Would you like Roamit to be able to send and receive content between your Windows and Android devices?" />
 
             <TextBlock TextWrapping="Wrap"
                                    Margin="0,32,0,0"
                                    Opacity="0.7"
-                                   Text="QuickShare will use your Microsoft ID to connect your Android and Windows devices through its servers." />
+                                   Text="Roamit will use your Microsoft ID to connect your Android and Windows devices through its servers." />
             <TextBlock TextWrapping="Wrap"
                                    Margin="0,8,0,0"
                                    Opacity="0.7"

@@ -149,7 +149,7 @@ namespace QuickShare.Droid.WebServerComponent
 
         public string DefaultRootPage()
         {
-            return "<html><head><title>QuickShare</title></head><body><h3>Hello from QuickShare :)</h3></body></html>";
+            return "<html><head><title>Roamit</title></head><body><h3>Hello from Roamit :)</h3></body></html>";
         }
 
         public void Dispose()
