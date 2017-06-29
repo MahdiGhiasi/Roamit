@@ -51,7 +51,9 @@
                     <TextBlock TextWrapping="Wrap" 
                                Margin="0,16,0,8"
                                Text="History of what you send and receive might get saved on your own devices, but not in the cloud." />
-                    
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="0,16,0,8"
+                               Text="Roamit may save and send anonymous data about app usage, to further improve the app." />
                 </StackPanel>
             </ScrollViewer>
         </Grid>

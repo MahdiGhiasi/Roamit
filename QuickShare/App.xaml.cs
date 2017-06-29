@@ -1,4 +1,5 @@
-﻿using Microsoft.QueryStringDotNET;
+﻿using GoogleAnalytics;
+using Microsoft.QueryStringDotNET;
 using Newtonsoft.Json;
 using QuickShare.Common;
 using QuickShare.DataStore;
@@ -38,6 +39,7 @@ namespace QuickShare
     /// </summary>
     sealed partial class App : Application
     {
+        public static Tracker Tracker;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -50,6 +52,13 @@ namespace QuickShare
 
             UWP.Rome.RomePackageManager.Instance.Initialize("com.roamit.service");
             DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
+
+            AnalyticsManager.Current.IsDebug = false; //use only for debugging, returns detailed info on hits sent to analytics servers
+            AnalyticsManager.Current.DispatchPeriod = TimeSpan.Zero; //immediate mode, sends hits immediately
+            AnalyticsManager.Current.ReportUncaughtExceptions = true; //catch unhandled exceptions and send the details
+            AnalyticsManager.Current.AutoAppLifetimeMonitoring = true; //handle suspend/resume and empty hit batched hits on suspend
+
+            Tracker = AnalyticsManager.Current.CreateTracker(Common.Secrets.GoogleAnalyticsId);
         }
 
         private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)

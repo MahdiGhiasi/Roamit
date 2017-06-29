@@ -1,4 +1,5 @@
-﻿using QuickShare.HelperClasses;
+﻿using GoogleAnalytics;
+using QuickShare.HelperClasses;
 using QuickShare.HelperClasses.VersionHelpers;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,8 @@ namespace QuickShare
 
         private async void UpgradeButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "TryUpgrade").Build());
+
             await TrialHelper.AskForUpgrade();
 
             Model.CheckTrialStatus();
@@ -41,6 +44,7 @@ namespace QuickShare
 
         private void PrivacyPolicyButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "PrivacyPolicy").Build());
             Frame.Navigate(typeof(PrivacyPolicy));
         }
     }

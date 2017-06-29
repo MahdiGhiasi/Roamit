@@ -5,6 +5,7 @@ using QuickShare.MicrosoftGraphFunctions;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using QuickShare.HelperClasses.VersionHelpers;
+using GoogleAnalytics;
 
 namespace QuickShare
 {
@@ -51,12 +52,16 @@ namespace QuickShare
                     FindOtherDevicesEnabled = false;
                     FindOtherDevicesProgressRingActive = true;
                     ActivateFindingOtherDevices();
+
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "FindOtherDevices", "Enabled").Build());
                 }
                 else
                 {
                     SecureKeyStorage.DeleteUserId();
                     findOtherDevices = SecureKeyStorage.IsUserIdStored();
                     MainPage.Current.ViewModel.ListManager.RemoveAndroidDevices();
+
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "FindOtherDevices", "Disabled").Build());
                 }
             }
         }

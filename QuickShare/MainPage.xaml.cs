@@ -26,6 +26,7 @@ using Microsoft.Graphics.Canvas.Effects;
 using Windows.ApplicationModel.DataTransfer;
 using QuickShare.ServiceTask.HelperClasses;
 using QuickShare.HelperClasses.VersionHelpers;
+using GoogleAnalytics;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -158,6 +159,8 @@ namespace QuickShare
         {
             if (!TrialSettings.IsTrial)
                 AdBanner.Suspend();
+
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("PageLoad", "MainPage", "MainPage").Build());
 
             DiscoverDevices();
             InitDiscoveringOtherDevices();

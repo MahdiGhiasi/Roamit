@@ -1,4 +1,5 @@
-﻿using QuickShare.Common;
+﻿using GoogleAnalytics;
+using QuickShare.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -72,10 +73,13 @@ namespace QuickShare.HelperClasses.VersionHelpers
 #endif
 
                     CheckIfFullVersion();
+
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("TryUpgrade", "Upgraded").Build());
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"In app purchase of {Token_RemoveAdsAndSizeLimit} failed: {ex.Message}");
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("TryUpgrade", "Failed", ex.Message).Build());
                 }
             }
         }

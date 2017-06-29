@@ -1,4 +1,5 @@
-﻿using QuickShare.Common;
+﻿using GoogleAnalytics;
+using QuickShare.Common;
 using QuickShare.Common.Rome;
 using QuickShare.DevicesListManager;
 using QuickShare.FileTransfer;
@@ -83,6 +84,7 @@ namespace QuickShare
         {
             base.OnNavigatedTo(e);
 
+
             var rs = MainPage.Current.GetSelectedSystem();
 
             IRomePackageManager packageManager;
@@ -94,7 +96,6 @@ namespace QuickShare
             string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
             var mode = e.Parameter.ToString();
 
-
             if ((mode == "file") && (!(await IsAllowedToSendAsync())))
             {
                 ViewModel.SendStatus = "";
@@ -103,33 +104,57 @@ namespace QuickShare
 
                 if (!(await IsAllowedToSendAsync()))
                 {
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "AskedToUpgrade", "Rejected").Build());
                     Frame.GoBack();
                     return;
                 }
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "AskedToUpgrade", "Accepted").Build());
                 ViewModel.SendStatus = "Connecting...";
             }
 
-
-            if (mode == "launchUri")
+            bool succeed = true;
+            try
             {
-                await LaunchUri(rs);
-            }
-            else if (mode == "text")
-            {
-                string text = SendDataTemporaryStorage.Text;
-                bool fastSendResult = await TrySendFastClipboard(text, rs, deviceName);
-
-                if (fastSendResult)
+                if (mode == "launchUri")
                 {
-                    SendTextFinished("");
+                    await LaunchUri(rs);
                 }
-                else
+                else if (mode == "text")
+                {
+                    string text = SendDataTemporaryStorage.Text;
+                    bool fastSendResult = await TrySendFastClipboard(text, rs, deviceName);
+
+                    if (fastSendResult)
+                    {
+                        SendTextFinished("");
+                    }
+                    else
+                    {
+                        ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
+                        RomeAppServiceConnectionStatus result = await Connect(rs);
+
+                        if (result != RomeAppServiceConnectionStatus.Success)
+                        {
+                            succeed = false;
+                            await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
+                            Frame.GoBack();
+                            return;
+                        }
+
+                        ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+
+                        await SendText(packageManager, deviceName, text);
+                        await SendFinishService(packageManager);
+                    }
+                }
+                else if (mode == "file")
                 {
                     ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
                     RomeAppServiceConnectionStatus result = await Connect(rs);
 
                     if (result != RomeAppServiceConnectionStatus.Success)
                     {
+                        succeed = false;
                         await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
                         Frame.GoBack();
                         return;
@@ -137,43 +162,39 @@ namespace QuickShare
 
                     ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
 
-                    await SendText(packageManager, deviceName, text);
+                    if ((await SendFile(rs, packageManager, deviceName)) == false)
+                    {
+                        succeed = false;
+                        Frame.GoBack();
+                        return;
+                    }
                     await SendFinishService(packageManager);
                 }
-            }
-            else if (mode == "file")
-            {
-                ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
-                RomeAppServiceConnectionStatus result = await Connect(rs);
-
-                if (result != RomeAppServiceConnectionStatus.Success)
+                else
                 {
-                    await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
+                    succeed = false;
+                    await (new MessageDialog("MainSend::Invalid parameter.")).ShowAsync();
                     Frame.GoBack();
                     return;
                 }
-
-                ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
-
-                if ((await SendFile(rs, packageManager, deviceName)) == false)
-                {
-                    Frame.GoBack();
-                    return;
-                }
-                await SendFinishService(packageManager);
             }
-            else
+            finally
             {
-                await (new MessageDialog("MainSend::Invalid parameter.")).ShowAsync();
-                Frame.GoBack();
-                return;
+                if (rs is NormalizedRemoteSystem)
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("SendToAndroid", mode, succeed ? "Success" : "Failed").Build());
+                else
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("SendToWindows", mode, succeed ? "Success" : "Failed").Build());
             }
 
             if (SendDataTemporaryStorage.IsSharingTarget)
             {
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "ShareTarget").Build());
                 await Task.Delay(TimeSpan.FromSeconds(1.5));
-
                 App.ShareOperation.ReportCompleted();
+            }
+            else
+            {
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "WithinApp").Build());
             }
         }
 
@@ -241,8 +262,8 @@ namespace QuickShare
                     await Task.Run(async () =>
                     {
                         result = await fs.SendFiles(from x in SendDataTemporaryStorage.Files
-                                                        where x is StorageFile
-                                                        select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
+                                                    where x is StorageFile
+                                                    select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
                         if (result != FileTransferResult.Successful)
                             failed = true;
                     });
@@ -374,9 +395,9 @@ namespace QuickShare
                     SecureKeyStorage.GetUserId(),
                     deviceName);
             else
-                return await MainPage.Current.PackageManager.QuickClipboard(text, 
-                    rs as RemoteSystem, 
-                    deviceName, 
+                return await MainPage.Current.PackageManager.QuickClipboard(text,
+                    rs as RemoteSystem,
+                    deviceName,
                     "roamit://clipboard");
         }
     }
