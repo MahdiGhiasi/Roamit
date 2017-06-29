@@ -1,6 +1,4 @@
-﻿using QuickShare.HelperClasses;
-using QuickShare.HelperClasses.VersionHelpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,26 +20,11 @@ namespace QuickShare
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class Settings : Page
+    public sealed partial class PrivacyPolicy : Page
     {
-        public SettingsModel Model { get; set; } = new SettingsModel();
-
-        public Settings()
+        public PrivacyPolicy()
         {
             this.InitializeComponent();
-        }
-
-        private async void UpgradeButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            await TrialHelper.AskForUpgrade();
-
-            Model.CheckTrialStatus();
-            MainPage.Current.CheckTrialStatus();
-        }
-
-        private void PrivacyPolicyButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(PrivacyPolicy));
         }
     }
 }

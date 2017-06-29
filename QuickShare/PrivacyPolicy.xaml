@@ -1,0 +1,59 @@
+﻿<Page
+    x:Class="QuickShare.PrivacyPolicy"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <DrillInNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="Transparent">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <TextBlock Text="Privacy Policy" FontSize="18" Margin="16,12,0,16" FontWeight="Bold" />
+            </Grid>
+            <ScrollViewer Grid.Row="1" Padding="20">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="0,0,0,8"
+                               Text="Communication between your Windows devices happens using Microsoft Project Rome APIs. " />
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="0,0,0,8"
+                               Text="You can read more about it at the Microsoft website." />
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="0,16,0,8"
+                               Text="Communication between Windows and Android devices happen using a combination of Project Rome APIs and Roamit's own servers." />
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="0,0,0,8"
+                               Text="Because of this, Roamit might send some of the data you are sharing to its servers, and then to Google's push notification services." />
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="0,0,0,8"
+                               Text="The shared data is removed from server as soon as it reaches Google notification service, and is not shared with any other third-parties." />
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="0,8,0,8"
+                               Text="When you activate 'Show my Android devices' option, your unique user id (retrieved from Microsoft) and some basic info about your devices get stored on Roamit's servers." />
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="0,0,0,8"
+                               Text="This data is necessary for Roamit to be able to identify you and your devices." />
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="0,16,0,8"
+                               Text="History of what you send and receive might get saved on your own devices, but not in the cloud." />
+                    
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Page>

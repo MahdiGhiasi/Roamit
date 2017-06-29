@@ -52,6 +52,9 @@
                             <TextBlock Text="You can upgrade to remove ads and file size limits." Margin="0,12,0,0" TextWrapping="Wrap" Opacity="0.7" />
                             <Button Content="Upgrade to full version" Margin="0,8,0,0" Tapped="UpgradeButton_Tapped" />
                         </StackPanel>
+                        <StackPanel Margin="0,16,0,0">
+                            <HyperlinkButton Content="Privacy policy" Tapped="PrivacyPolicyButton_Tapped" />
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
