@@ -240,7 +240,7 @@ namespace QuickShare
                 if ((selItem != null) && (ViewModel.ListManager.SelectedRemoteSystem.IsAvailableByProximity != selItem.IsAvailableByProximity))
                     ViewModel.ListManager.Select(selItem);
 
-                if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (ViewModel.ListManager.RemoteSystems.Count > remoteSystemPrevCount))
+                if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (ViewModel.ListManager.RemoteSystems.Count > remoteSystemPrevCount) && (AllowedToChangeSelectedRemoteSystem()))
                 {
                     remoteSystemPrevCount = ViewModel.ListManager.RemoteSystems.Count;
                     ViewModel.ListManager.SelectHighScoreItem();
@@ -320,13 +320,18 @@ namespace QuickShare
                 if (ViewModel.ListManager.RemoteSystems.FirstOrDefault(x => x.Id == item.Id) == null) //if not already exists
                     ViewModel.ListManager.AddDevice(item);
 
-            if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually))
+            if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (AllowedToChangeSelectedRemoteSystem()))
                 ViewModel.ListManager.SelectHighScoreItem();
             ViewModel.RefreshIsContentFrameEnabled();
 
             await Common.Service.DevicesLoader.WakeAndroidDevices(userId);
 
             return true;
+        }
+
+        private bool AllowedToChangeSelectedRemoteSystem()
+        {
+            return (ContentFrame.Content is MainActions) || (ContentFrame.Content is Settings) || (ContentFrame.Content is PrivacyPolicy);
         }
 
         private async void InitDiscoveringOtherDevices()
