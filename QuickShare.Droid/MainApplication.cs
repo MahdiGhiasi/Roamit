@@ -22,6 +22,8 @@ namespace QuickShare.Droid
             RegisterActivityLifecycleCallbacks(this);
             //A great place to initialize Xamarin.Insights and Dependency Services!
 
+            DataStore.DataStorageProviders.Init(PCLStorage.FileSystem.Current.LocalStorage.Path);
+
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
