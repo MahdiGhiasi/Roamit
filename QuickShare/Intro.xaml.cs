@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
 using QuickShare.Common;
+using System.Threading.Tasks;
 
 namespace QuickShare
 {
@@ -24,10 +25,18 @@ namespace QuickShare
         public Intro()
         {
             this.InitializeComponent();
+
+            AppIconImage.Opacity = 0;
+            WelcomeTitle.Opacity = 0;
+            WelcomeText.Opacity = 0;
+            flipView.Opacity = 0;
+            PageIndicators.Opacity = 0;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            startStoryboard.Begin();
+
             DeviceInfo.RefreshFormFactorType();
             if ((DeviceInfo.SystemVersion > DeviceInfo.CreatorsUpdate) && (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop))
             {
@@ -85,9 +94,13 @@ namespace QuickShare
 
 
             if (flipView.SelectedIndex == flipView.Items.Count - 1)
-                NextButton.Visibility = Visibility.Collapsed;
+            {
+                nextHideStoryboard.Begin();
+            }
             else
-                NextButton.Visibility = Visibility.Visible;
+            {
+                nextShowStoryboard.Begin();
+            }
         }
 
         private void NextButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -116,8 +129,14 @@ namespace QuickShare
             FinishIntro();
         }
 
-        private void FinishIntro()
+        private async void FinishIntro()
         {
+            progressRing.Visibility = Visibility.Visible;
+            progressRing.IsActive = true;
+            endStoryboard.Begin();
+            
+            await Task.Delay(TimeSpan.FromSeconds(0.1));
+
             Windows.Storage.ApplicationData.Current.LocalSettings.Values["FirstRun"] = "false";
             Frame.Navigate(typeof(MainPage));
         }

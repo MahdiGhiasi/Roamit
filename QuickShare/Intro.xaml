@@ -8,7 +8,131 @@
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
-    <Grid Background="Transparent">
+    <Page.Resources>
+        <ResourceDictionary>
+            <Storyboard x:Name="nextHideStoryboard">
+                <DoubleAnimation Storyboard.TargetName="NextButton" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 Duration="0:0:0.3" To="56">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseIn" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+            <Storyboard x:Name="nextShowStoryboard">
+                <DoubleAnimation Storyboard.TargetName="NextButton" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 Duration="0:0:0.5" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+            <Storyboard x:Name="endStoryboard">
+                <DoubleAnimation Storyboard.TargetName="flipView" 
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 Duration="0:0:0.3" To="0">
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="PageIndicators" 
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 Duration="0:0:0.3" To="0">
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="NextButton" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                 Duration="0:0:0.3" To="150">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="SkipButton" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                 Duration="0:0:0.3" To="-150">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="PrevButton" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                 Duration="0:0:0.3" To="-150">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+            <Storyboard x:Name="startStoryboard">
+                <DoubleAnimation Storyboard.TargetName="flipView" 
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 Duration="0:0:0.5" From="0" To="1">
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="PageIndicators" 
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 Duration="0:0:0.5" From="0" To="1">
+                </DoubleAnimation>
+
+                <DoubleAnimation Storyboard.TargetName="NextButton" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                 Duration="0:0:0.3" From="150" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="SkipButton" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                 Duration="0:0:0.3" From="-150" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+
+                <DoubleAnimation Storyboard.TargetName="AppIconImage" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 BeginTime="0:0:0.6"
+                                 Duration="0:0:0.3" From="40" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="AppIconImage" 
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 BeginTime="0:0:0.6"
+                                 Duration="0:0:0.2" From="0" To="1">
+                </DoubleAnimation>
+
+                <DoubleAnimation Storyboard.TargetName="WelcomeTitle" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 BeginTime="0:0:0.8"
+                                 Duration="0:0:0.3" From="40" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="WelcomeTitle" 
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 BeginTime="0:0:0.8"
+                                 Duration="0:0:0.2" From="0" To="1">
+                </DoubleAnimation>
+                
+                <DoubleAnimation Storyboard.TargetName="WelcomeText" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                 BeginTime="0:0:0.9"
+                                 Duration="0:0:0.3" From="40" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="WelcomeText" 
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 BeginTime="0:0:0.9"
+                                 Duration="0:0:0.2" From="0" To="1">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Background="#111111">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
@@ -27,24 +151,38 @@
         <Image Height="75" x:Name="ReferenceImage" Visibility="Collapsed" />
         <TextBlock FontSize="24" x:Name="ReferenceTitle" Visibility="Collapsed" />
         <TextBlock FontSize="16" x:Name="ReferenceText" Visibility="Collapsed" />
-        
+
         <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged">
             <Grid Background="#FF8C0095">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
                     <Image x:Name="AppIconImage"
                            Source="ms-appx:///Assets/Intro/icon-noborder.png" 
-                           Height="100" />
-                    <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
+                           Height="100">
+                        <Image.RenderTransform>
+                            <TranslateTransform />
+                        </Image.RenderTransform>
+                    </Image>
+                    <TextBlock x:Name="WelcomeTitle"
+                               FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
                                Text="Welcome to QuickShare!" 
                                FontWeight="Light"
                                TextWrapping="Wrap"
-                               TextAlignment="Center" />
-                    <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                               TextAlignment="Center">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                    <TextBlock x:Name="WelcomeText"
+                               FontSize="{Binding FontSize, ElementName=ReferenceText}"
                                Text="Swipe or click next to continue, or tap skip to skip the tutorial."
                                TextAlignment="Center"
                                TextWrapping="Wrap"
                                FontWeight="SemiLight"
-                               Margin="0,16,0,0" />
+                               Margin="0,16,0,0">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
                 </StackPanel>
             </Grid>
             <Grid Background="#ff2672EC">
@@ -126,45 +264,62 @@
                                TextWrapping="Wrap"
                                FontWeight="SemiLight"
                                Margin="0,16,0,0" />
+                    <Button x:Name="FinishButton"
+                            Content="Let's Begin"
+                            Tapped="FinishButton_Tapped"
+                            Width="180"
+                            Height="40"
+                            Background="#228299"
+                            Margin="0,80,0,0"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Center" />
                 </StackPanel>
-                <Button x:Name="FinishButton"
-                        Content="Let's Begin"
-                        Tapped="FinishButton_Tapped"
-                        Width="180"
-                        Height="40"
-                        Background="#aa777777"
-                        Margin="0,0,0,100"
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Center" />
             </Grid>
         </FlipView>
         <StackPanel x:Name="TitleBarStackPanel" Height="36" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="Collapsed">
             <TextBlock Text="QuickShare" FontSize="12" Foreground="LightGray" />
         </StackPanel>
         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
-            <StackPanel x:Name="PageIndicators" HorizontalAlignment="Center" Orientation="Horizontal" />
+            <StackPanel x:Name="PageIndicators" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,4,0,0" />
             <Button x:Name="SkipButton"
                     Content="Skip"
                     Tapped="SkipButton_Tapped"
                     Background="#aa777777"
                     Width="96"
+                    Height="36"
                     HorizontalAlignment="Left"
-                    Margin="16,0,0,16" />
+                    Margin="16,0,0,16">
+                <Button.RenderTransform>
+                    <TranslateTransform />
+                </Button.RenderTransform>
+            </Button>
             <Button x:Name="PrevButton"
                     Content="Previous"
                     Tapped="PrevButton_Tapped"
                     Visibility="Collapsed"
                     Background="#aa777777"
                     Width="96"
+                    Height="36"
                     HorizontalAlignment="Left"
-                    Margin="16,0,0,16" />
+                    Margin="16,0,0,16">
+                <Button.RenderTransform>
+                    <TranslateTransform />
+                </Button.RenderTransform>
+            </Button>
             <Button x:Name="NextButton"
                     Content="Next"
                     Tapped="NextButton_Tapped"
                     Background="#aa777777"
                     Width="96"
+                    Height="36"
                     HorizontalAlignment="Right"
-                    Margin="0,0,16,16" />
+                    Margin="0,0,16,16">
+                <Button.RenderTransform>
+                    <TranslateTransform />
+                </Button.RenderTransform>
+            </Button>
         </Grid>
+
+        <ProgressRing Width="50" Height="50" Visibility="Collapsed" IsActive="False" x:Name="progressRing" />
     </Grid>
 </Page>
