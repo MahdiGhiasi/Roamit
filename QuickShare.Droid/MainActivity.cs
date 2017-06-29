@@ -209,7 +209,7 @@ namespace QuickShare.Droid
 
         private void OnCreate_Main()
         {
-            showToolbarMenu = true;
+            showToolbarMenu = false;// true;
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             //Toolbar will now take on default actionbar characteristics
