@@ -8,34 +8,39 @@
     android:minHeight="25px"
     android:paddingLeft="30dp"
     android:paddingRight="30dp">
-  <LinearLayout
-      android:orientation="vertical"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/linearLayout1"
-      android:layout_centerInParent="true">
-    <TextView
-        android:text="Connect your experience across devices!"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView1"
-        android:gravity="center_horizontal" />
-    <TextView
-        android:text="QuickShare brings your Windows 10 and Android devices a lot closer."
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:paddingTop="30dp"
-        android:gravity="center_horizontal" />
-    <TextView
-        android:text="You can send the webpage you're reading to your PC or your Xbox, it'll open immediately."
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:paddingTop="10dp"
-        android:gravity="center_horizontal" />
-  </LinearLayout>
+        android:id="@+id/linearLayout1"
+        android:layout_centerInParent="true">
+        <ImageView
+            android:src="@drawable/intro_p1"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:paddingBottom="25dp" />
+        <TextView
+            android:text="Connect your experience across devices!"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView1"
+            android:gravity="center_horizontal" />
+        <TextView
+            android:text="QuickShare brings your Windows 10 and Android devices a lot closer."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            android:paddingTop="30dp"
+            android:gravity="center_horizontal" />
+        <TextView
+            android:text="You can send the webpage you're reading to your PC or your Xbox, it'll open immediately."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3"
+            android:paddingTop="10dp"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
 </RelativeLayout>

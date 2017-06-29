@@ -8,26 +8,31 @@
     android:minHeight="25px"
     android:paddingLeft="30dp"
     android:paddingRight="30dp">
-  <LinearLayout
-      android:orientation="vertical"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/linearLayout1"
-      android:layout_centerInParent="true">
-    <TextView
-        android:text="Share anything from everywhere"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView1"
-        android:gravity="center_horizontal" />
-    <TextView
-        android:text="No need to open the app manually. Just share the content from any app, and choose QuickShare as destination."
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:gravity="center_horizontal"
-        android:paddingTop="20dp" />
-  </LinearLayout>
+        android:id="@+id/linearLayout1"
+        android:layout_centerInParent="true">
+        <ImageView
+            android:src="@drawable/intro_p3"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:paddingBottom="15dp" />
+        <TextView
+            android:text="Share anything from everywhere"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView1"
+            android:gravity="center_horizontal" />
+        <TextView
+            android:text="No need to open the app manually. Just share the content from any app, and choose QuickShare as destination."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            android:gravity="center_horizontal"
+            android:paddingTop="20dp" />
+    </LinearLayout>
 </RelativeLayout>

@@ -8,26 +8,30 @@
     android:minHeight="25px"
     android:paddingLeft="30dp"
     android:paddingRight="30dp">
-  <LinearLayout
-      android:orientation="vertical"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/linearLayout1"
-      android:layout_centerInParent="true">
-    <TextView
-        android:text="Welcome to QuickShare!"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView1"
-        android:gravity="center_horizontal" />
-    <TextView
-        android:text="Swipe to continue, or tap skip to skip the tutorial."
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:gravity="center_horizontal"
-        android:paddingTop="30dp" />
-  </LinearLayout>
+        android:id="@+id/linearLayout1"
+        android:layout_centerInParent="true">
+        <ImageView
+            android:src="@drawable/icon_noborder"
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+        <TextView
+            android:text="Welcome to QuickShare!!"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView1"
+            android:gravity="center_horizontal" />
+        <TextView
+            android:text="Swipe to continue, or tap skip to skip the tutorial."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            android:gravity="center_horizontal"
+            android:paddingTop="30dp" />
+    </LinearLayout>
 </RelativeLayout>
