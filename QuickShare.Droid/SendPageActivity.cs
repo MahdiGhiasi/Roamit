@@ -227,6 +227,7 @@ namespace QuickShare.Droid
 
             bool failed = false;
             string message = "";
+            FileTransferResult transferResult = FileTransferResult.Successful;
 
             using (FileSender fs = new FileSender(Common.GetCurrentRemoteSystem(),
                                                   new WebServerComponent.WebServerGenerator(),
@@ -263,7 +264,8 @@ namespace QuickShare.Droid
                 {
                     await Task.Run(async () =>
                     {
-                        if (!await fs.SendFile(new PCLStorage.FileSystemFile(files[0])))
+                        transferResult = await fs.SendFile(new PCLStorage.FileSystemFile(files[0]));
+                        if (transferResult != FileTransferResult.Successful)
                             failed = true;
                     });
                 }
@@ -271,8 +273,9 @@ namespace QuickShare.Droid
                 {
                     await Task.Run(async () =>
                     {
-                        if (!await fs.SendFiles(from x in files
-                                                select new PCLStorage.FileSystemFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
+                        transferResult = await fs.SendFiles(from x in files
+                                                            select new PCLStorage.FileSystemFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
+                        if (transferResult != FileTransferResult.Successful)
                             failed = true;
                     });
                 }
@@ -293,7 +296,19 @@ namespace QuickShare.Droid
             {
                 sendStatus.Text = "Failed.";
                 System.Diagnostics.Debug.WriteLine("Send failed.\r\n\r\n" + message);
-                //await (new MessageDialog("Send failed.\r\n\r\n" + message)).ShowAsync();
+
+                if (transferResult == FileTransferResult.FailedOnHandshake)
+                {
+                    message = "Couldn't reach remote device.\r\n\r\n" +
+                        "Make sure both devices are connected to the same Wi-Fi or LAN network.";
+                }
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.SetTitle(message);
+                alert.SetPositiveButton("OK", (senderAlert, args) => { });
+                RunOnUiThread(() => {
+                    alert.Show();
+                });
             }
             else
             {

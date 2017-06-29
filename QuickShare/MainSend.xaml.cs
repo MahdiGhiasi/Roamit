@@ -184,6 +184,7 @@ namespace QuickShare
 
             bool failed = false;
             string message = "";
+            FileTransferResult result = FileTransferResult.Successful;
 
             using (FileSender fs = new FileSender(rs,
                                                   new QuickShare.UWP.WebServerGenerator(),
@@ -221,7 +222,8 @@ namespace QuickShare
                 {
                     await Task.Run(async () =>
                     {
-                        if (!await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0] as StorageFile)))
+                        result = await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0] as StorageFile));
+                        if (result != FileTransferResult.Successful)
                             failed = true;
                     });
                 }
@@ -229,7 +231,8 @@ namespace QuickShare
                 {
                     await Task.Run(async () =>
                     {
-                        if (!await fs.SendFolder(new PCLStorage.WinRTFolder(SendDataTemporaryStorage.Files[0] as StorageFolder), ""))
+                        result = await fs.SendFolder(new PCLStorage.WinRTFolder(SendDataTemporaryStorage.Files[0] as StorageFolder), "");
+                        if (result != FileTransferResult.Successful)
                             failed = true;
                     });
                 }
@@ -237,9 +240,10 @@ namespace QuickShare
                 {
                     await Task.Run(async () =>
                     {
-                        if (!await fs.SendFiles(from x in SendDataTemporaryStorage.Files
-                                                where x is StorageFile
-                                                select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\"))
+                        result = await fs.SendFiles(from x in SendDataTemporaryStorage.Files
+                                                        where x is StorageFile
+                                                        select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
+                        if (result != FileTransferResult.Successful)
                             failed = true;
                     });
                 }
@@ -249,7 +253,15 @@ namespace QuickShare
 
             if (failed)
             {
-                ViewModel.SendStatus = $"Failed ({message})";
+                if (result == FileTransferResult.FailedOnHandshake)
+                {
+                    var dlg = new MessageDialog("Make sure both devices are connected to the same Wi-Fi or LAN network.", "Couldn't reach remote device.");
+                    await dlg.ShowAsync();
+                }
+                else
+                {
+                    ViewModel.SendStatus = $"Failed ({message})";
+                }
             }
             else
             {

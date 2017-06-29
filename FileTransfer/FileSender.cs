@@ -54,7 +54,7 @@ namespace QuickShare.FileTransfer
             deviceName = _deviceName;
         }
 
-        public async Task<bool> SendFiles(IEnumerable<IFile> files, string directoryName)
+        public async Task<FileTransferResult> SendFiles(IEnumerable<IFile> files, string directoryName)
         {
             List<Tuple<string, IFile>> l = new List<Tuple<string, IFile>>();
             foreach (var file in files)
@@ -65,13 +65,18 @@ namespace QuickShare.FileTransfer
             return await SendQueue(l, directoryName);
         }
 
-        public async Task<bool> SendFile(IFile file, string directory = "", bool isQueue = false)
+        public async Task<FileTransferResult> SendFile(IFile file, string directory = "", bool isQueue = false)
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
-                await Handshake();
+            {
+                await Handshake().WithTimeout(TimeSpan.FromSeconds(10));
+
+                if (ipFinderResult == null)
+                    ipFinderResult.Success = false;
+            }
 
             if (ipFinderResult.Success == false)
-                return false;
+                return FileTransferResult.FailedOnHandshake;
 
             InitServer();
 
@@ -99,12 +104,12 @@ namespace QuickShare.FileTransfer
             };
 
             if (!(await BeginSending(key, slicesCount, file.Name, properties, directory, false)))
-                return false;
+                return FileTransferResult.FailedOnPrepare;
 
             if (!(await WaitForFinish()))
-                return false;
+                return FileTransferResult.FailedOnSend;
 
-            return true;
+            return FileTransferResult.Successful;
         }
 
         private void ClearInternalEventSubscribers()
@@ -156,13 +161,19 @@ namespace QuickShare.FileTransfer
         }
 
         /// <param name="files">A list of Tuple(Relative directory path, StorageFile) objects.</param>
-        private async Task<bool> SendQueue(List<Tuple<string, IFile>> files, string parentDirectoryName)
+        private async Task<FileTransferResult> SendQueue(List<Tuple<string, IFile>> files, string parentDirectoryName)
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
-                await Handshake();
+            {
+                await Handshake().WithTimeout(TimeSpan.FromSeconds(10));
+
+                if (ipFinderResult == null)
+                    ipFinderResult.Success = false;
+            }
 
             if (ipFinderResult.Success == false)
-                return false;
+                return FileTransferResult.FailedOnHandshake;
+
 
             InitServer();
 
@@ -220,27 +231,27 @@ namespace QuickShare.FileTransfer
             };
 
             if (await SendQueueInit(totalSlices, queueFinishKey, parentDirectoryName) == false)
-                return false;
+                return FileTransferResult.FailedOnQueueInit;
 
             for (int i = 0; i < files.Count; i++)
             {
                 var key = sFileKeyPairs[files[i].Item2];
-                if (!(await BeginSending(key, 
-                                         keyTable[key].lastSliceId + 1, 
+                if (!(await BeginSending(key,
+                                         keyTable[key].lastSliceId + 1,
                                          files[i].Item2.Name,
-                                         fs[i], 
+                                         fs[i],
                                          files[i].Item1,
                                          true)))
-                    return false;
+                    return FileTransferResult.FailedOnPrepare;
             }
 
             if (!(await WaitQueueToFinish()))
-                return false;
+                return FileTransferResult.FailedOnSend;
 
-            return true;
+            return FileTransferResult.Successful;
         }
 
-        public async Task<bool> SendFolder(IFolder folder, string parentDirectoryName)
+        public async Task<FileTransferResult> SendFolder(IFolder folder, string parentDirectoryName)
         {
             List<Tuple<string, IFile>> files = await GetFiles(folder);
 
@@ -334,7 +345,7 @@ namespace QuickShare.FileTransfer
         }
 
         private string SendFinished(IWebServer sender, RequestDetails request)
-        {          
+        {
             try
             {
                 var query = QueryHelpers.ParseQuery(request.Url.Query);
@@ -396,10 +407,10 @@ namespace QuickShare.FileTransfer
 
                 if (id >= keyTable[key].lastPieceAccessed)
                 {
-                    FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = id + 1, Total = keyTable[key].lastSliceId + 1 , State = FileTransferState.DataTransfer });
+                    FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = id + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.DataTransfer });
                     keyTable[key].lastPieceAccessed = (uint)id;
                 }
-                
+
                 IFile file = keyTable[key].storageFile;
 
                 int pieceSize = ((keyTable[key].lastSliceId != id) || (keyTable[key].lastSliceSize == 0)) ? (int)Constants.FileSliceMaxLength : (int)keyTable[key].lastSliceSize;
@@ -450,5 +461,14 @@ namespace QuickShare.FileTransfer
             if (server != null)
                 server.Dispose();
         }
+    }
+
+    public enum FileTransferResult
+    {
+        Successful = 1,
+        FailedOnHandshake = 2,
+        FailedOnQueueInit = 3,
+        FailedOnPrepare = 4,
+        FailedOnSend = 5,
     }
 }
