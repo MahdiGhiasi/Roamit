@@ -326,7 +326,7 @@ namespace QuickShare.Droid
         {
             sendStatus.Text = "Connecting...";
 
-            if (!(await Common.PackageManager.QuickClipboard(text, Common.GetCurrentRemoteSystem(), CrossDeviceInfo.Current.Model, "quickshare://clipboard")))
+            if (!(await Common.PackageManager.QuickClipboard(text, Common.GetCurrentRemoteSystem(), CrossDeviceInfo.Current.Model, "roamit://clipboard")))
             {
 
                 var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);

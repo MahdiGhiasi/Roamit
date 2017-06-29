@@ -83,10 +83,10 @@ namespace QuickShare.Droid
             IsInitialized = true;
 
             Common.PackageManager = new RomePackageManager(this);
-            Common.PackageManager.Initialize("com.quickshare.service");
+            Common.PackageManager.Initialize("com.roamit.service");
 
             Common.MessageCarrierPackageManager = new RomePackageManager(this);
-            Common.MessageCarrierPackageManager.Initialize("com.quickshare.messagecarrierservice");
+            Common.MessageCarrierPackageManager.Initialize("com.roamit.messagecarrierservice");
 
             Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 

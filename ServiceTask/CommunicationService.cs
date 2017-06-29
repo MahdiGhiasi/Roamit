@@ -31,7 +31,7 @@ namespace QuickShare.ServiceTask
 
             var details = taskInstance.TriggerDetails as AppServiceTriggerDetails;
 
-            if (details?.Name == "com.quickshare.service") //Remote Activation
+            if (details?.Name == "com.roamit.service") //Remote Activation
             {
                 DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
 
@@ -174,7 +174,7 @@ namespace QuickShare.ServiceTask
                     this.notificationService = new AppServiceConnection();
 
                     // Here, we use the app service name defined in the app service provider's Package.appxmanifest file in the <Extension> section.
-                    this.notificationService.AppServiceName = "com.quickshare.notificationservice";
+                    this.notificationService.AppServiceName = "com.roamit.notificationservice";
 
                     // Use Windows.ApplicationModel.Package.Current.Id.FamilyName within the app service provider to get this value.
                     this.notificationService.PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName;

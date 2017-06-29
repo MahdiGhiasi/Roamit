@@ -351,7 +351,7 @@ namespace QuickShare
                     SecureKeyStorage.GetUserId(),
                     MainPage.Current.PackageManager.RemoteSystems.Where(x => x.Kind != "Unknown").Select(x => x.Id));
             else
-                return await MainPage.Current.PackageManager.Connect(rs, true, new Uri("quickshare://wake"));
+                return await MainPage.Current.PackageManager.Connect(rs, true, new Uri("roamit://wake"));
         }
 
         private async Task<bool> TrySendFastClipboard(string text, object rs, string deviceName)
@@ -365,7 +365,7 @@ namespace QuickShare
                 return await MainPage.Current.PackageManager.QuickClipboard(text, 
                     rs as RemoteSystem, 
                     deviceName, 
-                    "quickshare://clipboard");
+                    "roamit://clipboard");
         }
     }
 }

@@ -48,7 +48,7 @@ namespace QuickShare
             this.Suspending += OnSuspending;
             this.UnhandledException += App_UnhandledException;
 
-            UWP.Rome.RomePackageManager.Instance.Initialize("com.quickshare.service");
+            UWP.Rome.RomePackageManager.Instance.Initialize("com.roamit.service");
             DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
         }
 
@@ -207,7 +207,7 @@ namespace QuickShare
                     LaunchRootFrameIfNecessary(ref rootFrame, false);
                     rootFrame.Navigate(typeof(ClipboardReceive), guid.ToString());
                 }
-                else if ((pEventArgs.Uri.AbsoluteUri.ToLower() == "quickshare://wake") || (pEventArgs.Uri.AbsoluteUri.ToLower() == "quickshare://wake/"))
+                else if ((pEventArgs.Uri.AbsoluteUri.ToLower() == "roamit://wake") || (pEventArgs.Uri.AbsoluteUri.ToLower() == "roamit://wake/"))
                 {
                     Debug.WriteLine("Wake request received");
                     Application.Current.Exit();
@@ -227,7 +227,7 @@ namespace QuickShare
 
         private string FastClipboardUri(string s)
         {
-            string fastClipboardUri = "quickshare://clipboard/";
+            string fastClipboardUri = "roamit://clipboard/";
             if (s.Length < fastClipboardUri.Length)
                 return "";
 
@@ -281,7 +281,7 @@ namespace QuickShare
             IBackgroundTaskInstance taskInstance = args.TaskInstance;
             AppServiceTriggerDetails appService = taskInstance.TriggerDetails as AppServiceTriggerDetails;
 
-            if (appService?.Name == "com.quickshare.notificationservice")
+            if (appService?.Name == "com.roamit.notificationservice")
             {
                 appServiceDeferral = taskInstance.GetDeferral();
                 taskInstance.Canceled += OnAppServicesCanceled;
@@ -289,7 +289,7 @@ namespace QuickShare
                 appServiceConnection.RequestReceived += OnAppServiceRequestReceived;
                 appServiceConnection.ServiceClosed += AppServiceConnection_ServiceClosed;
             }
-            else if (appService?.Name == "com.quickshare.messagecarrierservice")
+            else if (appService?.Name == "com.roamit.messagecarrierservice")
             {
                 messageCarrierAppServiceDeferral = taskInstance.GetDeferral();
                 taskInstance.Canceled += OnMessageCarrierAppServicesCanceled;
