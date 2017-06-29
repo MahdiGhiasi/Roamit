@@ -48,6 +48,8 @@ namespace QuickShare
 
         bool discoverOtherDevicesResult = true;
 
+        public bool isAskedAboutMSAPermissionThisTime = false;
+
         public bool IsAskedAboutMSAPermission
         {
             get
@@ -60,6 +62,7 @@ namespace QuickShare
             set
             {
                 ApplicationData.Current.LocalSettings.Values["IsAskedAboutMSAPermission"] = value;
+                isAskedAboutMSAPermissionThisTime = true;
             }
         }
 
@@ -334,7 +337,7 @@ namespace QuickShare
 
         private void CheckIfShouldAskAboutMSAPermission()
         {
-            if ((ViewModel.ListManager.IsAndroidDevicePresent) && (!IsAskedAboutMSAPermission) && (!discoverOtherDevicesResult))
+            if ((ViewModel.ListManager.IsAndroidDevicePresent) && (!IsAskedAboutMSAPermission) && (!isAskedAboutMSAPermissionThisTime) && (!discoverOtherDevicesResult))
             {
                 IsAskedAboutMSAPermission = true;
                 ShowSignInFlyout();

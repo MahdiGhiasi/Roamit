@@ -2,6 +2,7 @@
 using QuickShare.MicrosoftGraphFunctions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -32,16 +33,28 @@ namespace QuickShare.Flyouts
 
         private async void Authenticate_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            this.IsEnabled = false;
-            progressRing.Visibility = Visibility.Visible;
+            try
+            {
+                this.IsEnabled = false;
+                progressRing.Visibility = Visibility.Visible;
 
-            var graph = new Graph(await MSAAuthenticator.GetAccessTokenAsync("User.Read"));
-            //await (new MessageDialog(await graph.GetUserUniqueIdAsync())).ShowAsync();
-            var userId = await graph.GetUserUniqueIdAsync();
-            SecureKeyStorage.SetUserId(userId);
+                var graph = new Graph(await MSAAuthenticator.GetAccessTokenAsync("User.Read"));
+                //await (new MessageDialog(await graph.GetUserUniqueIdAsync())).ShowAsync();
+                var userId = await graph.GetUserUniqueIdAsync();
+                SecureKeyStorage.SetUserId(userId);
 
-            this.IsEnabled = true;
-            FlyoutCloseRequest?.Invoke(new EventArgs());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Authenticate failed. {ex.ToString()}");
+                MainPage.Current.IsAskedAboutMSAPermission = false;
+                MainPage.Current.isAskedAboutMSAPermissionThisTime = true;
+            }
+            finally
+            {
+                this.IsEnabled = true;
+                FlyoutCloseRequest?.Invoke(new EventArgs());
+            }
         }
 
         private void Cancel_Tapped(object sender, TappedRoutedEventArgs e)
