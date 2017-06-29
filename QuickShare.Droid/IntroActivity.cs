@@ -122,7 +122,14 @@ namespace QuickShare.Droid
             }
             else
             {
-                Toast.MakeText(this, result.ToString(), ToastLength.Long);
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.SetTitle(result.ToString() + "\n" + "Please try again later.");
+                alert.SetPositiveButton("OK", (senderAlert, args) => { });
+                RunOnUiThread(() => {
+                    alert.Show();
+                });
+
+                MSAAuthenticator.DeleteUserUniqueId();
                 ((Button)sender).Enabled = true;
             }
             signInSpinner.Visibility = ViewStates.Gone;

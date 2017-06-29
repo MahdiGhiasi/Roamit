@@ -111,5 +111,11 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 return true;
             return false;
         }
+
+        internal static void DeleteUserUniqueId()
+        {
+            if (HasUserUniqueId())
+                CrossSecureStorage.Current.DeleteKey("UserUniqueId");
+        }
     }
 }
