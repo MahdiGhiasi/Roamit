@@ -52,16 +52,18 @@ namespace QuickShare
                     FindOtherDevicesEnabled = false;
                     FindOtherDevicesProgressRingActive = true;
                     ActivateFindingOtherDevices();
-
+#if !DEBUG
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "FindOtherDevices", "Enabled").Build());
+#endif
                 }
                 else
                 {
                     SecureKeyStorage.DeleteUserId();
                     findOtherDevices = SecureKeyStorage.IsUserIdStored();
                     MainPage.Current.ViewModel.ListManager.RemoveAndroidDevices();
-
+#if !DEBUG
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "FindOtherDevices", "Disabled").Build());
+#endif
                 }
             }
         }

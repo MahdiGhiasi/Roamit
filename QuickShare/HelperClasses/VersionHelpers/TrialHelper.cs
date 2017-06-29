@@ -74,12 +74,16 @@ namespace QuickShare.HelperClasses.VersionHelpers
 
                     CheckIfFullVersion();
 
+#if !DEBUG
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("TryUpgrade", "Upgraded").Build());
+#endif
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"In app purchase of {Token_RemoveAdsAndSizeLimit} failed: {ex.Message}");
+#if !DEBUG
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("TryUpgrade", "Failed", ex.Message).Build());
+#endif
                 }
             }
         }

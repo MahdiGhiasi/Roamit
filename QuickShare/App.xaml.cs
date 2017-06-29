@@ -39,7 +39,9 @@ namespace QuickShare
     /// </summary>
     sealed partial class App : Application
     {
+#if !DEBUG
         public static Tracker Tracker;
+#endif
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -58,7 +60,9 @@ namespace QuickShare
             AnalyticsManager.Current.ReportUncaughtExceptions = true; //catch unhandled exceptions and send the details
             AnalyticsManager.Current.AutoAppLifetimeMonitoring = true; //handle suspend/resume and empty hit batched hits on suspend
 
+#if !DEBUG
             Tracker = AnalyticsManager.Current.CreateTracker(Common.Secrets.GoogleAnalyticsId);
+#endif
         }
 
         private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)

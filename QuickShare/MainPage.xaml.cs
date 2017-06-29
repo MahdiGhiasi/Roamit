@@ -159,9 +159,9 @@ namespace QuickShare
         {
             if (!TrialSettings.IsTrial)
                 AdBanner.Suspend();
-
+#if !DEBUG
             App.Tracker.Send(HitBuilder.CreateCustomEvent("PageLoad", "MainPage", "MainPage").Build());
-
+#endif
             DiscoverDevices();
             InitDiscoveringOtherDevices();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;

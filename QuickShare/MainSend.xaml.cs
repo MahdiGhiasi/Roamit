@@ -104,11 +104,15 @@ namespace QuickShare
 
                 if (!(await IsAllowedToSendAsync()))
                 {
+#if !DEBUG
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "AskedToUpgrade", "Rejected").Build());
+#endif
                     Frame.GoBack();
                     return;
                 }
+#if !DEBUG
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "AskedToUpgrade", "Accepted").Build());
+#endif
                 ViewModel.SendStatus = "Connecting...";
             }
 
@@ -186,21 +190,27 @@ namespace QuickShare
             }
             finally
             {
+#if !DEBUG
                 if (rs is NormalizedRemoteSystem)
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("SendToAndroid", mode, succeed ? "Success" : "Failed").Build());
                 else
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("SendToWindows", mode, succeed ? "Success" : "Failed").Build());
+#endif
             }
 
             if (SendDataTemporaryStorage.IsSharingTarget)
             {
+#if !DEBUG
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "ShareTarget").Build());
+#endif
                 await Task.Delay(TimeSpan.FromSeconds(1.5));
                 App.ShareOperation.ReportCompleted();
             }
             else
             {
+#if !DEBUG
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "WithinApp").Build());
+#endif
             }
         }
 

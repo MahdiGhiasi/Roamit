@@ -35,8 +35,9 @@ namespace QuickShare
 
         private async void UpgradeButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+#if !DEBUG
             App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "TryUpgrade").Build());
-
+#endif
             await TrialHelper.AskForUpgrade();
 
             Model.CheckTrialStatus();
@@ -45,7 +46,9 @@ namespace QuickShare
 
         private void PrivacyPolicyButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+#if !DEBUG
             App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "PrivacyPolicy").Build());
+#endif
             Frame.Navigate(typeof(PrivacyPolicy));
         }
 
@@ -55,11 +58,15 @@ namespace QuickShare
             {
                 var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
                 await launcher.LaunchAsync();
+#if !DEBUG
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "LaunchedFeedbackHub").Build());
+#endif
             }
             else
             {
+#if !DEBUG
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "FailedToLaunchFeedbackHub").Build());
+#endif
                 var dlg = new MessageDialog("Try sending feedback from a Windows 10 PC or phone.", "Feedback Hub is not supported on this device");
                 await dlg.ShowAsync();
             }
