@@ -16,8 +16,8 @@
                       HorizontalAlignment="Stretch" 
                       VerticalAlignment="Center">
         <StackPanel>
-            <Grid Height="100">
-                <!-- Will put Android+Windows logos here -->
+            <Grid Height="100" Padding="10,10,10,20">
+                <Image Source="ms-appx:///Assets/Intro/p1.png" />
             </Grid>
             <TextBlock TextWrapping="Wrap" 
                                    Text="We've noticed that you have one or more Android devices connected to your Microsoft account." />
