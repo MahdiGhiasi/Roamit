@@ -303,3 +303,4 @@ $RECYCLE.BIN/
 *.lnk
 
 /Droid.Config/Secrets.cs
+/QuickShare.Droid/google-services.json
