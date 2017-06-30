@@ -17,53 +17,61 @@ namespace QuickShare.Droid.Firebase
         {
             base.OnMessageReceived(message);
 
-            if (!message.Data.ContainsKey("Action"))
+            try
             {
-                SendNotification("Invalid data.", "");
+                if (!message.Data.ContainsKey("Action"))
+                {
+                    throw new InvalidOperationException();
+                }
+                else if (message.Data["Action"] == "Wake")
+                {
+#if DEBUG
+                    SendNotification("Wake", "Wake");
+#endif
+                    var intent = new Intent(this, typeof(MessageCarrierService));
+                    intent.PutExtra("Action", "Wake");
+                    StartService(intent);
+                }
+                else if (message.Data["Action"] == "SendCarrier")
+                {
+#if DEBUG
+                    SendNotification("SendCarrier", "SendCarrier");
+#endif
+                    var intent = new Intent(this, typeof(MessageCarrierService));
+                    intent.PutExtra("Action", "SendCarrier");
+                    intent.PutExtra("DeviceId", message.Data["WakerDeviceId"]);
+
+                    Android.Util.Log.Debug("CARRIER_DEBUG", "1");
+
+                    StartService(intent);
+                }
+                else if ((message.Data["Action"] == "LaunchUrl") && (message.Data.ContainsKey("Url")))
+                {
+                    string url = message.Data["Url"];
+
+                    Intent i = new Intent(Intent.ActionView);
+                    i.SetData(Android.Net.Uri.Parse(url));
+                    i.SetFlags(ActivityFlags.NewTask);
+                    StartActivity(i);
+                }
+                else if ((message.Data["Action"] == "FastClipboard") && (message.Data.ContainsKey("SenderName")) && (message.Data.ContainsKey("Text")))
+                {
+                    string senderName = message.Data["SenderName"];
+                    string text = message.Data["Text"];
+
+                    Guid guid = TextReceiver.QuickTextReceived(senderName, text);
+
+                    MessageCarrierService.CopyTextToClipboard(this, guid);
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
             }
-            else if (message.Data["Action"] == "Wake")
+            catch (InvalidOperationException)
             {
-                SendNotification("Wake", "Wake");
-
-                var intent = new Intent(this, typeof(MessageCarrierService));
-                intent.PutExtra("Action", "Wake");
-                StartService(intent);
+                SendNotification("Action not supported.", "Please make sure the app is updated to enjoy latest features.");
             }
-            else if (message.Data["Action"] == "SendCarrier")
-            {
-                SendNotification("SendCarrier", "SendCarrier");
-
-                var intent = new Intent(this, typeof(MessageCarrierService));
-                intent.PutExtra("Action", "SendCarrier");
-                intent.PutExtra("DeviceId", message.Data["WakerDeviceId"]);
-
-                Android.Util.Log.Debug("CARRIER_DEBUG", "1");
-
-                StartService(intent);
-            }
-            else if ((message.Data["Action"] == "LaunchUrl") && (message.Data.ContainsKey("Url")))
-            {
-                string url = message.Data["Url"];
-
-                Intent i = new Intent(Intent.ActionView);
-                i.SetData(Android.Net.Uri.Parse(url));
-                i.SetFlags(ActivityFlags.NewTask);
-                StartActivity(i);
-            }
-            else if ((message.Data["Action"] == "FastClipboard") && (message.Data.ContainsKey("SenderName")) && (message.Data.ContainsKey("Text")))
-            {
-                string senderName = message.Data["SenderName"];
-                string text = message.Data["Text"];
-
-                Guid guid = TextReceiver.QuickTextReceived(senderName, text);
-
-                MessageCarrierService.CopyTextToClipboard(this, guid);
-            }
-            else
-            {
-                SendNotification("Invalid action", message.Data["Action"]);
-            }
-
         }
 
         private void SendNotification(string title, string body)

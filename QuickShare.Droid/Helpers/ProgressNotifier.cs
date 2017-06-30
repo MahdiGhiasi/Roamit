@@ -17,7 +17,8 @@ namespace QuickShare.Droid.Helpers
 {
     internal class ProgressNotifier
     {
-        readonly TimeSpan _minimumTimeBetweenNotifs = TimeSpan.FromSeconds(1);
+        readonly TimeSpan _minimumTimeBetweenNotifs = TimeSpan.FromSeconds(0.5);
+        readonly TimeSpan _minimumTimeBetweenFinalNotifAndPrev = TimeSpan.FromSeconds(1.5);
 
         int id;
         Context context;
@@ -70,15 +71,36 @@ namespace QuickShare.Droid.Helpers
 
         public async void FinishProgress(string title, string text)
         {
-            if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenNotifs)
+            if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenFinalNotifAndPrev)
                 await Task.Delay(DateTime.Now - lastProgressNotif);
 
             builder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
                 .SetPriority((int)NotificationPriority.Max)
                 .SetContentTitle(title)
                 .SetContentText(text)
-                .SetProgress(0, 0, false);
+                .SetProgress(0, 0, false)
+                .SetStyle(new NotificationCompat.BigTextStyle()
+                    .SetBigContentTitle(title)
+                    .BigText(text));
 
+            notificationManager.Notify(id, builder.Build());
+        }
+
+        public async void FinishProgress(string title, string text, Intent intent, Context context)
+        {
+            if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenFinalNotifAndPrev)
+                await Task.Delay(DateTime.Now - lastProgressNotif);
+
+            builder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
+                .SetPriority((int)NotificationPriority.Max)
+                .SetContentTitle(title)
+                .SetContentText(text)
+                .SetContentIntent(PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.UpdateCurrent))
+                .SetProgress(0, 0, false)
+                .SetStyle(new NotificationCompat.BigTextStyle()
+                    .SetBigContentTitle(title)
+                    .BigText(text));
+            
             notificationManager.Notify(id, builder.Build());
         }
     }

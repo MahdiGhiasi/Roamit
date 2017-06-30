@@ -119,7 +119,7 @@ namespace QuickShare.Droid.Services
             await Common.MessageCarrierPackageManager.InitializeDiscovery();
         }
 
-        private static void ShowToast(Context context, string text, ToastLength length)
+        internal static void ShowToast(Context context, string text, ToastLength length)
         {
             Handler handler = new Handler(Looper.MainLooper);
             handler.Post(() =>
@@ -174,7 +174,23 @@ namespace QuickShare.Droid.Services
             }
             else if (e.State == FileTransfer.FileTransferState.Finished)
             {
-                progressNotifier?.FinishProgress("Receive completed.", "Tap to view");
+                if (e.TotalFiles == 1)
+                {
+                    var intent = new Intent(this, typeof(NotificationLaunchActivity));
+                    intent.PutExtra("action", "openFile");
+                    intent.PutExtra("guid", e.Guid.ToString());
+
+                    progressNotifier?.FinishProgress($"Received a file from {e.SenderName}", "Tap to open", intent, this);
+                }
+                else
+                {
+                    DataStorageProviders.HistoryManager.Open();
+                    var hr = DataStorageProviders.HistoryManager.GetItem(e.Guid);
+                    DataStorageProviders.HistoryManager.Close();
+                    var rootPath = (hr.Data as ReceivedFileCollection).StoreRootPath;
+                    progressNotifier?.FinishProgress($"Received {e.TotalFiles} files from {e.SenderName}", $"They're located at {rootPath}");
+                }
+                
             }
             else if (e.State == FileTransfer.FileTransferState.DataTransfer)
             {

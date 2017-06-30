@@ -182,6 +182,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="IntroViewPagerAdapter.cs" />
+    <Compile Include="NotificationLaunchActivity.cs" />
     <Compile Include="OnlineServiceHelpers\AuthenticateDialog.cs" />
     <Compile Include="OnlineServiceHelpers\ServiceFunctions.cs" />
     <Compile Include="OnlineServiceHelpers\MSAAuthenticator.cs" />
