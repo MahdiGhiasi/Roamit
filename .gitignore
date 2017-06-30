@@ -305,3 +305,7 @@ $RECYCLE.BIN/
 /Droid.Config/Secrets.cs
 /QuickShare.Droid/google-services.json
 /Common/Secrets.cs
+QuickShare/_scale-100.appx
+QuickShare/_scale-125.appx
+QuickShare/_scale-150.appx
+QuickShare/_scale-400.appx
