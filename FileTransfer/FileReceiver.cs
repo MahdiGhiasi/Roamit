@@ -81,6 +81,7 @@ namespace QuickShare.FileTransfer
                 filesCount = 1;
                 requestGuid = Guid.Parse(request["Guid"] as string);
                 senderName = (string)request["SenderName"];
+                isQueue = false;
 
                 DataStorageProviders.HistoryManager.Open();
                 DataStorageProviders.HistoryManager.Add(requestGuid,
