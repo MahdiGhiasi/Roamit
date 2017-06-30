@@ -149,15 +149,21 @@ namespace QuickShare.DevicesListManager
         {
             if (!selectCounts.ContainsKey(rs.Id))
                 return 0;
-
+            
             uint maximum = selectCounts.Values.Max();
-
+            double selectScore;
             if (maximum < 10)
-                return selectCounts[rs.Id];
+                selectScore = selectCounts[rs.Id];
             else if (maximum < 20)
-                return Math.Ceiling(((double)selectCounts[rs.Id]) / 3.0);
+                selectScore = 3.0 * Math.Ceiling(((double)selectCounts[rs.Id]) / 3.0);
             else
-                return Math.Ceiling(((double)selectCounts[rs.Id]) / 5.0);
+                selectScore = 5.0 * Math.Ceiling(((double)selectCounts[rs.Id]) / 5.0);
+
+            double proximityCoeff = 1.0;
+            if (rs.IsAvailableByProximity)
+                proximityCoeff = 1.1;
+
+            return proximityCoeff * selectScore;
         }
 
         public List<NormalizedRemoteSystem> GetSortedList(NormalizedRemoteSystem selected)
@@ -177,7 +183,7 @@ namespace QuickShare.DevicesListManager
             lock (RemoteSystems)
             {
                 RemoteSystems.Clear();
-                foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown").OrderBy(x => x.DisplayName).OrderByDescending(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
+                foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown").OrderBy(x => x.DisplayName).OrderByDescending(x => CalculateScore(x)))
                 {
                     if (item.Id != SelectedRemoteSystem?.Id)
                         RemoteSystems.Add(item);
