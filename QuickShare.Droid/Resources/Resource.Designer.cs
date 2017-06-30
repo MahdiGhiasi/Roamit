@@ -2068,8 +2068,8 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0c0091
 			public const int media_actions = 2131493009;
 			
-			// aapt resource value: 0x7f0c00a6
-			public const int menu_settings = 2131493030;
+			// aapt resource value: 0x7f0c00a9
+			public const int menu_settings = 2131493033;
 			
 			// aapt resource value: 0x7f0c001e
 			public const int middle = 2131492894;
@@ -2184,6 +2184,15 @@ namespace QuickShare.Droid
 			
 			// aapt resource value: 0x7f0c00a5
 			public const int sendStatus = 2131493029;
+			
+			// aapt resource value: 0x7f0c00a8
+			public const int settings_btn_upgrade = 2131493032;
+			
+			// aapt resource value: 0x7f0c00a7
+			public const int settings_txt_trialStatus = 2131493031;
+			
+			// aapt resource value: 0x7f0c00a6
+			public const int settings_txt_version = 2131493030;
 			
 			// aapt resource value: 0x7f0c0046
 			public const int shortcut = 2131492934;
@@ -2503,13 +2512,19 @@ namespace QuickShare.Droid
 			public const int SendPage = 2130968634;
 			
 			// aapt resource value: 0x7f04003b
-			public const int support_simple_spinner_dropdown_item = 2130968635;
+			public const int Settings = 2130968635;
 			
 			// aapt resource value: 0x7f04003c
-			public const int toolbar = 2130968636;
+			public const int support_simple_spinner_dropdown_item = 2130968636;
 			
 			// aapt resource value: 0x7f04003d
-			public const int TrialNotice = 2130968637;
+			public const int toolbar = 2130968637;
+			
+			// aapt resource value: 0x7f04003e
+			public const int TrialNotice = 2130968638;
+			
+			// aapt resource value: 0x7f04003f
+			public const int Upgrade = 2130968639;
 			
 			static Layout()
 			{

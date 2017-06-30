@@ -16,7 +16,7 @@
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
+    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v7.1</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <NuGetPackageImportStamp>
@@ -194,6 +194,7 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="SendPageActivity.cs" />
     <Compile Include="Services\MessageCarrierService.cs" />
+    <Compile Include="SettingsActivity.cs" />
     <Compile Include="TrialHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +232,12 @@
     </AndroidResource>
     <AndroidResource Include="Resources\layout\toolbar.axml" />
     <AndroidResource Include="Resources\layout\TrialNotice.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Settings.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Upgrade.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

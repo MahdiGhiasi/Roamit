@@ -23,6 +23,10 @@ namespace QuickShare.Droid
             {
                 SetContentView(Resource.Layout.TrialNotice);                
             }
+            else if (Intent.GetStringExtra("message") == "upgrade")
+            {
+                SetContentView(Resource.Layout.Upgrade);
+            }
             else
             {
                 Finish();

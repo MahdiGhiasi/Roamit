@@ -220,7 +220,7 @@ namespace QuickShare.Droid
 
         private void OnCreate_Main()
         {
-            showToolbarMenu = false;// true;
+            showToolbarMenu = true;
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             //Toolbar will now take on default actionbar characteristics
@@ -334,6 +334,19 @@ namespace QuickShare.Droid
             }
 
             return base.OnCreateOptionsMenu(menu);
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Resource.Id.menu_settings:
+                    var intent = new Intent(this, typeof(SettingsActivity));
+                    StartActivity(intent);
+                    return true;
+                default:
+                    return base.OnOptionsItemSelected(item);
+            }
         }
 
         //private void SendMessageCarrier_Click(object sender, EventArgs e)
@@ -458,6 +471,7 @@ namespace QuickShare.Droid
         private async void InitDiscovery()
         {
             Platform.FetchAuthCode += Platform_FetchAuthCode;
+
             await Common.PackageManager.InitializeDiscovery();
             await Common.MessageCarrierPackageManager.InitializeDiscovery();
         }

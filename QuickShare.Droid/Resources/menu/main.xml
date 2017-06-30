@@ -5,7 +5,7 @@
        android:id="@+id/menu_settings"
        local:showAsAction="never"
        android:icon="@drawable/ic_settings_white"
-       android:title="Settings" />
+       android:title="About" />
   <!--local:showAsAction="ifRoom"-->
   <!--<item
      android:id="@+id/menu_rate"
