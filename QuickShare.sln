@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.0
+VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickShare", "QuickShare\QuickShare.csproj", "{BD131DE6-8474-47F4-97CF-4F4C68A2E1C9}"
 EndProject
@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTransfer", "FileTransfe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextTransfer", "TextTransfer\TextTransfer.csproj", "{7B9A3000-AAA1-4EBC-8AEE-68B24E1C1543}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStore", "DataStore\DataStore.csproj", "{B368A0AE-3CD8-41E4-932D-64BB1E1E1557}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStore", "DataStore\DataStore.csproj", "{B368A0AE-3CD8-41E4-932D-64BB1E1E1557}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{91103E35-542F-457A-8248-CFCD92016755}"
 EndProject
@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UWP", "UWP", "{B76E8F7C-DE0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D4E76C59-D206-48EB-B734-203291B3204C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevicesListManager", "DevicesListManager\DevicesListManager.csproj", "{3085EF40-87C7-4B3B-929C-50E6A15FC42B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevicesListManager", "DevicesListManager\DevicesListManager.csproj", "{3085EF40-87C7-4B3B-929C-50E6A15FC42B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Droid.RomeComponent", "Droid.RomeComponent\Droid.RomeComponent.csproj", "{2894CF75-2EA2-4B83-9238-06525EEE443D}"
 EndProject
@@ -35,11 +35,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binding_Filepicker", "Binding_Filepicker\Binding_Filepicker.csproj", "{D1EF6F83-0FF5-49C9-9B93-D206522A68FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicrosoftGraphFunctions", "MicrosoftGraphFunctions\MicrosoftGraphFunctions.csproj", "{A636D1D4-EAF4-434C-A443-C7580F51A97F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftGraphFunctions", "MicrosoftGraphFunctions\MicrosoftGraphFunctions.csproj", "{A636D1D4-EAF4-434C-A443-C7580F51A97F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Droid.Config", "Droid.Config\Droid.Config.csproj", "{444AD5BF-95FC-46F3-98BC-0268518CA569}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Droid.Config", "Droid.Config\Droid.Config.csproj", "{444AD5BF-95FC-46F3-98BC-0268518CA569}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickShare.Droid", "QuickShare.Droid\QuickShare.Droid.csproj", "{CB23DC33-E319-402F-BBF0-3FAB110DDA3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Net.Http.HttpListener", "System.Net.Http.HttpListener\System.Net.Http.HttpListener.csproj", "{6F14E10A-6869-44D9-88CD-12E50BD92D9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -305,6 +307,22 @@ Global
 		{CB23DC33-E319-402F-BBF0-3FAB110DDA3D}.Release|x86.ActiveCfg = Release|Any CPU
 		{CB23DC33-E319-402F-BBF0-3FAB110DDA3D}.Release|x86.Build.0 = Release|Any CPU
 		{CB23DC33-E319-402F-BBF0-3FAB110DDA3D}.Release|x86.Deploy.0 = Release|Any CPU
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Debug|ARM.ActiveCfg = Debug|ARM
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Debug|ARM.Build.0 = Debug|ARM
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Debug|x64.ActiveCfg = Debug|x64
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Debug|x64.Build.0 = Debug|x64
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Debug|x86.ActiveCfg = Debug|x86
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Debug|x86.Build.0 = Debug|x86
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Release|ARM.ActiveCfg = Release|ARM
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Release|ARM.Build.0 = Release|ARM
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Release|x64.ActiveCfg = Release|x64
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Release|x64.Build.0 = Release|x64
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Release|x86.ActiveCfg = Release|x86
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -326,5 +344,6 @@ Global
 		{A636D1D4-EAF4-434C-A443-C7580F51A97F} = {D4E76C59-D206-48EB-B734-203291B3204C}
 		{444AD5BF-95FC-46F3-98BC-0268518CA569} = {91103E35-542F-457A-8248-CFCD92016755}
 		{CB23DC33-E319-402F-BBF0-3FAB110DDA3D} = {91103E35-542F-457A-8248-CFCD92016755}
+		{6F14E10A-6869-44D9-88CD-12E50BD92D9C} = {B76E8F7C-DE09-4249-92FD-42F3DC363EE7}
 	EndGlobalSection
 EndGlobal

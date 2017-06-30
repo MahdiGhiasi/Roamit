@@ -75,23 +75,23 @@ namespace QuickShare.UWP
 
         private async void Listener_Request(object sender, HttpListenerRequestEventArgs e)
         {
-            if (Urls.ContainsKey(e.Request.Url.AbsolutePath))
+            if (Urls.ContainsKey(e.Request.RequestUri.AbsolutePath))
             {
                 RequestDetails rd = new RequestDetails
                 {
                     Headers = new Dictionary<string, string>(e.Request.Headers.Select(x => new KeyValuePair<string, string>(x.Key, x.Value.ToString())).ToDictionary(x => x.Key, x => x.Value)),
-                    Host = e.Request.Host,
-                    HttpMethod = e.Request.HttpMethod,
+                    Host = e.Request.RequestUri.Host,
+                    HttpMethod = e.Request.Method,
                     InputStream = e.Request.InputStream,
-                    ProtocolVersion = e.Request.ProtocolVersion,
+                    ProtocolVersion = e.Request.Version,
                     RemoteEndpointAddress = e.Request.RemoteEndpoint.Address.ToString(),
-                    Url = e.Request.Url,
+                    Url = e.Request.RequestUri,
                 };
 
-                var value = Urls[e.Request.Url.AbsolutePath];
+                var value = Urls[e.Request.RequestUri.AbsolutePath];
                 if (value is string)
                 {
-                    await e.Response.WriteAsync(value as string);
+                    await e.Response.WriteContentAsync(value as string);
                 }
                 else if (value is byte[])
                 {
@@ -101,7 +101,7 @@ namespace QuickShare.UWP
                 else if (value is Func<IWebServer, RequestDetails, string>)
                 {
                     var output = ((Func<IWebServer, RequestDetails, string>)value).Invoke(this, rd);
-                    await e.Response.WriteAsync(output);
+                    await e.Response.WriteContentAsync(output);
                 }
                 else if (value is Func<IWebServer, RequestDetails, byte[]>)
                 {
@@ -111,7 +111,7 @@ namespace QuickShare.UWP
                 else if (value is Func<IWebServer, RequestDetails, Task<string>>)
                 {
                     var output = await ((Func<IWebServer, RequestDetails, Task<string>>)value).Invoke(this, rd);
-                    await e.Response.WriteAsync(output);
+                    await e.Response.WriteContentAsync(output);
                 }
                 else if (value is Func<IWebServer, RequestDetails, Task<byte[]>>)
                 {
@@ -120,12 +120,12 @@ namespace QuickShare.UWP
                 }
                 else
                 {
-                    await e.Response.WriteAsync("<html><body>Invalid url handler.</body></html>");
+                    await e.Response.WriteContentAsync("<html><body>Invalid url handler.</body></html>");
                 }
             }
             else
             {
-                await e.Response.WriteAsync("<html><body>Invalid Request.</body></html>");
+                await e.Response.WriteContentAsync("<html><body>Invalid Request.</body></html>");
             }
 
             e.Response.Close();
