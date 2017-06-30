@@ -16,7 +16,7 @@ namespace QuickShare.FileTransfer
 {
     public class FileSender : IDisposable
     {
-        readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(100);
+        readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(10);
 
         object remoteSystem;
 
