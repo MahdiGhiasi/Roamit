@@ -32,6 +32,8 @@ namespace QuickShare.FileTransfer
 
             servers = StartListeners(myIPs, key);
 
+            System.Diagnostics.Debug.WriteLine("Waiting...");
+
             Dictionary<string, object> vs = new Dictionary<string, object>();
             vs.Add("Receiver", "ServerIPFinder");
             vs.Add("IPs", JsonConvert.SerializeObject(myIPs));
@@ -108,6 +110,8 @@ namespace QuickShare.FileTransfer
                 ws.StartWebServer(item, Constants.CommunicationPort);
 
                 ws.AddResponseUrl("/" + communicationKey + "/", (Func<IWebServer, RequestDetails, string>)WebServerFetched);
+
+                System.Diagnostics.Debug.WriteLine($"Started listener at {item}:{Constants.CommunicationPort}. url is /{communicationKey}/");
 
                 servers.Add(new KeyValuePair<string, IWebServer>(item, ws));
             }
