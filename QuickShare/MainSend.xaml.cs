@@ -142,7 +142,18 @@ namespace QuickShare
                             HideEverything();
 
                             succeed = false;
-                            await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
+                            string errorMessage;
+
+                            if ((result == RomeAppServiceConnectionStatus.RemoteSystemUnavailable) && (packageManager is AndroidRomePackageManager))
+                            {
+                                errorMessage = "Can't connect to device. Open Roamit on your Android device and then try again.";
+                            }
+                            else
+                            {
+                                errorMessage = result.ToString();
+                            }
+
+                            await (new MessageDialog(errorMessage, "Can't connect")).ShowAsync();
                             Frame.GoBack();
                             return;
                         }
@@ -163,7 +174,18 @@ namespace QuickShare
                         HideEverything();
 
                         succeed = false;
-                        await (new MessageDialog("Connection problem : " + result.ToString())).ShowAsync();
+                        string errorMessage;
+
+                        if ((result == RomeAppServiceConnectionStatus.RemoteSystemUnavailable) && (packageManager is AndroidRomePackageManager))
+                        {
+                            errorMessage = "Can't connect to device. Open Roamit on your Android device and then try again.";
+                        }
+                        else
+                        {
+                            errorMessage = result.ToString();
+                        }
+
+                        await (new MessageDialog(errorMessage, "Can't connect")).ShowAsync();
                         Frame.GoBack();
                         return;
                     }
