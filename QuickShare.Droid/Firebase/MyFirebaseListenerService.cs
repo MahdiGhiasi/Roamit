@@ -6,6 +6,7 @@ using Android.Media;
 using Android.Support.V4.App;
 using QuickShare.Droid.Services;
 using QuickShare.TextTransfer;
+using Android.Util;
 
 namespace QuickShare.Droid.Firebase
 {
@@ -13,6 +14,8 @@ namespace QuickShare.Droid.Firebase
     [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class MyFirebaseListenerService : FirebaseMessagingService
     {
+        readonly string TAG = "MyFirebaseListenerService";
+
         public override void OnMessageReceived(RemoteMessage message)
         {
             base.OnMessageReceived(message);
@@ -47,12 +50,20 @@ namespace QuickShare.Droid.Firebase
                 }
                 else if ((message.Data["Action"] == "LaunchUrl") && (message.Data.ContainsKey("Url")))
                 {
-                    string url = message.Data["Url"];
+                    try
+                    {
+                        string url = message.Data["Url"];
 
-                    Intent i = new Intent(Intent.ActionView);
-                    i.SetData(Android.Net.Uri.Parse(url));
-                    i.SetFlags(ActivityFlags.NewTask);
-                    StartActivity(i);
+                        Intent i = new Intent(Intent.ActionView);
+                        i.SetData(Android.Net.Uri.Parse(url));
+                        i.SetFlags(ActivityFlags.NewTask);
+                        StartActivity(i);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(TAG, ex.Message);
+                        MessageCarrierService.ShowToast(this, "Couldn't launch URL.", Android.Widget.ToastLength.Long);
+                    }
                 }
                 else if ((message.Data["Action"] == "FastClipboard") && (message.Data.ContainsKey("SenderName")) && (message.Data.ContainsKey("Text")))
                 {
