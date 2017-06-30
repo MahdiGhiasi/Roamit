@@ -16,6 +16,8 @@ namespace QuickShare.FileTransfer
 {
     public class FileSender : IDisposable
     {
+        readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(100);
+
         object remoteSystem;
 
         ServerIPFinder ipFinder;
@@ -69,7 +71,7 @@ namespace QuickShare.FileTransfer
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
             {
-                await Handshake().WithTimeout(TimeSpan.FromSeconds(10));
+                await Handshake().WithTimeout(handshakeTimeout);
 
                 if (ipFinderResult == null)
                     ipFinderResult = new IPDetectionCompletedEventArgs
@@ -168,7 +170,7 @@ namespace QuickShare.FileTransfer
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
             {
-                await Handshake().WithTimeout(TimeSpan.FromSeconds(10));
+                await Handshake().WithTimeout(handshakeTimeout);
 
                 if (ipFinderResult == null)
                     ipFinderResult = new IPDetectionCompletedEventArgs
