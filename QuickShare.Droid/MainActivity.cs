@@ -65,6 +65,8 @@ namespace QuickShare.Droid
             mainActions = FindViewById<RelativeLayout>(Resource.Id.main_actions);
             mainShare = FindViewById<RelativeLayout>(Resource.Id.main_share);
 
+            RefreshUserTrialStatus();
+
             if ((Intent.Action == Intent.ActionSend) || (Intent.Action == Intent.ActionSendMultiple))
             {
                 OnCreate_Share();
@@ -91,6 +93,15 @@ namespace QuickShare.Droid
             Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
             InitDiscovery();
+        }
+
+        private async void RefreshUserTrialStatus()
+        {
+            if (MSAAuthenticator.HasUserUniqueId())
+            {
+                var userId = await MSAAuthenticator.GetUserUniqueIdAsync();
+                await TrialHelper.RefreshUserTrialStatusAsync(userId);
+            }
         }
 
         private void SetButtonsEnableStatus(bool enabled)
@@ -253,6 +264,7 @@ namespace QuickShare.Droid
                 FirebaseInstanceId.Instance.DeleteInstanceId();
 #endif
                 await ServiceFunctions.RegisterDevice();
+                RefreshUserTrialStatus();
             });
         }
 

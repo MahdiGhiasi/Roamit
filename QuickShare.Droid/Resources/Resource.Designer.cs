@@ -2508,6 +2508,9 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f04003c
 			public const int toolbar = 2130968636;
 			
+			// aapt resource value: 0x7f04003d
+			public const int TrialNotice = 2130968637;
+			
 			static Layout()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
