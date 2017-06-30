@@ -135,6 +135,14 @@ namespace QuickShare.DevicesListManager
 
             SelectedRemoteSystem = rs;
             Sort();
+
+            System.Diagnostics.Debug.WriteLine("Scores are:");
+            foreach (var item in RemoteSystems)
+            {
+                System.Diagnostics.Debug.WriteLine(item.DisplayName + " : " + CalculateScore(item));
+            }
+            System.Diagnostics.Debug.WriteLine("");
+            System.Diagnostics.Debug.WriteLine("");
         }
 
         private double CalculateScore(NormalizedRemoteSystem rs)
@@ -169,7 +177,7 @@ namespace QuickShare.DevicesListManager
             lock (RemoteSystems)
             {
                 RemoteSystems.Clear();
-                foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown").OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
+                foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown").OrderBy(x => x.DisplayName).OrderByDescending(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
                 {
                     if (item.Id != SelectedRemoteSystem?.Id)
                         RemoteSystems.Add(item);
