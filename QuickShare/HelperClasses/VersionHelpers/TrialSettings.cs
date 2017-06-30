@@ -30,7 +30,7 @@ namespace QuickShare.HelperClasses.VersionHelpers
             }
         }
 
-        public delegate void ReceiveFileProgressEventHandler();
-        public static event ReceiveFileProgressEventHandler IsTrialChanged;
+        public delegate void IsTrialChangedEventHandler();
+        public static event IsTrialChangedEventHandler IsTrialChanged;
     }
 }
