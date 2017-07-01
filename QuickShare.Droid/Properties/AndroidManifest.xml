@@ -15,19 +15,16 @@
 		<activity android:name="com.ghiasi.quickshare.sendpage" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
 		<activity android:name="com.ghiasi.quickshare.mainpage" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
 			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<data android:mimeType="*/*" />   
       </intent-filter>
 			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<data android:mimeType="text/plain" />
 			</intent-filter>
 			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.SEND_MULTIPLE" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<data android:mimeType="*/*" />

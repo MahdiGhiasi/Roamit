@@ -50,47 +50,12 @@ namespace QuickShare.Droid
                 openFile.SetDataAndType(file, mimeType);
                 openFile.AddFlags(ActivityFlags.GrantReadUriPermission);
 
-                if (mimeType == "*/*")
-                {
-                    StartActivity(openFile);
-                }
-                else
-                {
-                    //Hide Roamit from the open with list
-                    var activities = PackageManager.QueryIntentActivities(openFile, 0);
-                    string packageNameToHide = "com.ghiasi.roamit";
-                    var targetIntents = new List<Intent>();
-                    foreach (var currentInfo in activities)
-                    {
-                        string packageName = currentInfo.ActivityInfo.PackageName;
-                        if (packageName.ToLower() != packageNameToHide)
-                        {
-                            Intent targetIntent = new Intent(Android.Content.Intent.ActionView);
-                            targetIntent.SetDataAndType(file, mimeType);
-                            targetIntent.SetPackage(packageName);
-                            targetIntents.Add(targetIntent);
-                        }
-                    }
-
-                    if (targetIntents.Count > 0)
-                    {
-                        var intent0 = targetIntents[0];
-                        targetIntents.RemoveAt(0);
-
-                        Intent chooserIntent = Intent.CreateChooser(intent0, "Open file with");
-                        chooserIntent.PutExtra(Intent.ExtraInitialIntents, targetIntents.Select(x => (IParcelable)x).ToArray());
-                        StartActivity(chooserIntent);
-                    }
-                    else
-                    {
-                        MessageCarrierService.ShowToast(this, "No app found to open this type of file.", ToastLength.Long);
-                    }
-                }
+                StartActivity(openFile);
             }
-            catch (ActivityNotFoundException e)
+            catch (Exception ex)
             {
                 MessageCarrierService.ShowToast(this, "Cannot open file.", ToastLength.Long);
-                Log.Debug(TAG, "Cannot open file.");
+                Log.Debug(TAG, "Cannot open file: " + ex.ToString());
             }
         }
 
