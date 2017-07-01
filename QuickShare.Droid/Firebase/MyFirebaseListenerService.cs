@@ -16,7 +16,7 @@ namespace QuickShare.Droid.Firebase
     {
         readonly string TAG = "MyFirebaseListenerService";
 
-        public override void OnMessageReceived(RemoteMessage message)
+        public override async void OnMessageReceived(RemoteMessage message)
         {
             base.OnMessageReceived(message);
 
@@ -70,7 +70,7 @@ namespace QuickShare.Droid.Firebase
                     string senderName = message.Data["SenderName"];
                     string text = message.Data["Text"];
 
-                    Guid guid = TextReceiver.QuickTextReceived(senderName, text);
+                    Guid guid = await TextReceiver.QuickTextReceivedAsync(senderName, text);
 
                     MessageCarrierService.CopyTextToClipboard(this, guid);
                 }
