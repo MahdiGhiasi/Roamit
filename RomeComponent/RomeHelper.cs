@@ -49,7 +49,7 @@ namespace QuickShare.UWP.Rome
                 _remoteSystemWatcher.RemoteSystemUpdated += RemoteSystemWatcher_RemoteSystemUpdated;
                 _remoteSystemWatcher.Start();
 
-                if (timer != null)
+                if (timer == null)
                     timer = new Timer(Timer_Tick, null, (int)delayBeforeTimerBegin.TotalMilliseconds, (int)refreshInterval.TotalMilliseconds);
             }
         }
