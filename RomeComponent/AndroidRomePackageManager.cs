@@ -29,6 +29,8 @@ namespace QuickShare.UWP.Rome
             }
         }
 
+        public bool HasWaitingMessageCarrier { get; private set; }
+
         readonly int _maxRetryCount = 3;
         readonly double _maxSecondsForCarrier = 5.0;
         readonly int _maxWaitTime = 180;
@@ -49,6 +51,8 @@ namespace QuickShare.UWP.Rome
             Guid guid = Guid.NewGuid();
             latestCarrierCode = guid;
             int counter = 0;
+
+            HasWaitingMessageCarrier = true;
 
             while (true)
             {
@@ -82,6 +86,8 @@ namespace QuickShare.UWP.Rome
                 queueItem.SetSendResult((RomeAppServiceResponseStatus)result);
                 sendQueue.Remove(queueItem);
                 sendQueueSemaphore.Release();
+
+                HasWaitingMessageCarrier = false;
 
                 break;
             }

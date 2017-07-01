@@ -108,7 +108,7 @@ namespace QuickShare.DevicesListManager
         }
 
         Object dbLock = new Object();
-        private void Select(object o, bool updateHistory)
+        private async void Select(object o, bool updateHistory)
         {
             if (!(o is NormalizedRemoteSystem))
             {
@@ -125,9 +125,9 @@ namespace QuickShare.DevicesListManager
                 else
                     selectCounts[rs.Id] = _initialCountValue;
 
+                await DataStorageProviders.SettingsManager.OpenAsync();
                 lock (dbLock)
                 {
-                    DataStorageProviders.SettingsManager.OpenAsync();
                     DataStorageProviders.SettingsManager.Add("selectCounts", JsonConvert.SerializeObject(selectCounts));
                     DataStorageProviders.SettingsManager.Close();
                 }

@@ -102,7 +102,7 @@ namespace QuickShare.ServiceTask
                 }
                 else if (receiver == "TextReceiver")
                 {
-                    TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
+                    await TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
                 }
                 else if (receiver == "System")
                 {

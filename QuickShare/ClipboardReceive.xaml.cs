@@ -46,7 +46,7 @@ namespace QuickShare
             if (!(item.Data is ReceivedText))
                 throw new Exception("Invalid received item type.");
 
-            DataStorageProviders.TextReceiveContentManager.OpenAsync();
+            await DataStorageProviders.TextReceiveContentManager.OpenAsync();
             viewModel["ClipboardContent"] = DataStorageProviders.TextReceiveContentManager.GetItemContent(guid);
             DataStorageProviders.TextReceiveContentManager.Close();
 

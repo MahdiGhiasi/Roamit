@@ -215,7 +215,7 @@ namespace QuickShare
                 if (clipboardData.Length > 0)
                 {
                     string[] parts = clipboardData.Split('?');
-                    var guid = TextReceiver.QuickTextReceived(parts[0].DecodeBase64(), parts[1].DecodeBase64());
+                    var guid = await TextReceiver.QuickTextReceivedAsync(parts[0].DecodeBase64(), parts[1].DecodeBase64());
 
                     LaunchRootFrameIfNecessary(ref rootFrame, false);
                     rootFrame.Navigate(typeof(ClipboardReceive), guid.ToString());
@@ -302,7 +302,7 @@ namespace QuickShare
                 appServiceConnection.RequestReceived += OnAppServiceRequestReceived;
                 appServiceConnection.ServiceClosed += AppServiceConnection_ServiceClosed;
             }
-            else if (appService?.Name == "com.roamit.messagecarrierservice")
+            else if (appService?.Name == "com.roamit.carrierinternal")
             {
                 messageCarrierAppServiceDeferral = taskInstance.GetDeferral();
                 taskInstance.Canceled += OnMessageCarrierAppServicesCanceled;
@@ -350,24 +350,25 @@ namespace QuickShare
 
         private void OnAppServicesCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
-            appServiceDeferral.Complete();
+            appServiceDeferral?.Complete();
         }
 
         private void AppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
-            appServiceDeferral.Complete();
+            appServiceDeferral?.Complete();
         }
 
         private void MessageCarrierAppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
-            messageCarrierAppServiceDeferral.Complete();
+            messageCarrierAppServiceDeferral?.Complete();
         }
 
         private void OnMessageCarrierAppServicesCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
-            messageCarrierAppServiceDeferral.Complete();
+            messageCarrierAppServiceDeferral?.Complete();
         }
 
+        DateTime lastCall = DateTime.MinValue;
         private async void OnMessageCarrierAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var deferral = args.GetDeferral();
@@ -383,7 +384,23 @@ namespace QuickShare
                 Debug.WriteLine(ex.ToString());
             }
 
+            lastCall = DateTime.Now;
+            CheckIfIsOver(lastCall);
+
             deferral.Complete();
+        }
+
+        private async void CheckIfIsOver(DateTime callTime)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(4));
+            if (lastCall != callTime)
+                return;
+
+            if (!MainPage.Current.AndroidPackageManager.HasWaitingMessageCarrier)
+            {
+                Debug.WriteLine("We're done here.");
+                messageCarrierAppServiceDeferral.Complete();
+            }
         }
 
         public static ShareOperation ShareOperation;

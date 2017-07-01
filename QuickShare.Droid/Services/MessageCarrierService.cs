@@ -328,7 +328,7 @@ namespace QuickShare.Droid.Services
             }
             else if (receiver == "TextReceiver")
             {
-                TextTransfer.TextReceiver.ReceiveRequest(message);
+                await TextTransfer.TextReceiver.ReceiveRequest(message);
             }
             else if (receiver == "System")
             {

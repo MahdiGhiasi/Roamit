@@ -74,7 +74,7 @@ namespace QuickShare.TextTransfer
             return true;
         }
 
-        public static async Task<Guid> QuickTextReceived(string sender, string text)
+        public static async Task<Guid> QuickTextReceivedAsync(string sender, string text)
         {
             Guid guid = Guid.NewGuid();
 

@@ -278,6 +278,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CarrierTask\CarrierTask.csproj">
+      <Project>{5b168f75-fbc4-4ccf-9e5f-35cf3b068b29}</Project>
+      <Name>CarrierTask</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{e9e7916c-d4fd-4b08-b904-3bcae5de1af0}</Project>
       <Name>Common</Name>
