@@ -101,17 +101,25 @@ namespace QuickShare
                 }
             }
 
-            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) //Desktop
+            //if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView")) //Desktop
+            //{
+            //    var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+            //    if (e.State == FileTransferState.Finished)
+            //    {
+            //        appView.Title = "";
+            //    }
+            //    else
+            //    {
+            //        appView.Title = "Receiving " + ((int)Math.Round((100.0 * e.CurrentPart) / (e.Total + 1))).ToString() + "%";
+            //    }
+            //}
+            if (e.State == FileTransferState.Finished)
             {
-                var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-                if (e.State == FileTransferState.Finished)
-                {
-                    appView.Title = "";
-                }
-                else
-                {
-                    appView.Title = "Receiving " + ((int)Math.Round((100.0 * e.CurrentPart) / (e.Total + 1))).ToString() + "%";
-                }
+                ViewModel.Caption = "";
+            }
+            else
+            {
+                ViewModel.Caption = "Receiving " + ((int)Math.Round((100.0 * e.CurrentPart) / (e.Total + 1))).ToString() + "%";
             }
         }
 

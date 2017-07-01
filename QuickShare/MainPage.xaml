@@ -106,7 +106,7 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" x:Name="TitleBarStackPanel" Height="32" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="{x:Bind ViewModel.CustomTopBarVisibility, Mode=OneWay}">
                 <Grid Width="40" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.BackButtonPlaceholderVisibility, Mode=OneWay}"  />
-                <TextBlock Text="{x:Bind ViewModel.Caption, Mode=OneWay}"  FontSize="12" Foreground="LightGray" x:Name="TitleBarCaption" />
+                <TextBlock Text="{x:Bind ViewModel.Caption, Mode=OneWay}"  FontSize="12" Foreground="LightGray" />
                 <TextBlock Text="Roamit" FontSize="12" Foreground="LightGray" />
             </StackPanel>
             <Grid Grid.Row="1" x:Name="AdFrame">

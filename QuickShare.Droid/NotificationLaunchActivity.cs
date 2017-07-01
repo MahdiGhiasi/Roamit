@@ -22,7 +22,7 @@ namespace QuickShare.Droid
     {
         readonly string TAG = "NotificationLaunchActivity";
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
@@ -30,7 +30,7 @@ namespace QuickShare.Droid
             {
                 var guid = Guid.Parse(Intent.GetStringExtra("guid"));
 
-                DataStorageProviders.HistoryManager.Open();
+                await DataStorageProviders.HistoryManager.OpenAsync();
                 var hr = DataStorageProviders.HistoryManager.GetItem(guid);
                 DataStorageProviders.HistoryManager.Close();
 

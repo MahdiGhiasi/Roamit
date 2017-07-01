@@ -83,7 +83,7 @@ namespace QuickShare.FileTransfer
                 senderName = (string)request["SenderName"];
                 isQueue = false;
 
-                DataStorageProviders.HistoryManager.Open();
+                await DataStorageProviders.HistoryManager.OpenAsync();
                 DataStorageProviders.HistoryManager.Add(requestGuid,
                     DateTime.Now,
                     senderName,
@@ -105,7 +105,7 @@ namespace QuickShare.FileTransfer
 
                 await DownloadFile(request, downloadFolder);
 
-                DataStorageProviders.HistoryManager.Open();
+                await DataStorageProviders.HistoryManager.OpenAsync();
                 DataStorageProviders.HistoryManager.ChangeCompletedStatus(requestGuid, true);
                 DataStorageProviders.HistoryManager.Close();
             }
@@ -128,7 +128,7 @@ namespace QuickShare.FileTransfer
                                StorePath = System.IO.Path.Combine(downloadFolder.Path, (string)x["Directory"]),
                            };
 
-            DataStorageProviders.HistoryManager.Open();
+            await DataStorageProviders.HistoryManager.OpenAsync();
             DataStorageProviders.HistoryManager.Add(requestGuid,
                 DateTime.Now,
                 senderName,
@@ -147,7 +147,7 @@ namespace QuickShare.FileTransfer
 
             FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = (ulong)queueTotalSlices, Total = (ulong)queueTotalSlices, State = FileTransferState.Finished, Guid = requestGuid, SenderName = senderName, TotalFiles = filesCount });
 
-            DataStorageProviders.HistoryManager.Open();
+            await DataStorageProviders.HistoryManager.OpenAsync();
             DataStorageProviders.HistoryManager.ChangeCompletedStatus(requestGuid, true);
             DataStorageProviders.HistoryManager.Close();
 
@@ -199,7 +199,7 @@ namespace QuickShare.FileTransfer
 
             if (file.Name != fileName) //File already existed, so new name generated for it. We should update database now.
             {
-                DataStorageProviders.HistoryManager.Open();
+                await DataStorageProviders.HistoryManager.OpenAsync();
                 DataStorageProviders.HistoryManager.UpdateFileName(requestGuid, fileName, file.Name, System.IO.Path.Combine(downloadFolder.Path, directory));
                 DataStorageProviders.HistoryManager.Close();
             }

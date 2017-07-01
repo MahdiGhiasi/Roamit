@@ -184,19 +184,19 @@ namespace QuickShare
 
                         break;
                     case "openFolder":
-                        hr = GetHistoryItemGuid(Guid.Parse(args["guid"]));
+                        hr = await GetHistoryItemGuid(Guid.Parse(args["guid"]));
                         await HelperClasses.LaunchOperations.LaunchFolderFromPathAsync((hr.Data as ReceivedFileCollection).StoreRootPath);
                         if (isJustLaunched)
                             Application.Current.Exit();
                         break;
                     case "openFolderSingleFile":
-                        hr = GetHistoryItemGuid(Guid.Parse(args["guid"]));
+                        hr = await GetHistoryItemGuid(Guid.Parse(args["guid"]));
                         await HelperClasses.LaunchOperations.LaunchFolderFromPathAndSelectSingleItemAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
                         if (isJustLaunched)
                             Application.Current.Exit();
                         break;
                     case "openSingleFile":
-                        hr = GetHistoryItemGuid(Guid.Parse(args["guid"]));
+                        hr = await GetHistoryItemGuid(Guid.Parse(args["guid"]));
                         await HelperClasses.LaunchOperations.LaunchFileFromPathAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
                         if (isJustLaunched)
                             Application.Current.Exit();
@@ -249,10 +249,10 @@ namespace QuickShare
             return (command == fastClipboardUri) ? s.Substring(fastClipboardUri.Length) : "";
         }
 
-        private HistoryRow GetHistoryItemGuid(Guid guid)
+        private async Task<HistoryRow> GetHistoryItemGuid(Guid guid)
         {
             HistoryRow hr;
-            DataStorageProviders.HistoryManager.Open();
+            await DataStorageProviders.HistoryManager.OpenAsync();
             hr = DataStorageProviders.HistoryManager.GetItem(guid);
             DataStorageProviders.HistoryManager.Close();
             return hr;

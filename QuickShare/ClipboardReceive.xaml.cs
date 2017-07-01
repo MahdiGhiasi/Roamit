@@ -35,18 +35,18 @@ namespace QuickShare
             get { return this.viewModel; }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             Guid guid = Guid.Parse(e.Parameter as string);
 
-            DataStorageProviders.HistoryManager.Open();
+            await DataStorageProviders.HistoryManager.OpenAsync();
             var item = DataStorageProviders.HistoryManager.GetItem(guid);
             DataStorageProviders.HistoryManager.Close();
 
             if (!(item.Data is ReceivedText))
                 throw new Exception("Invalid received item type.");
 
-            DataStorageProviders.TextReceiveContentManager.Open();
+            DataStorageProviders.TextReceiveContentManager.OpenAsync();
             viewModel["ClipboardContent"] = DataStorageProviders.TextReceiveContentManager.GetItemContent(guid);
             DataStorageProviders.TextReceiveContentManager.Close();
 

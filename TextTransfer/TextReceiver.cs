@@ -12,7 +12,7 @@ namespace QuickShare.TextTransfer
         public delegate void TextReceiveFinishedEventHandler(TextReceiveEventArgs e);
         public static event TextReceiveFinishedEventHandler TextReceiveFinished;
 
-        public static bool ReceiveRequest(Dictionary<string, object> data)
+        public static async Task<bool> ReceiveRequest(Dictionary<string, object> data)
         {
             var type = (ContentType)data["Type"];
             Guid guid;
@@ -33,7 +33,7 @@ namespace QuickShare.TextTransfer
                 var totalParts = (int)data["TotalParts"];
 
                 if (!DataStorageProviders.TextReceiveContentManager.IsOpened)
-                    DataStorageProviders.TextReceiveContentManager.Open();
+                    await DataStorageProviders.TextReceiveContentManager.OpenAsync();
 
                 if (partNumber == 0)
                     DataStorageProviders.TextReceiveContentManager.Add(guid, "");
@@ -54,7 +54,7 @@ namespace QuickShare.TextTransfer
 
                 if (partNumber == (totalParts - 1)) //Finished receiving data.
                 {
-                    DataStorageProviders.HistoryManager.Open();
+                    await DataStorageProviders.HistoryManager.OpenAsync();
                     DataStorageProviders.HistoryManager.Add(guid, 
                         DateTime.Now,
                         (string)data["SenderName"],
@@ -74,15 +74,15 @@ namespace QuickShare.TextTransfer
             return true;
         }
 
-        public static Guid QuickTextReceived(string sender, string text)
+        public static async Task<Guid> QuickTextReceived(string sender, string text)
         {
             Guid guid = Guid.NewGuid();
 
-            DataStorageProviders.TextReceiveContentManager.Open();
+            await DataStorageProviders.TextReceiveContentManager.OpenAsync();
             DataStorageProviders.TextReceiveContentManager.Add(guid, text);
             DataStorageProviders.TextReceiveContentManager.Close();
 
-            DataStorageProviders.HistoryManager.Open();
+            await DataStorageProviders.HistoryManager.OpenAsync();
             DataStorageProviders.HistoryManager.Add(guid,
                 DateTime.Now,
                 sender,

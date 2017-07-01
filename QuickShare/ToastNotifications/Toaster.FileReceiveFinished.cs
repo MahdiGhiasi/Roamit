@@ -13,12 +13,14 @@ namespace QuickShare.ToastNotifications
     {
         static string[] notDirectlyOpenableExtensions = { ".exe" };
 
-        public static void ShowFileReceiveFinishedNotification(int filesCount, string hostName, Guid guid)
+        public static async void ShowFileReceiveFinishedNotification(int filesCount, string hostName, Guid guid)
         {
             ClearNotification(guid); //Clear progress notification
 
-            DataStorageProviders.HistoryManager.Open();
-            var data = DataStorageProviders.HistoryManager.GetItem(guid);
+            HistoryRow data;
+
+            await DataStorageProviders.HistoryManager.OpenAsync();
+            data = DataStorageProviders.HistoryManager.GetItem(guid);
             DataStorageProviders.HistoryManager.Close();
 
             string toastXml;

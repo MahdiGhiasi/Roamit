@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using System;
+using System.Threading.Tasks;
 
 namespace QuickShare.DataStore
 {
@@ -24,18 +25,30 @@ namespace QuickShare.DataStore
             }
         }
 
-        public void Open()
+        public async Task OpenAsync()
+        {
+            System.Diagnostics.Debug.WriteLine($"{this.GetType().ToString()}.Open()");
+
+            while (IsOpened)
+                await Task.Delay(100);
+
+            OpenIfPossible();
+        }
+
+        public bool OpenIfPossible()
         {
             try
             {
                 db = new LiteDatabase($"Filename={dbPath};");
                 data = db.GetCollection<T>(collectionName);
+                return true;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to open {dbPath}");
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
                 System.Diagnostics.Debug.WriteLine("*****");
+                return false;
             }
         }
 

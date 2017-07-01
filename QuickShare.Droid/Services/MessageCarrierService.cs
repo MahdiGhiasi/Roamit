@@ -140,16 +140,16 @@ namespace QuickShare.Droid.Services
             CopyTextToClipboard(this, (Guid)e.Guid);
         }
 
-        internal static void CopyTextToClipboard(Context context, Guid guid)
+        internal static async void CopyTextToClipboard(Context context, Guid guid)
         {
-            DataStorageProviders.HistoryManager.Open();
+            await DataStorageProviders.HistoryManager.OpenAsync();
             var item = DataStorageProviders.HistoryManager.GetItem(guid);
             DataStorageProviders.HistoryManager.Close();
 
             if (!(item.Data is ReceivedText))
                 throw new Exception("Invalid received item type.");
 
-            DataStorageProviders.TextReceiveContentManager.Open();
+            await DataStorageProviders.TextReceiveContentManager.OpenAsync();
             string text = DataStorageProviders.TextReceiveContentManager.GetItemContent(guid);
             DataStorageProviders.TextReceiveContentManager.Close();
 
@@ -164,7 +164,7 @@ namespace QuickShare.Droid.Services
             ShowToast(context, "Text copied to clipboard.", ToastLength.Long);
         }
 
-        private void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
+        private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
         {
             lastActiveTime = DateTime.UtcNow;
 
@@ -184,7 +184,7 @@ namespace QuickShare.Droid.Services
                 }
                 else
                 {
-                    DataStorageProviders.HistoryManager.Open();
+                    await DataStorageProviders.HistoryManager.OpenAsync();
                     var hr = DataStorageProviders.HistoryManager.GetItem(e.Guid);
                     DataStorageProviders.HistoryManager.Close();
                     var rootPath = (hr.Data as ReceivedFileCollection).StoreRootPath;
