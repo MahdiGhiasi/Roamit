@@ -91,6 +91,8 @@ namespace QuickShare.Droid.Helpers
             if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenFinalNotifAndPrev)
                 await Task.Delay(DateTime.Now - lastProgressNotif);
 
+            notificationManager.Cancel(id);
+
             builder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
                 .SetPriority((int)NotificationPriority.Max)
                 .SetContentTitle(title)
@@ -101,7 +103,7 @@ namespace QuickShare.Droid.Helpers
                     .SetBigContentTitle(title)
                     .BigText(text));
             
-            notificationManager.Notify(id, builder.Build());
+            notificationManager.Notify(Notification.GetNewNotifId(), builder.Build());
         }
     }
 }
