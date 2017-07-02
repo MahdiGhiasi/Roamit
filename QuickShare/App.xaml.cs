@@ -55,13 +55,14 @@ namespace QuickShare
             UWP.Rome.RomePackageManager.Instance.Initialize("com.roamit.service");
             DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
 
+#if !DEBUG
             AnalyticsManager.Current.IsDebug = false; //use only for debugging, returns detailed info on hits sent to analytics servers
-            AnalyticsManager.Current.DispatchPeriod = TimeSpan.Zero; //immediate mode, sends hits immediately
+            AnalyticsManager.Current.DispatchPeriod = TimeSpan.FromSeconds(10); //immediate mode, sends hits immediately
             AnalyticsManager.Current.ReportUncaughtExceptions = true; //catch unhandled exceptions and send the details
             AnalyticsManager.Current.AutoAppLifetimeMonitoring = true; //handle suspend/resume and empty hit batched hits on suspend
 
-#if !DEBUG
             Tracker = AnalyticsManager.Current.CreateTracker(Common.Secrets.GoogleAnalyticsId);
+            Tracker.AppName = "Roamit-Windows10";
 #endif
         }
 
