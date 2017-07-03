@@ -521,6 +521,16 @@ namespace QuickShare.FileTransfer
 
         private async Task Handshake()
         {
+            if (myIPs.Count == 1)
+            {
+                Debug.WriteLine("Device has only one IP, so IPFinder will not be called.");
+                ipFinderResult = new IPDetectionCompletedEventArgs
+                {
+                    MyIP = myIPs[0],
+                    Success = true,
+                };
+            }
+
             ipFinder.IPDetectionCompleted += IpFinder_IPDetectionCompleted;
             ipFinderTcs = new TaskCompletionSource<bool>();
             await ipFinder.StartFindingMyLocalIP(myIPs);
