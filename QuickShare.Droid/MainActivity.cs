@@ -186,6 +186,8 @@ namespace QuickShare.Droid
             shareFileBtn.Click += ShareFileBtn_Click;
             shareUrlBtn.Click += ShareUrlBtn_Click;
             shareTextBtn.Click += ShareTextBtn_Click;
+
+            Analytics.TrackPage("ShareTarget");
         }
 
         private void ShareFileBtn_Click(object sender, EventArgs e)
@@ -266,6 +268,8 @@ namespace QuickShare.Droid
                 await ServiceFunctions.RegisterDevice();
                 RefreshUserTrialStatus();
             });
+
+            Analytics.TrackPage("MainPage");
         }
 
         private void ClipboardUpdateTimer_Tick(object state)

@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using QuickShare.Droid.Helpers;
 
 namespace QuickShare.Droid
 {
@@ -21,10 +22,12 @@ namespace QuickShare.Droid
             
             if (Intent.GetStringExtra("message") == "trialNotice")
             {
+                Analytics.TrackEvent("Send", "AskedToUpgrade", "Android");
                 SetContentView(Resource.Layout.TrialNotice);                
             }
             else if (Intent.GetStringExtra("message") == "upgrade")
             {
+                Analytics.TrackEvent("Send", "TryUpgrade", "Android");
                 SetContentView(Resource.Layout.Upgrade);
             }
             else

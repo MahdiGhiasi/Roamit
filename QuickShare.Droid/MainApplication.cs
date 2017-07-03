@@ -4,6 +4,7 @@ using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Plugin.CurrentActivity;
+using QuickShare.Droid.Helpers;
 
 namespace QuickShare.Droid
 {
@@ -26,6 +27,7 @@ namespace QuickShare.Droid
             //A great place to initialize Xamarin.Insights and Dependency Services!
 
             DataStore.DataStorageProviders.Init(PCLStorage.FileSystem.Current.LocalStorage.Path);
+            Analytics.Initialize();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }

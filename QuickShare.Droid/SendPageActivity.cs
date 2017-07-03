@@ -55,6 +55,8 @@ namespace QuickShare.Droid
             InitSpinner();
 
             ProcessRequest(contentType);
+
+            Analytics.TrackPage("Send");
         }
 
         private void InitSpinner()
@@ -70,6 +72,8 @@ namespace QuickShare.Droid
 
         private async void ProcessRequest(string contentType)
         {
+            bool isFromShareTarget = false;
+
             switch (contentType)
             {
                 case "Clipboard":
@@ -85,18 +89,27 @@ namespace QuickShare.Droid
                     await OpenUrl(ClipboardHelper.GetClipboardText(this));
                     break;
                 case "Share_File":
+                    isFromShareTarget = true;
                     await SendFiles(Common.ShareFiles);
                     break;
                 case "Share_Url":
+                    isFromShareTarget = true;
                     await OpenUrl(Common.ShareText);
                     break;
                 case "Share_Text":
+                    isFromShareTarget = true;
                     await SendText(Common.ShareText);
                     break;
                 case "Unknown":
                 default:
+                    Analytics.TrackException($"SendPageActivity: Unknown contentType '{contentType}'.", false);
                     break;
             }
+
+            if (isFromShareTarget)
+                Analytics.TrackEvent("Send", "ShareTarget");
+            else
+                Analytics.TrackEvent("Send", "WithinApp");
         }
 
         private string GetRealPathFromURI(Android.Net.Uri contentURI)
@@ -229,6 +242,7 @@ namespace QuickShare.Droid
 
             if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
             {
+                Analytics.TrackEvent("SendToWindows", "file", "Failed");
                 sendStatus.Text = $"Connect failed. ({result.ToString()})";
                 return;
             }
@@ -239,6 +253,7 @@ namespace QuickShare.Droid
 
             if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
             {
+                Analytics.TrackEvent("SendToWindows", "file", "Failed");
                 sendStatus.Text = $"Connect failed. ({result.ToString()})";
                 return;
             }
@@ -315,6 +330,8 @@ namespace QuickShare.Droid
 
             if (failed)
             {
+                Analytics.TrackEvent("SendToWindows", "file", "Failed");
+
                 sendStatus.Text = "Failed.";
                 System.Diagnostics.Debug.WriteLine("Send failed.\r\n\r\n" + message);
 
@@ -334,6 +351,7 @@ namespace QuickShare.Droid
             else
             {
                 sendStatus.Text = "Finished.";
+                Analytics.TrackEvent("SendToWindows", "file", "Success");
             }
         }
 
@@ -351,10 +369,12 @@ namespace QuickShare.Droid
             if (result == QuickShare.Common.Rome.RomeRemoteLaunchUriStatus.Success)
             {
                 sendStatus.Text = "Finished.";
+                Analytics.TrackEvent("SendToWindows", "launchUri", "Success");
             }
             else
             {
                 sendStatus.Text = result.ToString();
+                Analytics.TrackEvent("SendToWindows", "launchUri", "Failed");
             }
         }
 
@@ -370,6 +390,7 @@ namespace QuickShare.Droid
                 if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
                 {
                     sendStatus.Text = $"Connect failed. ({result.ToString()})";
+                    Analytics.TrackEvent("SendToWindows", "text", "Failed");
                     return;
                 }
 
@@ -380,6 +401,7 @@ namespace QuickShare.Droid
                 if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
                 {
                     sendStatus.Text = $"Connect failed. ({result.ToString()})";
+                    Analytics.TrackEvent("SendToWindows", "text", "Failed");
                     return;
                 }
 
@@ -400,12 +422,14 @@ namespace QuickShare.Droid
                 {
                     sendStatus.Text = "Send failed.";
                     sendProgress.Progress = sendProgress.Max;
+                    Analytics.TrackEvent("SendToWindows", "text", "Failed");
                     return;
                 }
             }
             
             sendStatus.Text = "Finished.";
             SetProgressBarValueToMax();
+            Analytics.TrackEvent("SendToWindows", "text", "Success");
         }
 
         private void SetProgressBarValue(int val, int max)

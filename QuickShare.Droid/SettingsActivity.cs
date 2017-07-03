@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Support.V7.App;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using QuickShare.Droid.Helpers;
 
 namespace QuickShare.Droid
 {
@@ -48,6 +49,8 @@ namespace QuickShare.Droid
             }
 
             btnUpgrade.Click += BtnUpgrade_Click;
+
+            Analytics.TrackPage("Settings");
         }
 
         private void BtnUpgrade_Click(object sender, EventArgs e)
