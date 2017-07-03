@@ -6,8 +6,66 @@
         xmlns:local="clr-namespace:QuickShare.Desktop"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="400" Width="300" ShowInTaskbar="False" ResizeMode="NoResize" WindowStyle="None">
+
+    <Window.Resources>
+        <Style x:Key="Link" TargetType="Button">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="Blue"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock TextDecorations="Underline" 
+                    Text="{TemplateBinding Content}"
+                    Background="{TemplateBinding Background}"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Foreground" Value="Red"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
-        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition />
+                <RowDefinition Height="28" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Background="#ccc">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="40" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Roamit" FontFamily="Segoe UI" Margin="8" FontSize="18" FontWeight="Bold" />
+                <Button Content="X" Grid.Column="1" BorderThickness="0" Background="Transparent" Click="ExitButton_Click" />
+            </Grid>
+            <Grid Grid.Row="1">
+                <TextBlock x:Name="NoClipboardActivity"
+                           Text="No clipboard activity yet."
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Opacity="0.5"/>
+                <ListView Padding="4,4,4,0"
+                          Visibility="Collapsed">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBlock Text="" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+            <Grid Grid.Row="2" Background="#eee">
+                <Button Content="Open app" Style="{StaticResource Link}" Click="OpenApp_Click" />
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,11 +27,25 @@ namespace QuickShare.Desktop
         public MainWindow()
         {
             InitializeComponent();
+
+            var desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
+            this.Left = desktopWorkingArea.Right - this.Width;
+            this.Top = desktopWorkingArea.Bottom - this.Height;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             
+        }
+
+        private void OpenApp_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("roamit://");
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
