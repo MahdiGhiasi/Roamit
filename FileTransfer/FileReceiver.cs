@@ -208,7 +208,11 @@ namespace QuickShare.FileTransfer
 
             Debug.WriteLine("Receive begin");
 
-            var slicesCount = (int)(long)message["SlicesCount"];
+            int slicesCount;
+            if (message["SlicesCount"] is Int64)
+                slicesCount = (int)(long)message["SlicesCount"];
+            else
+                slicesCount = (int)message["SlicesCount"];
             var fileName = (string)message["FileName"];
             var dateModifiedMilliseconds = (long)message["DateModified"];
             var dateCreatedMilliseconds = (long)message["DateCreated"];
