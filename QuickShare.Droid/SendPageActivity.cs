@@ -132,31 +132,45 @@ namespace QuickShare.Droid
 
         protected override async void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
-            if ((requestCode == PickImageId) && (resultCode == Result.Ok) && (data != null))
+            if (requestCode == PickImageId)
             {
-                InitSpinner();
-                sendStatus.Text = "Connecting...";
-
-                List<string> files = new List<string>();
-
-                ClipData clipData = data.ClipData;
-                if (clipData != null)
+                if ((resultCode == Result.Ok) && (data != null))
                 {
-                    for (int i = 0; i < clipData.ItemCount; i++)
+                    InitSpinner();
+                    sendStatus.Text = "Connecting...";
+
+                    List<string> files = new List<string>();
+
+                    ClipData clipData = data.ClipData;
+                    if (clipData != null)
                     {
-                        ClipData.Item item = clipData.GetItemAt(i);
-                        var uri = item.Uri;
-                        files.Add(FilePathHelper.GetPath(this, uri));
+                        for (int i = 0; i < clipData.ItemCount; i++)
+                        {
+                            ClipData.Item item = clipData.GetItemAt(i);
+                            var uri = item.Uri;
+                            files.Add(FilePathHelper.GetPath(this, uri));
+                        }
                     }
+                    else
+                    {
+                        Android.Net.Uri uri = data.Data;
+                        var file = FilePathHelper.GetPath(this, uri);
+                        files.Add(file);
+                    }
+
+                    if (files.Count == 0)
+                    {
+                        Finish();
+                        return;
+                    }
+
+                    await SendFiles(files.ToArray());
                 }
                 else
                 {
-                    Android.Net.Uri uri = data.Data;
-                    var file = FilePathHelper.GetPath(this, uri);
-                    files.Add(file);
+                    Finish();
+                    return;
                 }
-
-                await SendFiles(files.ToArray());
             }
         }
 
@@ -210,6 +224,12 @@ namespace QuickShare.Droid
             dialog.Show();
 
             string[] files = await filePickerTask.Task;
+
+            if (files.Length == 0)
+            {
+                Finish();
+                return;
+            }
 
             await SendFiles(files);
         }
