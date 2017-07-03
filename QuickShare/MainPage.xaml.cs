@@ -181,10 +181,10 @@ namespace QuickShare
             await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)27 : (uint)80);
 
             TrialSettings.IsTrialChanged += TrialSettings_IsTrialChanged;
-            CheckTrialStatus();
+            TrialHelper.CheckIfFullVersion();
         }
 
-        private void TrialSettings_IsTrialChanged()
+        private async void TrialSettings_IsTrialChanged()
         {
             if (TrialSettings.IsTrial)
             {
@@ -196,11 +196,6 @@ namespace QuickShare
                 AdBanner.Suspend();
                 ViewModel.UpgradeButtonVisibility = Visibility.Collapsed;
             }
-        }
-
-        internal async void CheckTrialStatus()
-        {
-            TrialHelper.CheckIfFullVersion();
 
             if (SecureKeyStorage.IsUserIdStored())
                 await Common.Service.UpgradeDetails.SetUpgradeStatus(SecureKeyStorage.GetUserId(), !TrialSettings.IsTrial);

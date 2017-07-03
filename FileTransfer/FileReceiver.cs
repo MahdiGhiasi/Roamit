@@ -1,4 +1,5 @@
-﻿using PCLStorage;
+﻿using Newtonsoft.Json;
+using PCLStorage;
 using QuickShare.Common;
 using QuickShare.DataStore;
 using System;
@@ -29,12 +30,15 @@ namespace QuickShare.FileTransfer
         static int filesCount = 0;
         static string queueParentDirectory = "";
 
+        static int latestReceivedQueueItemGroupId = -1;
+
         static Guid requestGuid;
         static string senderName = "remote device";
 
         public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, IFolder downloadFolder)
         {
             Dictionary<string, object> returnVal = null;
+
             if ((request.ContainsKey("Type")) && (request["Type"] as string == "QueueInit"))
             {
                 //Queue initialization
@@ -47,10 +51,12 @@ namespace QuickShare.FileTransfer
                 queueFinishUrl = "http://" + (request["ServerIP"] as string) + ":" + Constants.CommunicationPort + "/" + request["QueueFinishKey"] + "/finishQueue/";
                 filesCount = 0;
                 queueParentDirectory = (string)request["parentDirectoryName"];
+                latestReceivedQueueItemGroupId = -1;
 
-                returnVal = new Dictionary<string, object>();
-                returnVal.Add("QueueInitialized", "1");
-
+                returnVal = new Dictionary<string, object>
+                {
+                    { "QueueInitialized", "1" }
+                };
                 requestGuid = Guid.Parse(request["Guid"] as string);
                 senderName = (string)request["SenderName"];
 
@@ -59,21 +65,30 @@ namespace QuickShare.FileTransfer
 
                 InvokeProgressEvent(0, 0, FileTransferState.QueueList);
             }
+            else if ((request.ContainsKey("IsQueueItemGroup")) && (request["IsQueueItemGroup"] as string == "true"))
+            {
+                int partNum = int.Parse(request["PartNum"].ToString());
+                Debug.WriteLine($"Received QueueItemGroup #{partNum}.");
+                if (partNum > latestReceivedQueueItemGroupId)
+                {
+                    latestReceivedQueueItemGroupId = partNum;
+
+                    var items = JsonConvert.DeserializeObject<List<string>>(request["Data"].ToString());
+
+                    Debug.WriteLine($"It contains {items.Count} entries. Processing...");
+
+                    foreach (var item in items)
+                    {
+                        var info = JsonConvert.DeserializeObject<Dictionary<string, object>>(item);
+                        await ProcessQueueItem(info, downloadFolder);
+                    }
+
+                    Debug.WriteLine("Processed QueueItemGroup successfully.");
+                }
+            }
             else if ((request.ContainsKey("IsQueueItem")) && (request["IsQueueItem"] as string == "true"))
             {
-                //Queue data details
-                queuedSlicesYet += (int)request["SlicesCount"];
-                queueItems.Add(request);
-
-                filesCount++;
-
-                if (queuedSlicesYet == queueTotalSlices)
-                    await BeginProcessingQueue(downloadFolder);
-                else if (queuedSlicesYet > queueTotalSlices)
-                {
-                    Debug.WriteLine("Queued more slices than expected.");
-                    throw new Exception("Queued more slices than expected.");
-                }
+                await ProcessQueueItem(request, downloadFolder);
             }
             else
             {
@@ -111,6 +126,23 @@ namespace QuickShare.FileTransfer
             }
 
             return returnVal;
+        }
+
+        private static async Task ProcessQueueItem(Dictionary<string, object> request, IFolder downloadFolder)
+        {
+            //Queue data details
+            queuedSlicesYet += (int)(long)request["SlicesCount"];
+            queueItems.Add(request);
+
+            filesCount++;
+
+            if (queuedSlicesYet == queueTotalSlices)
+                await BeginProcessingQueue(downloadFolder);
+            else if (queuedSlicesYet > queueTotalSlices)
+            {
+                Debug.WriteLine("Queued more slices than expected.");
+                throw new Exception("Queued more slices than expected.");
+            }
         }
 
         public static void ClearEventRegistrations()
@@ -176,7 +208,7 @@ namespace QuickShare.FileTransfer
 
             Debug.WriteLine("Receive begin");
 
-            var slicesCount = (int)message["SlicesCount"];
+            var slicesCount = (int)(long)message["SlicesCount"];
             var fileName = (string)message["FileName"];
             var dateModifiedMilliseconds = (long)message["DateModified"];
             var dateCreatedMilliseconds = (long)message["DateCreated"];

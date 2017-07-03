@@ -41,7 +41,6 @@ namespace QuickShare
             await TrialHelper.AskForUpgrade();
 
             Model.CheckTrialStatus();
-            MainPage.Current.CheckTrialStatus();
         }
 
         private void PrivacyPolicyButton_Tapped(object sender, TappedRoutedEventArgs e)
