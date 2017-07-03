@@ -17,7 +17,7 @@ namespace QuickShare.FileTransfer
 {
     public class FileSender : IDisposable
     {
-        readonly int maxQueueInfoMessageSize = 1024;
+        readonly int maxQueueInfoMessageSize = 1536;
         readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(10);
 
         object remoteSystem;
