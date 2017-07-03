@@ -11,11 +11,13 @@ using QuickShare.FileTransfer;
 using QuickShare.Common.Rome;
 using PCLStorage;
 using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
 
 namespace QuickShare.FileTransfer
 {
     public class FileSender : IDisposable
     {
+        readonly int maxQueueInfoMessageSize = 1024;
         readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(10);
 
         object remoteSystem;
@@ -241,22 +243,69 @@ namespace QuickShare.FileTransfer
             if (await SendQueueInit(totalSlices, queueFinishKey, parentDirectoryName) == false)
                 return FileTransferResult.FailedOnQueueInit;
 
-            for (int i = 0; i < files.Count; i++)
-            {
-                var key = sFileKeyPairs[files[i].Item2];
-                if (!(await BeginSending(key,
-                                         keyTable[key].lastSliceId + 1,
-                                         files[i].Item2.Name,
-                                         fs[i],
-                                         files[i].Item1,
-                                         true)))
-                    return FileTransferResult.FailedOnPrepare;
-            }
+            bool infoSendResult = await SendQueueInfo(files, sFileKeyPairs, fs);
 
             if (!(await WaitQueueToFinish()))
                 return FileTransferResult.FailedOnSend;
 
             return FileTransferResult.Successful;
+        }
+
+        private async Task<bool> SendQueueInfo(List<Tuple<string, IFile>> files, Dictionary<IFile, string> sFileKeyPairs, IFileStats[] fs)
+        {
+            Queue<string> items = new Queue<string>();
+            for (int i = 0; i < files.Count; i++)
+            {
+                var key = sFileKeyPairs[files[i].Item2];
+                items.Enqueue(GetQueueFileInfo(key,
+                    keyTable[key].lastSliceId + 1,
+                    files[i].Item2.Name,
+                    fs[i],
+                    files[i].Item1,
+                    true));
+            }
+
+            int partNum = 0;
+            while (items.Count > 0)
+            {
+                int totalSize = 0;
+                List<string> curItems = new List<string>();
+
+                while ((items.Count > 0) && ((totalSize + items.Peek().Length) <= maxQueueInfoMessageSize))
+                {
+                    string nextItem = items.Dequeue();
+                    curItems.Add(nextItem);
+                    totalSize += nextItem.Length;
+                }
+
+                string data = JsonConvert.SerializeObject(curItems);
+
+                Debug.WriteLine($"QueueItemGroup #{partNum} contains {curItems.Count} items. Sending...");
+
+                Dictionary<string, object> qData = new Dictionary<string, object>
+                {
+                    { "IsQueueItemGroup", "true" },
+                    { "PartNum", partNum },
+                    { "Data", data },
+                };
+
+                int tryCount = 0;
+                RomeAppServiceResponse result;
+                do
+                {
+                    result = await packageManager.Send(qData);
+                    tryCount++;
+                }
+                while ((result.Status != RomeAppServiceResponseStatus.Success) && (tryCount < 2));
+
+                if (result.Status != RomeAppServiceResponseStatus.Success)
+                    return false;
+
+                Debug.WriteLine("Sent.");
+                partNum++;
+            }
+
+            return true;
         }
 
         public async Task<FileTransferResult> SendFolder(IFolder folder, string parentDirectoryName)
@@ -283,16 +332,17 @@ namespace QuickShare.FileTransfer
 
         private async Task<bool> SendQueueInit(ulong totalSlices, string queueFinishKey, string parentDirectoryName)
         {
-            Dictionary<string, object> qInit = new Dictionary<string, object>();
-            qInit.Add("Receiver", "FileReceiver");
-            qInit.Add("Type", "QueueInit");
-            qInit.Add("TotalSlices", (long)totalSlices);
-            qInit.Add("QueueFinishKey", queueFinishKey);
-            qInit.Add("ServerIP", ipFinderResult.MyIP);
-            qInit.Add("Guid", Guid.NewGuid().ToString());
-            qInit.Add("SenderName", deviceName);
-            qInit.Add("parentDirectoryName", parentDirectoryName);
-
+            Dictionary<string, object> qInit = new Dictionary<string, object>
+            {
+                { "Receiver", "FileReceiver" },
+                { "Type", "QueueInit" },
+                { "TotalSlices", (long)totalSlices },
+                { "QueueFinishKey", queueFinishKey },
+                { "ServerIP", ipFinderResult.MyIP },
+                { "Guid", Guid.NewGuid().ToString() },
+                { "SenderName", deviceName },
+                { "parentDirectoryName", parentDirectoryName }
+            };
             var result = await packageManager.Send(qInit);
 
             if (result.Status == RomeAppServiceResponseStatus.Success)
@@ -304,19 +354,38 @@ namespace QuickShare.FileTransfer
             }
         }
 
+        private string GetQueueFileInfo(string key, uint slicesCount, string fileName, IFileStats properties, string directory, bool isQueue)
+        {
+            Dictionary<string, object> vs = new Dictionary<string, object>
+            {
+                { "Receiver", "FileReceiver" },
+                { "DownloadKey", key },
+                { "SlicesCount", (int)slicesCount },
+                { "FileName", fileName },
+                { "DateModified", properties.LastWriteTime.ToUnixTimeMilliseconds() },
+                { "DateCreated", properties.CreationTime.ToUnixTimeMilliseconds() },
+                { "FileSize", properties.Length },
+                { "Directory", directory },
+                { "ServerIP", ipFinderResult.MyIP }
+            };
+            var serialized = JsonConvert.SerializeObject(vs, Formatting.None);
+            return serialized;
+        }
+
         private async Task<bool> BeginSending(string key, uint slicesCount, string fileName, IFileStats properties, string directory, bool isQueue)
         {
-            Dictionary<string, object> vs = new Dictionary<string, object>();
-            vs.Add("Receiver", "FileReceiver");
-            vs.Add("DownloadKey", key);
-            vs.Add("SlicesCount", (int)slicesCount);
-            vs.Add("FileName", fileName);
-            vs.Add("DateModified", properties.LastWriteTime.ToUnixTimeMilliseconds());
-            vs.Add("DateCreated", properties.CreationTime.ToUnixTimeMilliseconds());
-            vs.Add("FileSize", properties.Length);
-            vs.Add("Directory", directory);
-            vs.Add("ServerIP", ipFinderResult.MyIP);
-
+            Dictionary<string, object> vs = new Dictionary<string, object>
+            {
+                { "Receiver", "FileReceiver" },
+                { "DownloadKey", key },
+                { "SlicesCount", (int)slicesCount },
+                { "FileName", fileName },
+                { "DateModified", properties.LastWriteTime.ToUnixTimeMilliseconds() },
+                { "DateCreated", properties.CreationTime.ToUnixTimeMilliseconds() },
+                { "FileSize", properties.Length },
+                { "Directory", directory },
+                { "ServerIP", ipFinderResult.MyIP }
+            };
             if (!isQueue)
             {
                 vs.Add("Guid", Guid.NewGuid().ToString());
