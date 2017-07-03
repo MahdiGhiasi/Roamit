@@ -135,6 +135,9 @@ namespace QuickShare
 
             var files = await picker.PickMultipleFilesAsync();
 
+            if (files.Count == 0)
+                return;
+
             SendDataTemporaryStorage.Files.Clear();
             SendDataTemporaryStorage.Files.AddRange(files);
 

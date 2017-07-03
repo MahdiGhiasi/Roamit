@@ -66,7 +66,7 @@ namespace QuickShare
             picker.FileTypeFilter.Add(".mp4");
 
             var files = await picker.PickMultipleFilesAsync();
-            if (files != null)
+            if ((files != null) && (files.Count > 0))
             {
                 Send(files);
             }
