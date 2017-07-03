@@ -287,6 +287,7 @@ namespace QuickShare.FileTransfer
                     { "IsQueueItemGroup", "true" },
                     { "PartNum", partNum },
                     { "Data", data },
+                    { "Receiver", "FileReceiver" },
                 };
 
                 int tryCount = 0;

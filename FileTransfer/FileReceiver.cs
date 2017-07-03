@@ -131,7 +131,7 @@ namespace QuickShare.FileTransfer
         private static async Task ProcessQueueItem(Dictionary<string, object> request, IFolder downloadFolder)
         {
             //Queue data details
-            queuedSlicesYet += (int)request["SlicesCount"];
+            queuedSlicesYet += (int)(long)request["SlicesCount"];
             queueItems.Add(request);
 
             filesCount++;
@@ -208,7 +208,7 @@ namespace QuickShare.FileTransfer
 
             Debug.WriteLine("Receive begin");
 
-            var slicesCount = (int)message["SlicesCount"];
+            var slicesCount = (int)(long)message["SlicesCount"];
             var fileName = (string)message["FileName"];
             var dateModifiedMilliseconds = (long)message["DateModified"];
             var dateCreatedMilliseconds = (long)message["DateCreated"];
