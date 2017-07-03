@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GoogleAnalytics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,13 @@ namespace QuickShare
         public PrivacyPolicy()
         {
             this.InitializeComponent();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateScreenView("PrivacyPolicy").Build());
+#endif
         }
     }
 }

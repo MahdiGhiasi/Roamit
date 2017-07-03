@@ -27,13 +27,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace QuickShare
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainSend : Page
     {
         public MainSendViewModel ViewModel { get; set; }
@@ -84,6 +79,10 @@ namespace QuickShare
         {
             base.OnNavigatedTo(e);
 
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateScreenView("Send").Build());
+#endif
+
 
             var rs = MainPage.Current.GetSelectedSystem();
 
@@ -105,13 +104,13 @@ namespace QuickShare
                 if (!(await IsAllowedToSendAsync()))
                 {
 #if !DEBUG
-                    App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "AskedToUpgrade", "Rejected").Build());
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "AskedToUpgrade", "Rejected").Build());
 #endif
                     Frame.GoBack();
                     return;
                 }
 #if !DEBUG
-                App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "AskedToUpgrade", "Accepted").Build());
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "AskedToUpgrade", "Accepted").Build());
 #endif
                 ViewModel.SendStatus = "Connecting...";
             }
@@ -223,7 +222,7 @@ namespace QuickShare
             if (SendDataTemporaryStorage.IsSharingTarget)
             {
 #if !DEBUG
-                App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "ShareTarget").Build());
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "ShareTarget").Build());
 #endif
                 await Task.Delay(TimeSpan.FromSeconds(1.5));
                 App.ShareOperation.ReportCompleted();
@@ -231,7 +230,7 @@ namespace QuickShare
             else
             {
 #if !DEBUG
-                App.Tracker.Send(HitBuilder.CreateCustomEvent("MainSend", "WithinApp").Build());
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "WithinApp").Build());
 #endif
             }
         }

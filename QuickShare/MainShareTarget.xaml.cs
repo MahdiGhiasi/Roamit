@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GoogleAnalytics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -59,6 +60,10 @@ namespace QuickShare
             }
 
             base.OnNavigatedTo(e);
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateScreenView("ShareTarget").Build());
+#endif
         }
 
         private void SendStorageItems_Tapped(object sender, TappedRoutedEventArgs e)
