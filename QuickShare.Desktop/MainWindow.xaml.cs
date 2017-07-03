@@ -79,7 +79,7 @@ namespace QuickShare.Desktop
             Process.Start("roamit://");
         }
 
-        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        private void Settings_Click(object sender, RoutedEventArgs e)
         {
 
         }
