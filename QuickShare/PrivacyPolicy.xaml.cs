@@ -33,6 +33,7 @@ namespace QuickShare
 #if !DEBUG
             App.Tracker.Send(HitBuilder.CreateScreenView("PrivacyPolicy").Build());
 #endif
+            webView.Navigate(new Uri("https://roamit.ghiasi.net/privacy/dark/"));
         }
     }
 }
