@@ -25,6 +25,7 @@ namespace QuickShare.Droid.Helpers
             GAInstance = GoogleAnalytics.GetInstance(Application.Context);
             GAInstance.SetLocalDispatchPeriod(4);
             GATracker = GAInstance.NewTracker(QuickShare.Common.Secrets.GoogleAnalyticsId);
+            GATracker.SetAppName("Roamit-Android");
             GATracker.EnableExceptionReporting(true);
             GATracker.EnableAdvertisingIdCollection(true);
             GATracker.EnableAutoActivityTracking(true);
