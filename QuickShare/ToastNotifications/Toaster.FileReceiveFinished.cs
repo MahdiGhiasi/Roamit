@@ -18,10 +18,7 @@ namespace QuickShare.ToastNotifications
             ClearNotification(guid); //Clear progress notification
 
             HistoryRow data;
-
-            await DataStorageProviders.HistoryManager.OpenAsync();
-            data = DataStorageProviders.HistoryManager.GetItem(guid);
-            DataStorageProviders.HistoryManager.Close();
+            data = await GetItem(guid);
 
             string toastXml;
 
@@ -55,6 +52,25 @@ namespace QuickShare.ToastNotifications
             };
 
             ToastNotificationManager.CreateToastNotifier().Show(toast);
+        }
+
+        //Retry once
+        private static async Task<HistoryRow> GetItem(Guid guid)
+        {
+            HistoryRow data = null;
+
+            await DataStorageProviders.HistoryManager.OpenAsync();
+            try
+            {
+                data = DataStorageProviders.HistoryManager.GetItem(guid);
+            }
+            catch
+            {
+                await Task.Delay(500);
+                data = DataStorageProviders.HistoryManager.GetItem(guid);
+            }
+            DataStorageProviders.HistoryManager.Close();
+            return data;
         }
     }
 }
