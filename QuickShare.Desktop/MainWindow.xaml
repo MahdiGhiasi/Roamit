@@ -6,7 +6,13 @@
         xmlns:local="clr-namespace:QuickShare.Desktop"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="MainWindow" Height="400" Width="300" ShowInTaskbar="False" ResizeMode="NoResize" WindowStyle="None">
+        Title="Roamit" 
+        Height="400" 
+        Width="300" 
+        ShowInTaskbar="False" 
+        ResizeMode="NoResize" 
+        WindowStyle="None" 
+        Topmost="True">
 
     <Window.Resources>
         <Style x:Key="Link" TargetType="Button">
@@ -31,8 +37,8 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Grid>
+    <Grid Background="DarkCyan">
+        <Grid Margin="1" Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition />
@@ -44,7 +50,7 @@
                     <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Roamit" FontFamily="Segoe UI" Margin="8" FontSize="18" FontWeight="Bold" />
-                <Button Content="X" Grid.Column="1" BorderThickness="0" Background="Transparent" Click="ExitButton_Click" />
+                <Button Content="?" Grid.Column="1" BorderThickness="0" Background="Transparent" Click="ExitButton_Click" />
             </Grid>
             <Grid Grid.Row="1">
                 <TextBlock x:Name="NoClipboardActivity"
@@ -52,15 +58,25 @@
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Opacity="0.5"/>
-                <ListView Padding="4,4,4,0"
+                <ListView x:Name="ClipboardActivity" 
+                          Padding="4,4,4,0"
+                          HorizontalContentAlignment="Stretch"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           Visibility="Collapsed">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <TextBlock Text="" />
-                            </Grid>
+                            <StackPanel HorizontalAlignment="Stretch" MaxWidth="{Binding ActualWidth, ElementName=ClipboardActivity, Mode=OneWay}">
+                                <TextBlock Text="{Binding DisplayText}" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding CopyDateString}" Opacity="0.6" HorizontalAlignment="Right" />
+                            </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
                 </ListView>
             </Grid>
             <Grid Grid.Row="2" Background="#eee">
