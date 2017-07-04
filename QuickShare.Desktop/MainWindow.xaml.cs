@@ -79,9 +79,9 @@ namespace QuickShare.Desktop
             Process.Start("roamit://");
         }
 
-        private void Settings_Click(object sender, RoutedEventArgs e)
+        private async void Settings_Click(object sender, RoutedEventArgs e)
         {
-
+            await Windows.System.Launcher.LaunchUriAsync(new Uri("http://ghiasi.net"));
         }
     }
 }
