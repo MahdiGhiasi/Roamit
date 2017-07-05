@@ -182,7 +182,7 @@
             android:layout_width="fill_parent"
             android:gravity="bottom|center_horizontal"
             android:layout_gravity="bottom"
-            android:background="@color/primary"
+            android:background="#111111"
             android:translationY="-50dp"
             android:layout_height="50dp" />
     </LinearLayout>
