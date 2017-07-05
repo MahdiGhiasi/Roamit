@@ -12,7 +12,7 @@ using Android.Widget;
 using Android.Media;
 using Android.Support.V4.App;
 
-namespace QuickShare.Droid.Helpers
+namespace QuickShare.Droid.Classes
 {
     internal static class Notification
     {

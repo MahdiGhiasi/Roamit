@@ -9,7 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using QuickShare.Droid.Helpers;
+using QuickShare.Droid.Classes;
 
 namespace QuickShare.Droid
 {

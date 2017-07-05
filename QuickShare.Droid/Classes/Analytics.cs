@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Gms.Analytics;
 
-namespace QuickShare.Droid.Helpers
+namespace QuickShare.Droid.Classes
 {
     static class Analytics
     {

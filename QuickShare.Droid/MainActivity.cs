@@ -22,7 +22,10 @@ using Android.Support.V7.App;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Android.Views;
 using Android.Net;
-using QuickShare.Droid.Helpers;
+using QuickShare.Droid.Classes;
+using Com.Revmob;
+using Com.Revmob.Ads.Banner;
+using QuickShare.Droid.Classes.RevMob;
 
 namespace QuickShare.Droid
 {
@@ -49,6 +52,12 @@ namespace QuickShare.Droid
 
         private Timer clipboardUpdateTimer;
 
+        internal static CallbackStartSessionListener startSessionListener;
+        internal static CallbackShowBanner showBannerAdListener;
+        RevMobBanner revmobBanner;
+        LinearLayout devicesListLayout;
+        RelativeLayout bannerLayout;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -65,6 +74,14 @@ namespace QuickShare.Droid
             mainActions = FindViewById<RelativeLayout>(Resource.Id.main_actions);
             mainShare = FindViewById<RelativeLayout>(Resource.Id.main_share);
 
+            devicesListLayout = FindViewById<LinearLayout>(Resource.Id.main_devicesListLayout);
+            bannerLayout = FindViewById<RelativeLayout>(Resource.Id.main_banner);
+
+            startSessionListener = new CallbackStartSessionListener(this);
+            showBannerAdListener = new CallbackShowBanner(this);
+            RevMob.StartWithListener(this, startSessionListener, Droid.Config.Secrets.RevMobId);
+            UserTrialStatusUpdated();
+            TrialHelper.UserTrialStatusChanged += UserTrialStatusUpdated;
             RefreshUserTrialStatus();
 
             if ((Intent.Action == Intent.ActionSend) || (Intent.Action == Intent.ActionSendMultiple))
@@ -93,6 +110,50 @@ namespace QuickShare.Droid
             Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
             InitDiscovery();
+        }
+
+        private async void UserTrialStatusUpdated()
+        {
+            if (TrialHelper.UserTrialStatus == QuickShare.Common.Service.UpgradeDetails.VersionStatus.TrialVersion)
+                await ShowBanner();
+            else
+                HideBanner();
+        }
+
+        private void HideBanner()
+        {
+            devicesListLayout.SetPadding(16, 16, 16, 0);
+            bannerLayout.Visibility = ViewStates.Gone;
+
+            if (revmobBanner != null)
+                revmobBanner.Hide();
+        }
+
+        private async Task ShowBanner()
+        {
+            devicesListLayout.SetPadding(16, 0, 16, 50);
+            bannerLayout.Visibility = ViewStates.Visible;
+
+            if (revmobBanner != null)
+            {
+                revmobBanner.Show();
+                return;
+            }
+
+            var revMob = await RevMobHelper.TryGetAdMobSessionAsync(startSessionListener);
+            if (revMob == null)
+            {
+                HideBanner();
+                return;
+            }
+
+            revmobBanner = revMob.CreateBanner(this, "", showBannerAdListener);
+            revmobBanner.SetAutoShow(true);
+
+            ViewGroup view = FindViewById<ViewGroup>(Resource.Id.main_banner);
+
+            view.RemoveAllViews();
+            view.AddView(revmobBanner);
         }
 
         private async void RefreshUserTrialStatus()
