@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Support.V7.App;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
-using QuickShare.Droid.Helpers;
+using QuickShare.Droid.Classes;
 
 namespace QuickShare.Droid
 {

@@ -4,7 +4,7 @@ using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Plugin.CurrentActivity;
-using QuickShare.Droid.Helpers;
+using QuickShare.Droid.Classes;
 
 namespace QuickShare.Droid
 {

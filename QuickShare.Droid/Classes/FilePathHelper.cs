@@ -14,7 +14,7 @@ using Android.Util;
 using Uri = Android.Net.Uri;
 using Android.Database;
 
-namespace QuickShare.Droid.Helpers
+namespace QuickShare.Droid.Classes
 {
     //Obtained from https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
     internal static class FilePathHelper

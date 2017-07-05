@@ -13,7 +13,7 @@ using Android.Support.V4.App;
 using Android.Media;
 using System.Threading.Tasks;
 
-namespace QuickShare.Droid.Helpers
+namespace QuickShare.Droid.Classes
 {
     internal class ProgressNotifier
     {

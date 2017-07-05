@@ -14,7 +14,7 @@ using PCLStorage;
 using QuickShare.DataStore;
 using QuickShare.Droid.RomeComponent;
 using QuickShare.Droid.OnlineServiceHelpers;
-using QuickShare.Droid.Helpers;
+using QuickShare.Droid.Classes;
 
 namespace QuickShare.Droid.Services
 {
@@ -101,7 +101,7 @@ namespace QuickShare.Droid.Services
         {
             if (!IsApplicationInForeground())
             {
-                Helpers.Notification.SendLaunchNotification(this, "Roamit needs your attention", "Open the app to continue receiving data from your other devices");
+                Classes.Notification.SendLaunchNotification(this, "Roamit needs your attention", "Open the app to continue receiving data from your other devices");
             }
         }
 
