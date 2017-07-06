@@ -123,6 +123,7 @@
       <DependentUpon>PrivacyPolicy.xaml</DependentUpon>
     </Compile>
     <Compile Include="RemoteSystemNormalizer.cs" />
+    <Compile Include="AdConstants.cs" />
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>

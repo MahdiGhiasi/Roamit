@@ -77,8 +77,8 @@ namespace QuickShare
             AdBanner.ApplicationId = "3f83fe91-d6be-434d-a0ae-7351c5a997f1";
             AdBanner.AdUnitId = "test";
 #else
-            AdBanner.ApplicationId = "9nrdffns92g1";
-            AdBanner.AdUnitId = "11687719";
+            AdBanner.ApplicationId = AdConstants.AdAppId;
+            AdBanner.AdUnitId = AdConstants.UnitId;
 #endif
         }
 
