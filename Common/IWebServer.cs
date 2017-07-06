@@ -20,5 +20,7 @@ namespace QuickShare.Common
         
         void ClearResponseUrls();
         void RemoveResponseUrl(string url);
+
+        void StopListener();
     }
 }

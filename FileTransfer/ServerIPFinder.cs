@@ -7,10 +7,11 @@ using System.Net.Http;
 using QuickShare.Common;
 using QuickShare.Common.Rome;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Diagnostics;
 
 namespace QuickShare.FileTransfer
 {
-    public partial class ServerIPFinder
+    public partial class ServerIPFinder : IDisposable
     {
         public delegate void IPDetectionCompletedEventHandler(object sender, IPDetectionCompletedEventArgs e);
         public event IPDetectionCompletedEventHandler IPDetectionCompleted;
@@ -53,13 +54,14 @@ namespace QuickShare.FileTransfer
         {
             foreach (var item in servers)
             {
-                item.Value.Dispose();
+                item.Value.StopListener();
             }
             servers.Clear();
         }
 
         private string WebServerFetched(IWebServer sender, RequestDetails request)
         {
+            Debug.WriteLine("ServerIPFinder: Fetched. Stopping listeners...");
             StopListeners(servers);
 
             IPDetectionCompletedEventArgs ea;
@@ -107,11 +109,11 @@ namespace QuickShare.FileTransfer
             foreach (var item in IPs)
             {
                 IWebServer ws = webServerGenerator.GenerateInstance();
-                ws.StartWebServer(item, Constants.CommunicationPort);
+                ws.StartWebServer(item, Constants.IPFinderCommunicationPort);
 
                 ws.AddResponseUrl("/" + communicationKey + "/", (Func<IWebServer, RequestDetails, string>)WebServerFetched);
 
-                System.Diagnostics.Debug.WriteLine($"Started listener at {item}:{Constants.CommunicationPort}. url is /{communicationKey}/");
+                System.Diagnostics.Debug.WriteLine($"Started listener at {item}:{Constants.IPFinderCommunicationPort}. url is /{communicationKey}/");
 
                 servers.Add(new KeyValuePair<string, IWebServer>(item, ws));
             }
@@ -168,7 +170,7 @@ namespace QuickShare.FileTransfer
 
             try
             {
-                await httpClient.GetAsync("http://" + senderIP + ":" + Constants.CommunicationPort.ToString() + "/" + key + "/");
+                await httpClient.GetAsync("http://" + senderIP + ":" + Constants.IPFinderCommunicationPort.ToString() + "/" + key + "/");
             }
             catch { }
         }
@@ -179,7 +181,7 @@ namespace QuickShare.FileTransfer
 
             try
             {
-                var response = await httpClient.GetAsync("http://" + senderIP + ":" + Constants.CommunicationPort.ToString() + "/" + key + "/?" + additional);
+                var response = await httpClient.GetAsync("http://" + senderIP + ":" + Constants.IPFinderCommunicationPort.ToString() + "/" + key + "/?" + additional);
             }
             catch { }
         }
@@ -190,7 +192,7 @@ namespace QuickShare.FileTransfer
 
             try
             {
-                var response = await httpClient.GetAsync("http://" + ip + ":" + Constants.CommunicationPort.ToString() + "/");
+                var response = await httpClient.GetAsync("http://" + ip + ":" + Constants.IPFinderCommunicationPort.ToString() + "/");
                 if (response.IsSuccessStatusCode)
                 {
                     var body = await response.Content.ReadAsStringAsync();
@@ -208,6 +210,16 @@ namespace QuickShare.FileTransfer
             {
                 return false;
             }
+        }
+
+        public void Dispose()
+        {
+            if (servers != null)
+                foreach (var item in servers)
+                {
+                    item.Value.StopListener();
+                    item.Value.Dispose();
+                }
         }
     }
 }

@@ -529,6 +529,7 @@ namespace QuickShare.FileTransfer
                     MyIP = myIPs[0],
                     Success = true,
                 };
+                return;
             }
 
             ipFinder.IPDetectionCompleted += IpFinder_IPDetectionCompleted;
@@ -540,12 +541,14 @@ namespace QuickShare.FileTransfer
 
         private void IpFinder_IPDetectionCompleted(object sender, IPDetectionCompletedEventArgs e)
         {
+            Debug.WriteLine("IpFinder_IPDetectionCompleted.");
             ipFinderResult = e;
             ipFinderTcs.SetResult(true);
         }
 
         public void Dispose()
         {
+            ipFinder.Dispose();
             if (server != null)
                 server.Dispose();
         }

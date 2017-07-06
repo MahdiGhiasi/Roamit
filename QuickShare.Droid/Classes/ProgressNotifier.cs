@@ -69,7 +69,7 @@ namespace QuickShare.Droid.Classes
             notificationManager.Notify(id, builder.Build());
         }
 
-        public async void FinishProgress(string title, string text)
+        public async Task FinishProgress(string title, string text)
         {
             if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenFinalNotifAndPrev)
                 await Task.Delay(DateTime.Now - lastProgressNotif);
@@ -86,7 +86,7 @@ namespace QuickShare.Droid.Classes
             notificationManager.Notify(id, builder.Build());
         }
 
-        public async void FinishProgress(string title, string text, Intent intent, Context context)
+        public async Task FinishProgress(string title, string text, Intent intent, Context context)
         {
             if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenFinalNotifAndPrev)
                 await Task.Delay(DateTime.Now - lastProgressNotif);

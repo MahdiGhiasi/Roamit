@@ -9,6 +9,7 @@ namespace QuickShare.Common
     public static class Constants
     {
         public static int CommunicationPort = 8081;
+        public static int IPFinderCommunicationPort = 8082;
 
         public static ulong FileSliceMaxLength = 512 * 1024; // 512 Kilobytes
 
