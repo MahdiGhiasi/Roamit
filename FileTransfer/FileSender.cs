@@ -529,6 +529,7 @@ namespace QuickShare.FileTransfer
                     MyIP = myIPs[0],
                     Success = true,
                 };
+                return;
             }
 
             ipFinder.IPDetectionCompleted += IpFinder_IPDetectionCompleted;
