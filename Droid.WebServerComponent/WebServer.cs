@@ -152,9 +152,15 @@ namespace QuickShare.Droid.WebServerComponent
             return "<html><head><title>Roamit</title></head><body><h3>Hello from Roamit :)</h3></body></html>";
         }
 
-        public void Dispose()
+        public void StopListener()
         {
             listener.Close();
+            listener = null;
+        }
+
+        public void Dispose()
+        {
+            listener?.Close();
         }
     }
 }

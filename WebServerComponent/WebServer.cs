@@ -25,6 +25,8 @@ namespace QuickShare.UWP
         string ip;
         int port;
 
+        Guid guid = Guid.NewGuid();
+
         public void StartWebServer(string _ip, int _port)
         {
             ip = _ip;
@@ -56,6 +58,8 @@ namespace QuickShare.UWP
 
         private void AddResponseUrlInternal(string url, object response)
         {
+            Debug.WriteLine($"Added url {url} to listener {guid}.");
+
             if (Urls.ContainsKey(url))
                 Urls.Remove(url);
 
@@ -125,20 +129,24 @@ namespace QuickShare.UWP
             }
             else
             {
+                Debug.WriteLine($"Listener {guid} received an invalid request: {e.Request.RequestUri.AbsolutePath}");
                 await e.Response.WriteContentAsync("<html><body>Invalid Request.</body></html>");
             }
 
             e.Response.Close();
         }
 
-        public void Dispose()
+        public void StopListener()
         {
-            try
-            {
-                listener.Close();
-            }
-            catch { }
+            Debug.WriteLine($"Listener of WebServer {guid} is closing...");
+            listener.Close();
+            listener = null;
         }
 
+        public void Dispose()
+        {
+            Debug.WriteLine($"WebServer {guid} is going down...");
+            listener?.Close();
+        }
     }
 }
