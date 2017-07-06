@@ -170,7 +170,7 @@ namespace QuickShare.Droid.Services
 
             if (e.State == FileTransfer.FileTransferState.Error)
             {
-                progressNotifier?.FinishProgress("Receive failed.", "");
+                await progressNotifier?.FinishProgress("Receive failed.", "");
             }
             else if (e.State == FileTransfer.FileTransferState.Finished)
             {
@@ -180,7 +180,7 @@ namespace QuickShare.Droid.Services
                     intent.PutExtra("action", "openFile");
                     intent.PutExtra("guid", e.Guid.ToString());
 
-                    progressNotifier?.FinishProgress($"Received a file from {e.SenderName}", "Tap to open", intent, this);
+                    await progressNotifier?.FinishProgress($"Received a file from {e.SenderName}", "Tap to open", intent, this);
                 }
                 else
                 {
@@ -188,9 +188,10 @@ namespace QuickShare.Droid.Services
                     var hr = DataStorageProviders.HistoryManager.GetItem(e.Guid);
                     DataStorageProviders.HistoryManager.Close();
                     var rootPath = (hr.Data as ReceivedFileCollection).StoreRootPath;
-                    progressNotifier?.FinishProgress($"Received {e.TotalFiles} files from {e.SenderName}", $"They're located at {rootPath}");
+                    await progressNotifier?.FinishProgress($"Received {e.TotalFiles} files from {e.SenderName}", $"They're located at {rootPath}");
                 }
-                
+
+                progressNotifier = null;
             }
             else if (e.State == FileTransfer.FileTransferState.DataTransfer)
             {
@@ -313,13 +314,15 @@ namespace QuickShare.Droid.Services
 
             if (receiver == "ServerIPFinder")
             {
-                progressNotifier = new ProgressNotifier(this);
-                progressNotifier.SendInitialNotification("Receiving...", "");
+                InitProgressNotifier();
 
                 await FileTransfer.ServerIPFinder.ReceiveRequest(message);
             }
             else if (receiver == "FileReceiver")
             {
+                if (progressNotifier == null)
+                    InitProgressNotifier();
+
                 string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "Roamit");
                 System.IO.Directory.CreateDirectory(downloadPath); //Make sure download folder exists.
                 IFolder downloadFolder = new FileSystemFolder(downloadPath);
@@ -340,6 +343,12 @@ namespace QuickShare.Droid.Services
             }
 
             return false;
+        }
+
+        private void InitProgressNotifier()
+        {
+            progressNotifier = new ProgressNotifier(this);
+            progressNotifier.SendInitialNotification("Receiving...", "");
         }
 
         public override void OnDestroy()
