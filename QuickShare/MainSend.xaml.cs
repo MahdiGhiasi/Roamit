@@ -17,6 +17,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Connectivity;
 using Windows.Storage;
+using Windows.System;
 using Windows.System.RemoteSystems;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -230,9 +231,64 @@ namespace QuickShare
             else
             {
                 ViewModel.GoBackButtonVisibility = Visibility.Visible;
+
+                if (succeed)
+                {
+                    await AskForReviewIfNecessary();
+                }
+
 #if !DEBUG
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "WithinApp").Build());
 #endif
+            }
+        }
+
+        private async Task AskForReviewIfNecessary()
+        {
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("SuccessSendCount"))
+                ApplicationData.Current.LocalSettings.Values["SuccessSendCount"] = "0";
+
+            if (!int.TryParse(ApplicationData.Current.LocalSettings.Values["SuccessSendCount"].ToString(), out int count))
+                count = 0;
+
+            count++;
+            ApplicationData.Current.LocalSettings.Values["SuccessSendCount"] = count.ToString();
+
+            if ((count > 8) && (!ApplicationData.Current.LocalSettings.Values.ContainsKey("AskedForReview")))
+            {
+                ApplicationData.Current.LocalSettings.Values["AskedForReview"] = "true";
+
+                var dlg = new MessageDialog("We really appreciate it.", "Would you mind rating Roamit in the Store?");
+                dlg.Commands.Add(new UICommand
+                {
+                    Id = 0,
+                    Label = "Ok, sure",
+                });
+                dlg.Commands.Add(new UICommand
+                {
+                    Id = 1,
+                    Label = "No, thanks",
+                });
+                dlg.DefaultCommandIndex = 0;
+                dlg.CancelCommandIndex = 1;
+
+                var result = await dlg.ShowAsync();
+
+                if ((int)result.Id == 0)
+                {
+#if !DEBUG
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("AskForReview", "Accepted").Build());
+#endif
+                    ApplicationData.Current.LocalSettings.Values["AskedForReviewResult"] = "accept";
+                    await Launcher.LaunchUriAsync(new Uri(string.Format("ms-windows-store:REVIEW?PFN={0}", Windows.ApplicationModel.Package.Current.Id.FamilyName)));
+                }
+                else
+                {
+#if !DEBUG
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("AskForReview", "Rejected").Build());
+#endif
+                    ApplicationData.Current.LocalSettings.Values["AskedForReviewResult"] = "reject";
+                }
             }
         }
 
