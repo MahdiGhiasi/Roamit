@@ -31,7 +31,7 @@ namespace QuickShare.UWP.Rome
 
         public bool HasWaitingMessageCarrier { get; private set; }
 
-        readonly int _maxRetryCount = 3;
+        readonly int _maxRetryCount = 4;
         readonly double _maxSecondsForCarrier = 5.0;
         readonly int _maxWaitTime = 180;
 
