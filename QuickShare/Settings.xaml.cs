@@ -44,9 +44,12 @@ namespace QuickShare
             Model.CheckTrialStatus();
         }
 
-        private void PrivacyPolicyButton_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void PrivacyPolicyButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Frame.Navigate(typeof(PrivacyPolicy));
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateScreenView("PrivacyPolicy").Build());
+#endif
+            await Launcher.LaunchUriAsync(new Uri("https://roamit.ghiasi.net/privacy/"));
         }
 
         private async void SendFeedbackButton_Tapped(object sender, TappedRoutedEventArgs e)
