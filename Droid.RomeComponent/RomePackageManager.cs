@@ -101,8 +101,13 @@ namespace QuickShare.Droid.RomeComponent
             connectionRequest = new RemoteSystemConnectionRequest(rs);
             appService = new AppServiceClientConnection(appServiceName, appIdentifier, connectionRequest);
             var result = await appService.OpenRemoteAsync();
-            
-            return result.ConvertToRomeAppServiceConnectionStatus();
+
+            var finalResult = result.ConvertToRomeAppServiceConnectionStatus();
+
+            if (finalResult == RomeAppServiceConnectionStatus.AppNotInstalled)
+                await LaunchStoreForApp(_remoteSystem);
+
+            return finalResult;
         }
 
         public void CloseAppService()
@@ -132,6 +137,11 @@ namespace QuickShare.Droid.RomeComponent
             return await LaunchUri(new Uri(@"ms-windows-store://pdp/?PFN=" + appIdentifier));
         }
 
+        public async Task<RomeRemoteLaunchUriStatus> LaunchStoreForApp(object rs)
+        {
+            return await LaunchUri(new Uri(@"ms-windows-store://pdp/?PFN=" + appIdentifier), rs);
+        }
+
         public async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri uri)
         {
             return await LaunchUri(uri, remoteSystem);
@@ -150,7 +160,11 @@ namespace QuickShare.Droid.RomeComponent
             var request = new RemoteSystemConnectionRequest(rs);
             var launchUriStatus = await RemoteLauncher.LaunchUriAsync(request, uri);
 
-            return launchUriStatus.ConvertToRomeRemoteLaunchUriStatus();
+            var result = launchUriStatus.ConvertToRomeRemoteLaunchUriStatus();
+            if (result == RomeRemoteLaunchUriStatus.ProtocolUnavailable)
+                await LaunchStoreForApp(rs);
+
+            return result;
         }
 
         //Instantiate a Singleton of the Semaphore with a value of 1. This means that only 1 thread can be granted access at a time.

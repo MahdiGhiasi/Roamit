@@ -222,6 +222,10 @@ namespace QuickShare.UWP.Rome
                     appService.RequestReceived += AppService_RequestReceived;
                     appService.ServiceClosed += AppService_ServiceClosed;
                 }
+                else if (result == AppServiceConnectionStatus.AppNotInstalled)
+                {
+                    await LaunchStoreForApp(_remoteSystem);
+                }
                 return (RomeAppServiceConnectionStatus)result;
             }
             catch
@@ -263,6 +267,13 @@ namespace QuickShare.UWP.Rome
         public async Task<RomeRemoteLaunchUriStatus> LaunchStoreForApp()
         {
             var result = await LaunchUri(new Uri(@"ms-windows-store://pdp/?PFN=" + appService.PackageFamilyName));
+
+            return (RomeRemoteLaunchUriStatus)result;
+        }
+
+        public async Task<RomeRemoteLaunchUriStatus> LaunchStoreForApp(object rs)
+        {
+            var result = await LaunchUri(new Uri(@"ms-windows-store://pdp/?PFN=" + appService.PackageFamilyName), rs);
 
             return (RomeRemoteLaunchUriStatus)result;
         }
@@ -317,6 +328,8 @@ namespace QuickShare.UWP.Rome
                 }
             }
 
+            if (launchStatus == RemoteLaunchUriStatus.ProtocolUnavailable)
+                await LaunchStoreForApp(rs);
 
             return (RomeRemoteLaunchUriStatus)launchStatus;
         }
