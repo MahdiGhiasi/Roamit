@@ -75,6 +75,20 @@ namespace QuickShare
             }
         }
 
+        Visibility goBackButtonVisibility = Visibility.Collapsed;
+        public Visibility GoBackButtonVisibility
+        {
+            get
+            {
+                return goBackButtonVisibility;
+            }
+            set
+            {
+                goBackButtonVisibility = value;
+                OnPropertyChanged("GoBackButtonVisibility");
+            }
+        }
+
         Visibility progressPercentIndicatorVisibility = Visibility.Visible;
         public Visibility ProgressPercentIndicatorVisibility
         {

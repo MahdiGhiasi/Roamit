@@ -229,6 +229,7 @@ namespace QuickShare
             }
             else
             {
+                ViewModel.GoBackButtonVisibility = Visibility.Visible;
 #if !DEBUG
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "WithinApp").Build());
 #endif
