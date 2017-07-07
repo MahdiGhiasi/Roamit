@@ -110,6 +110,7 @@
     <Compile Include="HelperClasses\VersionHelpers\TrialSettings.cs" />
     <Compile Include="HelperClasses\VisualChildFinder.cs" />
     <Compile Include="HelperClasses\WindowTopBarFunctions.cs" />
+    <Compile Include="IKindChangeAware.cs" />
     <Compile Include="Intro.xaml.cs">
       <DependentUpon>Intro.xaml</DependentUpon>
     </Compile>

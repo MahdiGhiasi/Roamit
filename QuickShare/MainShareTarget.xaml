@@ -20,7 +20,7 @@
                 </Grid>
             </Grid>
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Content="Copy to clipboard" Padding="20,12,20,12" FontSize="18" Tapped="SendUrl_Tapped" Margin="4" />
+                <Button Content="Copy to clipboard" IsEnabled="{x:Bind ViewModel.AppActionsAvailable, Mode=OneWay}" Padding="20,12,20,12" FontSize="18" Tapped="SendUrl_Tapped" Margin="4" />
                 <Button Content="Open Url" Padding="20,12,20,12" FontSize="18" Tapped="LaunchUrl_Tapped" Margin="4" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
             </StackPanel>
         </Grid>
@@ -36,7 +36,7 @@
                 </Grid>
             </Grid>
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Content="Copy to clipboard" Padding="20,12,20,12" FontSize="18" Tapped="SendText_Tapped" Margin="4" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
+                <Button Content="Copy to clipboard" IsEnabled="{x:Bind ViewModel.AppActionsAvailable, Mode=OneWay}" Padding="20,12,20,12" FontSize="18" Tapped="SendText_Tapped" Margin="4" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
             </StackPanel>
         </Grid>
         <Grid Visibility="{x:Bind ViewModel.ShareStorageItemVisibility, Mode=OneWay}">
@@ -51,7 +51,7 @@
                 </Grid>
             </Grid>
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Content="Send" Padding="20,12,20,12" FontSize="18" Tapped="SendStorageItems_Tapped" Margin="4" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
+                <Button Content="Send" IsEnabled="{x:Bind ViewModel.AppActionsAvailable, Mode=OneWay}" Padding="20,12,20,12" FontSize="18" Tapped="SendStorageItems_Tapped" Margin="4" Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
             </StackPanel>
         </Grid>
     </Grid>

@@ -22,7 +22,7 @@ namespace QuickShare
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainShareTarget : Page
+    public sealed partial class MainShareTarget : Page, IKindChangeAware
     {
         ShareTargetDetails shareDetails;
 
@@ -84,6 +84,11 @@ namespace QuickShare
         private void SendUrl_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(MainSend), "text");
+        }
+
+        public void SelectedRemoteSystemChanged(string kind)
+        {
+            ViewModel.AppActionsAvailable = (kind != "Xbox");
         }
     }
 }

@@ -47,6 +47,20 @@ namespace QuickShare
             }
         }
 
+        bool appActionsAvailable = true;
+        public bool AppActionsAvailable
+        {
+            get
+            {
+                return appActionsAvailable;
+            }
+            set
+            {
+                appActionsAvailable = value;
+                OnPropertyChanged("AppActionsAvailable");
+            }
+        }
+
         string previewText;
         public string PreviewText
         {
