@@ -343,7 +343,7 @@ namespace QuickShare
 
         private bool AllowedToChangeSelectedRemoteSystem()
         {
-            return (ContentFrame.Content is MainActions) || (ContentFrame.Content is Settings) || (ContentFrame.Content is PrivacyPolicy);
+            return (ContentFrame.Content is MainActions) || (ContentFrame.Content is Settings) || (ContentFrame.Content is PrivacyPolicy) || (ContentFrame.Content is MainShareTarget);
         }
 
         private async void InitDiscoveringOtherDevices()
