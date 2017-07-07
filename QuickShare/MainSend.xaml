@@ -26,8 +26,7 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Button Content="Back" Margin="10,0,0,0" Tapped="BackButton_Tapped" Visibility="Collapsed" />
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel Margin="0,-40,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="{x:Bind ViewModel.SendStatus, Mode=OneWay}" 
                        x:Name="StatusText" 
                        FontSize="28" 
@@ -56,5 +55,11 @@
                    TextAlignment="Center"
                    Margin="0,0,0,60"
                    Visibility="{x:Bind ViewModel.UnlockNoticeVisibility, Mode=OneWay}" />
+        <Button Content="Go Back"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,60"
+                Tapped="BackButton_Tapped"
+                Visibility="{x:Bind ViewModel.GoBackButtonVisibility, Mode=OneWay}" />
     </Grid>
 </Page>
