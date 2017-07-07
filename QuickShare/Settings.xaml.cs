@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -73,6 +74,14 @@ namespace QuickShare
 #if !DEBUG
             App.Tracker.Send(HitBuilder.CreateScreenView("Settings").Build());
 #endif
+        }
+
+        private async void RateAndReviewButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "RateAndReview").Build());
+#endif
+            await Launcher.LaunchUriAsync(new Uri(string.Format("ms-windows-store:REVIEW?PFN={0}", Windows.ApplicationModel.Package.Current.Id.FamilyName)));
         }
     }
 }
