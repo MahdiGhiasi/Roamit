@@ -354,6 +354,8 @@ namespace QuickShare
         {
             if ((e.Content is MainActions) || (e.Content is MainShareTarget))
             {
+                ViewModel.RefreshIsContentFrameEnabled();
+
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;
             }
