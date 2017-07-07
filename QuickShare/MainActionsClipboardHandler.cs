@@ -110,6 +110,8 @@ namespace QuickShare
             ClipboardButton.IsEnabled = true;
             ClipboardContentPreviewContainer.Visibility = Visibility.Visible;
 
+            SelectedRemoteSystemChanged(latestKind);
+
             clipboardTextContent = text;
 
             //truncate text preview if it's too long

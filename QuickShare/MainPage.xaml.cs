@@ -44,6 +44,8 @@ namespace QuickShare
         public MainPageViewModel ViewModel { get; set; } = new MainPageViewModel();
         public IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem> PicturePickerItems { get; internal set; }
 
+        public object InternalFrameContent { get => ContentFrame.Content; }
+
         bool isUserSelectedRemoteSystemManually = false;
         int remoteSystemPrevCount = 0;
 
@@ -271,12 +273,16 @@ namespace QuickShare
 
             var sv = VisualChildFinder.FindVisualChild<ScrollViewer>(devicesList);
             sv.ChangeView(0, 0, sv.ZoomFactor, false);
+
+            ViewModel.RefreshIsContentFrameEnabled();
         }
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
             if ((e.Content is MainActions) || (e.Content is MainShareTarget))
             {
+                ViewModel.RefreshIsContentFrameEnabled();
+
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;
             }

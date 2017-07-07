@@ -113,6 +113,12 @@ namespace QuickShare
         public void RefreshIsContentFrameEnabled()
         {
             OnPropertyChanged("IsContentFrameEnabled");
+
+            if (IsContentFrameEnabled)
+            {
+                var content = MainPage.Current.InternalFrameContent as IKindChangeAware;
+                content?.SelectedRemoteSystemChanged(ListManager.SelectedRemoteSystem.Kind);
+            }
         }
 
         private bool isAcrylicEnabled = false;
