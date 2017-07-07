@@ -372,6 +372,7 @@ namespace QuickShare.Droid
                     if (Common.ListManager.SelectedRemoteSystem != null)
                     {
                         clipboardButton.Enabled = true;
+                        CheckRemoteDeviceSupport();
 
                         bool isValidUri = System.Uri.TryCreate(content, UriKind.Absolute, out _);
                         if (isValidUri)
@@ -499,7 +500,21 @@ namespace QuickShare.Droid
                 System.Diagnostics.Debug.WriteLine(Common.ListManager.SelectedRemoteSystem?.DisplayName ?? "NULL" + " is selected.");
 
                 SetButtonsEnableStatus(true);
+                CheckRemoteDeviceSupport();
             });
+        }
+
+        private void CheckRemoteDeviceSupport()
+        {
+            string kind = (Common.ListManager.SelectedRemoteSystem?.Kind);
+            if (string.IsNullOrEmpty(kind))
+                kind = "Unknown";
+            if (kind.ToLower() == "xbox")
+            {
+                SetButtonsEnableStatus(false);
+                if (sendUrlButton != null)
+                    sendUrlButton.Enabled = true;
+            }
         }
 
         private void ListView_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
