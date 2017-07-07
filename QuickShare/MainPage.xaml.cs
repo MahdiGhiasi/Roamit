@@ -169,14 +169,24 @@ namespace QuickShare
         {
             if (!TrialSettings.IsTrial)
                 AdBanner.Suspend();
-#if !DEBUG
-            App.Tracker.Send(HitBuilder.CreateScreenView("MainPage").Build());
-#endif
+
             DiscoverDevices();
             InitDiscoveringOtherDevices();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
             await DownloadFolderHelper.InitDownloadFolderAsync();
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateScreenView("MainPage").Build());
+
+            if (App.LaunchTime != null)
+            {
+                App.LaunchTime = null;
+                var loadTime = DateTime.Now - (DateTime)App.LaunchTime;
+                string loadTimeString = $"{loadTime.TotalSeconds}.{loadTime.Milliseconds / 100}";
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("AppLoadTime", loadTimeString).Build());
+            }
+#endif
 
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                                                                                                           DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);

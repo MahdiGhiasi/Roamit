@@ -42,6 +42,8 @@ namespace QuickShare
 #if !DEBUG
         public static Tracker Tracker;
 #endif
+        public static DateTime? LaunchTime { get; set; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -51,6 +53,8 @@ namespace QuickShare
             this.InitializeComponent();
             this.Suspending += OnSuspending;
             this.UnhandledException += App_UnhandledException;
+
+            LaunchTime = DateTime.Now;
 
             UWP.Rome.RomePackageManager.Instance.Initialize("com.roamit.service");
             DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
@@ -91,6 +95,7 @@ namespace QuickShare
             }
             else
             {
+                LaunchTime = null;
                 InitApplication(e, typeof(Intro));
             }
         }
@@ -261,6 +266,7 @@ namespace QuickShare
 
         private void LaunchRootFrameIfNecessary(ref Frame rootFrame, bool launchMainPage)
         {
+            LaunchTime = null;
             if (rootFrame == null)
             {
                 InitApplication(null, launchMainPage ? typeof(MainPage) : null);
