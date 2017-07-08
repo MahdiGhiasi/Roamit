@@ -56,7 +56,7 @@ namespace QuickShare.UWP.Rome
 
         private async void Timer_Tick(object state)
         {
-            Debug.WriteLine("Timer_Tick");
+            //Debug.WriteLine("Timer_Tick");
 
             if (firstTimeRefresh)
             {
@@ -65,15 +65,15 @@ namespace QuickShare.UWP.Rome
                     return;
             }
 
-            Debug.WriteLine("Timer_Tick. Stopping watcher...");
+            //Debug.WriteLine("Timer_Tick. Stopping watcher...");
             _remoteSystemWatcher.Stop();
-            Debug.WriteLine("Timer_Tick. Stopped watcher...");
+            //Debug.WriteLine("Timer_Tick. Stopped watcher...");
 
             await Task.Delay(500);
 
-            Debug.WriteLine("Timer_Tick. Starting watcher...");
+            //Debug.WriteLine("Timer_Tick. Starting watcher...");
             _remoteSystemWatcher.Start();
-            Debug.WriteLine("Timer_Tick. Started watcher...");
+            //Debug.WriteLine("Timer_Tick. Started watcher...");
         }
 
         private async void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
