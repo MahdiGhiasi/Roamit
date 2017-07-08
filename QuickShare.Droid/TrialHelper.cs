@@ -40,10 +40,14 @@ namespace QuickShare.Droid
 
         internal static async Task<VersionStatus> RefreshUserTrialStatusAsync(string userId)
         {
-            var status = await UpgradeDetails.GetUpgradeStatus(userId);
+            VersionStatus status = await UpgradeDetails.GetUpgradeStatus(userId);
             var oldStatus = UserTrialStatus;
 
-            CrossSecureStorage.Current.SetValue("UserTrialStatus", ((int)status).ToString());
+            try
+            {
+                CrossSecureStorage.Current.SetValue("UserTrialStatus", ((int)status).ToString());
+            }
+            catch { }
 
             if (status != oldStatus)
                 UserTrialStatusChanged?.Invoke();
