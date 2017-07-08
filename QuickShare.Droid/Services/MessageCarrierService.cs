@@ -211,6 +211,8 @@ namespace QuickShare.Droid.Services
 
             Android.Util.Log.Debug(TAG, "3 " + deviceId);
 
+            InitProgressNotifier();
+
             //try finding remote system for 15 seconds
             for (int i = 0; i < 30; i++)
             {
@@ -315,13 +317,14 @@ namespace QuickShare.Droid.Services
             if (receiver == "ServerIPFinder")
             {
                 InitProgressNotifier();
+                progressNotifier.UpdateTitle("Initializing...");
 
                 await FileTransfer.ServerIPFinder.ReceiveRequest(message);
             }
             else if (receiver == "FileReceiver")
             {
-                if (progressNotifier == null)
-                    InitProgressNotifier();
+                InitProgressNotifier();
+                progressNotifier.UpdateTitle("Receiving...");
 
                 string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "Roamit");
                 System.IO.Directory.CreateDirectory(downloadPath); //Make sure download folder exists.
@@ -347,8 +350,11 @@ namespace QuickShare.Droid.Services
 
         private void InitProgressNotifier()
         {
+            if (progressNotifier != null)
+                return;
+
             progressNotifier = new ProgressNotifier(this);
-            progressNotifier.SendInitialNotification("Receiving...", "");
+            progressNotifier.SendInitialNotification("Connecting...", "");
         }
 
         public override void OnDestroy()
