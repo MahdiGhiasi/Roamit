@@ -346,6 +346,8 @@ namespace QuickShare.Droid
             };
             await Common.PackageManager.Send(vs);
 
+            Common.PackageManager.CloseAppService();
+
             SetProgressBarValueToMax();
 
             if (failed)
@@ -445,6 +447,8 @@ namespace QuickShare.Droid
                     Analytics.TrackEvent("SendToWindows", "text", "Failed");
                     return;
                 }
+
+                Common.PackageManager.CloseAppService();
             }
             
             sendStatus.Text = "Finished.";
