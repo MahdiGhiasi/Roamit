@@ -50,6 +50,8 @@ namespace QuickShare
 
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            while (Frame.BackStackDepth > 1)
+                Frame.BackStack.RemoveAt(Frame.BackStackDepth - 1);
             Frame.GoBack();
         }
 
