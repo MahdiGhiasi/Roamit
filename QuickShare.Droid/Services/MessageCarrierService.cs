@@ -195,7 +195,7 @@ namespace QuickShare.Droid.Services
             }
             else if (e.State == FileTransfer.FileTransferState.DataTransfer)
             {
-                progressNotifier?.SetProgressValue((int)e.Total, (int)e.CurrentPart);
+                progressNotifier?.SetProgressValue((int)e.Total, (int)e.CurrentPart, "Receiving...");
             }
         }
 
@@ -353,7 +353,7 @@ namespace QuickShare.Droid.Services
             if (progressNotifier != null)
                 return;
 
-            progressNotifier = new ProgressNotifier(this);
+            progressNotifier = new ProgressNotifier(this, "Receive failed.");
             progressNotifier.SendInitialNotification("Connecting...", "");
         }
 
