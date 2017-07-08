@@ -309,7 +309,7 @@ namespace QuickShare
                 appServiceConnection.RequestReceived += OnAppServiceRequestReceived;
                 appServiceConnection.ServiceClosed += AppServiceConnection_ServiceClosed;
             }
-            else if (appService?.Name == "com.roamit.carrierinternal")
+            else if (appService?.Name == "com.roamit.messagecarrierservice")
             {
                 messageCarrierAppServiceDeferral = taskInstance.GetDeferral();
                 taskInstance.Canceled += OnMessageCarrierAppServicesCanceled;
