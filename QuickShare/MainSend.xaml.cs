@@ -233,6 +233,7 @@ namespace QuickShare
             else
             {
                 ViewModel.GoBackButtonVisibility = Visibility.Visible;
+                GoBackButtonShowStoryboard.Begin();
 
                 if (succeed)
                 {
