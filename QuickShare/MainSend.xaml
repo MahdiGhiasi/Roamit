@@ -55,10 +55,11 @@
                    TextAlignment="Center"
                    Margin="0,0,0,60"
                    Visibility="{x:Bind ViewModel.UnlockNoticeVisibility, Mode=OneWay}" />
-        <Button Content="Go Back"
-                HorizontalAlignment="Center"
+        <Button Content="GO BACK"
+                HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
-                Margin="0,0,0,60"
+                Margin="0,0,0,0"
+                Height="50"
                 Tapped="BackButton_Tapped"
                 Visibility="{x:Bind ViewModel.GoBackButtonVisibility, Mode=OneWay}" />
     </Grid>
