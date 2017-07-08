@@ -18,7 +18,7 @@ namespace QuickShare.FileTransfer
     public class FileSender : IDisposable
     {
         readonly int maxQueueInfoMessageSize = 1536;
-        readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(10);
+        readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(6);
 
         object remoteSystem;
 
@@ -73,7 +73,7 @@ namespace QuickShare.FileTransfer
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
             {
-                await Handshake().WithTimeout(handshakeTimeout);
+                await Handshake();
 
                 if (ipFinderResult == null)
                     ipFinderResult = new IPDetectionCompletedEventArgs
@@ -172,7 +172,7 @@ namespace QuickShare.FileTransfer
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
             {
-                await Handshake().WithTimeout(handshakeTimeout);
+                await Handshake();
 
                 if (ipFinderResult == null)
                     ipFinderResult = new IPDetectionCompletedEventArgs
@@ -519,7 +519,7 @@ namespace QuickShare.FileTransfer
             server.StartWebServer(ipFinderResult.MyIP, Constants.CommunicationPort);
         }
 
-        private async Task Handshake()
+        private async Task<bool> Handshake()
         {
             if (myIPs.Count == 1)
             {
@@ -529,14 +529,28 @@ namespace QuickShare.FileTransfer
                     MyIP = myIPs[0],
                     Success = true,
                 };
-                return;
+                return true;
             }
 
             ipFinder.IPDetectionCompleted += IpFinder_IPDetectionCompleted;
             ipFinderTcs = new TaskCompletionSource<bool>();
-            await ipFinder.StartFindingMyLocalIP(myIPs);
-            await ipFinderTcs.Task;
-            System.Diagnostics.Debug.WriteLine(ipFinderResult.MyIP);
+            if (await ipFinder.StartFindingMyLocalIP(myIPs))
+            {
+                await ipFinderTcs.Task.WithTimeout(handshakeTimeout);
+
+                if (ipFinderResult != null)
+                {
+                    System.Diagnostics.Debug.WriteLine(ipFinderResult.MyIP);
+                    return true;
+                }
+            }
+
+            Debug.WriteLine("Sending handshake message failed.");
+            ipFinderResult = new IPDetectionCompletedEventArgs
+            {
+                Success = false,
+            };
+            return false;
         }
 
         private void IpFinder_IPDetectionCompleted(object sender, IPDetectionCompletedEventArgs e)
