@@ -224,11 +224,22 @@ namespace QuickShare
 
             if (SendDataTemporaryStorage.IsSharingTarget)
             {
+                if (App.ShareOperation == null)
+                {
 #if !DEBUG
-                App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "ShareTarget").Build());
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "UriTarget").Build());
 #endif
-                await Task.Delay(TimeSpan.FromSeconds(1.5));
-                App.ShareOperation.ReportCompleted();
+                    await Task.Delay(TimeSpan.FromSeconds(1.5));
+                    App.Current.Exit();
+                }
+                else
+                {
+#if !DEBUG
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "ShareTarget").Build());
+#endif
+                    await Task.Delay(TimeSpan.FromSeconds(1.5));
+                    App.ShareOperation.ReportCompleted();
+                }
             }
             else
             {

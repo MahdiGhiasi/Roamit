@@ -73,7 +73,7 @@ namespace QuickShare
         private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             e.Handled = true;
-            LogExceptionMessage(e.Message + "\r\n\r\n" + e.Exception.ToString());           
+            LogExceptionMessage(e.Message + "\r\n\r\n" + e.Exception.ToString());
         }
 
         private async void LogExceptionMessage(string msg)
@@ -216,24 +216,40 @@ namespace QuickShare
             {
                 ProtocolActivatedEventArgs pEventArgs = e as ProtocolActivatedEventArgs;
 
-                string clipboardData = FastClipboardUri(pEventArgs.Uri.AbsoluteUri);
-
-                if (clipboardData.Length > 0)
-                {
-                    string[] parts = clipboardData.Split('?');
-                    var guid = await TextReceiver.QuickTextReceivedAsync(parts[0].DecodeBase64(), parts[1].DecodeBase64());
-
-                    LaunchRootFrameIfNecessary(ref rootFrame, false);
-                    rootFrame.Navigate(typeof(ClipboardReceive), guid.ToString());
-                }
-                else if ((pEventArgs.Uri.AbsoluteUri.ToLower() == "roamit://wake") || (pEventArgs.Uri.AbsoluteUri.ToLower() == "roamit://wake/"))
+                if ((pEventArgs.Uri.AbsoluteUri.ToLower() == "roamit://wake") || (pEventArgs.Uri.AbsoluteUri.ToLower() == "roamit://wake/"))
                 {
                     Debug.WriteLine("Wake request received");
                     Application.Current.Exit();
                 }
                 else
                 {
-                    LaunchRootFrameIfNecessary(ref rootFrame, true);
+                    string clipboardData = ParseFastClipboardUri(pEventArgs.Uri.AbsoluteUri);
+                    string launchUriData = ParseLaunchUri(pEventArgs.Uri.AbsoluteUri);
+
+                    if (clipboardData.Length > 0)
+                    {
+                        string[] parts = clipboardData.Split('?');
+                        var guid = await TextReceiver.QuickTextReceivedAsync(parts[0].DecodeBase64(), parts[1].DecodeBase64());
+
+                        LaunchRootFrameIfNecessary(ref rootFrame, false);
+                        rootFrame.Navigate(typeof(ClipboardReceive), guid.ToString());
+                    }
+                    else if (launchUriData.Length > 0)
+                    {
+                        string type = ExternalContentHelper.SetUriData(new Uri(launchUriData.DecodeBase64()));
+                        
+                        SendDataTemporaryStorage.IsSharingTarget = true;
+
+                        LaunchRootFrameIfNecessary(ref rootFrame, false);
+                        rootFrame.Navigate(typeof(MainPage), new ShareTargetDetails
+                        {
+                            Type = type,
+                        });
+                    }
+                    else
+                    {
+                        LaunchRootFrameIfNecessary(ref rootFrame, true);
+                    }
                 }
             }
             else
@@ -244,7 +260,7 @@ namespace QuickShare
             base.OnActivated(e);
         }
 
-        private string FastClipboardUri(string s)
+        private string ParseFastClipboardUri(string s)
         {
             string fastClipboardUri = "roamit://clipboard/";
             if (s.Length < fastClipboardUri.Length)
@@ -253,6 +269,17 @@ namespace QuickShare
             var command = s.Substring(0, fastClipboardUri.Length).ToLower();
 
             return (command == fastClipboardUri) ? s.Substring(fastClipboardUri.Length) : "";
+        }
+
+        private string ParseLaunchUri(string s)
+        {
+            string launchUri = "roamit://remotelaunch/";
+            if (s.Length < launchUri.Length)
+                return "";
+
+            var command = s.Substring(0, launchUri.Length).ToLower();
+
+            return (command == launchUri) ? s.Substring(launchUri.Length) : "";
         }
 
         private async Task<HistoryRow> GetHistoryItemGuid(Guid guid)
@@ -415,7 +442,7 @@ namespace QuickShare
         {
             ShareOperation = args.ShareOperation;
             string type = await ExternalContentHelper.SetData(ShareOperation.Data);
-            
+
             if (type == "")
             {
                 ShareOperation.ReportError("Unknown data type received.");
