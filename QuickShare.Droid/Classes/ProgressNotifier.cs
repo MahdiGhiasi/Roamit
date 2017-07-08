@@ -20,7 +20,9 @@ namespace QuickShare.Droid.Classes
         readonly TimeSpan _minimumTimeBetweenNotifs = TimeSpan.FromSeconds(0.5);
         readonly TimeSpan _minimumTimeBetweenFinalNotifAndPrev = TimeSpan.FromSeconds(1.5);
 
-        int id;
+        // We have just one progress notification, but 
+        // more than one finish notifications.
+        static int id = Notification.GetNewNotifId();
         Context context;
         NotificationManager notificationManager;
         NotificationCompat.Builder builder;
@@ -29,7 +31,6 @@ namespace QuickShare.Droid.Classes
 
         public ProgressNotifier(Context _context)
         {
-            id = Notification.GetNewNotifId();
             context = _context;
 
             notificationManager = NotificationManager.FromContext(_context);
@@ -46,6 +47,18 @@ namespace QuickShare.Droid.Classes
             notificationManager.Notify(id, builder.Build());
             lastProgressNotif = DateTime.Now;
         }
+
+        public void UpdateTitle(string title)
+        {
+            if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenNotifs)
+                return;
+
+            builder.SetContentTitle(title);
+
+            notificationManager.Notify(id, builder.Build());
+            lastProgressNotif = DateTime.Now;
+        }
+
 
         public void SetProgressValue(int max, int value)
         {
