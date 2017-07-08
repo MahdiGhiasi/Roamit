@@ -11,6 +11,20 @@
     mc:Ignorable="d"
     x:Name="page">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <Storyboard x:Name="GoBackButtonShowStoryboard">
+                <DoubleAnimation Storyboard.TargetName="GoBackButtonTransform" 
+                                 Storyboard.TargetProperty="Y"
+                                 Duration="0:0:0.3" From="50" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+        </ResourceDictionary>
+    </Page.Resources>
+    
     <Grid Background="Transparent" x:Name="parentGrid">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -61,6 +75,10 @@
                 Margin="0,0,0,0"
                 Height="50"
                 Tapped="BackButton_Tapped"
-                Visibility="{x:Bind ViewModel.GoBackButtonVisibility, Mode=OneWay}" />
+                Visibility="{x:Bind ViewModel.GoBackButtonVisibility, Mode=OneWay}">
+            <Button.RenderTransform>
+                <TranslateTransform Y="50" x:Name="GoBackButtonTransform" />
+            </Button.RenderTransform>
+        </Button>
     </Grid>
 </Page>
