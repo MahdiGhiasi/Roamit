@@ -300,6 +300,10 @@ namespace QuickShare.Droid.Services
                 Log.Debug(TAG, ex.Message);
                 Log.Debug(TAG, ex.ToString());
             }
+            finally
+            {
+                Common.MessageCarrierPackageManager.CloseAppService();
+            }
 
             //StopSelf();
         }
