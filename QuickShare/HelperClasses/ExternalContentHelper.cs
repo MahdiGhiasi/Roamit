@@ -82,5 +82,13 @@ namespace QuickShare.HelperClasses
 
             return "";
         }
+
+        internal static string SetUriData(Uri uri)
+        {
+            SendDataTemporaryStorage.LaunchUri = uri;
+            SendDataTemporaryStorage.Text = uri.OriginalString;
+
+            return StandardDataFormats.WebLink;
+        }
     }
 }
