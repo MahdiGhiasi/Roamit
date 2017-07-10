@@ -178,12 +178,11 @@ namespace QuickShare
 
 #if !DEBUG
             App.Tracker.Send(HitBuilder.CreateScreenView("MainPage").Build());
-
             if (App.LaunchTime != null)
             {
-                App.LaunchTime = null;
                 var loadTime = DateTime.Now - (DateTime)App.LaunchTime;
-                string loadTimeString = $"{loadTime.TotalSeconds}.{loadTime.Milliseconds / 100}";
+                App.LaunchTime = null;
+                string loadTimeString = $"{(int)Math.Floor(loadTime.TotalSeconds)}.{(int)Math.Floor(loadTime.Milliseconds / 100.0)}";
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("AppLoadTime", loadTimeString).Build());
             }
 #endif
