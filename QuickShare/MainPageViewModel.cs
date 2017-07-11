@@ -1,12 +1,13 @@
 ﻿using QuickShare.DevicesListManager;
 using QuickShare.UWP.Rome;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Windows.UI.Xaml;
 
 namespace QuickShare
 {
-    public class MainPageViewModel : INotifyPropertyChanged
+    public class MainPageViewModel : INotifyPropertyChanged, IDisposable
     {
         public DevicesListManager.DevicesListManager ListManager { get; } = new DevicesListManager.DevicesListManager("", new RemoteSystemNormalizer());
 
@@ -112,13 +113,17 @@ namespace QuickShare
 
         public void RefreshIsContentFrameEnabled()
         {
-            OnPropertyChanged("IsContentFrameEnabled");
-
-            if (IsContentFrameEnabled)
+            try
             {
-                var content = MainPage.Current.InternalFrameContent as IKindChangeAware;
-                content?.SelectedRemoteSystemChanged(ListManager.SelectedRemoteSystem.Kind);
+                OnPropertyChanged("IsContentFrameEnabled");
+
+                if (IsContentFrameEnabled)
+                {
+                    var content = MainPage.Current.InternalFrameContent as IKindChangeAware;
+                    content?.SelectedRemoteSystemChanged(ListManager.SelectedRemoteSystem.Kind);
+                }
             }
+            catch { }
         }
 
         private bool isAcrylicEnabled = false;
@@ -147,7 +152,16 @@ namespace QuickShare
         // Create the OnPropertyChanged method to raise the event
         protected void OnPropertyChanged(string name)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+            catch { }
+        }
+
+        public void Dispose()
+        {
+            ListManager.PropertyChanged -= ListManager_PropertyChanged;
         }
     }
 }

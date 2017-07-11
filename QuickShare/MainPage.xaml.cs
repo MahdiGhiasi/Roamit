@@ -27,6 +27,7 @@ using Windows.ApplicationModel.DataTransfer;
 using QuickShare.ServiceTask.HelperClasses;
 using QuickShare.HelperClasses.VersionHelpers;
 using GoogleAnalytics;
+using Windows.UI.Core;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -45,6 +46,9 @@ namespace QuickShare
         public IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem> PicturePickerItems { get; internal set; }
 
         public object InternalFrameContent { get => ContentFrame.Content; }
+
+        public bool IsShareContent { get; private set; } = false;
+        bool loadWait = false;
 
         bool isUserSelectedRemoteSystemManually = false;
         int remoteSystemPrevCount = 0;
@@ -73,8 +77,6 @@ namespace QuickShare
         {
             this.InitializeComponent();
 
-            Current = this;
-
 #if DEBUG
             AdBanner.ApplicationId = "3f83fe91-d6be-434d-a0ae-7351c5a997f1";
             AdBanner.AdUnitId = "test";
@@ -82,6 +84,8 @@ namespace QuickShare
             AdBanner.ApplicationId = AdConstants.AppId;
             AdBanner.AdUnitId = AdConstants.UnitId;
 #endif
+
+            Window.Current.Closed += Window_Closed;
         }
 
         public async Task FileTransferProgress(FileTransferProgressEventArgs e)
@@ -145,18 +149,35 @@ namespace QuickShare
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            loadWait = false;
             InitAcrylicUI();
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
             if (e.Parameter is ShareTargetDetails)
             {
+                IsShareContent = true;
+
                 ContentFrame.Navigate(typeof(MainShareTarget), e.Parameter);
                 DispatcherEx.CustomDispatcher = Dispatcher;
+
+                if ((Current != null) && (Current != this) && (Current.IsShareContent == false)) //Main window is present
+                {
+                    loadWait = true;
+                    await Current.WaitForShare();
+                    await Task.Delay(2000);
+                }
+            }
+            else if (e.Parameter.ToString() == "BackFromShareTarget")
+            {
+                loadWait = true;
+                ContentFrame.Navigate(typeof(MainActions));
+                await Task.Delay(2000);
             }
             else
             {
                 ContentFrame.Navigate(typeof(MainActions));
             }
+            Current = this;
 
             base.OnNavigatedTo(e);
 
@@ -165,8 +186,19 @@ namespace QuickShare
                 await clipboardTempFolder.DeleteAsync();
         }
 
+        public async Task WaitForShare()
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                Frame.Navigate(typeof(ShareWaiting));
+            });
+        }
+
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            if (loadWait)
+                await Task.Delay(2000);
+
             if (!TrialSettings.IsTrial)
                 AdBanner.Suspend();
 
@@ -241,31 +273,35 @@ namespace QuickShare
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
             {
-                if (e.NewItems != null)
-                    foreach (var item in e.NewItems)
-                    {
-                        ViewModel.ListManager.AddDevice(item);
-                    }
-
-                if (e.OldItems != null)
-                    foreach (var item in e.OldItems)
-                    {
-                        ViewModel.ListManager.RemoveDevice(item);
-                    }
-
-                var selItem = PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == ViewModel.ListManager.SelectedRemoteSystem?.Id);
-                if ((selItem != null) && (ViewModel.ListManager.SelectedRemoteSystem.IsAvailableByProximity != selItem.IsAvailableByProximity))
-                    ViewModel.ListManager.Select(selItem);
-
-                if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (ViewModel.ListManager.RemoteSystems.Count > remoteSystemPrevCount) && (AllowedToChangeSelectedRemoteSystem()))
+                try
                 {
-                    remoteSystemPrevCount = ViewModel.ListManager.RemoteSystems.Count;
-                    ViewModel.ListManager.SelectHighScoreItem();
+                    if (e.NewItems != null)
+                        foreach (var item in e.NewItems)
+                        {
+                            ViewModel.ListManager.AddDevice(item);
+                        }
+
+                    if (e.OldItems != null)
+                        foreach (var item in e.OldItems)
+                        {
+                            ViewModel.ListManager.RemoveDevice(item);
+                        }
+
+                    var selItem = PackageManager.RemoteSystems.FirstOrDefault(x => x.Id == ViewModel.ListManager.SelectedRemoteSystem?.Id);
+                    if ((selItem != null) && (ViewModel.ListManager.SelectedRemoteSystem.IsAvailableByProximity != selItem.IsAvailableByProximity))
+                        ViewModel.ListManager.Select(selItem);
+
+                    if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (ViewModel.ListManager.RemoteSystems.Count > remoteSystemPrevCount) && (AllowedToChangeSelectedRemoteSystem()))
+                    {
+                        remoteSystemPrevCount = ViewModel.ListManager.RemoteSystems.Count;
+                        ViewModel.ListManager.SelectHighScoreItem();
+                    }
+
+                    ViewModel.RefreshIsContentFrameEnabled();
+
+                    CheckIfShouldAskAboutMSAPermission();
                 }
-
-                ViewModel.RefreshIsContentFrameEnabled();
-
-                CheckIfShouldAskAboutMSAPermission();
+                catch { }
             });
         }
 
@@ -444,6 +480,20 @@ namespace QuickShare
         private async void UpgradeButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await TrialHelper.AskForUpgrade();
+        }
+
+        private void Window_Closed(object sender, CoreWindowEventArgs e)
+        {
+            if (Current == this)
+            {
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested -= MainPage_BackRequested;
+                PackageManager.RemoteSystems.CollectionChanged -= RemoteSystems_CollectionChanged;
+                TrialSettings.IsTrialChanged -= TrialSettings_IsTrialChanged;
+
+                ViewModel.Dispose();
+
+                Current = null;
+            }
         }
     }
 }

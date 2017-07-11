@@ -20,16 +20,20 @@ namespace QuickShare.DataStore
 
         public void Add(string key, string value)
         {
-            if (ContainsKey(key))
+            try
             {
-                Remove(key);
-            }
+                if (ContainsKey(key))
+                {
+                    Remove(key);
+                }
 
-            data.Insert(new SettingsRow
-            {
-                Key = key,
-                Value = value,
-            });
+                data.Insert(new SettingsRow
+                {
+                    Key = key,
+                    Value = value,
+                });
+            }
+            catch { }
 
         }
 
