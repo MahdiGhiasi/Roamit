@@ -111,6 +111,8 @@
             </StackPanel>
             <Grid Grid.Row="1" x:Name="AdFrame">
                 <ads:AdControl x:Name="AdBanner"
+                               BorderThickness="1"
+                               BorderBrush="#555555"
                                HorizontalAlignment="Center"
                                Height="50"
                                VerticalAlignment="Top"
