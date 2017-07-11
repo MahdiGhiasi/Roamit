@@ -127,6 +127,9 @@
     </Compile>
     <Compile Include="SettingsModel.cs" />
     <Compile Include="ShareTargetDetails.cs" />
+    <Compile Include="ShareWaiting.xaml.cs">
+      <DependentUpon>ShareWaiting.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ToastNotifications\Toaster.ClipboardTextReceived.cs" />
     <Compile Include="ToastNotifications\Toaster.cs" />
     <Compile Include="ToastNotifications\Toaster.FileReceiveFinished.cs" />
@@ -264,6 +267,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ShareWaiting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
