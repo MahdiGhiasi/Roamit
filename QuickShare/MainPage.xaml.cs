@@ -167,7 +167,7 @@ namespace QuickShare
                     await Task.Delay(2000);
                 }
             }
-            else if (e.Parameter.ToString() == "BackFromShareTarget")
+            else if ((e.Parameter != null) && (e.Parameter.ToString() == "BackFromShareTarget"))
             {
                 loadWait = true;
                 ContentFrame.Navigate(typeof(MainActions));
