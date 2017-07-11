@@ -240,6 +240,8 @@ namespace QuickShare
                     await Task.Delay(TimeSpan.FromSeconds(1.5));
                     App.ShareOperation.ReportCompleted();
                 }
+                SendDataTemporaryStorage.IsSharingTarget = false;
+                App.ShareOperation = null;
             }
             else
             {
