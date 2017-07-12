@@ -25,7 +25,7 @@ namespace QuickShare.ServiceTask
         static SemaphoreSlim notificationSemaphoreSlim = new SemaphoreSlim(1, 1);
         static int waitingNumSemaphore = 0;
 
-        public void Run(IBackgroundTaskInstance taskInstance)
+        public async void Run(IBackgroundTaskInstance taskInstance)
         {
             _deferral = taskInstance.GetDeferral();
 
@@ -34,6 +34,7 @@ namespace QuickShare.ServiceTask
             if (details?.Name == "com.roamit.service") //Remote Activation
             {
                 DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
+                await HelperClasses.DownloadFolderHelper.InitDownloadFolderAsync();
 
                 _appServiceconnection = details.AppServiceConnection;
                 _appServiceconnection.RequestReceived += OnRequestReceived;
@@ -47,7 +48,6 @@ namespace QuickShare.ServiceTask
 
                 taskInstance.Canceled += OnTaskCanceled;
             }
-
         }
 
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
