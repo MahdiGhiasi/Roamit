@@ -30,12 +30,15 @@ namespace QuickShare
         private bool hasMoreItems;
         private int currentPage;
 
+        private int partsCount;
+
         public IncrementalLoadingCollection(int preferredItemsPerPage = 20, int partCoefficient = 3)
         {
             source = new T();
             itemsPerPart = Math.Max(preferredItemsPerPage / partCoefficient, 5);
             itemsPerPage = itemsPerPart * partCoefficient;
             hasMoreItems = true;
+            partsCount = partCoefficient;
         }
 
         public bool HasMoreItems
@@ -53,7 +56,7 @@ namespace QuickShare
                 uint resultCount = 0;
                 IEnumerable<I> result = null;
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < partsCount; i++)
                 {
                     //dispatcher.RunAsync doesn't wait for task to be done, so we use this method instead.
                     await DispatcherEx.RunTaskAsync(dispatcher, async () =>

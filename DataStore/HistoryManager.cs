@@ -42,6 +42,11 @@ namespace QuickShare.DataStore
             return data.FindById(guid);
         }
 
+        public IEnumerable<HistoryRow> GetPage(int startIndex, int count)
+        {
+            return data.Find(x => true, startIndex, count);
+        }
+
         public void ChangeCompletedStatus(Guid guid, bool isCompleted)
         {
             var item = GetItem(guid);
