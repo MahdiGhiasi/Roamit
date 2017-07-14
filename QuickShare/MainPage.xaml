@@ -243,6 +243,11 @@
             </CommandBar.RenderTransform>
             <AppBarButton Icon="Setting" Label="Settings" Tapped="SettingsButton_Tapped" />
             <AppBarButton Icon="Shop" Label="Upgrade to full version" Visibility="{x:Bind ViewModel.UpgradeButtonVisibility, Mode=OneWay}" Tapped="UpgradeButton_Tapped" />
+            <AppBarButton Label="History" Tapped="HistoryButton_Tapped">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE81C;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
         </CommandBar>
 
         <Grid x:Name="Overlay" Background="#00FFFFFF" Visibility="{x:Bind ViewModel.OverlayVisibility, Mode=OneWay}">

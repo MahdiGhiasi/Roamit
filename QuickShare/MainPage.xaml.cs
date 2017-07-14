@@ -495,5 +495,10 @@ namespace QuickShare
                 Current = null;
             }
         }
+
+        private void HistoryButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ContentFrame.Navigate(typeof(HistoryPage));
+        }
     }
 }

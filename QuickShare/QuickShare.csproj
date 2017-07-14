@@ -93,6 +93,14 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="HelperClasses\HistoryItemTemplateSelector.cs" />
+    <Compile Include="HistoryItemSource.cs" />
+    <Compile Include="ViewModels\History\FileInfo.cs" />
+    <Compile Include="ViewModels\History\HistoryClipboardTextItem.cs" />
+    <Compile Include="ViewModels\History\HistoryMultipleFileItem.cs" />
+    <Compile Include="ViewModels\History\HistorySingleFileItem.cs" />
+    <Compile Include="ViewModels\History\HistoryItem.cs" />
+    <Compile Include="ViewModels\History\HistoryWebLinkItem.cs" />
     <None Include="project.json" />
     <Compile Include="HelperClasses\VersionHelpers\AdDisplayTrigger.cs" />
     <Compile Include="Flyouts\SignInNoticeFlyout.xaml.cs">
@@ -110,6 +118,9 @@
     <Compile Include="HelperClasses\VersionHelpers\TrialSettings.cs" />
     <Compile Include="HelperClasses\VisualChildFinder.cs" />
     <Compile Include="HelperClasses\WindowTopBarFunctions.cs" />
+    <Compile Include="HistoryPage.xaml.cs">
+      <DependentUpon>HistoryPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="IKindChangeAware.cs" />
     <Compile Include="Intro.xaml.cs">
       <DependentUpon>Intro.xaml</DependentUpon>
@@ -241,6 +252,10 @@
     <Page Include="Flyouts\SignInNoticeFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HistoryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Intro.xaml">
       <Generator>MSBuild:Compile</Generator>
