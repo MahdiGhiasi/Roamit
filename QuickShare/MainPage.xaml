@@ -31,9 +31,9 @@
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="BottomCommandBar" 
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                 Duration="0:0:0.3" From="24" To="0">
+                                 Duration="0:0:0.3" From="48" To="0">
                     <DoubleAnimation.EasingFunction>
-                        <BackEase EasingMode="EaseOut" Amplitude="1" />
+                        <BackEase EasingMode="EaseOut" Amplitude="0" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
             </Storyboard>
@@ -47,7 +47,7 @@
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="BottomCommandBar" 
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                 Duration="0:0:0.3" From="0" To="24">
+                                 Duration="0:0:0.3" From="0" To="48">
                     <DoubleAnimation.EasingFunction>
                         <ExponentialEase EasingMode="EaseOut" />
                     </DoubleAnimation.EasingFunction>
