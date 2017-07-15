@@ -326,8 +326,6 @@ namespace QuickShare
         {
             if ((e.Content is MainActions) || (e.Content is MainShareTarget))
             {
-                ViewModel.RefreshIsContentFrameEnabled();
-
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;
             }
@@ -353,6 +351,9 @@ namespace QuickShare
                 BottomBar.Visibility = Visibility.Collapsed;
                 BottomCommandBar.Visibility = Visibility.Collapsed;
             }
+
+            ViewModel.ContentFrameNeedsRemoteSystemSelection = !(((e.Content is Settings) || (e.Content is HistoryPage)));
+            ViewModel.RefreshIsContentFrameEnabled();
         }
 
         private async void DiscoverDevices()
