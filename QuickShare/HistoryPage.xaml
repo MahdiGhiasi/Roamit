@@ -36,6 +36,8 @@
                                    Text="{Binding LinkPath}" />
                         <HyperlinkButton Content="Open link"
                                          Margin="0,4,0,0"
+                                         Tapped="OpenLink_Tapped"
+                                         Tag="{Binding LinkPath}"
                                          HorizontalAlignment="Center" />
                     </StackPanel>
                     <TextBlock HorizontalAlignment="Right"
@@ -65,7 +67,10 @@
                                    Text="{Binding SenderName}" />
                     </Grid>
                     <StackPanel Margin="8,8,8,0">
-                        <HyperlinkButton Content="{Binding Content}" HorizontalAlignment="Stretch">
+                        <HyperlinkButton Content="{Binding ContentPreview}" 
+                                         Tag="{Binding Content}"
+                                         Tapped="CopyToClipboard_Tapped"
+                                         HorizontalAlignment="Stretch">
                             <HyperlinkButton.ContentTemplate>
                                 <DataTemplate>
                                     <TextBlock TextWrapping="Wrap"
@@ -114,18 +119,31 @@
                                    FontStyle="Italic"
                                    Text="{Binding File}" />
                         <Grid Margin="0,4,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <HyperlinkButton Content="Open file"
-                                             Grid.Column="1"
-                                             HorizontalAlignment="Center"
-                                             Margin="2,0,0,8" />
-                            <HyperlinkButton Content="Open containing folder"
-                                             Grid.Column="0"
-                                             HorizontalAlignment="Center"
-                                             Margin="2,0,0,8" />
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Right">
+                                <Button BorderThickness="0" 
+                                        Background="Transparent"
+                                        Tag="{Binding File}"
+                                        Tapped="OpenSingleFileContainingFolder_Tapped">
+                                    <Button.Content>
+                                        <TextBlock Text="&#xE8DA;" Foreground="White" FontFamily="Segoe MDL2 Assets" AutomationProperties.Name="Favorite" />
+                                    </Button.Content>
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock Text="Open folder" />
+                                    </ToolTipService.ToolTip>
+                                </Button>
+                                <Button BorderThickness="0" 
+                                        Background="Transparent"
+                                        Tag="{Binding File}"
+                                        Tapped="OpenSingleFile_Tapped">
+                                    <Button.Content>
+                                        <TextBlock Text="&#xE8E5;" Foreground="White" FontFamily="Segoe MDL2 Assets" AutomationProperties.Name="Favorite" />
+                                    </Button.Content>
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock Text="Open file" />
+                                    </ToolTipService.ToolTip>
+                                </Button>
+                            </StackPanel>
                         </Grid>
                     </StackPanel>
 
@@ -156,23 +174,61 @@
                                    Text="{Binding SenderName}" />
                     </Grid>
                     <ListView ItemsSource="{Binding Files}" 
+                              SelectionMode="None"
                               MaxHeight="156" 
                               Margin="0,8,0,0">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
                                     <TextBlock Text="{Binding}" 
+                                               Grid.Column="0"
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"
                                                TextAlignment="Center" />
+                                    <StackPanel Orientation="Horizontal"
+                                                VerticalAlignment="Center"
+                                                Grid.Column="1"
+                                                Margin="0,8,0,0"
+                                                HorizontalAlignment="Right">
+                                        <Button BorderThickness="0" 
+                                                Background="Transparent"
+                                                Tag="{Binding}"
+                                                Tapped="OpenSingleFileContainingFolder_Tapped">
+                                            <Button.Content>
+                                                <TextBlock Text="&#xE8DA;" FontSize="20" Foreground="White" FontFamily="Segoe MDL2 Assets" AutomationProperties.Name="Open folder" />
+                                            </Button.Content>
+                                            <ToolTipService.ToolTip>
+                                                <TextBlock Text="Open folder" />
+                                            </ToolTipService.ToolTip>
+                                        </Button>
+                                        <Button BorderThickness="0" 
+                                                Background="Transparent"
+                                                Tag="{Binding}"
+                                                Tapped="OpenSingleFile_Tapped">
+                                            <Button.Content>
+                                                <TextBlock Text="&#xE8E5;" FontSize="20" Foreground="White" FontFamily="Segoe MDL2 Assets" AutomationProperties.Name="Open file" />
+                                            </Button.Content>
+                                            <ToolTipService.ToolTip>
+                                                <TextBlock Text="Open file" />
+                                            </ToolTipService.ToolTip>
+                                        </Button>
+                                    </StackPanel>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
-                    <TextBlock Text="(Tap on file name to open)"
-                               Opacity="0.4"
-                               Margin="0,8,0,4"
-                               TextAlignment="Center"
-                               FontSize="11" />
                     <HyperlinkButton Content="Open containing folder"
+                                     Tag="{Binding Path}"
+                                     Tapped="OpenFolder_Tapped"
                                      HorizontalAlignment="Center"
                                      Margin="2,0,0,8" />
                     <TextBlock HorizontalAlignment="Right"

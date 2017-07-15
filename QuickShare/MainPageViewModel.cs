@@ -105,10 +105,17 @@ namespace QuickShare
             }
         }
 
+        public bool ContentFrameNeedsRemoteSystemSelection { get; set; } = false;
+
         private bool isContentFrameEnabled = false;
         public bool IsContentFrameEnabled
         {
-            get { return ListManager.SelectedRemoteSystem != null; }
+            get
+            {
+                if (ContentFrameNeedsRemoteSystemSelection)
+                    return ListManager.SelectedRemoteSystem != null;
+                return true;
+            }
         }
 
         public void RefreshIsContentFrameEnabled()

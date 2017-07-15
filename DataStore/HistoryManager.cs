@@ -44,7 +44,7 @@ namespace QuickShare.DataStore
 
         public IEnumerable<HistoryRow> GetPage(int startIndex, int count)
         {
-            return data.Find(x => true, startIndex, count);
+            return data.Find(x => (x.Completed == true)).OrderByDescending(x => x.ReceiveTime).Skip(startIndex).Take(count);
         }
 
         public void ChangeCompletedStatus(Guid guid, bool isCompleted)
