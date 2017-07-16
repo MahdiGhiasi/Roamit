@@ -305,6 +305,12 @@ namespace QuickShare
             });
         }
 
+        internal void BeTheShareTarget(ShareTargetDetails shareTargetDetails)
+        {
+            IsShareContent = true;
+            ContentFrame.Navigate(typeof(MainShareTarget), shareTargetDetails);
+        }
+
         private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (devicesList.SelectedItem == null)
