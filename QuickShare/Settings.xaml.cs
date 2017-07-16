@@ -86,5 +86,10 @@ namespace QuickShare
 #endif
             await Launcher.LaunchUriAsync(new Uri(string.Format("ms-windows-store:REVIEW?PFN={0}", Windows.ApplicationModel.Package.Current.Id.FamilyName)));
         }
+
+        private async void ContactButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri($"mailto:roamitapp@gmail.com?subject={Model.PackageName}%20v{Model.PackageVersion}")); //TODO: Add version to the subject
+        }
     }
 }
