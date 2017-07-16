@@ -1,4 +1,5 @@
-﻿using QuickShare.HelperClasses;
+﻿using GoogleAnalytics;
+using QuickShare.HelperClasses;
 using QuickShare.ViewModels.History;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,13 @@ namespace QuickShare
         public HistoryPage()
         {
             this.InitializeComponent();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateScreenView("HistoryPage").Build());
+#endif
         }
 
         private async void CopyToClipboard_Tapped(object sender, TappedRoutedEventArgs e)
