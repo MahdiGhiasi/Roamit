@@ -358,7 +358,11 @@ namespace QuickShare
 
         private async void DiscoverDevices()
         {
-            await PackageManager.InitializeDiscovery();
+            var result = await PackageManager.InitializeDiscovery();
+            if (result == false)
+            {
+                await (new MessageDialog("Please make sure your account is logged in into your Microsoft account, and 'Shared Experiences' is enabled in system settings, then restart the app.", "Cannot discover devices.")).ShowAsync();
+            }
         }
 
         bool alreadyDiscovered = false;

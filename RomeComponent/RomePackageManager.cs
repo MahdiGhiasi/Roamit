@@ -64,19 +64,20 @@ namespace QuickShare.UWP.Rome
             }
         }
 
-        public async Task InitializeDiscovery()
+        public async Task<bool> InitializeDiscovery()
         {
             if (romeHelper == null)
             {
                 romeHelper = new RomeHelper();
-                await romeHelper.Initialize();
+                return await romeHelper.Initialize();
             }
+            return true;
         }
 
-        private async Task ReinitializeDiscovery()
+        private async Task<bool> ReinitializeDiscovery()
         {
             romeHelper = new RomeHelper();
-            await romeHelper.Initialize();
+            return await romeHelper.Initialize();
         }
 
         public void Initialize(string appServiceName)
