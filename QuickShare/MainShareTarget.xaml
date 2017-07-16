@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="4,4,4,200">
+    <Grid Padding="4,4,4,220">
         <Grid Visibility="{x:Bind ViewModel.ShareUrlVisibility, Mode=OneWay}">
             <Grid Margin="24,24,24,60">
                 <Grid.RowDefinitions>
