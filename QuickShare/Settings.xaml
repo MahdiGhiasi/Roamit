@@ -40,6 +40,14 @@
                         </RelativePanel>
                     </StackPanel>
                     <StackPanel Margin="0,24,0,8">
+                        <StackPanel Margin="0,16,0,0">
+                            <TextBlock Text="Want to suggest a feature or an improvement?" TextWrapping="Wrap" />
+                            <HyperlinkButton Content="Send feedback in Feedback Hub" Tapped="SendFeedbackButton_Tapped" />
+                        </StackPanel>
+                        <StackPanel Margin="0,16,0,24">
+                            <TextBlock Text="Having issues with the app?" TextWrapping="Wrap" />
+                            <HyperlinkButton Content="Contact me" Tapped="ContactButton_Tapped" />
+                        </StackPanel>
                         <TextBlock Text="{x:Bind Model.PackageName, Mode=OneTime}" FontWeight="Bold" />
                         <StackPanel Orientation="Horizontal" Margin="0,4,0,0" >
                             <TextBlock Text="Version " Opacity="0.7" />
@@ -54,8 +62,8 @@
                             <Button Content="Upgrade to full version" Margin="0,8,0,0" Tapped="UpgradeButton_Tapped" />
                         </StackPanel>
                         <StackPanel Margin="0,16,0,0">
+                            <TextBlock Text="Developed by Mahdi Ghiasi" Opacity="0.5" Margin="0,0,0,12" />
                             <HyperlinkButton Content="Rate and review" Tapped="RateAndReviewButton_Tapped" />
-                            <HyperlinkButton Content="Send feedback" Tapped="SendFeedbackButton_Tapped" />
                             <HyperlinkButton Content="Privacy policy" Tapped="PrivacyPolicyButton_Tapped" />
                         </StackPanel>
                     </StackPanel>
