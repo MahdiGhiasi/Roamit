@@ -240,11 +240,21 @@ namespace QuickShare
                         
                         SendDataTemporaryStorage.IsSharingTarget = true;
 
-                        LaunchRootFrameIfNecessary(ref rootFrame, false);
-                        rootFrame.Navigate(typeof(MainPage), new ShareTargetDetails
+                        if (rootFrame == null)
                         {
-                            Type = type,
-                        });
+                            LaunchRootFrameIfNecessary(ref rootFrame, false);
+                            rootFrame.Navigate(typeof(MainPage), new ShareTargetDetails
+                            {
+                                Type = type,
+                            });
+                        }
+                        else
+                        {
+                            MainPage.Current.BeTheShareTarget(new ShareTargetDetails
+                            {
+                                Type = type,
+                            });
+                        }
                     }
                     else
                     {
