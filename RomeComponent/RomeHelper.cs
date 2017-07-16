@@ -31,10 +31,10 @@ namespace QuickShare.UWP.Rome
             get { return _remoteSystems; }
         }
 
-        public async Task Initialize()
+        public async Task<bool> Initialize()
         {
             if (_remoteSystemWatcher != null)
-                return;
+                return true;
 
             RemoteSystemAccessStatus accessStatus = await RemoteSystem.RequestAccessAsync();
             if (accessStatus == RemoteSystemAccessStatus.Allowed)
@@ -51,7 +51,11 @@ namespace QuickShare.UWP.Rome
 
                 if (timer == null)
                     timer = new Timer(Timer_Tick, null, (int)delayBeforeTimerBegin.TotalMilliseconds, (int)refreshInterval.TotalMilliseconds);
+
+                return true;
             }
+
+            return false;
         }
 
         private async void Timer_Tick(object state)
