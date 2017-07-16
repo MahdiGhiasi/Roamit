@@ -227,6 +227,7 @@
                         </ListView.ItemContainerStyle>
                     </ListView>
                     <HyperlinkButton Content="Open containing folder"
+                                     Visibility="{Binding OpenContainingFolderVisibility}"
                                      Tag="{Binding Path}"
                                      Tapped="OpenFolder_Tapped"
                                      HorizontalAlignment="Center"
@@ -254,7 +255,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <TextBlock Text="History" FontSize="18" Margin="16,12,0,16" FontWeight="Bold" />
+                <TextBlock Text="Receive History" FontSize="18" Margin="16,12,0,16" FontWeight="Bold" />
             </Grid>
             <Grid Grid.Row="1">
                 <ListView ItemTemplateSelector="{StaticResource TemplateSelector}"

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 
 namespace QuickShare.ViewModels.History
 {
@@ -19,6 +20,17 @@ namespace QuickShare.ViewModels.History
                     return "File";
                 else
                     return $"{Files.Count} files";
+            }
+        }
+
+        public Visibility OpenContainingFolderVisibility
+        {
+            get
+            {
+                if ((Files != null) && (Files.Count == 1))
+                    return Visibility.Collapsed;
+
+                return Visibility.Visible;
             }
         }
     }
