@@ -24,6 +24,9 @@ namespace QuickShare
     ISupportIncrementalLoading
     where T : IIncrementalSource<I>, new()
     {
+        public delegate void LoadFinishedEventHandler(EventArgs e);
+        public event LoadFinishedEventHandler LoadFinished;
+
         private T source;
         private int itemsPerPart;
         private int itemsPerPage;
@@ -66,6 +69,7 @@ namespace QuickShare
                         if (result == null || result.Count() == 0)
                         {
                             hasMoreItems = false;
+                            LoadFinished?.Invoke(new EventArgs());
                         }
                         else
                         {
