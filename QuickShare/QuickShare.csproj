@@ -333,6 +333,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <SDKReference Include="AdDuplex.Windows10, Version=10.1.1.1">
+      <Name>AdDuplex SDK for Windows 10 %28XAML%29</Name>
+    </SDKReference>
     <SDKReference Include="Microsoft.Advertising.Xaml, Version=10.0">
       <Name>Microsoft Advertising SDK for XAML</Name>
     </SDKReference>

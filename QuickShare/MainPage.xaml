@@ -13,6 +13,7 @@
     xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
     xmlns:versionhelpers="using:QuickShare.HelperClasses.VersionHelpers"
     xmlns:ads="using:Microsoft.Advertising.WinRT.UI"
+    xmlns:adduplex="using:AdDuplex"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     SizeChanged="Page_SizeChanged"
@@ -119,15 +120,21 @@
                 <TextBlock Text="Roamit" FontSize="12" Foreground="LightGray" />
             </StackPanel>
             <Grid Grid.Row="1" x:Name="AdFrame">
-                <Grid BorderThickness="1"
-                      BorderBrush="#555555"
+                <Grid x:Name="AdBannerContainer" 
                       Height="50"
                       Width="320">
                     <ads:AdControl x:Name="AdBanner"
                                    HorizontalAlignment="Center"
+                                   ErrorOccurred="AdBanner_ErrorOccurred"
                                    Height="50"
                                    VerticalAlignment="Top"
                                    Width="320"/>
+                </Grid>
+                <Grid x:Name="AdDuplexContainer"
+                      Width="300"
+                      Height="50"
+                      Visibility="Collapsed">
+                    
                 </Grid>
             </Grid>
             <Grid Grid.Row="2" RenderTransformOrigin="0.5,0.5">
