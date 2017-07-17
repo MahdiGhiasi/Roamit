@@ -157,12 +157,17 @@ namespace QuickShare
             InitAcrylicUI();
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
+            if (!TrialSettings.IsTrial)
+                AdFrame.Visibility = Visibility.Collapsed;
+
             if (e.Parameter is ShareTargetDetails)
             {
                 IsShareContent = true;
 
                 ContentFrame.Navigate(typeof(MainShareTarget), e.Parameter);
                 DispatcherEx.CustomDispatcher = Dispatcher;
+
+                BottomCommandBar.Visibility = Visibility.Collapsed;
 
                 if ((Current != null) && (Current != this) && (Current.IsShareContent == false)) //Main window is present
                 {
@@ -237,11 +242,13 @@ namespace QuickShare
             {
                 AdBanner.Resume();
                 ViewModel.UpgradeButtonVisibility = Visibility.Visible;
+                AdFrame.Visibility = Visibility.Visible;
             }
             else
             {
                 AdBanner.Suspend();
                 ViewModel.UpgradeButtonVisibility = Visibility.Collapsed;
+                AdFrame.Visibility = Visibility.Collapsed;
             }
 
             if (SecureKeyStorage.IsUserIdStored())

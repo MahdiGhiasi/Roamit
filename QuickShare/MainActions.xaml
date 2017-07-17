@@ -176,7 +176,25 @@
                     <VisualState.StateTriggers>
                         <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
                             <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="530" ConditionModifier="{StaticResource LessThanModifier}" />
+                                <userinterfacetriggers:WindowHeightTrigger Condition="550" ConditionModifier="{StaticResource LessThanModifier}" />
+                                <versionhelpers:AdDisplayTrigger Condition="False" />
+                            </logicaltriggers:MultiTrigger.Triggers>
+                        </logicaltriggers:MultiTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentScaleTransform.ScaleX" Value="0.95" />
+                        <Setter Target="ContentScaleTransform.ScaleY" Value="0.95" />
+                        <Setter Target="DragDropText.FontSize" Value="16" />
+                        <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,200" />
+                        <Setter Target="wholeGridTransform.Y" Value="-16" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
+                            <logicaltriggers:MultiTrigger.Triggers>
+                                <userinterfacetriggers:WindowHeightTrigger Condition="550" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
+                                <userinterfacetriggers:WindowHeightTrigger Condition="620" ConditionModifier="{StaticResource LessThanModifier}" />
                                 <versionhelpers:AdDisplayTrigger Condition="False" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
@@ -192,7 +210,7 @@
                     <VisualState.StateTriggers>
                         <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
                             <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="530" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
+                                <userinterfacetriggers:WindowHeightTrigger Condition="620" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
                                 <versionhelpers:AdDisplayTrigger Condition="False" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
@@ -209,7 +227,7 @@
                     <VisualState.StateTriggers>
                         <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
                             <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="575" ConditionModifier="{StaticResource LessThanModifier}" />
+                                <userinterfacetriggers:WindowHeightTrigger Condition="585" ConditionModifier="{StaticResource LessThanModifier}" />
                                 <versionhelpers:AdDisplayTrigger Condition="True" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
@@ -219,14 +237,15 @@
                         <Setter Target="ContentScaleTransform.ScaleY" Value="0.8" />
                         <Setter Target="DragDropText.FontSize" Value="14" />
                         <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,200" />
+                        <Setter Target="wholeGridTransform.Y" Value="-16" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
                     <VisualState.StateTriggers>
                         <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
                             <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="575" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
-                                <userinterfacetriggers:WindowHeightTrigger Condition="612" ConditionModifier="{StaticResource LessThanModifier}" />
+                                <userinterfacetriggers:WindowHeightTrigger Condition="585" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
+                                <userinterfacetriggers:WindowHeightTrigger Condition="632" ConditionModifier="{StaticResource LessThanModifier}" />
                                 <versionhelpers:AdDisplayTrigger Condition="True" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
@@ -236,13 +255,15 @@
                         <Setter Target="ContentScaleTransform.ScaleY" Value="0.9" />
                         <Setter Target="DragDropText.FontSize" Value="16" />
                         <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,200" />
+                        <Setter Target="wholeGridTransform.Y" Value="-16" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
                     <VisualState.StateTriggers>
                         <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
                             <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="612" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
+                                <userinterfacetriggers:WindowHeightTrigger Condition="632" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
+                                <userinterfacetriggers:WindowHeightTrigger Condition="720" ConditionModifier="{StaticResource LessThanModifier}" />
                                 <versionhelpers:AdDisplayTrigger Condition="True" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
@@ -252,19 +273,43 @@
                         <Setter Target="ContentScaleTransform.ScaleY" Value="1" />
                         <Setter Target="DragDropText.FontSize" Value="20" />
                         <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,232" />
+                        <Setter Target="wholeGridTransform.Y" Value="-8" />
+                        <Setter Target="dragDropTextBlockTransform.Y" Value="-8" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
+                            <logicaltriggers:MultiTrigger.Triggers>
+                                <userinterfacetriggers:WindowHeightTrigger Condition="720" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
+                                <versionhelpers:AdDisplayTrigger Condition="True" />
+                            </logicaltriggers:MultiTrigger.Triggers>
+                        </logicaltriggers:MultiTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentScaleTransform.ScaleX" Value="1" />
+                        <Setter Target="ContentScaleTransform.ScaleY" Value="1" />
+                        <Setter Target="DragDropText.FontSize" Value="20" />
+                        <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,232" />
+                        <Setter Target="wholeGridTransform.Y" Value="0" />
+                        <Setter Target="dragDropTextBlockTransform.Y" Value="0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <Grid.RenderTransform>
-            <TranslateTransform Y="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=-(((580-x)v24)^0)}" />
+            <TranslateTransform x:Name="wholeGridTransform" Y="0" />
         </Grid.RenderTransform>
-        <Grid VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0">
+        <Grid VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,12,0,0">
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="dragDropTextTransform" />
             </Grid.RenderTransform>
-            <TextBlock Text="Or just drag and drop anything here" FontWeight="Light" FontSize="20" Foreground="LightGray" TextWrapping="Wrap" TextAlignment="Center" x:Name="DragDropText" />
+            <TextBlock Text="Or just drag and drop anything here" FontWeight="Light" FontSize="20" Foreground="LightGray" TextWrapping="Wrap" TextAlignment="Center" x:Name="DragDropText">
+                <TextBlock.RenderTransform>
+                    <TranslateTransform x:Name="dragDropTextBlockTransform" />
+                </TextBlock.RenderTransform>
+            </TextBlock>
         </Grid>
         <Grid MaxWidth="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x-270}" 
               Margin="0,30,0,0"
