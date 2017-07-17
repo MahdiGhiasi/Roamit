@@ -56,21 +56,42 @@ namespace QuickShare
 
         private async void OpenSingleFile_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var info = (ViewModels.History.FileInfo)(((Button)sender).Tag);
+            try
+            {
+                var info = (ViewModels.History.FileInfo)(((Button)sender).Tag);
 
-            await LaunchOperations.LaunchFileFromPathAsync(info.Path, info.FileName);
+                await LaunchOperations.LaunchFileFromPathAsync(info.Path, info.FileName);
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                await (new MessageDialog("File not found.")).ShowAsync();
+            }
         }
 
         private async void OpenSingleFileContainingFolder_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var info = (ViewModels.History.FileInfo)(((Button)sender).Tag);
+            try
+            {
+                var info = (ViewModels.History.FileInfo)(((Button)sender).Tag);
 
-            await LaunchOperations.LaunchFolderFromPathAndSelectSingleItemAsync(info.Path, info.FileName);
+                await LaunchOperations.LaunchFolderFromPathAndSelectSingleItemAsync(info.Path, info.FileName);
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                await (new MessageDialog("File or folder does not exist.")).ShowAsync();
+            }
         }
 
         private async void OpenFolder_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await LaunchOperations.LaunchFolderFromPathAsync(((HyperlinkButton)sender).Tag.ToString());
+            try
+            {
+                await LaunchOperations.LaunchFolderFromPathAsync(((HyperlinkButton)sender).Tag.ToString());
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                await (new MessageDialog("File or folder does not exist.")).ShowAsync();
+            }
         }
 
         private async void OpenLink_Tapped(object sender, TappedRoutedEventArgs e)
