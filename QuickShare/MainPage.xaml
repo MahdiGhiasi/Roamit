@@ -88,16 +88,7 @@
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <versionhelpers:AdDisplayTrigger Condition="False" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="AdFrame.Height" Value="0" />
-                        <Setter Target="AdFrame.Visibility" Value="Collapsed" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowHeight="612" />
+                        <AdaptiveTrigger MinWindowHeight="632" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="BehindBottomCommandBar.Height" Value="48" />
