@@ -24,11 +24,19 @@ namespace QuickShare
 {
     public sealed partial class HistoryPage : Page
     {
-        public ObservableCollection<HistoryItem> HistoryItems { get; set; } = new IncrementalLoadingCollection<HistoryItemSource, HistoryItem>(20, 1);
+        public IncrementalLoadingCollection<HistoryItemSource, HistoryItem> HistoryItems { get; set; }
 
         public HistoryPage()
         {
             this.InitializeComponent();
+            HistoryItems = new IncrementalLoadingCollection<HistoryItemSource, HistoryItem>(20, 1);
+            HistoryItems.LoadFinished += HistoryItems_LoadFinished;
+        }
+
+        private void HistoryItems_LoadFinished(EventArgs e)
+        {
+            if (HistoryItems.Count == 0)
+                HistoryEmptyNotice.Visibility = Visibility.Visible;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
