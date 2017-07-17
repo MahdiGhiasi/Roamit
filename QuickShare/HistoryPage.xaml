@@ -8,6 +8,15 @@
     xmlns:helperclasses="using:QuickShare.HelperClasses"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <DrillInNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
 
     <Page.Resources>
         <ResourceDictionary>
