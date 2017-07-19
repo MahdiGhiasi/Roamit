@@ -170,5 +170,15 @@ namespace QuickShare.Droid.Classes
             
             notificationManager.Notify(Notification.GetNewNotifId(), builder.Build());
         }
+
+        internal async Task ClearProgressNotification()
+        {
+            lastActivityGuid = Guid.Empty;
+
+            if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenFinalNotifAndPrev)
+                await Task.Delay(DateTime.Now - lastProgressNotif);
+
+            notificationManager.Cancel(id);
+        }
     }
 }

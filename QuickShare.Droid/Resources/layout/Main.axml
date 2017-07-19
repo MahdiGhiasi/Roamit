@@ -34,7 +34,9 @@
                 android:translationY="10dp"
                 android:translationX="-5dp"
                 android:layout_centerVertical="false"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:textAllCaps="false"
+                android:paddingTop="40dp" />
             <Button
                 android:text="Clipboard"
                 android:layout_width="wrap_content"
@@ -48,7 +50,9 @@
                 android:width="100dp"
                 android:translationX="20dp"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true" />
+                android:layout_alignParentLeft="true"
+                android:textAllCaps="false"
+                android:paddingTop="20dp" />
             <Button
                 android:text="Picture"
                 android:layout_width="wrap_content"
@@ -62,7 +66,9 @@
                 android:width="100dp"
                 android:translationX="-20dp"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true" />
+                android:layout_alignParentRight="true"
+                android:textAllCaps="false"
+                android:paddingTop="20dp" />
             <TextView
                 android:text="Hello world!"
                 android:maxLines="1"
@@ -84,12 +90,39 @@
                 android:layout_alignParentBottom="true"
                 android:translationX="-8dp"
                 android:translationY="8dp" />
+          <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:src="@drawable/clipboard"
+                android:layout_alignLeft="@id/clipboardButton"
+                android:layout_alignTop="@id/clipboardButton"
+                android:layout_alignRight="@id/clipboardButton"
+                android:translationX="20dp"
+                android:translationY="-14dp" />
+          <ImageView
+              android:src="@drawable/file"
+              android:layout_width="wrap_content"
+              android:layout_height="26dp"
+              android:layout_alignRight="@id/sendFileButton"
+              android:layout_alignTop="@id/sendFileButton"
+              android:layout_alignLeft="@id/sendFileButton"
+              android:translationX="-5dp"
+              android:translationY="72dp" />
+          <ImageView
+              android:src="@drawable/picture"
+              android:layout_width="wrap_content"
+              android:layout_height="20dp"
+              android:layout_alignLeft="@id/sendPictureButton"
+              android:layout_alignRight="@id/sendPictureButton"
+              android:layout_alignTop="@id/sendPictureButton"
+              android:translationX="-20dp"
+              android:translationY="-45dp" />
         </RelativeLayout>
         <RelativeLayout
             android:minWidth="25px"
             android:minHeight="25px"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="1dp"
             android:id="@+id/main_share"
             android:padding="20dp"
             android:visibility="invisible">
@@ -149,18 +182,19 @@
             android:layout_height="wrap_content"
             android:id="@+id/linearLayout2"
             android:padding="16dp"
-            android:background="@color/primary_dark">
+            android:background="@color/primary">
             <TextView
                 android:text="Searching for devices..."
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/selectedDeviceName" />
+                android:id="@+id/selectedDeviceName"
+                android:textStyle="bold" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:background="@color/primary"
+            android:background="@color/primary_dark"
             android:id="@+id/main_devicesListLayout"
             android:paddingBottom="0dp"
             android:paddingLeft="16dp"
