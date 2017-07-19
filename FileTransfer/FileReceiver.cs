@@ -303,11 +303,32 @@ namespace QuickShare.FileTransfer
 
         private static async Task<byte[]> DownloadDataFromUrl(string url)
         {
-            HttpClient client = new HttpClient();
+            int tryCount = 0;
+            TimeSpan timeout = TimeSpan.FromSeconds(3);
+            while (true)
+            {
+                try
+                {
+                    tryCount++;
 
-            Debug.WriteLine("Downloading " + url);
+                    HttpClient client = new HttpClient()
+                    {
+                        Timeout = timeout,
+                    };
 
-            return await client.GetByteArrayAsync(url);
+                    Debug.WriteLine("Downloading " + url);
+                    return await client.GetByteArrayAsync(url);
+                }
+                catch
+                {
+                    Debug.WriteLine("Failed.");
+
+                    if (tryCount > 5)
+                        throw;
+                }
+                
+                timeout = timeout.Add(TimeSpan.FromSeconds(2));
+            }
         }
 
         private static async Task<IFile> CreateFile(IFolder downloadFolder, string fileName)
