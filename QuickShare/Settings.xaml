@@ -41,7 +41,7 @@
                     </StackPanel>
                     <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
                         <TextBlock Text="Extensions" FontWeight="Bold" />
-                        <HyperlinkButton Visibility="{x:Bind Model.ChromeFirefoxExtensionVisibility, Mode=OneWay}" Tapped="GetChromeFirefoxExtension_Tapped">
+                        <HyperlinkButton Foreground="SkyBlue" Visibility="{x:Bind Model.ChromeFirefoxExtensionVisibility, Mode=OneWay}" Tapped="GetChromeFirefoxExtension_Tapped">
                             <HyperlinkButton.Content>
                                 <TextBlock TextWrapping="Wrap">
                                     <Underline>
@@ -55,11 +55,11 @@
                     <StackPanel Margin="0,24,0,8">
                         <StackPanel Margin="0,16,0,0">
                             <TextBlock Text="Want to suggest a feature or an improvement?" TextWrapping="Wrap" />
-                            <HyperlinkButton Content="Send feedback in Feedback Hub" Tapped="SendFeedbackButton_Tapped" />
+                            <HyperlinkButton Foreground="SkyBlue" Content="Send feedback in Feedback Hub" Tapped="SendFeedbackButton_Tapped" />
                         </StackPanel>
                         <StackPanel Margin="0,16,0,24">
                             <TextBlock Text="Having issues with the app?" TextWrapping="Wrap" />
-                            <HyperlinkButton Content="Contact me" Tapped="ContactButton_Tapped" />
+                            <HyperlinkButton Foreground="SkyBlue" Content="Contact me" Tapped="ContactButton_Tapped" />
                         </StackPanel>
                         <TextBlock Text="{x:Bind Model.PackageName, Mode=OneTime}" FontWeight="Bold" />
                         <StackPanel Orientation="Horizontal" Margin="0,4,0,0" >
