@@ -128,16 +128,23 @@ namespace QuickShare.Droid.Services
             });
         }
 
-        private void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)
+        private async void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)
         {
-            lastActiveTime = DateTime.UtcNow;
-            if (!e.Success)
+            try
             {
-                ShowToast(this, "Failed to receive text.", ToastLength.Long);
-                return;
-            }
+                lastActiveTime = DateTime.UtcNow;
+                if (!e.Success)
+                {
+                    ShowToast(this, "Failed to receive text.", ToastLength.Long);
+                    return;
+                }
 
-            CopyTextToClipboard(this, (Guid)e.Guid);
+                CopyTextToClipboard(this, (Guid)e.Guid);
+            }
+            finally
+            {
+                await progressNotifier?.ClearProgressNotification();
+            }
         }
 
         internal static async void CopyTextToClipboard(Context context, Guid guid)
