@@ -2216,10 +2216,7 @@ namespace QuickShare.Droid
 			public const int media_actions = 2131558555;
 			
 			// aapt resource value: 0x7f0d00b3
-			public const int menu_history = 2131558579;
-			
-			// aapt resource value: 0x7f0d00b4
-			public const int menu_settings = 2131558580;
+			public const int menu_settings = 2131558579;
 			
 			// aapt resource value: 0x7f0d0024
 			public const int middle = 2131558436;
