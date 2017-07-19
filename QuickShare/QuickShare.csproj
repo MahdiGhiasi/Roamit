@@ -93,7 +93,11 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="Flyouts\WhatsNewFlyout.xaml.cs">
+      <DependentUpon>WhatsNewFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="HelperClasses\HistoryItemTemplateSelector.cs" />
+    <Compile Include="HelperClasses\WhatsNewHelper.cs" />
     <Compile Include="HistoryItemSource.cs" />
     <Compile Include="ViewModels\History\FileInfo.cs" />
     <Compile Include="ViewModels\History\HistoryClipboardTextItem.cs" />
@@ -188,6 +192,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Assets\chrome-firefox.png" />
     <Content Include="Assets\Intro\icon-noborder.png" />
     <Content Include="Assets\Intro\p1.png" />
     <Content Include="Assets\Intro\p2.png" />
@@ -250,6 +255,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Flyouts\SignInNoticeFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Flyouts\WhatsNewFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

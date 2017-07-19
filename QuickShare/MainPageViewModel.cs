@@ -94,11 +94,24 @@ namespace QuickShare
             }
         }
 
+        private Visibility whatsNewVisibility = Visibility.Collapsed;
+        public Visibility WhatsNewVisibility
+        {
+            get { return whatsNewVisibility; }
+            set
+            {
+                whatsNewVisibility = value;
+                OnPropertyChanged("WhatsNewVisibility");
+                OnPropertyChanged("OverlayVisibility");
+            }
+        }
+
         public Visibility OverlayVisibility
         {
             get
             {
-                if (signInNoticeVisibility == Visibility.Visible)
+                if ((signInNoticeVisibility == Visibility.Visible) ||
+                    (whatsNewVisibility == Visibility.Visible))
                     return Visibility.Visible;
 
                 return Visibility.Collapsed;

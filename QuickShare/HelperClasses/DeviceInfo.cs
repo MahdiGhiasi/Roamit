@@ -16,7 +16,8 @@ namespace QuickShare.Common
         public static Version SystemVersion { get; }
         public static string SystemArchitecture { get; }
         public static string ApplicationName { get; }
-        public static string ApplicationVersion { get; }
+        public static string ApplicationVersionString { get; }
+        public static Version ApplicationVersion { get; }
         public static string DeviceManufacturer { get; }
         public static string DeviceModel { get; }
         public static DeviceFormFactorType FormFactorType { get; set; }
@@ -47,7 +48,8 @@ namespace QuickShare.Common
 
             // get the app version
             PackageVersion pv = package.Id.Version;
-            ApplicationVersion = $"{pv.Major}.{pv.Minor}.{pv.Build}.{pv.Revision}";
+            ApplicationVersionString = $"{pv.Major}.{pv.Minor}.{pv.Build}.{pv.Revision}";
+            ApplicationVersion = Version.Parse(ApplicationVersionString);
 
             // get the device manufacturer and model name
             EasClientDeviceInformation eas = new EasClientDeviceInformation();

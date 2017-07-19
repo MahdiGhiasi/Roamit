@@ -59,6 +59,8 @@ namespace QuickShare
                 };
                 PageIndicators.Children.Add(indicators[i]);
             }
+
+            WhatsNewHelper.InitIntro();
         }
 
         private void HideFlipViewButton(string name)

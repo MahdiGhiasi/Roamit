@@ -39,6 +39,19 @@
                                           RelativePanel.AlignVerticalCenterWithPanel="True" />
                         </RelativePanel>
                     </StackPanel>
+                    <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
+                        <TextBlock Text="Extensions" FontWeight="Bold" />
+                        <HyperlinkButton Visibility="{x:Bind Model.ChromeFirefoxExtensionVisibility, Mode=OneWay}" Tapped="GetChromeFirefoxExtension_Tapped">
+                            <HyperlinkButton.Content>
+                                <TextBlock TextWrapping="Wrap">
+                                    <Underline>
+                                        <Run Text="Get Roamit integration extension for Chrome and Firefox" />
+                                    </Underline>
+                                </TextBlock>
+                            </HyperlinkButton.Content>
+                        </HyperlinkButton>
+
+                    </StackPanel>
                     <StackPanel Margin="0,24,0,8">
                         <StackPanel Margin="0,16,0,0">
                             <TextBlock Text="Want to suggest a feature or an improvement?" TextWrapping="Wrap" />

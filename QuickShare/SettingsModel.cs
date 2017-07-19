@@ -6,6 +6,7 @@ using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using QuickShare.HelperClasses.VersionHelpers;
 using GoogleAnalytics;
+using QuickShare.Common;
 
 namespace QuickShare
 {
@@ -14,6 +15,17 @@ namespace QuickShare
         public SettingsModel()
         {
             CheckTrialStatus();
+
+            if ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet))
+            {
+                extensionsSectionVisibility = Visibility.Visible;
+                chromeFirefoxExtensionVisibility = Visibility.Visible;
+            }
+            else
+            {
+                extensionsSectionVisibility = Visibility.Collapsed;
+                chromeFirefoxExtensionVisibility = Visibility.Collapsed;
+            }
         }
 
         public void CheckTrialStatus()
@@ -154,6 +166,18 @@ namespace QuickShare
             }
         }
 
+
+        private Visibility extensionsSectionVisibility;
+        public Visibility ExtensionsSectionVisibility
+        {
+            get { return extensionsSectionVisibility; }
+        }
+
+        private Visibility chromeFirefoxExtensionVisibility;
+        public Visibility ChromeFirefoxExtensionVisibility
+        {
+            get { return chromeFirefoxExtensionVisibility; }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

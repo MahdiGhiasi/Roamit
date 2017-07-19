@@ -89,7 +89,12 @@ namespace QuickShare
 
         private async void ContactButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri($"mailto:roamitapp@gmail.com?subject={Model.PackageName}%20v{Model.PackageVersion}")); //TODO: Add version to the subject
+            await Launcher.LaunchUriAsync(new Uri($"mailto:roamitapp@gmail.com?subject={Model.PackageName}%20v{Model.PackageVersion}"));
+        }
+
+        private async void GetChromeFirefoxExtension_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#browserExtensions"));
         }
     }
 }

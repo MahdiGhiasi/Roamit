@@ -1,0 +1,62 @@
+﻿<UserControl
+    x:Class="QuickShare.Flyouts.WhatsNewFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare.Flyouts"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    Loaded="UserControl_Loaded">
+
+    <Grid Background="{Binding Source={ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.7}"
+          MaxWidth="400"
+          MaxHeight="400">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="What's new in version"
+                           FontWeight="Bold"
+                           Margin="10,10,0,10"/>
+                <TextBlock x:Name="VersionText" 
+                           Text="x.y.z"
+                           FontWeight="Bold"
+                           Margin="4,10,0,10"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" Padding="14,8,14,14">
+            <ScrollViewer>
+                <StackPanel x:Name="Content">
+                    <StackPanel Tag="1">
+                        <Image Source="ms-appx:///Assets/chrome-firefox.png"
+                               Height="40"
+                               Margin="0,12,0,8" />
+                        <TextBlock Text="Chrome and Firefox extensions"
+                                   TextWrapping="Wrap" 
+                                   TextAlignment="Center"
+                                   Margin="0,8,0,12" />
+                        <TextBlock Text="You can now share links directly from Chrome or Firefox browsers by installing Roamit integration extension."
+                                   Margin="0,0,0,4"
+                                   TextWrapping="Wrap"
+                                   Opacity="0.7" />
+                        <TextBlock Text="Go to settings page to download extensions."
+                                   TextWrapping="Wrap"
+                                   Opacity="0.7" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        <Grid Grid.Row="2" Padding="12">
+            <Button Content="OK"
+                    HorizontalAlignment="Center"
+                    Width="150"
+                    Background="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                    Tapped="OKButton_Tapped" />
+        </Grid>
+    </Grid>
+</UserControl>
