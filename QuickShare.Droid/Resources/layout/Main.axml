@@ -36,7 +36,7 @@
                 android:layout_centerVertical="false"
                 android:layout_centerHorizontal="true"
                 android:textAllCaps="false"
-                android:paddingTop="40dp" />
+                android:paddingTop="30dp" />
             <Button
                 android:text="Clipboard"
                 android:layout_width="wrap_content"
@@ -107,7 +107,7 @@
               android:layout_alignTop="@id/sendFileButton"
               android:layout_alignLeft="@id/sendFileButton"
               android:translationX="-5dp"
-              android:translationY="72dp" />
+              android:translationY="76dp" />
           <ImageView
               android:src="@drawable/picture"
               android:layout_width="wrap_content"
