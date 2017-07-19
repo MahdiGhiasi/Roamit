@@ -236,6 +236,10 @@ namespace QuickShare
                     }
                     else if (launchUriData.Length > 0)
                     {
+#if !DEBUG
+                        App.Tracker.Send(HitBuilder.CreateCustomEvent("ExtensionCalled", "").Build());
+#endif
+
                         string type = ExternalContentHelper.SetUriData(new Uri(launchUriData.DecodeBase64()));
                         
                         SendDataTemporaryStorage.IsSharingTarget = true;

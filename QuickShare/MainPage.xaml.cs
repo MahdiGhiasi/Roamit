@@ -195,6 +195,12 @@ namespace QuickShare
                 await clipboardTempFolder.DeleteAsync();
         }
 
+        private void ShowWhatsNewFlyout()
+        {
+            ViewModel.WhatsNewVisibility = Visibility.Visible;
+            overlayShowStoryboard.Begin();
+        }
+
         public async Task WaitForShare()
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -210,6 +216,11 @@ namespace QuickShare
 
             if (!TrialSettings.IsTrial)
                 AdBanner.Suspend();
+
+            if ((!IsShareContent) && (WhatsNewHelper.ShouldShowWhatsNew()))
+            {
+                ShowWhatsNewFlyout();
+            }
 
             DiscoverDevices();
             InitDiscoveringOtherDevices();
@@ -592,6 +603,20 @@ namespace QuickShare
             }
 
             base.OnNavigatingFrom(e);
+        }
+
+        private async void WhatsNewFlyout_FlyoutCloseRequest(EventArgs e)
+        {
+            if (ViewModel.SignInNoticeVisibility == Visibility.Visible)
+            {
+                ViewModel.WhatsNewVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                overlayHideStoryboard.Begin();
+                await Task.Delay(250);
+                ViewModel.WhatsNewVisibility = Visibility.Collapsed;
+            }
         }
     }
 }
