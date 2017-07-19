@@ -15,22 +15,22 @@ using QuickShare.DevicesListManager;
 
 namespace QuickShare.Droid
 {
-    class DevicesListAdapter : BaseAdapter<string>, IListAdapter
+    class DevicesListAdapter : BaseAdapter<NormalizedRemoteSystem>, IListAdapter
     {
         Activity context;
         DevicesListManager.DevicesListManager listManager;
         List<NormalizedRemoteSystem> systems = new List<NormalizedRemoteSystem>();
 
-        public override string this[int position]
+        public override NormalizedRemoteSystem this[int position]
         {
             get
             {
                 try
                 {
-                    string s;
+                    NormalizedRemoteSystem s;
                     lock (systems)
                     {
-                        s = systems[position].DisplayName;
+                        s = systems[position];
                     }
                     return s;
                 }
@@ -108,9 +108,26 @@ namespace QuickShare.Droid
         {
             View view = convertView; // re-use an existing view, if one is available
             if (view == null) // otherwise create a new one
-                view = context.LayoutInflater.Inflate(Android.Resource.Layout.SimpleListItem1, null);
-            view.FindViewById<TextView>(Android.Resource.Id.Text1).Text = this[position];
+                view = context.LayoutInflater.Inflate(Resource.Layout.DeviceItemStyle, null);
+            view.FindViewById<TextView>(Resource.Id.deviceItemStyle_text).Text = this[position].DisplayName;
+            view.FindViewById<ImageView>(Resource.Id.deviceItemStyle_icon).SetImageResource(GetDeviceIconResource(this[position].Kind));
+
             return view;
+        }
+
+        public static int GetDeviceIconResource(string kind)
+        {
+            switch (kind.ToLower())
+            {
+                case "xbox":
+                    return Resource.Drawable.xbox;
+                case "mobile":
+                case "phone":
+                    return Resource.Drawable.phone;
+                case "unknown":
+                default:
+                    return Resource.Drawable.laptop;
+            }
         }
     }
 }

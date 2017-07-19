@@ -496,7 +496,12 @@ namespace QuickShare.Droid
 
             RunOnUiThread(() =>
             {
-                FindViewById<TextView>(Resource.Id.selectedDeviceName).Text = (Common.ListManager.SelectedRemoteSystem?.DisplayName) ?? "";
+                FindViewById<TextView>(Resource.Id.selectedDeviceName).Text = Common.ListManager.SelectedRemoteSystem?.DisplayName ?? "";
+
+                var imageView = FindViewById<ImageView>(Resource.Id.selectedDeviceIcon);
+                imageView.Visibility = ViewStates.Visible;
+                imageView.SetImageResource(DevicesListAdapter.GetDeviceIconResource(Common.ListManager.SelectedRemoteSystem?.Kind ?? ""));
+
                 System.Diagnostics.Debug.WriteLine(Common.ListManager.SelectedRemoteSystem?.DisplayName ?? "NULL" + " is selected.");
 
                 SetButtonsEnableStatus(true);
