@@ -12,11 +12,10 @@ namespace QuickShare.HelperClasses
     {
         public static bool ShouldShowWhatsNew()
         {
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("WhatsNewInitialized"))
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LatestWhatsNewVersion"))
                 return true;
 
-            if ((ApplicationData.Current.LocalSettings.Values.ContainsKey("LatestWhatsNewVersion")) && 
-                (Version.TryParse(ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"].ToString(), out Version v)))
+            if (Version.TryParse(ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"].ToString(), out Version v))
             {
                 if (v < DeviceInfo.ApplicationVersion)
                 {
@@ -29,7 +28,7 @@ namespace QuickShare.HelperClasses
 
         public static void InitIntro()
         {
-            ApplicationData.Current.LocalSettings.Values["WhatsNewInitialized"] = "true";
+            MarkThisWhatsNewAsRead();
         }
 
         public static List<string> GetWhatsNewContentId()
@@ -44,8 +43,8 @@ namespace QuickShare.HelperClasses
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("LatestWhatsNewVersion"))
                 Version.TryParse(ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"].ToString(), out prevVersion);
 
-            if ((prevVersion < new Version("1.2.0.0")) &&
-                ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet)))
+            if ((prevVersion < new Version("1.2.1.0")) &&
+                ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet)))
                 output.Add("1");
 
             MarkThisWhatsNewAsRead();
@@ -55,7 +54,6 @@ namespace QuickShare.HelperClasses
 
         private static void MarkThisWhatsNewAsRead()
         {
-            InitIntro();
             ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"] = DeviceInfo.ApplicationVersionString;
         }
     }
