@@ -274,8 +274,9 @@
                 </Grid.RenderTransform>
                 <flyouts:SignInNoticeFlyout Visibility="{x:Bind ViewModel.SignInNoticeVisibility, Mode=OneWay}"
                                             FlyoutCloseRequest="SignInNoticeFlyout_FlyoutCloseRequest" />
-                <flyouts:WhatsNewFlyout Visibility="{x:Bind ViewModel.WhatsNewVisibility, Mode=OneWay}"
-                                            FlyoutCloseRequest="WhatsNewFlyout_FlyoutCloseRequest" />
+                <flyouts:WhatsNewFlyout x:Name="WhatsNewFlyoutInstance"
+                                        Visibility="{x:Bind ViewModel.WhatsNewVisibility, Mode=OneWay}"
+                                        FlyoutCloseRequest="WhatsNewFlyout_FlyoutCloseRequest" />
             </Grid>
         </Grid>
     </Grid>

@@ -43,7 +43,7 @@ namespace QuickShare.Flyouts
             FlyoutCloseRequest?.Invoke(new EventArgs());
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        public void InitFlyout()
         {
             bool changelogPresent = false;
             var ids = WhatsNewHelper.GetWhatsNewContentId();

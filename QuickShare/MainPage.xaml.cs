@@ -197,6 +197,7 @@ namespace QuickShare
 
         private void ShowWhatsNewFlyout()
         {
+            WhatsNewFlyoutInstance.InitFlyout();
             ViewModel.WhatsNewVisibility = Visibility.Visible;
             overlayShowStoryboard.Begin();
         }
