@@ -148,7 +148,11 @@ namespace QuickShare.DevicesListManager
         private double CalculateScore(NormalizedRemoteSystem rs)
         {
             if (!selectCounts.ContainsKey(rs.Id))
+            {
+                if (rs.IsAvailableByProximity)
+                    return 0.1;
                 return 0;
+            }
             
             uint maximum = selectCounts.Values.Max();
             double selectScore;
