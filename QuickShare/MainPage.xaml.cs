@@ -333,7 +333,7 @@ namespace QuickShare
                         ViewModel.ListManager.SelectHighScoreItem();
                     }
 
-                    ViewModel.RefreshIsContentFrameEnabled();
+                    ViewModel.RemoteSystemCollectionChanged();
 
                     CheckIfShouldAskAboutMSAPermission();
                 }
@@ -361,7 +361,7 @@ namespace QuickShare
             var sv = VisualChildFinder.FindVisualChild<ScrollViewer>(devicesList);
             sv.ChangeView(0, 0, sv.ZoomFactor, false);
 
-            ViewModel.RefreshIsContentFrameEnabled();
+            ViewModel.RemoteSystemCollectionChanged();
         }
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
@@ -397,7 +397,7 @@ namespace QuickShare
             }
 
             ViewModel.ContentFrameNeedsRemoteSystemSelection = !(((e.Content is Settings) || (e.Content is HistoryPage)));
-            ViewModel.RefreshIsContentFrameEnabled();
+            ViewModel.RemoteSystemCollectionChanged();
         }
 
         private async void DiscoverDevices()
@@ -428,7 +428,7 @@ namespace QuickShare
 
             if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (AllowedToChangeSelectedRemoteSystem()))
                 ViewModel.ListManager.SelectHighScoreItem();
-            ViewModel.RefreshIsContentFrameEnabled();
+            ViewModel.RemoteSystemCollectionChanged();
 
             await Common.Service.DevicesLoader.WakeAndroidDevices(userId);
 
@@ -633,6 +633,13 @@ namespace QuickShare
                 await Task.Delay(250);
                 ViewModel.WhatsNewVisibility = Visibility.Collapsed;
             }
+        }
+
+        private async void LookingForDevicesHelp_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var dlg = new MessageDialog("On your Windows devices, make sure your user account is connected to your Microsoft account, 'Continue App Experiences' is activated in system settings, and the operating system is updated to latest version.\r\n" +
+                "On your Android devices, make sure you opened Roamit and logged in with your Microsoft account.", "Not seeing your devices?");
+            await dlg.ShowAsync();
         }
     }
 }

@@ -82,6 +82,16 @@ namespace QuickShare
             }
         }
 
+        public Visibility LookingForDevicesVisibility
+        {
+            get
+            {
+                if ((ListManager.RemoteSystems == null) || (ListManager.RemoteSystems.Count == 0))
+                    return Visibility.Visible;
+                return Visibility.Collapsed;
+            }
+        }
+
         private Visibility signInNoticeVisibility = Visibility.Collapsed;
         public Visibility SignInNoticeVisibility
         {
@@ -131,11 +141,12 @@ namespace QuickShare
             }
         }
 
-        public void RefreshIsContentFrameEnabled()
+        public void RemoteSystemCollectionChanged()
         {
             try
             {
                 OnPropertyChanged("IsContentFrameEnabled");
+                OnPropertyChanged("LookingForDevicesVisibility");
 
                 if (IsContentFrameEnabled)
                 {
