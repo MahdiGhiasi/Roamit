@@ -250,6 +250,7 @@ namespace QuickShare
 >>>>>>> UWP: Measure app launch time and send it to Google Analytics
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("AppLoadTime", loadTimeString).Build());
             }
+            AdDuplex.AdDuplexClient.Initialize(AdConstants.AdDuplexAppKey);
 #endif
 
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,

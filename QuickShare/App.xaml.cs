@@ -61,7 +61,6 @@ namespace QuickShare
 
 #if !DEBUG
             AnalyticsManager.Current.IsDebug = false; //use only for debugging, returns detailed info on hits sent to analytics servers
-            AnalyticsManager.Current.DispatchPeriod = TimeSpan.FromSeconds(4);
             AnalyticsManager.Current.ReportUncaughtExceptions = true; //catch unhandled exceptions and send the details
             AnalyticsManager.Current.AutoAppLifetimeMonitoring = true; //handle suspend/resume and empty hit batched hits on suspend
 
