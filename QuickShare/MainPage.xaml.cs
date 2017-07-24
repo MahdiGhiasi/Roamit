@@ -638,8 +638,9 @@ namespace QuickShare
 
         private async void LookingForDevicesHelp_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var dlg = new MessageDialog("On your Windows devices, make sure your user account is connected to your Microsoft account, 'Continue App Experiences' is activated in system settings, and the operating system is updated to latest version.\r\n" +
-                "On your Android devices, make sure you opened Roamit and logged in with your Microsoft account.", "Not seeing your devices?");
+            var dlg = new MessageDialog("Please check your internet connection.\r\n\r\nIf your internet connection is working, then check the following: \r\n" +
+                $"{Convert.ToChar(8226)} On your Windows devices, make sure your user account is connected to your Microsoft account, 'Continue App Experiences' is activated in system settings, and the operating system is updated to latest version.\r\n" +
+                $"{Convert.ToChar(8226)} On your Android devices, make sure you opened Roamit and logged in with your Microsoft account.", "Not seeing your devices?");
             await dlg.ShowAsync();
         }
     }
