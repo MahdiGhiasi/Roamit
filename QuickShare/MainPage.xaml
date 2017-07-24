@@ -176,7 +176,22 @@
                         </DataTemplate>
                     </ContentControl.ContentTemplate>
                 </ContentControl>
-                <!--<Polygon Points="0,20 30,0, 30,20" Stroke="LightGray" Fill="LightGray" VerticalAlignment="Bottom" HorizontalAlignment="Right" />-->
+                <ProgressBar IsIndeterminate="True" 
+                             Opacity="0.7"
+                             Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
+                             Visibility="{x:Bind ViewModel.LookingForDevicesVisibility, Mode=OneWay}"
+                             VerticalAlignment="Bottom" 
+                             HorizontalAlignment="Stretch" />
+                <Button VerticalAlignment="Stretch"
+                        HorizontalAlignment="Right"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Visibility="{x:Bind ViewModel.LookingForDevicesVisibility, Mode=OneWay}"
+                        Tapped="LookingForDevicesHelp_Tapped">
+                    <Button.Content>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE11B;" />
+                    </Button.Content>
+                </Button>
             </Grid>
             <ListView x:Name="devicesList" 
                       ItemsSource="{x:Bind ViewModel.DevicesList, Mode=OneWay}" 
