@@ -251,21 +251,25 @@ namespace QuickShare
 
         private async void TrialSettings_IsTrialChanged()
         {
-            if (TrialSettings.IsTrial)
+            try
             {
-                AdBanner.Resume();
-                ViewModel.UpgradeButtonVisibility = Visibility.Visible;
-                AdFrame.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                AdBanner.Suspend();
-                ViewModel.UpgradeButtonVisibility = Visibility.Collapsed;
-                AdFrame.Visibility = Visibility.Collapsed;
-            }
+                if (TrialSettings.IsTrial)
+                {
+                    AdBanner.Resume();
+                    ViewModel.UpgradeButtonVisibility = Visibility.Visible;
+                    AdFrame.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    AdBanner.Suspend();
+                    ViewModel.UpgradeButtonVisibility = Visibility.Collapsed;
+                    AdFrame.Visibility = Visibility.Collapsed;
+                }
 
-            if (SecureKeyStorage.IsUserIdStored())
-                await Common.Service.UpgradeDetails.SetUpgradeStatus(SecureKeyStorage.GetUserId(), !TrialSettings.IsTrial);
+                if (SecureKeyStorage.IsUserIdStored())
+                    await Common.Service.UpgradeDetails.SetUpgradeStatus(SecureKeyStorage.GetUserId(), !TrialSettings.IsTrial);
+            }
+            catch { } //Temporary fix for share window threading issues.
         }
 
         int AcrylicStatus = -1;
