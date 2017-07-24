@@ -254,22 +254,28 @@ namespace QuickShare
             try
             {
                 if (TrialSettings.IsTrial)
-                {
-                    AdBanner.Resume();
-                    ViewModel.UpgradeButtonVisibility = Visibility.Visible;
-                    AdFrame.Visibility = Visibility.Visible;
-                }
+                    ShowAds();
                 else
-                {
-                    AdBanner.Suspend();
-                    ViewModel.UpgradeButtonVisibility = Visibility.Collapsed;
-                    AdFrame.Visibility = Visibility.Collapsed;
-                }
+                    HideAds();
 
                 if (SecureKeyStorage.IsUserIdStored())
                     await Common.Service.UpgradeDetails.SetUpgradeStatus(SecureKeyStorage.GetUserId(), !TrialSettings.IsTrial);
             }
             catch { } //Temporary fix for share window threading issues.
+        }
+
+        private void HideAds()
+        {
+            AdBanner.Suspend();
+            ViewModel.UpgradeButtonVisibility = Visibility.Collapsed;
+            AdFrame.Visibility = Visibility.Collapsed;
+        }
+
+        private void ShowAds()
+        {
+            AdBanner.Resume();
+            ViewModel.UpgradeButtonVisibility = Visibility.Visible;
+            AdFrame.Visibility = Visibility.Visible;
         }
 
         int AcrylicStatus = -1;
@@ -544,37 +550,42 @@ namespace QuickShare
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                AdBanner.Visibility = Visibility.Collapsed;
-                AdBanner.Suspend();
-
-                AdDuplexContainer.Visibility = Visibility.Visible;
-
-                adDuplexControl = new AdDuplex.AdControl()
-                {
-                    Height = 300,
-                    Width = 50,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    AppKey = AdConstants.AdDuplexAppKey,
-                    AdUnitId = AdConstants.AdDuplexUnitId,
-#if DEBUG
-                    IsTest = true,
-#else
-                    IsTest = false,
-#endif
-                };
-                adDuplexControl.AdLoadingError += AdDuplexBanner_AdLoadingError;
-                adDuplexControl.NoAd += AdDuplexBanner_NoAd;
-                adDuplexControl.AdLoaded += AdDuplexBanner_AdLoaded;
-                adDuplexControl.AdCovered += AdDuplexBanner_AdCovered;
-
-                AdDuplexContainer.Children.Add(adDuplexControl);
+                ShowAdDuplexBanner();
             });
 
             Debug.WriteLine($"AdBanner load error '{e.ErrorCode}': '{e.ErrorMessage}'");
 #if !DEBUG
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("MicrosoftAd", "Error", e.ErrorCode.ToString()).Build());
 #endif
+        }
+
+        private void ShowAdDuplexBanner()
+        {
+            AdBanner.Visibility = Visibility.Collapsed;
+            AdBanner.Suspend();
+
+            AdDuplexContainer.Visibility = Visibility.Visible;
+
+            adDuplexControl = new AdDuplex.AdControl()
+            {
+                Height = 300,
+                Width = 50,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                AppKey = AdConstants.AdDuplexAppKey,
+                AdUnitId = AdConstants.AdDuplexUnitId,
+#if DEBUG
+                IsTest = true,
+#else
+                    IsTest = false,
+#endif
+            };
+            adDuplexControl.AdLoadingError += AdDuplexBanner_AdLoadingError;
+            adDuplexControl.NoAd += AdDuplexBanner_NoAd;
+            adDuplexControl.AdLoaded += AdDuplexBanner_AdLoaded;
+            adDuplexControl.AdCovered += AdDuplexBanner_AdCovered;
+
+            AdDuplexContainer.Children.Add(adDuplexControl);
         }
 
         private void AdDuplexBanner_AdLoadingError(object sender, AdDuplex.Common.Models.AdLoadingErrorEventArgs e)
