@@ -24,7 +24,6 @@ using QuickShare.MicrosoftGraphFunctions;
 using Windows.UI.Popups;
 using Microsoft.Graphics.Canvas.Effects;
 using Windows.ApplicationModel.DataTransfer;
-using QuickShare.ServiceTask.HelperClasses;
 using QuickShare.HelperClasses.VersionHelpers;
 using GoogleAnalytics;
 using Windows.UI.Core;

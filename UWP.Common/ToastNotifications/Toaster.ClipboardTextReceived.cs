@@ -8,9 +8,9 @@ using Windows.UI.Notifications;
 
 namespace QuickShare.ToastNotifications
 {
-    internal static partial class Toaster
+    public static partial class Toaster
     {
-        internal static void ShowClipboardTextReceivedNotification(Guid guid, string hostName)
+        public static void ShowClipboardTextReceivedNotification(Guid guid, string hostName)
         {
             if (ToastNotificationManager.History.GetHistory().FirstOrDefault(x => x.Tag == guid.ToString()) != null)
                 return;
