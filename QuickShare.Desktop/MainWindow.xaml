@@ -30,7 +30,20 @@
                 <Button Content="O" Grid.Column="1" BorderThickness="0" Background="Transparent" Click="OpenApp_Click" />
                 <Button Content="S" Grid.Column="2" BorderThickness="0" Background="Transparent" Click="Settings_Click" />
             </Grid>
-            <Grid Grid.Row="1">
+            <StackPanel x:Name="NotSignedIn"
+                        Grid.Row="1" 
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <TextBlock Text="Please sign in to enable Cloud Clipboard." 
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,16" />
+                <Button Content="Sign in"
+                        HorizontalAlignment="Center"
+                        Width="100"
+                        Height="32"
+                        Click="SignIn_Click" />
+            </StackPanel>
+            <Grid Grid.Row="1" x:Name="ActivityContainer">
                 <TextBlock x:Name="NoClipboardActivity"
                            Text="No clipboard activity yet."
                            VerticalAlignment="Center"
