@@ -172,6 +172,10 @@ namespace QuickShare
                 HistoryRow hr;
                 switch (args["action"])
                 {
+                    case "cloudClipboard":
+                        LaunchRootFrameIfNecessary(ref rootFrame, false);
+                        rootFrame.Navigate(typeof(ClipboardReceive), "CLOUD_CLIPBOARD");
+                        break;
                     case "clipboardReceive":
                         LaunchRootFrameIfNecessary(ref rootFrame, false);
                         rootFrame.Navigate(typeof(ClipboardReceive), args["guid"]);
