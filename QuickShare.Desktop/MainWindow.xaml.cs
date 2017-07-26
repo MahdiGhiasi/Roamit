@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -28,12 +29,16 @@ namespace QuickShare.Desktop
 
         MainViewModel ViewModel { get; } = new MainViewModel();
 
+        SignInWindow signInWindow;
+
         public MainWindow()
         {
             InitializeComponent();
             SetWindowPosition();
 
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
+
+            Properties.Settings.Default.AccountId = "";
         }
 
         private void SetWindowPosition()
@@ -66,12 +71,65 @@ namespace QuickShare.Desktop
                     return;
 
                 ViewModel.ClipboardActivities.Insert(0, new ClipboardItem(text));
+
+                SendClipboardItem(text);
+            }
+        }
+
+        private async void SendClipboardItem(string text)
+        {
+            var httpClient = new HttpClient();
+            var formContent = new FormUrlEncodedContent(new[]
+            {
+                    new KeyValuePair<string, string>("accountId", Properties.Settings.Default.AccountId),
+                    new KeyValuePair<string, string>("senderName", "NOPE"),
+                    new KeyValuePair<string, string>("text", text),
+                });
+            var response = await httpClient.PostAsync("http://localhost:14100/v2/Graph/SendCloudClipboard", formContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseText = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine(responseText);
             }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            CheckAccountId(true);
+        }
+
+        private void CheckAccountId(bool showWindow)
+        {
+            if (Properties.Settings.Default.AccountId == "")
+            {
+                InitSignInWindow();
+
+                if (showWindow)
+                    signInWindow.Show();
+
+                NotSignedIn.Visibility = Visibility.Visible;
+                ActivityContainer.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                NotSignedIn.Visibility = Visibility.Collapsed;
+                ActivityContainer.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void InitSignInWindow()
+        {
+            signInWindow = new SignInWindow();
+            signInWindow.Closed += SignInWindow_Closed;
+        }
+
+        private void SignInWindow_Closed(object sender, EventArgs e)
+        {
+            signInWindow.Closed -= SignInWindow_Closed;
+            signInWindow = null;
+
+            CheckAccountId(false);
         }
 
         private void OpenApp_Click(object sender, RoutedEventArgs e)
@@ -81,7 +139,15 @@ namespace QuickShare.Desktop
 
         private async void Settings_Click(object sender, RoutedEventArgs e)
         {
-            await Windows.System.Launcher.LaunchUriAsync(new Uri("http://ghiasi.net"));
+            //await Windows.System.Launcher.LaunchUriAsync(new Uri("http://ghiasi.net"));
+        }
+
+        private void SignIn_Click(object sender, RoutedEventArgs e)
+        {
+            if (signInWindow == null)
+                InitSignInWindow();
+
+            signInWindow.Show();
         }
     }
 }
