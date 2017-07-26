@@ -29,6 +29,8 @@ namespace QuickShare.ToastNotifications
             };
 
             ToastNotificationManager.CreateToastNotifier().Show(toast);
+
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values["LastToast"] = guid.ToString();
         }
     }
 }

@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Core;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -37,18 +38,33 @@ namespace QuickShare
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            Guid guid = Guid.Parse(e.Parameter as string);
+            if (e.Parameter as string == "CLOUD_CLIPBOARD")
+            {
+                string content = Windows.Storage.ApplicationData.Current.LocalSettings.Values["CloudClipboardText"].ToString();
+                viewModel["ClipboardContent"] = content;
 
-            await DataStorageProviders.HistoryManager.OpenAsync();
-            var item = DataStorageProviders.HistoryManager.GetItem(guid);
-            DataStorageProviders.HistoryManager.Close();
+                //Re-register the notification
+                Windows.Storage.ApplicationData.Current.LocalSettings.Values["LastToast"] = "";
+                CloudClipboardHandler.ReceiveRequest(new Dictionary<string, object>
+                {
+                    {"Data", content},
+                });
+            }
+            else
+            {
+                Guid guid = Guid.Parse(e.Parameter as string);
 
-            if (!(item.Data is ReceivedText))
-                throw new Exception("Invalid received item type.");
+                await DataStorageProviders.HistoryManager.OpenAsync();
+                var item = DataStorageProviders.HistoryManager.GetItem(guid);
+                DataStorageProviders.HistoryManager.Close();
 
-            await DataStorageProviders.TextReceiveContentManager.OpenAsync();
-            viewModel["ClipboardContent"] = DataStorageProviders.TextReceiveContentManager.GetItemContent(guid);
-            DataStorageProviders.TextReceiveContentManager.Close();
+                if (!(item.Data is ReceivedText))
+                    throw new Exception("Invalid received item type.");
+
+                await DataStorageProviders.TextReceiveContentManager.OpenAsync();
+                viewModel["ClipboardContent"] = DataStorageProviders.TextReceiveContentManager.GetItemContent(guid);
+                DataStorageProviders.TextReceiveContentManager.Close();
+            }
 
             Window.Current.Activated += Window_Activated;
 

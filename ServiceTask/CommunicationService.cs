@@ -18,7 +18,7 @@ namespace QuickShare.ServiceTask
 {
     public sealed class CommunicationService : IBackgroundTask
     {
-        BackgroundTaskDeferral _deferral;
+        BackgroundTaskDeferral _deferral = null;
         private AppServiceConnection _appServiceconnection;
 
         //Instantiate a Singleton of the Semaphore with a value of 1. This means that only 1 thread can be granted access at a time.
@@ -27,6 +27,11 @@ namespace QuickShare.ServiceTask
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
+            Debug.WriteLine("CommunicationService running");
+
+            if (_deferral != null)
+                Debug.WriteLine("***** Previous instance still running!");
+
             _deferral = taskInstance.GetDeferral();
 
             var details = taskInstance.TriggerDetails as AppServiceTriggerDetails;
@@ -68,87 +73,108 @@ namespace QuickShare.ServiceTask
             {
                 // Complete the service deferral.
                 _deferral.Complete();
+                _deferral = null;
             }
         }
 
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            //Debug.WriteLine("***************************REQUEST RECEIVED!");
-            if (args.Request.Message.ContainsKey("Receiver"))
+            var requestDeferral = args.GetDeferral();
+
+            try
             {
-                var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
-                if (!futureAccessList.ContainsItem("downloadMainFolder"))
-                    return;
-
-                await HelperClasses.DownloadFolderHelper.InitDownloadFolderAsync();
-                IFolder downloadFolder = new WinRTFolder(await futureAccessList.GetFolderAsync("downloadMainFolder"));
-
-                string receiver = args.Request.Message["Receiver"] as string;
-
-                Dictionary<string, object> reqMessage = new Dictionary<string, object>();
-
-                foreach (var item in args.Request.Message)
+                Debug.WriteLine("A request received");
+                if (args.Request.Message.ContainsKey("Receiver"))
                 {
-                    reqMessage.Add(item.Key, item.Value);
-                }
+                    var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
+                    if (!futureAccessList.ContainsItem("downloadMainFolder"))
+                        return;
 
-                if (receiver == "ServerIPFinder")
-                {
-                    await FileTransfer.ServerIPFinder.ReceiveRequest(reqMessage);
-                }
-                else if (receiver == "FileReceiver")
-                {
-                    await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, downloadFolder);
-                }
-                else if (receiver == "TextReceiver")
-                {
-                    await TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
-                }
-                else if (receiver == "System")
-                {
-                    if (args.Request.Message.ContainsKey("FinishService"))
+                    string receiver = args.Request.Message["Receiver"] as string;
+
+                    Debug.WriteLine($"Receiver is {receiver}");
+
+                    Dictionary<string, object> reqMessage = new Dictionary<string, object>();
+
+                    foreach (var item in args.Request.Message)
                     {
-                        if (_deferral != null)
+                        reqMessage.Add(item.Key, item.Value);
+                    }
+
+                    if (receiver == "ServerIPFinder")
+                    {
+                        await FileTransfer.ServerIPFinder.ReceiveRequest(reqMessage);
+                    }
+                    else if (receiver == "FileReceiver")
+                    {
+                        await HelperClasses.DownloadFolderHelper.InitDownloadFolderAsync();
+                        IFolder downloadFolder = new WinRTFolder(await futureAccessList.GetFolderAsync("downloadMainFolder"));
+
+                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, downloadFolder);
+                    }
+                    else if (receiver == "TextReceiver")
+                    {
+                        await TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
+                    }
+                    else if (receiver == "CloudClipboardHandler")
+                    {
+                        CloudClipboardHandler.ReceiveRequest(reqMessage);
+
+                        _appServiceconnection.Dispose();
+                        _deferral?.Complete();
+                        _deferral = null;
+                    }
+                    else if (receiver == "System")
+                    {
+                        if (args.Request.Message.ContainsKey("FinishService"))
                         {
-                            System.Diagnostics.Debug.WriteLine("Let's say goodbye");
+                            if (_deferral != null)
+                            {
+                                System.Diagnostics.Debug.WriteLine("Let's say goodbye");
 
-                            while (waitingNumSemaphore > 0)
-                                await Task.Delay(100);
+                                while (waitingNumSemaphore > 0)
+                                    await Task.Delay(100);
 
-                            System.Diagnostics.Debug.WriteLine("Goodbye");
-                            _appServiceconnection.Dispose();
-                            _deferral.Complete();
+                                System.Diagnostics.Debug.WriteLine("Goodbye");
+                                _appServiceconnection.Dispose();
+                                _deferral.Complete();
+                                _deferral = null;
+                            }
                         }
-                    }
-                    else if ((args.Request.Message.ContainsKey("Task")) && (args.Request.Message["Task"] as string == "MessageCarrier"))
-                    {
-                        
+                        //else if ((args.Request.Message.ContainsKey("Task")) && (args.Request.Message["Task"] as string == "MessageCarrier"))
+                        //{
+
+                        //}
                     }
                 }
+                //else if (args.Request.Message.ContainsKey("Test"))
+                //{
+                //    string s = args.Request.Message["Test"] as string;
+
+                //    if (s == null)
+                //        s = "null";
+
+                //    ValueSet vs = new ValueSet();
+                //    vs.Add("RecvSuccessful", "RecvSuccessful");
+                //    await args.Request.SendResponseAsync(vs);
+
+                //    await System.Threading.Tasks.Task.Delay(1500);
+
+                //    SendToast(s);
+                //}
+                //else if (args.Request.Message.ContainsKey("TestLongRunning"))
+                //{
+                //    for (int i = 0; i < 10000; i++)
+                //    {
+                //        SendToast((i).ToString() + " seconds");
+                //        await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1));
+                //    }
+                //}
             }
-             else if (args.Request.Message.ContainsKey("Test"))
-             {
-                 string s = args.Request.Message["Test"] as string;
-
-                 if (s == null)
-                     s = "null";
-
-                 ValueSet vs = new ValueSet();
-                 vs.Add("RecvSuccessful", "RecvSuccessful");
-                 await args.Request.SendResponseAsync(vs);
-
-                 await System.Threading.Tasks.Task.Delay(1500);
-
-                 SendToast(s);
-             }
-             else if (args.Request.Message.ContainsKey("TestLongRunning"))
-             {
-                 for (int i = 0; i < 10000; i++)
-                 {
-                     SendToast((i).ToString() + " seconds");
-                     await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1));
-                 }
-             }
+            finally
+            {
+                requestDeferral?.Complete();
+            }
         }
 
         public static void SendToast(string text)
