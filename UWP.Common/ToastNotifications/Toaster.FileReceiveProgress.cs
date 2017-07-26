@@ -11,7 +11,7 @@ using Windows.UI.Notifications;
 
 namespace QuickShare.ToastNotifications
 {
-    internal static partial class Toaster // :D
+    public static partial class Toaster // :D
     {
         private static Dictionary<Guid, string> fileReceiveProgresses = new Dictionary<Guid, string>();
 

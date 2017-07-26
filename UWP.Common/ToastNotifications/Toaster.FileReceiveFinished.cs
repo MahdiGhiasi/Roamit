@@ -9,7 +9,7 @@ using Windows.UI.Notifications;
 
 namespace QuickShare.ToastNotifications
 {
-    internal static partial class Toaster
+    public static partial class Toaster
     {
         static string[] notDirectlyOpenableExtensions = { ".exe" };
 

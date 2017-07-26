@@ -69,7 +69,7 @@ namespace QuickShare.Common
             Other
         }
 
-        internal static void RefreshFormFactorType()
+        public static void RefreshFormFactorType()
         {
             switch (AnalyticsInfo.VersionInfo.DeviceFamily)
             {

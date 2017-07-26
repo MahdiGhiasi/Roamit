@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 
-namespace QuickShare.ServiceTask.HelperClasses
+namespace QuickShare.HelperClasses
 {
     public static class DownloadFolderHelper
     {

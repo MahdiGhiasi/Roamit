@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace QuickShare.ToastNotifications
 {
-    internal static class Templates
+    public static class Templates
     {
-        internal static string BasicText { get; } = @"
+        public static string BasicText { get; } = @"
 <toast launch='{argsLaunch}'>
   <visual>
     <binding template='ToastGeneric'>
@@ -18,7 +18,7 @@ namespace QuickShare.ToastNotifications
   </visual>
 </toast>";
 
-        internal static string ProgressBar { get; } = @"
+        public static string ProgressBar { get; } = @"
 <toast launch='{argsLaunch}'>
   <visual>
     <binding template='ToastGeneric'>
@@ -32,7 +32,7 @@ namespace QuickShare.ToastNotifications
   </visual>  
 </toast>";
 
-        internal static string SingleFileReceived { get; } = @"
+        public static string SingleFileReceived { get; } = @"
 <toast launch='action=fileFinished'>
   <visual>
     <binding template='ToastGeneric'>
@@ -46,7 +46,7 @@ namespace QuickShare.ToastNotifications
   </actions>
 </toast>";
 
-        internal static string SingleFileReceivedWithNoOpenFileButton { get; } = @"
+        public static string SingleFileReceivedWithNoOpenFileButton { get; } = @"
 <toast launch='action=fileFinished'>
   <visual>
     <binding template='ToastGeneric'>
@@ -59,7 +59,7 @@ namespace QuickShare.ToastNotifications
   </actions>
 </toast>";
 
-        internal static string MultipleFilesReceived { get; } = @"
+        public static string MultipleFilesReceived { get; } = @"
 <toast launch='action=fileFinished'>
   <visual>
     <binding template='ToastGeneric'>
