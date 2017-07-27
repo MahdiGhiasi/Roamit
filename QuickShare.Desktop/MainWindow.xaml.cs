@@ -177,6 +177,8 @@ namespace QuickShare.Desktop
                 NotSignedIn.Visibility = Visibility.Collapsed;
                 ActivityContainer.Visibility = Visibility.Visible;
 
+                TryRegisterForStartup();
+
                 return true;
             }
         }
@@ -196,6 +198,21 @@ namespace QuickShare.Desktop
             {
                 notifyIcon.ShowBalloonTip(int.MaxValue, "Roamit Cloud Clipboard is running in the background.",
                     "You can check the status and change settings by clicking the Roamit icon in the system tray.", ToolTipIcon.None);
+
+                TryRegisterForStartup();
+            }
+        }
+
+        private void TryRegisterForStartup()
+        {
+            try
+            {
+                var startupManager = new StartupManager("Roamit Cloud Clipboard");
+                startupManager.AddApplicationToCurrentUserStartup();
+            }
+            catch
+            {
+                Debug.WriteLine("Failed to register program to run at startup.");
             }
         }
 
