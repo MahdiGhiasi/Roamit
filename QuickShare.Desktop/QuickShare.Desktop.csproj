@@ -74,6 +74,7 @@
     <Compile Include="SignInWindow.xaml.cs">
       <DependentUpon>SignInWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StartupManager.cs" />
     <Compile Include="ViewModel\ClipboardItem.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Page Include="MainWindow.xaml">
