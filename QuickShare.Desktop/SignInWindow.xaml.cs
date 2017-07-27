@@ -58,7 +58,7 @@ namespace QuickShare.Desktop
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            webBrowser.Navigate("http://localhost:14100/v2/Authenticate/Graph");
+            webBrowser.Navigate($"{Config.ServerAddress}/v2/Authenticate/Graph");
         }
     }
 }

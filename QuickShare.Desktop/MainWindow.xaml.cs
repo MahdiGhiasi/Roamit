@@ -36,6 +36,7 @@ namespace QuickShare.Desktop
             InitializeComponent();
             SetWindowPosition();
 
+            this.Opacity = 0;
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
 
             Properties.Settings.Default.AccountId = "";
@@ -47,7 +48,6 @@ namespace QuickShare.Desktop
             };
             notifyIcon.Click += NotifyIcon_Click;
 
-            this.Visibility = Visibility.Hidden;
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
 
             CheckAccountId(true);
@@ -115,7 +115,7 @@ namespace QuickShare.Desktop
                         new KeyValuePair<string, string>("senderName", deviceName),
                         new KeyValuePair<string, string>("text", text),
                     });
-                    var response = await httpClient.PostAsync("http://localhost:14100/v2/Graph/SendCloudClipboard", formContent);
+                    var response = await httpClient.PostAsync($"{Config.ServerAddress}/v2/Graph/SendCloudClipboard", formContent);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -132,7 +132,8 @@ namespace QuickShare.Desktop
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            this.Opacity = 1;
+            this.Visibility = Visibility.Hidden;
         }
 
         private bool CheckAccountId(bool showWindow)
@@ -192,6 +193,13 @@ namespace QuickShare.Desktop
                 InitSignInWindow();
 
             signInWindow.Show();
+        }
+
+        private void ClipboardActivity_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var item = ClipboardActivity.SelectedItem as ClipboardItem;
+
+            System.Windows.Clipboard.SetText(item.Text);
         }
     }
 }
