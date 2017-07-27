@@ -223,7 +223,8 @@ namespace QuickShare.Desktop
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            //await Windows.System.Launcher.LaunchUriAsync(new Uri("http://ghiasi.net"));
+            var settings = new SettingsWindow();
+            settings.Show();
         }
 
         private void SignIn_Click(object sender, RoutedEventArgs e)
