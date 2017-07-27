@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:QuickShare.Desktop"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="Sign in" Height="600" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Title="Sign in - Roamit" Height="600" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Grid>
         <Grid x:Name="Page1" Visibility="Visible">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
