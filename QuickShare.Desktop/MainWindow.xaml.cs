@@ -92,7 +92,7 @@ namespace QuickShare.Desktop
                 ClipboardActivity.Visibility = Visibility.Visible;
 
                 if ((ViewModel.ClipboardActivities.Count > 0) &&
-                    (ViewModel.ClipboardActivities.Last().DisplayText == text))
+                    (ViewModel.ClipboardActivities.First().DisplayText == text))
                     return;
 
                 ViewModel.ClipboardActivities.Insert(0, new ClipboardItem(text));
