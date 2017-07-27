@@ -8,7 +8,7 @@
         Loaded="Window_Loaded"
         Title="Sign in - Roamit" Height="600" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Grid>
-        <Grid x:Name="Page1" Visibility="Visible">
+        <Grid x:Name="Page1" Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
                 <Image Source="pack://application:,,,/Resources/icon.ico"
                        Width="75" />
@@ -33,7 +33,7 @@
             <WebBrowser x:Name="webBrowser"
                         Navigated="WebBrowser_Navigated" />
         </Grid>
-        <Grid x:Name="Page3" Visibility="Collapsed">
+        <Grid x:Name="Page3" Visibility="Visible">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
                 <Image Source="pack://application:,,,/Resources/green-tick.png"
                        Width="75" />
@@ -48,7 +48,7 @@
                            TextAlignment="Center"
                            FontSize="14"
                            Margin="0,0,0,8" />
-                <TextBlock Text="Tap it to copy it to the local clipboard of your device."
+                <TextBlock Text="You can copy it to local clipboard of your device by tapping the notification."
                            TextWrapping="Wrap"
                            TextAlignment="Center"
                            FontSize="14"
