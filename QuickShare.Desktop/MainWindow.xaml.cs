@@ -107,10 +107,12 @@ namespace QuickShare.Desktop
             {
                 using (var httpClient = new HttpClient())
                 {
+                    string deviceName = System.Net.Dns.GetHostName(); //Environment.MachineName;
+
                     var formContent = new FormUrlEncodedContent(new[]
                     {
                         new KeyValuePair<string, string>("accountId", Properties.Settings.Default.AccountId),
-                        new KeyValuePair<string, string>("senderName", "NOPE"),
+                        new KeyValuePair<string, string>("senderName", deviceName),
                         new KeyValuePair<string, string>("text", text),
                     });
                     var response = await httpClient.PostAsync("http://localhost:14100/v2/Graph/SendCloudClipboard", formContent);
