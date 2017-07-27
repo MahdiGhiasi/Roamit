@@ -64,6 +64,8 @@
                           HorizontalContentAlignment="Stretch"
                           ScrollViewer.VerticalScrollBarVisibility="Auto"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ToolTip="Double click to copy"
+                          MouseDoubleClick="ClipboardActivity_MouseDoubleClick"
                           Visibility="Collapsed">
                     <ListView.ItemTemplate>
                         <DataTemplate>
