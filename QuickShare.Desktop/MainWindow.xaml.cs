@@ -233,6 +233,7 @@ namespace QuickShare.Desktop
                 InitSignInWindow();
 
             signInWindow.Show();
+            signInWindow.Activate();
         }
 
         private void ClipboardActivity_MouseDoubleClick(object sender, MouseButtonEventArgs e)
