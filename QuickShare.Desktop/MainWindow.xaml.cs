@@ -195,7 +195,7 @@ namespace QuickShare.Desktop
             if (CheckAccountId(false))
             {
                 notifyIcon.ShowBalloonTip(int.MaxValue, "Roamit Cloud Clipboard is running in the background.",
-                    "You can check its status by clicking the Roamit icon in the system tray.", ToolTipIcon.Info);
+                    "You can check the status and change settings by clicking the Roamit icon in the system tray.", ToolTipIcon.None);
             }
         }
 
