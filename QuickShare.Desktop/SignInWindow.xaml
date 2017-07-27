@@ -10,6 +10,8 @@
     <Grid>
         <Grid x:Name="Page1" Visibility="Visible">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
+                <Image Source="pack://application:,,,/Resources/icon.ico"
+                       Width="75" />
                 <TextBlock Text="Welcome to Roamit Cloud Clipboard"
                            TextAlignment="Center"
                            TextWrapping="Wrap"
@@ -33,6 +35,8 @@
         </Grid>
         <Grid x:Name="Page3" Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
+                <Image Source="pack://application:,,,/Resources/green-tick.png"
+                       Width="75" />
                 <TextBlock Text="You're all set"
                            TextAlignment="Center"
                            TextWrapping="Wrap"
