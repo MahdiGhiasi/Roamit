@@ -27,8 +27,18 @@
                     <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Roamit" FontFamily="Segoe UI" Margin="8" FontSize="18" FontWeight="Bold" />
-                <Button Content="O" Grid.Column="1" BorderThickness="0" Background="Transparent" Click="OpenApp_Click" />
-                <Button Content="S" Grid.Column="2" BorderThickness="0" Background="Transparent" Click="Settings_Click" />
+                <Button ToolTip="Open app" Grid.Column="1" BorderThickness="0" Background="Transparent" Click="OpenApp_Click">
+                    <Button.Content>
+                        <Image Source="pack://application:,,,/Resources/icon48.png"
+                               Width="24" />
+                    </Button.Content>
+                </Button>
+                <Button ToolTip="Settings" Grid.Column="2" BorderThickness="0" Background="Transparent" Click="Settings_Click">
+                    <Button.Content>
+                        <Image Source="pack://application:,,,/Resources/settings.png"
+                               Width="20" />
+                    </Button.Content>
+                </Button>
             </Grid>
             <StackPanel x:Name="NotSignedIn"
                         Grid.Row="1" 

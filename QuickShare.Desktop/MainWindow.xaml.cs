@@ -24,7 +24,7 @@ namespace QuickShare.Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
-        NotifyIcon notifyIcon = new NotifyIcon();
+        NotifyIcon notifyIcon;
         ClipboardManager clipboardManager;
 
         MainViewModel ViewModel { get; } = new MainViewModel();
@@ -39,6 +39,31 @@ namespace QuickShare.Desktop
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
 
             Properties.Settings.Default.AccountId = "";
+
+            notifyIcon = new NotifyIcon
+            {
+                Visible = true,
+                Icon = Properties.Resources.icon_white,
+            };
+            notifyIcon.Click += NotifyIcon_Click;
+
+            this.Visibility = Visibility.Hidden;
+            System.Windows.Application.Current.Deactivated += Application_Deactivated;
+
+            CheckAccountId(true);
+        }
+
+        private void Application_Deactivated(object sender, EventArgs e)
+        {
+            this.Visibility = Visibility.Hidden;
+        }
+
+        private void NotifyIcon_Click(object sender, EventArgs e)
+        {
+            if (this.Visibility == Visibility.Visible)
+                this.Visibility = Visibility.Hidden;
+            else
+                this.Visibility = Visibility.Visible;
         }
 
         private void SetWindowPosition()
@@ -105,10 +130,10 @@ namespace QuickShare.Desktop
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            CheckAccountId(true);
+            
         }
 
-        private void CheckAccountId(bool showWindow)
+        private bool CheckAccountId(bool showWindow)
         {
             if (Properties.Settings.Default.AccountId == "")
             {
@@ -119,11 +144,15 @@ namespace QuickShare.Desktop
 
                 NotSignedIn.Visibility = Visibility.Visible;
                 ActivityContainer.Visibility = Visibility.Collapsed;
+
+                return false;
             }
             else
             {
                 NotSignedIn.Visibility = Visibility.Collapsed;
                 ActivityContainer.Visibility = Visibility.Visible;
+
+                return true;
             }
         }
 
@@ -138,7 +167,11 @@ namespace QuickShare.Desktop
             signInWindow.Closed -= SignInWindow_Closed;
             signInWindow = null;
 
-            CheckAccountId(false);
+            if (CheckAccountId(false))
+            {
+                notifyIcon.ShowBalloonTip(int.MaxValue, "Roamit Cloud Clipboard is running in the background.",
+                    "You can check its status by clicking the Roamit icon in the system tray.", ToolTipIcon.Info);
+            }
         }
 
         private void OpenApp_Click(object sender, RoutedEventArgs e)
@@ -146,7 +179,7 @@ namespace QuickShare.Desktop
             Process.Start("roamit://");
         }
 
-        private async void Settings_Click(object sender, RoutedEventArgs e)
+        private void Settings_Click(object sender, RoutedEventArgs e)
         {
             //await Windows.System.Launcher.LaunchUriAsync(new Uri("http://ghiasi.net"));
         }
