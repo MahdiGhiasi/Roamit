@@ -97,14 +97,32 @@ namespace QuickShare.Desktop
 
                 ViewModel.ClipboardActivities.Insert(0, new ClipboardItem(text));
 
-                SendClipboardItem(text);
+                SendClipboardItem();
             }
         }
 
-        private async void SendClipboardItem(string text)
+        DateTime lastSendTime = DateTime.MinValue;
+        bool willSendAfterLimit = false;
+        private async void SendClipboardItem()
         {
+            if (willSendAfterLimit)
+                return;
+
             try
             {
+                var elapsed = (DateTime.UtcNow - lastSendTime);
+                if (elapsed < TimeSpan.FromSeconds(11))
+                {
+                    Debug.WriteLine("Waiting...");
+                    willSendAfterLimit = true;
+                    await Task.Delay(TimeSpan.FromSeconds(11) - elapsed);
+                    willSendAfterLimit = false;
+                }
+
+                string text = ViewModel.ClipboardActivities[0].Text;
+                Debug.WriteLine("Sending...");
+
+                lastSendTime = DateTime.UtcNow;
                 using (var httpClient = new HttpClient())
                 {
                     string deviceName = System.Net.Dns.GetHostName(); //Environment.MachineName;
@@ -121,6 +139,10 @@ namespace QuickShare.Desktop
                     {
                         var responseText = await response.Content.ReadAsStringAsync();
                         Debug.WriteLine(responseText);
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Failed to send: {response.ReasonPhrase}");
                     }
                 }
             }
