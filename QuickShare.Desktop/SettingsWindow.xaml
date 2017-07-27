@@ -1,0 +1,71 @@
+﻿<Window x:Class="QuickShare.Desktop.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QuickShare.Desktop"
+        mc:Ignorable="d"
+        Height="400" 
+        Width="280"
+        ResizeMode="CanMinimize" 
+        WindowStartupLocation="CenterScreen"
+        Title="Settings - Roamit">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="Link" TargetType="Button">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Foreground" Value="Blue"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock TextDecorations="Underline" 
+                                       Text="{TemplateBinding Content}"
+                                       Background="{TemplateBinding Background}"/>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="12">
+                <StackPanel Margin="0,0,0,16">
+                    <TextBlock Text="Send Cloud Clipboard to these devices:"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,8" />
+                    <ListView Height="140" />
+                </StackPanel>
+                <StackPanel Margin="0,8,0,0">
+                    <TextBlock Text="Roamit Cloud Clipboard extension for Windows PC"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,4" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Version" />
+                        <TextBlock Text="x.y.z"
+                                   Margin="4,0,0,0" />
+                    </StackPanel>
+                    <Button Content="Check for updates" 
+                            Style="{StaticResource Link}"
+                            HorizontalAlignment="Left"
+                            Margin="0,0,0,8"
+                            Click="CheckForUpdates_Click" />
+                    <Button Content="Sign out and exit" 
+                            Style="{StaticResource Link}"
+                            HorizontalAlignment="Left"
+                            Margin="0,0,0,8"
+                            Click="SignOutAndExit_Click" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>   
+    </Grid>
+</Window>
