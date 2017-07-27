@@ -78,19 +78,28 @@ namespace QuickShare.Desktop
 
         private async void SendClipboardItem(string text)
         {
-            var httpClient = new HttpClient();
-            var formContent = new FormUrlEncodedContent(new[]
+            try
             {
-                    new KeyValuePair<string, string>("accountId", Properties.Settings.Default.AccountId),
-                    new KeyValuePair<string, string>("senderName", "NOPE"),
-                    new KeyValuePair<string, string>("text", text),
-                });
-            var response = await httpClient.PostAsync("http://localhost:14100/v2/Graph/SendCloudClipboard", formContent);
+                using (var httpClient = new HttpClient())
+                {
+                    var formContent = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("accountId", Properties.Settings.Default.AccountId),
+                        new KeyValuePair<string, string>("senderName", "NOPE"),
+                        new KeyValuePair<string, string>("text", text),
+                    });
+                    var response = await httpClient.PostAsync("http://localhost:14100/v2/Graph/SendCloudClipboard", formContent);
 
-            if (response.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseText = await response.Content.ReadAsStringAsync();
+                        Debug.WriteLine(responseText);
+                    }
+                }
+            }
+            catch (Exception ex)
             {
-                var responseText = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine(responseText);
+                Debug.WriteLine($"SendClipboardItem exception: {ex.Message}");
             }
         }
 
