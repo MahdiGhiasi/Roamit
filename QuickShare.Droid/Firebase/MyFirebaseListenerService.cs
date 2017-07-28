@@ -7,6 +7,8 @@ using Android.Support.V4.App;
 using QuickShare.Droid.Services;
 using QuickShare.TextTransfer;
 using Android.Util;
+using QuickShare.Droid.Classes;
+using Android.Preferences;
 
 namespace QuickShare.Droid.Firebase
 {
@@ -74,6 +76,13 @@ namespace QuickShare.Droid.Firebase
 
                     MessageCarrierService.CopyTextToClipboard(this, guid);
                 }
+                else if ((message.Data["Action"] == "CloudClipboard") && (message.Data.ContainsKey("Data")))
+                {
+                    string text = message.Data["Data"];
+
+                    SaveCloudClipboardValue(text);
+                    CloudClipboardNotifier.SendCloudClipboardNotification(this, text);
+                }
                 else
                 {
                     throw new InvalidOperationException();
@@ -83,6 +92,14 @@ namespace QuickShare.Droid.Firebase
             {
                 SendNotification("Action not supported.", "Please make sure the app is updated to enjoy latest features.");
             }
+        }
+
+        private void SaveCloudClipboardValue(string text)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            ISharedPreferencesEditor editor = prefs.Edit();
+            editor.PutString("CloudClipboardText", text);
+            editor.Apply();
         }
 
         private void SendNotification(string title, string body)

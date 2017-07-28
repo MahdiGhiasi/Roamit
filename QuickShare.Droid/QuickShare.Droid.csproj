@@ -184,6 +184,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\CloudClipboardNotifier.cs" />
     <Compile Include="Classes\RevMob\CallbackShowBanner.cs" />
     <Compile Include="Classes\RevMob\CallbackStartSessionListener.cs" />
     <Compile Include="Classes\RevMob\RevMobHelper.cs" />
@@ -211,6 +212,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="SendPageActivity.cs" />
+    <Compile Include="Services\CloudClipboardService.cs" />
     <Compile Include="Services\MessageCarrierService.cs" />
     <Compile Include="SettingsActivity.cs" />
     <Compile Include="TrialHelper.cs" />
