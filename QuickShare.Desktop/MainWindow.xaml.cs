@@ -41,7 +41,6 @@ namespace QuickShare.Desktop
             this.Visibility = Visibility.Hidden;
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
 
-            Properties.Settings.Default.AccountId = "";
             InitNotifyIcon();
 
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
