@@ -6,7 +6,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickShare.Desktop
+namespace QuickShare.Desktop.Helpers
 {
     // from http://www.visualbx.com/blog/run-wpf-application-at-windows-startup/
     public class StartupManager
