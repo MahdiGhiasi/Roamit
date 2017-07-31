@@ -40,20 +40,47 @@ namespace QuickShare.Desktop
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
 
             Properties.Settings.Default.AccountId = "";
-
-            notifyIcon = new NotifyIcon
-            {
-                Visible = true,
-                Icon = Properties.Resources.icon_white,
-            };
-            notifyIcon.Click += NotifyIcon_Click;
+            InitNotifyIcon();
 
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
 
             CheckAccountId(true);
         }
 
-#region Stuff related to hiding window when clicked away
+        private void InitNotifyIcon()
+        {
+            var contextMenu = new System.Windows.Forms.ContextMenu();
+            contextMenu.MenuItems.Add("&Open", OpenContextMenuItem_Click);
+            contextMenu.MenuItems.Add("&Settings", SettingsContextMenuItem_Click);
+            contextMenu.MenuItems.Add("-");
+            contextMenu.MenuItems.Add("E&xit", ExitContextMenuItem_Click);
+
+            notifyIcon = new NotifyIcon
+            {
+                Visible = true,
+                Icon = Properties.Resources.icon_white,
+                ContextMenu = contextMenu,
+            };
+            notifyIcon.MouseClick += NotifyIcon_MouseClick;
+        }
+
+        private void ExitContextMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        private void SettingsContextMenuItem_Click(object sender, EventArgs e)
+        {
+            Settings_Click(this, new RoutedEventArgs());
+        }
+
+        private void OpenContextMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Visibility = Visibility.Visible;
+            this.Activate();
+        }
+
+        #region Stuff related to hiding window when clicked away
         private void Window_Activated(object sender, EventArgs e)
         {
             System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
@@ -83,18 +110,21 @@ namespace QuickShare.Desktop
         {
             this.Visibility = Visibility.Hidden;
         }
-#endregion
+        #endregion
 
-        private void NotifyIcon_Click(object sender, EventArgs e)
+        private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (this.Visibility == Visibility.Visible)
+            if (e.Button == MouseButtons.Left)
             {
-                this.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                this.Visibility = Visibility.Visible;
-                this.Activate();
+                if (this.Visibility == Visibility.Visible)
+                {
+                    this.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    this.Visibility = Visibility.Visible;
+                    this.Activate();
+                }
             }
         }
 
