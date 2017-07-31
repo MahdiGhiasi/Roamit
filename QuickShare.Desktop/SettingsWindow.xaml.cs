@@ -48,7 +48,7 @@ namespace QuickShare.Desktop
                 }
                 catch
                 {
-                    Debug.WriteLine("Failed to register program to run at startup.");
+                    Debug.WriteLine("Failed to unregister program from running at startup.");
                 }
 
                 Application.Current.Shutdown();
