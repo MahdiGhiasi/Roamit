@@ -320,8 +320,10 @@ namespace QuickShare.Desktop
 
         private void ClipboardActivity_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var item = ClipboardActivity.SelectedItem as ClipboardItem;
+            if (ClipboardActivity.SelectedItem == null)
+                return;
 
+            var item = ClipboardActivity.SelectedItem as ClipboardItem;
             System.Windows.Clipboard.SetText(item.Text);
         }
     }
