@@ -53,17 +53,49 @@ namespace QuickShare.Desktop
             CheckAccountId(true);
         }
 
+#region Stuff related to hiding window when clicked away
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
+        }
+
+        double posX, posY;
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (posX < 0 || posX > this.Width || posY < 0 || posY > this.Height)
+                HideWindow();
+        }
+
+        private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Point p = e.GetPosition(this);
+
+            posX = p.X; // private double posX is a class member
+            posY = p.Y; // private double posY is a class member
+        }
+
         private void Application_Deactivated(object sender, EventArgs e)
+        {
+            HideWindow();
+        }
+
+        private void HideWindow()
         {
             this.Visibility = Visibility.Hidden;
         }
+#endregion
 
         private void NotifyIcon_Click(object sender, EventArgs e)
         {
             if (this.Visibility == Visibility.Visible)
+            {
                 this.Visibility = Visibility.Hidden;
+            }
             else
+            {
                 this.Visibility = Visibility.Visible;
+                this.Activate();
+            }
         }
 
         private void SetWindowPosition()
