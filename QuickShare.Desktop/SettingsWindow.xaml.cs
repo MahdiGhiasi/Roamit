@@ -31,7 +31,15 @@ namespace QuickShare.Desktop
 
         private void SignOutAndExit_Click(object sender, RoutedEventArgs e)
         {
+            var result = MessageBox.Show("Are you sure you want to sign out?\r\n\r\nYour clipboard content will not be synced to your devices. If you want to enable Cloud Clipboard again, you'll need to open 'Roamit Cloud Clipboard' from start menu and sign in with your Microsoft account.",
+                "Roamit", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.No);
 
+            if (result == MessageBoxResult.Yes)
+            {
+                Properties.Settings.Default.AccountId = "";
+                Properties.Settings.Default.Save();
+                Application.Current.Shutdown();
+            }
         }
     }
 }
