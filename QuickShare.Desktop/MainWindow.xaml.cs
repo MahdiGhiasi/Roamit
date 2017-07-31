@@ -1,4 +1,5 @@
-﻿using QuickShare.Desktop.ViewModel;
+﻿using QuickShare.Desktop.Helpers;
+using QuickShare.Desktop.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -35,9 +36,9 @@ namespace QuickShare.Desktop
         public MainWindow()
         {
             InitializeComponent();
-            SetWindowPosition();
 
             this.Opacity = 0;
+            this.Visibility = Visibility.Hidden;
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
 
             Properties.Settings.Default.AccountId = "";
@@ -77,8 +78,7 @@ namespace QuickShare.Desktop
 
         private void OpenContextMenuItem_Click(object sender, EventArgs e)
         {
-            this.Visibility = Visibility.Visible;
-            this.Activate();
+            ShowWindow();
         }
 
         #region Stuff related to hiding window when clicked away
@@ -125,17 +125,45 @@ namespace QuickShare.Desktop
                 }
                 else if ((DateTime.UtcNow -lastTimeLostFocus) > TimeSpan.FromSeconds(1))
                 {
-                    this.Visibility = Visibility.Visible;
-                    this.Activate();
+                    ShowWindow();
                 }
             }
         }
 
+        private void ShowWindow()
+        {
+            SetWindowPosition();
+
+            this.Visibility = Visibility.Visible;
+            this.Activate();
+        }
+
         private void SetWindowPosition()
         {
-            var desktopWorkingArea = SystemParameters.WorkArea;
-            this.Left = desktopWorkingArea.Right - this.Width;
-            this.Top = desktopWorkingArea.Bottom - this.Height;
+            Screen.PrimaryScreen.GetScaleFactors(out double scaleFactorX, out double scaleFactorY);
+
+            var taskbarInfo = new Taskbar(); // taskbarInfo is not DPI aware (returns values in real pixels, not effective pixels)
+
+            switch (taskbarInfo.Position)
+            {
+                case TaskbarPosition.Left:
+                    this.Left = (taskbarInfo.Size.Width / scaleFactorX);
+                    this.Top = Screen.PrimaryScreen.Bounds.Height - this.Height;
+                    break;
+                case TaskbarPosition.Top:
+                    this.Left = (taskbarInfo.Size.Width / scaleFactorX) - this.Width;
+                    this.Top = (taskbarInfo.Size.Height / scaleFactorY);
+                    break;
+                case TaskbarPosition.Right:
+                    this.Left = Screen.PrimaryScreen.Bounds.Width - this.Width - (taskbarInfo.Size.Width / scaleFactorX);
+                    this.Top = Screen.PrimaryScreen.Bounds.Height - this.Height;
+                    break;
+                case TaskbarPosition.Bottom:
+                default:
+                    this.Left = (taskbarInfo.Size.Width / scaleFactorX) - this.Width;
+                    this.Top = (taskbarInfo.Location.Y / scaleFactorY) - this.Height;
+                    break;
+            }
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -219,6 +247,7 @@ namespace QuickShare.Desktop
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            SetWindowPosition();
             this.Opacity = 1;
             this.Visibility = Visibility.Hidden;
         }
