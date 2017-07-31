@@ -262,6 +262,7 @@ namespace QuickShare.Desktop
             if (CheckAccountId(false))
             {
                 ViewModel.ClipboardActivities.Clear();
+                ClipboardActivity.Visibility = Visibility.Collapsed;
 
                 notifyIcon.ShowBalloonTip(int.MaxValue, "Roamit Cloud Clipboard is running in the background.",
                     "You can check the status and change settings by clicking the Roamit icon in the system tray.", ToolTipIcon.None);
