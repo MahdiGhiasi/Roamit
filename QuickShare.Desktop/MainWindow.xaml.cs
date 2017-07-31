@@ -88,6 +88,7 @@ namespace QuickShare.Desktop
         }
 
         double posX, posY;
+        DateTime lastTimeLostFocus = DateTime.MinValue;
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (posX < 0 || posX > this.Width || posY < 0 || posY > this.Height)
@@ -109,6 +110,7 @@ namespace QuickShare.Desktop
 
         private void HideWindow()
         {
+            lastTimeLostFocus = DateTime.UtcNow;
             this.Visibility = Visibility.Hidden;
         }
         #endregion
@@ -121,7 +123,7 @@ namespace QuickShare.Desktop
                 {
                     this.Visibility = Visibility.Hidden;
                 }
-                else
+                else if ((DateTime.UtcNow -lastTimeLostFocus) > TimeSpan.FromSeconds(1))
                 {
                     this.Visibility = Visibility.Visible;
                     this.Activate();
