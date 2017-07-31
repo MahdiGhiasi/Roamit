@@ -38,7 +38,6 @@ namespace QuickShare.Desktop
             InitializeComponent();
 
             this.Opacity = 0;
-            this.Visibility = Visibility.Hidden;
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
 
             InitNotifyIcon();
