@@ -30,6 +30,7 @@ namespace QuickShare.Desktop
         MainViewModel ViewModel { get; } = new MainViewModel();
 
         SignInWindow signInWindow;
+        SettingsWindow settingsWindow;
 
         public MainWindow()
         {
@@ -285,8 +286,23 @@ namespace QuickShare.Desktop
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            var settings = new SettingsWindow();
-            settings.Show();
+            if (settingsWindow == null)
+                InitSettingsWindow();
+
+            settingsWindow.Show();
+            settingsWindow.Activate();
+        }
+
+        private void InitSettingsWindow()
+        {
+            settingsWindow = new SettingsWindow();
+            settingsWindow.Closed += Settings_Closed;
+        }
+
+        private void Settings_Closed(object sender, EventArgs e)
+        {
+            settingsWindow.Closed -= SignInWindow_Closed;
+            settingsWindow = null;
         }
 
         private void SignIn_Click(object sender, RoutedEventArgs e)
