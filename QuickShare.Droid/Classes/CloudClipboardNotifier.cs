@@ -33,7 +33,7 @@ namespace QuickShare.Droid.Classes
                     .SetContentIntent(pendingIntent);
 
             var notificationManager = NotificationManager.FromContext(context);
-            notificationManager.Notify(0, notificationBuilder.Build());
+            notificationManager.Notify(1, notificationBuilder.Build());
         }
     }
 }
