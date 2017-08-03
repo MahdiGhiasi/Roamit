@@ -10,5 +10,8 @@ namespace QuickShare.Desktop.ViewModel
     class MainViewModel
     {
         public ObservableCollection<ClipboardItem> ClipboardActivities { get; } = new ObservableCollection<ClipboardItem>();
+
+        public bool IsTrial { get; set; } = false;
+        public DateTime TrialExpireTime { get; set; } = DateTime.MaxValue;
     }
 }

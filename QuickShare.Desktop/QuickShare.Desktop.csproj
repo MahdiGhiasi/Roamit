@@ -39,6 +39,9 @@
     <ApplicationIcon>icon_MON_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -71,7 +74,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Config.cs" />
+    <Compile Include="Helpers\CurrentDevice.cs" />
     <Compile Include="Helpers\ScreenExtensions.cs" />
+    <Compile Include="Helpers\Service.cs" />
     <Compile Include="Helpers\Taskbar.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>

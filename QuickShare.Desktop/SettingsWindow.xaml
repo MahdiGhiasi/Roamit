@@ -10,31 +10,6 @@
         ResizeMode="CanMinimize" 
         WindowStartupLocation="CenterScreen"
         Title="Settings - Roamit">
-    <Window.Resources>
-        <ResourceDictionary>
-            <Style x:Key="Link" TargetType="Button">
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="Cursor" Value="Hand"/>
-                <Setter Property="Foreground" Value="Blue"/>
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <TextBlock TextDecorations="Underline" 
-                                       Text="{TemplateBinding Content}"
-                                       Background="{TemplateBinding Background}"/>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Foreground" Value="Red"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </ResourceDictionary>
-    </Window.Resources>
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="12">
@@ -42,7 +17,19 @@
                     <TextBlock Text="Send Cloud Clipboard to these devices:"
                                TextWrapping="Wrap"
                                Margin="0,0,0,8" />
-                    <ListView Height="140" />
+                    <ListBox Height="140" ItemsSource="{Binding Devices}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}">
+                                        <CheckBox.Content>
+                                            <TextBlock Text="{Binding Name}" />
+                                        </CheckBox.Content>
+                                    </CheckBox>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </StackPanel>
                 <StackPanel Margin="0,8,0,0">
                     <TextBlock Text="Roamit Cloud Clipboard extension for Windows PC"
@@ -51,7 +38,7 @@
                                Margin="0,0,0,4" />
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                         <TextBlock Text="Version" />
-                        <TextBlock Text="x.y.z"
+                        <TextBlock Text="{Binding VersionNumber}"
                                    Margin="4,0,0,0" />
                     </StackPanel>
                     <Button Content="Check for updates" 
