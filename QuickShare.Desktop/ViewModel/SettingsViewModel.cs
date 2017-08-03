@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.Desktop.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,9 +12,36 @@ namespace QuickShare.Desktop.ViewModel
 {
     public class SettingsViewModel : INotifyPropertyChanged
     {
-        public SettingsViewModel()
-        {
+        string accountId;
 
+        public SettingsViewModel(string _accountId)
+        {
+            accountId = _accountId;
+            FetchDevicesList();
+        }
+
+        private async void FetchDevicesList()
+        {
+            var devices = (await Service.GetDevices(accountId))?.OrderBy(x => x.Name ?? "");
+
+            if (devices == null)
+                return;
+
+            foreach (var item in devices)
+            {
+                if ((item.Name ?? "").ToLower() == CurrentDevice.GetDeviceName().ToLower())
+                    continue;
+
+                Devices.Add(new DeviceItem
+                {
+                    AccountID = item.AccountID,
+                    DeviceID = item.DeviceID,
+                    Name = item.Name,
+                    IsActive = item.CloudClipboardEnabled,
+                    Type = (item.FormFactor == null) ? DeviceType.Unknown :
+                           (item.FormFactor.ToLower() == "phone") ? DeviceType.Phone : DeviceType.PC,
+                });
+            }
         }
 
         public string VersionNumber
@@ -26,6 +54,7 @@ namespace QuickShare.Desktop.ViewModel
 
         public ObservableCollection<DeviceItem> Devices { get; } = new ObservableCollection<DeviceItem>();
 
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         // Create the OnPropertyChanged method to raise the event
@@ -37,6 +66,8 @@ namespace QuickShare.Desktop.ViewModel
 
     public class DeviceItem
     {
+        public string AccountID { get; set; }
+        public string DeviceID { get; set; }
         public string Name { get; set; }
         public DeviceType Type { get; set; }
 
@@ -50,8 +81,13 @@ namespace QuickShare.Desktop.ViewModel
             set
             {
                 isActive = value;
-                //TODO: Save changes
+                ActiveChanged(value);
             }
+        }
+
+        private async void ActiveChanged(bool value)
+        {
+            await Service.SetCloudClipboardActivation(AccountID, DeviceID, value);
         }
     }
 
@@ -59,5 +95,6 @@ namespace QuickShare.Desktop.ViewModel
     {
         PC,
         Phone,
+        Unknown,
     }
 }

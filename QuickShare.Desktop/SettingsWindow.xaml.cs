@@ -1,4 +1,5 @@
 ﻿using QuickShare.Desktop.Helpers;
+using QuickShare.Desktop.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,9 +22,12 @@ namespace QuickShare.Desktop
     /// </summary>
     public partial class SettingsWindow : Window
     {
+        SettingsViewModel ViewModel { get; } = new SettingsViewModel(Properties.Settings.Default.AccountId);
+
         public SettingsWindow()
         {
             InitializeComponent();
+            DataContext = ViewModel;
         }
 
         private void CheckForUpdates_Click(object sender, RoutedEventArgs e)

@@ -33,6 +33,8 @@ namespace QuickShare.Desktop
         SignInWindow signInWindow;
         SettingsWindow settingsWindow;
 
+        bool isExpired = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -134,6 +136,8 @@ namespace QuickShare.Desktop
 
             this.Visibility = Visibility.Visible;
             this.Activate();
+
+            CheckTrialStatus();
         }
 
         private void SetWindowPosition()
@@ -189,6 +193,8 @@ namespace QuickShare.Desktop
                 ViewModel.ClipboardActivities.Insert(0, new ClipboardItem(text));
 
                 SendClipboardItem();
+
+                CheckTrialStatus();
             }
         }
 
@@ -196,6 +202,12 @@ namespace QuickShare.Desktop
         bool willSendAfterLimit = false;
         private async void SendClipboardItem()
         {
+            if (isExpired)
+            {
+                Debug.WriteLine("Premium expired, won't send clipboard.");
+                return;
+            }
+
             if (willSendAfterLimit)
                 return;
 
@@ -214,28 +226,8 @@ namespace QuickShare.Desktop
                 Debug.WriteLine("Sending...");
 
                 lastSendTime = DateTime.UtcNow;
-                using (var httpClient = new HttpClient())
-                {
-                    string deviceName = System.Net.Dns.GetHostName(); //Environment.MachineName;
 
-                    var formContent = new FormUrlEncodedContent(new[]
-                    {
-                        new KeyValuePair<string, string>("accountId", Properties.Settings.Default.AccountId),
-                        new KeyValuePair<string, string>("senderName", deviceName),
-                        new KeyValuePair<string, string>("text", text),
-                    });
-                    var response = await httpClient.PostAsync($"{Config.ServerAddress}/v2/Graph/SendCloudClipboard", formContent);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var responseText = await response.Content.ReadAsStringAsync();
-                        Debug.WriteLine(responseText);
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"Failed to send: {response.ReasonPhrase}");
-                    }
-                }
+                await Service.SendCloudClipboard(Properties.Settings.Default.AccountId, text);
             }
             catch (Exception ex)
             {
@@ -346,6 +338,11 @@ namespace QuickShare.Desktop
             signInWindow.Activate();
         }
 
+        private void Upgrade_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("roamit://upgrade");
+        }
+
         private void ClipboardActivity_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (ClipboardActivity.SelectedItem == null)
@@ -353,6 +350,75 @@ namespace QuickShare.Desktop
 
             var item = ClipboardActivity.SelectedItem as ClipboardItem;
             System.Windows.Clipboard.SetText(item.Text);
+        }
+
+        bool knowTrialStatus = false;
+        private async void CheckTrialStatus()
+        {
+            if ((knowTrialStatus) && (ViewModel.IsTrial))
+                UpdateExpireTimeText();
+
+            var status = await Service.GetPremiumStatus(Properties.Settings.Default.AccountId);
+
+            if (status == null)
+                return;
+
+            if (status.State == AccountPremiumState.PremiumTrial)
+            {
+                ViewModel.IsTrial = true;
+                ViewModel.TrialExpireTime = status.TrialExpireTime;
+
+                TrialExpireNoticeContainer.Visibility = Visibility.Visible;
+
+                UpdateExpireTimeText();
+            }
+            else
+            {
+                TrialExpireNoticeContainer.Visibility = Visibility.Collapsed;
+            }
+
+            knowTrialStatus = true;
+        }
+
+        private void UpdateExpireTimeText()
+        {
+            if (ViewModel.TrialExpireTime < DateTime.UtcNow)
+            {
+                isExpired = true;
+
+                TrialExpireTimeText.Visibility = Visibility.Collapsed;
+                TrialExpireTime.Text = "EXPIRED";
+                return;
+            }
+
+            TrialExpireTimeText.Visibility = Visibility.Visible;
+            var remainingTime = ViewModel.TrialExpireTime - DateTime.UtcNow;
+
+            if (remainingTime.TotalDays >= 2)
+            {
+                if (remainingTime.Hours > 1)
+                    TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalDays)} days, {remainingTime.Hours} hours";
+                else if (remainingTime.Hours == 1)
+                    TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalDays)} days, 1 hour";
+                else
+                    TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalDays)} days";
+            }
+            else if (remainingTime.TotalDays >= 1)
+            {
+                TrialExpireTime.Text = "1 day";
+            }
+            else if (remainingTime.TotalHours >= 1)
+            {
+                TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalHours)} hours";
+            }
+            else if (remainingTime.TotalMinutes >= 1)
+            {
+                TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalMinutes)} minutes";
+            }
+            else
+            {
+                TrialExpireTime.Text = "in a few seconds";
+            }
         }
     }
 }
