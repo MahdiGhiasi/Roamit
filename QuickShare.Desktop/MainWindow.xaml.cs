@@ -204,6 +204,7 @@ namespace QuickShare.Desktop
             clipboardManager.ClipboardChanged += ClipboardChanged;
         }
 
+        DateTime lastCheckedTrialStatus = DateTime.MinValue;
         private void ClipboardChanged(object sender, EventArgs e)
         {
             // Handle your clipboard update here, debug logging example:
@@ -221,7 +222,11 @@ namespace QuickShare.Desktop
 
                 SendClipboardItem();
 
-                CheckTrialStatus(isExpired); //If not expired, no need to refresh from server.
+                if ((isExpired) && ((DateTime.UtcNow - lastCheckedTrialStatus) > TimeSpan.FromMinutes(5)))
+                {
+                    lastCheckedTrialStatus = DateTime.UtcNow;
+                    CheckTrialStatus(true); //If not expired, no need to refresh from server.
+                }
             }
         }
 
