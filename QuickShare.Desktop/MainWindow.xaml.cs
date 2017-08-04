@@ -164,7 +164,7 @@ namespace QuickShare.Desktop
             this.Visibility = Visibility.Visible;
             this.Activate();
 
-            CheckTrialStatus();
+            CheckTrialStatus(true);
         }
 
         private void SetWindowPosition()
@@ -221,7 +221,7 @@ namespace QuickShare.Desktop
 
                 SendClipboardItem();
 
-                CheckTrialStatus();
+                CheckTrialStatus(isExpired); //If not expired, no need to refresh from server.
             }
         }
 
@@ -386,10 +386,15 @@ namespace QuickShare.Desktop
         }
 
         bool knowTrialStatus = false;
-        private async void CheckTrialStatus()
+        private async void CheckTrialStatus(bool refreshStatus)
         {
             if ((knowTrialStatus) && (ViewModel.IsTrial))
+            {
                 UpdateExpireTimeText();
+
+                if (!refreshStatus)
+                    return;
+            }
 
             var status = await Service.GetPremiumStatus(Properties.Settings.Default.AccountId);
 
