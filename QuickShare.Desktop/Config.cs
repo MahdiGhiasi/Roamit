@@ -8,6 +8,6 @@ namespace QuickShare.Desktop
 {
     internal static class Config
     {
-        internal static readonly string ServerAddress = "http://localhost:14100";
+        internal static readonly string ServerAddress = "https://qs.services.ghiasi.net"; //"http://localhost:14100";
     }
 }
