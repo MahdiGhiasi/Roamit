@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace QuickShare.Desktop
 {
@@ -35,6 +36,8 @@ namespace QuickShare.Desktop
 
         bool isExpired = false;
 
+        DispatcherTimer updateTimer;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -46,7 +49,30 @@ namespace QuickShare.Desktop
 
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
 
+            updateTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromMinutes(30),
+            };
+            updateTimer.Tick += UpdateTimer_Tick;
+
             CheckAccountId(true);
+        }
+
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            CheckForUpdates();
+        }
+
+        private async void CheckForUpdates()
+        {
+            try
+            {
+                await Updater.CheckForUpdates();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception occured while checking for updates: {ex.Message}");
+            }
         }
 
         private void InitNotifyIcon()
@@ -262,6 +288,10 @@ namespace QuickShare.Desktop
                 ActivityContainer.Visibility = Visibility.Visible;
 
                 TryRegisterForStartup();
+
+                if (!updateTimer.IsEnabled)
+                    updateTimer.Start();
+                CheckForUpdates();
 
                 return true;
             }
