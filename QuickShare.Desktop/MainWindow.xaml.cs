@@ -26,7 +26,7 @@ namespace QuickShare.Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
-        NotifyIcon notifyIcon;
+        public static NotifyIcon notifyIcon;
         ClipboardManager clipboardManager;
 
         MainViewModel ViewModel { get; } = new MainViewModel();
@@ -94,6 +94,7 @@ namespace QuickShare.Desktop
 
         private void ExitContextMenuItem_Click(object sender, EventArgs e)
         {
+            notifyIcon.Visible = false;
             System.Windows.Application.Current.Shutdown();
         }
 
@@ -407,6 +408,7 @@ namespace QuickShare.Desktop
             else
             {
                 TrialExpireNoticeContainer.Visibility = Visibility.Collapsed;
+                isExpired = false;
             }
 
             knowTrialStatus = true;
@@ -423,6 +425,7 @@ namespace QuickShare.Desktop
                 return;
             }
 
+            isExpired = false;
             TrialExpireTimeText.Visibility = Visibility.Visible;
             var remainingTime = ViewModel.TrialExpireTime - DateTime.UtcNow;
 
@@ -449,7 +452,7 @@ namespace QuickShare.Desktop
             }
             else
             {
-                TrialExpireTime.Text = "in a few seconds";
+                TrialExpireTime.Text = "a few seconds";
             }
         }
     }

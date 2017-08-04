@@ -57,6 +57,8 @@ namespace QuickShare.Desktop
                 }
 #endif
 
+                MainWindow.notifyIcon.Visible = false;
+
                 Application.Current.Shutdown();
             }
         }
