@@ -32,12 +32,11 @@ namespace QuickShare.Desktop.ViewModel
                 if ((item.Name ?? "").ToLower() == CurrentDevice.GetDeviceName().ToLower())
                     continue;
 
-                Devices.Add(new DeviceItem
+                Devices.Add(new DeviceItem(item.CloudClipboardEnabled)
                 {
                     AccountID = item.AccountID,
                     DeviceID = item.DeviceID,
                     Name = item.Name,
-                    IsActive = item.CloudClipboardEnabled,
                     Type = (item.FormFactor == null) ? DeviceType.Unknown :
                            (item.FormFactor.ToLower() == "phone") ? DeviceType.Phone : DeviceType.PC,
                 });
@@ -88,6 +87,11 @@ namespace QuickShare.Desktop.ViewModel
         private async void ActiveChanged(bool value)
         {
             await Service.SetCloudClipboardActivation(AccountID, DeviceID, value);
+        }
+
+        public DeviceItem(bool _isActive)
+        {
+            isActive = _isActive; //Does not call cloud service for initial value.
         }
     }
 
