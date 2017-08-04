@@ -322,6 +322,7 @@ namespace QuickShare.Desktop
 
         private void TryRegisterForStartup()
         {
+#if !DEBUG
             try
             {
                 var startupManager = new StartupManager("Roamit Cloud Clipboard");
@@ -331,6 +332,7 @@ namespace QuickShare.Desktop
             {
                 Debug.WriteLine("Failed to register program to run at startup.");
             }
+#endif
         }
 
         private void OpenApp_Click(object sender, RoutedEventArgs e)

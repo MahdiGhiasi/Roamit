@@ -45,6 +45,7 @@ namespace QuickShare.Desktop
                 Properties.Settings.Default.AccountId = "";
                 Properties.Settings.Default.Save();
 
+#if !DEBUG
                 try
                 {
                     var startupManager = new StartupManager("Roamit Cloud Clipboard");
@@ -54,6 +55,7 @@ namespace QuickShare.Desktop
                 {
                     Debug.WriteLine("Failed to unregister program from running at startup.");
                 }
+#endif
 
                 Application.Current.Shutdown();
             }
