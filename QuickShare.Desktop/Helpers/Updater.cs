@@ -22,6 +22,12 @@ namespace QuickShare.Desktop.Helpers
                     Debug.WriteLine($"Update available. Downloading and installing...");
                     await mgr.UpdateApp();
 
+                    try
+                    {
+                        MainWindow.notifyIcon.Visible = false;
+                    }
+                    catch { }
+
                     Debug.WriteLine("Restarting app...");
                     UpdateManager.RestartApp();
                 }
