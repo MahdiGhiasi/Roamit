@@ -18,11 +18,26 @@ namespace QuickShare.Desktop.Helpers
             appName = _appName;
         }
 
+        public string GetExecutablePath()
+        {
+            var exec = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+            var fileName = System.IO.Path.GetFileName(exec);
+            var parentDir = System.IO.Path.GetDirectoryName(exec);
+            var parentParentDir = System.IO.Path.GetDirectoryName(parentDir);
+
+            var squirrelDummyExe = System.IO.Path.Combine(parentParentDir, fileName);
+            if (System.IO.File.Exists(squirrelDummyExe))
+                return squirrelDummyExe;
+            else
+                return exec;
+        }
+
         public void AddApplicationToCurrentUserStartup()
         {
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
             {
-                key.SetValue(appName, "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
+                key.SetValue(appName, "\"" + GetExecutablePath() + "\"");
             }
         }
 
@@ -30,7 +45,7 @@ namespace QuickShare.Desktop.Helpers
         {
             using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
             {
-                key.SetValue(appName, "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
+                key.SetValue(appName, "\"" + GetExecutablePath() + "\"");
             }
         }
 
