@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.Desktop.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -44,8 +45,8 @@ namespace QuickShare.Desktop
                 string id = e.Uri.Query.Substring(11);
                 Debug.WriteLine($"Account Id is: {id}");
 
-                Properties.Settings.Default.AccountId = id;
-                Properties.Settings.Default.Save();
+                Settings.Data.AccountId = id;
+                Settings.Save();
 
                 Page3.Visibility = Visibility.Visible;
             }

@@ -22,7 +22,7 @@ namespace QuickShare.Desktop
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        SettingsViewModel ViewModel { get; } = new SettingsViewModel(Properties.Settings.Default.AccountId);
+        SettingsViewModel ViewModel { get; } = new SettingsViewModel(Settings.Data.AccountId);
 
         public SettingsWindow()
         {
@@ -42,8 +42,8 @@ namespace QuickShare.Desktop
 
             if (result == MessageBoxResult.Yes)
             {
-                Properties.Settings.Default.AccountId = "";
-                Properties.Settings.Default.Save();
+                Settings.Data.AccountId = "";
+                Settings.Save();
 
 #if !DEBUG
                 try
