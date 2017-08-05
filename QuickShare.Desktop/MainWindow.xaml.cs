@@ -279,10 +279,11 @@ namespace QuickShare.Desktop
         {
             if (Properties.Settings.Default.AccountId == "")
             {
-                InitSignInWindow();
-
                 if (showWindow)
+                {
+                    InitSignInWindow();
                     signInWindow.Show();
+                }
 
                 NotSignedIn.Visibility = Visibility.Visible;
                 ActivityContainer.Visibility = Visibility.Collapsed;
