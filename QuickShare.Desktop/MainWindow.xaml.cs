@@ -222,7 +222,8 @@ namespace QuickShare.Desktop
 
                 SendClipboardItem();
 
-                if ((isExpired) && ((DateTime.UtcNow - lastCheckedTrialStatus) > TimeSpan.FromMinutes(5)))
+                if (((isExpired) && ((DateTime.UtcNow - lastCheckedTrialStatus) > TimeSpan.FromMinutes(5))) ||
+                    (!knowTrialStatus))
                 {
                     lastCheckedTrialStatus = DateTime.UtcNow;
                     CheckTrialStatus(true); //If not expired, no need to refresh from server.
