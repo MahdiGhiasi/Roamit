@@ -88,6 +88,7 @@ namespace QuickShare.Desktop
                 Visible = true,
                 Icon = Properties.Resources.icon_white,
                 ContextMenu = contextMenu,
+                Text = "Roamit PC Extension",
             };
             notifyIcon.MouseClick += NotifyIcon_MouseClick;
         }
