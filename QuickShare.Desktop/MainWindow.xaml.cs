@@ -260,8 +260,8 @@ namespace QuickShare.Desktop
                 Debug.WriteLine("Sending...");
 
                 lastSendTime = DateTime.UtcNow;
-
-                await Service.SendCloudClipboard(Properties.Settings.Default.AccountId, text);
+                
+                await Service.SendCloudClipboard(Settings.Data.AccountId, text);
             }
             catch (Exception ex)
             {
@@ -278,7 +278,7 @@ namespace QuickShare.Desktop
 
         private bool CheckAccountId(bool showWindow)
         {
-            if (Properties.Settings.Default.AccountId == "")
+            if (Settings.Data.AccountId == "")
             {
                 if (showWindow)
                 {
@@ -404,7 +404,7 @@ namespace QuickShare.Desktop
                     return;
             }
 
-            var status = await Service.GetPremiumStatus(Properties.Settings.Default.AccountId);
+            var status = await Service.GetPremiumStatus(Settings.Data.AccountId);
 
             if (status == null)
                 return;
