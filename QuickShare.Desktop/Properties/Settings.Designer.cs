@@ -22,17 +22,5 @@ namespace QuickShare.Desktop.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AccountId {
-            get {
-                return ((string)(this["AccountId"]));
-            }
-            set {
-                this["AccountId"] = value;
-            }
-        }
     }
 }
