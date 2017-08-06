@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -22,8 +23,17 @@ namespace QuickShare.Desktop.Helpers
             screen.GetDpi(DpiType.Effective, out uint dpix_eff, out uint dpiy_eff);
             screen.GetDpi(DpiType.Raw, out uint dpix_raw, out uint dpiy_raw);
 
+            //Debug.WriteLine($"Raw: {dpix_raw}, {dpiy_raw}");
+            //Debug.WriteLine($"Effectve: {dpix_eff}, {dpiy_eff}");
+
             scaleFactorX = ((double)dpix_raw) / ((double)dpix_eff);
             scaleFactorY = ((double)dpiy_raw) / ((double)dpiy_eff);
+
+            if (scaleFactorX < 1)
+                scaleFactorX = 1.0 / scaleFactorX;
+
+            if (scaleFactorY < 1)
+                scaleFactorY = 1.0 / scaleFactorY;
         }
 
         //https://msdn.microsoft.com/en-us/library/windows/desktop/dd145062(v=vs.85).aspx

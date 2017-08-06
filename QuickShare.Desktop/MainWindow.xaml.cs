@@ -171,22 +171,22 @@ namespace QuickShare.Desktop
         private void SetWindowPosition()
         {
             Screen.PrimaryScreen.GetScaleFactors(out double scaleFactorX, out double scaleFactorY);
-
+            
             var taskbarInfo = new Taskbar(); // taskbarInfo is not DPI aware (returns values in real pixels, not effective pixels)
 
             switch (taskbarInfo.Position)
             {
                 case TaskbarPosition.Left:
                     this.Left = (taskbarInfo.Size.Width / scaleFactorX);
-                    this.Top = Screen.PrimaryScreen.Bounds.Height - this.Height;
+                    this.Top = (taskbarInfo.Size.Height / scaleFactorY) - this.Height;
                     break;
                 case TaskbarPosition.Top:
                     this.Left = (taskbarInfo.Size.Width / scaleFactorX) - this.Width;
                     this.Top = (taskbarInfo.Size.Height / scaleFactorY);
                     break;
                 case TaskbarPosition.Right:
-                    this.Left = Screen.PrimaryScreen.Bounds.Width - this.Width - (taskbarInfo.Size.Width / scaleFactorX);
-                    this.Top = Screen.PrimaryScreen.Bounds.Height - this.Height;
+                    this.Left = SystemParameters.PrimaryScreenWidth - this.Width - (taskbarInfo.Size.Width / scaleFactorX);
+                    this.Top = (taskbarInfo.Size.Height / scaleFactorY) - this.Height;
                     break;
                 case TaskbarPosition.Bottom:
                 default:
