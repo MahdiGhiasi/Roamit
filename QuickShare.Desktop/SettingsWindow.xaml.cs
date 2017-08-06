@@ -1,4 +1,5 @@
-﻿using QuickShare.Desktop.Helpers;
+﻿using CSharpAnalytics;
+using QuickShare.Desktop.Helpers;
 using QuickShare.Desktop.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,11 @@ namespace QuickShare.Desktop
 
                 Application.Current.Shutdown();
             }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            AutoMeasurement.Client.TrackScreenView("SettingsWindow");
         }
     }
 }

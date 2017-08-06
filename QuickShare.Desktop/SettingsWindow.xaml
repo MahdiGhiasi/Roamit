@@ -9,7 +9,8 @@
         Width="280"
         ResizeMode="CanMinimize" 
         WindowStartupLocation="CenterScreen"
-        Title="Settings - Roamit">
+        Title="Settings - Roamit"
+        Loaded="Window_Loaded">
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="12">
