@@ -1,10 +1,12 @@
-﻿using QuickShare.Desktop.Helpers;
+﻿using CSharpAnalytics;
+using QuickShare.Desktop.Helpers;
 using QuickShare.Desktop.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -42,6 +44,8 @@ namespace QuickShare.Desktop
         {
             InitializeComponent();
 
+            InitGoogleAnalytics();
+
             this.Opacity = 0;
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
 
@@ -56,6 +60,14 @@ namespace QuickShare.Desktop
             updateTimer.Tick += UpdateTimer_Tick;
 
             CheckAccountId(true);
+        }
+
+        private static void InitGoogleAnalytics()
+        {
+            AutoMeasurement.Instance = new WpfAutoMeasurement();
+            AutoMeasurement.Start(new MeasurementConfiguration(Common.Secrets.GoogleAnalyticsId, "PCExtension", Assembly.GetExecutingAssembly().GetName().Version.ToString()));
+
+            AutoMeasurement.Client.TrackScreenView("MainWindow");
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)

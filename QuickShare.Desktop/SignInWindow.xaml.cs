@@ -1,4 +1,5 @@
-﻿using QuickShare.Desktop.Helpers;
+﻿using CSharpAnalytics;
+using QuickShare.Desktop.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -50,6 +51,8 @@ namespace QuickShare.Desktop
 
                 Page3.Visibility = Visibility.Visible;
             }
+
+            AutoMeasurement.Client.TrackEvent("SignInBrowser", "Navigated", System.Net.WebUtility.UrlEncode(e.Uri.OriginalString));
         }
 
         private void FinishButton_Click(object sender, RoutedEventArgs e)
@@ -60,6 +63,7 @@ namespace QuickShare.Desktop
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             webBrowser.Navigate($"{Config.ServerAddress}/v2/Authenticate/Graph");
+            AutoMeasurement.Client.TrackScreenView("SignInWindow");
         }
     }
 }
