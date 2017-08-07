@@ -20,6 +20,7 @@ namespace QuickShare.Droid
     {
         TextView txtVersionNumber, txtTrialStatus;
         Button btnUpgrade;
+        Switch swCloudClipboardActivity, swCloudClipboardMode;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -29,11 +30,13 @@ namespace QuickShare.Droid
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-            SupportActionBar.Title = "About";
+            SupportActionBar.Title = "Settings";
 
             txtVersionNumber = FindViewById<TextView>(Resource.Id.settings_txt_version);
             txtTrialStatus = FindViewById<TextView>(Resource.Id.settings_txt_trialStatus);
             btnUpgrade = FindViewById<Button>(Resource.Id.settings_btn_upgrade);
+            swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
+            swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
 
             txtVersionNumber.Text = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
             
@@ -48,9 +51,30 @@ namespace QuickShare.Droid
                 btnUpgrade.Visibility = ViewStates.Gone;
             }
 
+            Settings settings = new Settings(this);
+            swCloudClipboardMode.Checked = (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic);
+            swCloudClipboardActivity.Enabled = (settings.RoamitServiceAccountId.Length > 0);
+
             btnUpgrade.Click += BtnUpgrade_Click;
+            swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
+            swCloudClipboardMode.CheckedChange += SwCloudClipboardMode_CheckedChange;
 
             Analytics.TrackPage("Settings");
+        }
+
+        private void SwCloudClipboardMode_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            Settings settings = new Settings(this);
+
+            if (e.IsChecked)
+                settings.CloudClipboardReceiveMode = CloudClipboardReceiveMode.Automatic;
+            else
+                settings.CloudClipboardReceiveMode = CloudClipboardReceiveMode.Notification;
+        }
+
+        private void SwCloudClipboardActivity_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            
         }
 
         private void BtnUpgrade_Click(object sender, EventArgs e)
