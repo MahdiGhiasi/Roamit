@@ -44,6 +44,8 @@ namespace QuickShare.Desktop
         {
             InitializeComponent();
 
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             InitGoogleAnalytics();
 
             this.Opacity = 0;
@@ -60,6 +62,39 @@ namespace QuickShare.Desktop
             updateTimer.Tick += UpdateTimer_Tick;
 
             CheckAccountId(true);
+
+            if (Properties.Settings.Default.HasLastExceptionMessage)
+            {
+                var exceptionMessage = Properties.Settings.Default.LastExceptionMessage ?? "null";
+
+                Properties.Settings.Default.HasLastExceptionMessage = false;
+                Properties.Settings.Default.LastExceptionMessage = "";
+                Properties.Settings.Default.Save();
+
+                AutoMeasurement.Client.TrackEvent("UnhandledException", "Fatal", exceptionMessage);
+            }
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (!e.IsTerminating)
+                return;
+
+            notifyIcon.Visible = false;
+
+            Properties.Settings.Default.LastExceptionMessage = e.ExceptionObject.ToString();
+            Properties.Settings.Default.HasLastExceptionMessage = true;
+            Properties.Settings.Default.Save();
+
+            ProcessStartInfo Info = new ProcessStartInfo()
+            {
+                Arguments = "/C choice /C Y /N /D Y /T 5 & START \"\" \"" + Assembly.GetExecutingAssembly().Location + "\"",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                CreateNoWindow = true,
+                FileName = "cmd.exe"
+            };
+            Process.Start(Info);
+            System.Windows.Application.Current.Shutdown();
         }
 
         private static void InitGoogleAnalytics()
