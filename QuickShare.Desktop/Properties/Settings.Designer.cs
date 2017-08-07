@@ -22,5 +22,29 @@ namespace QuickShare.Desktop.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastExceptionMessage {
+            get {
+                return ((string)(this["LastExceptionMessage"]));
+            }
+            set {
+                this["LastExceptionMessage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HasLastExceptionMessage {
+            get {
+                return ((bool)(this["HasLastExceptionMessage"]));
+            }
+            set {
+                this["HasLastExceptionMessage"] = value;
+            }
+        }
     }
 }
