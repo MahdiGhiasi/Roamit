@@ -80,8 +80,17 @@ namespace QuickShare.Droid.Firebase
                 {
                     string text = message.Data["Data"];
 
-                    SaveCloudClipboardValue(text);
-                    CloudClipboardNotifier.SendCloudClipboardNotification(this, text);
+                    var settings = new Settings(this);
+
+                    if (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic)
+                    {
+                        CloudClipboardNotifier.SetCloudClipboardValue(this, text);
+                    }
+                    else
+                    {
+                        settings.CloudClipboardText = text;
+                        CloudClipboardNotifier.SendCloudClipboardNotification(this, text);
+                    }
                 }
                 else
                 {
@@ -92,14 +101,6 @@ namespace QuickShare.Droid.Firebase
             {
                 SendNotification("Action not supported.", "Please make sure the app is updated to enjoy latest features.");
             }
-        }
-
-        private void SaveCloudClipboardValue(string text)
-        {
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-            ISharedPreferencesEditor editor = prefs.Edit();
-            editor.PutString("CloudClipboardText", text);
-            editor.Apply();
         }
 
         private void SendNotification(string title, string body)

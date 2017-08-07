@@ -22,12 +22,14 @@ namespace QuickShare.Droid.Services
         {
 
         }
+
         protected override void OnHandleIntent(Intent intent)
         {
             if (intent.Action == "CloudClipboardCopy")
             {
-                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-                var text = prefs.GetString("CloudClipboardText", "");
+                var settings = new Classes.Settings(this);
+
+                var text = settings.CloudClipboardText;
 
                 Handler handler = new Handler(Looper.MainLooper);
                 handler.Post(() =>

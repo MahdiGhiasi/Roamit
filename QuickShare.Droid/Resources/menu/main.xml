@@ -8,9 +8,9 @@
        android:title="History" />-->
   <item
        android:id="@+id/menu_settings"
-       local:showAsAction="never"
+       local:showAsAction="ifRoom"
        android:icon="@drawable/ic_settings_white"
-       android:title="About" />
+       android:title="Settings" />
   <!--local:showAsAction="ifRoom"-->
   <!--<item
      android:id="@+id/menu_rate"
