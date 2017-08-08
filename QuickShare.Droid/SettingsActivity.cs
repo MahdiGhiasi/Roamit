@@ -12,6 +12,8 @@ using Android.Widget;
 using Android.Support.V7.App;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using QuickShare.Droid.Classes;
+using Plugin.SecureStorage;
+using QuickShare.Droid.OnlineServiceHelpers;
 
 namespace QuickShare.Droid
 {
@@ -39,7 +41,7 @@ namespace QuickShare.Droid
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
 
             txtVersionNumber.Text = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
-            
+
             if (TrialHelper.UserTrialStatus == QuickShare.Common.Service.UpgradeDetails.VersionStatus.TrialVersion)
             {
                 txtTrialStatus.Text = "Free version";
@@ -51,15 +53,34 @@ namespace QuickShare.Droid
                 btnUpgrade.Visibility = ViewStates.Gone;
             }
 
-            Settings settings = new Settings(this);
-            swCloudClipboardMode.Checked = (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic);
-            swCloudClipboardActivity.Enabled = (settings.RoamitServiceAccountId.Length > 0);
-
             btnUpgrade.Click += BtnUpgrade_Click;
-            swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
-            swCloudClipboardMode.CheckedChange += SwCloudClipboardMode_CheckedChange;
+
+            InitValues();
 
             Analytics.TrackPage("Settings");
+        }
+
+        private async void InitValues()
+        {
+            Settings settings = new Settings(this);
+
+            swCloudClipboardMode.Checked = (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic);
+            swCloudClipboardMode.CheckedChange += SwCloudClipboardMode_CheckedChange;
+
+            swCloudClipboardActivity.Visibility = CrossSecureStorage.Current.HasKey("RoamitAccountId") ? ViewStates.Visible : ViewStates.Gone;
+
+            if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
+            {
+                swCloudClipboardMode.Enabled = false;
+
+                var cloudClipboardActivated = await ServiceFunctions.GetCloudClipboardActivationStatus();
+                swCloudClipboardActivity.Checked = cloudClipboardActivated;
+
+                if (cloudClipboardActivated)
+                    swCloudClipboardMode.Enabled = true;
+
+                swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
+            }
         }
 
         private void SwCloudClipboardMode_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -72,9 +93,11 @@ namespace QuickShare.Droid
                 settings.CloudClipboardReceiveMode = CloudClipboardReceiveMode.Notification;
         }
 
-        private void SwCloudClipboardActivity_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        private async void SwCloudClipboardActivity_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            
+            swCloudClipboardMode.Enabled = e.IsChecked;
+
+            await ServiceFunctions.SetCloudClipboardActivationStatus(e.IsChecked);
         }
 
         private void BtnUpgrade_Click(object sender, EventArgs e)

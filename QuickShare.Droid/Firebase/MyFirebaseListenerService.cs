@@ -9,6 +9,7 @@ using QuickShare.TextTransfer;
 using Android.Util;
 using QuickShare.Droid.Classes;
 using Android.Preferences;
+using Plugin.SecureStorage;
 
 namespace QuickShare.Droid.Firebase
 {
@@ -81,6 +82,14 @@ namespace QuickShare.Droid.Firebase
                     string text = message.Data["Data"];
 
                     var settings = new Settings(this);
+
+                    if (message.Data.ContainsKey("AccountId"))
+                    {
+                        if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
+                            CrossSecureStorage.Current.DeleteKey("RoamitAccountId");
+
+                        CrossSecureStorage.Current.SetValue("RoamitAccountId", message.Data["AccountId"]);
+                    }
 
                     if (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic)
                     {
