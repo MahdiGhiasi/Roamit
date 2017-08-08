@@ -116,7 +116,6 @@
     <Compile Include="Config.cs" />
     <Compile Include="Helpers\CurrentDevice.cs" />
     <Compile Include="Helpers\ScreenExtensions.cs" />
-    <Compile Include="Helpers\Service.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\Taskbar.cs" />
     <Compile Include="Helpers\Updater.cs" />

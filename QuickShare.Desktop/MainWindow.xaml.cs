@@ -1,4 +1,5 @@
 ﻿using CSharpAnalytics;
+using QuickShare.Common.Service;
 using QuickShare.Desktop.Helpers;
 using QuickShare.Desktop.ViewModel;
 using System;
@@ -308,7 +309,7 @@ namespace QuickShare.Desktop
 
                 lastSendTime = DateTime.UtcNow;
                 
-                await Service.SendCloudClipboard(Settings.Data.AccountId, text);
+                await CloudClipboardService.SendCloudClipboard(Settings.Data.AccountId, text, CurrentDevice.GetDeviceName());
             }
             catch (Exception ex)
             {
@@ -451,7 +452,7 @@ namespace QuickShare.Desktop
                     return;
             }
 
-            var status = await Service.GetPremiumStatus(Settings.Data.AccountId);
+            var status = await CloudClipboardService.GetPremiumStatus(Settings.Data.AccountId);
 
             if (status == null)
                 return;
