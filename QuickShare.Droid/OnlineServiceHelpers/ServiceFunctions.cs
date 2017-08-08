@@ -17,6 +17,7 @@ using Firebase.Iid;
 using System.Json;
 using Firebase;
 using Newtonsoft.Json;
+using Plugin.SecureStorage;
 
 namespace QuickShare.Droid.OnlineServiceHelpers
 {
@@ -92,6 +93,30 @@ namespace QuickShare.Droid.OnlineServiceHelpers
             {
                 return false;
             }
+        }
+
+        internal static async Task<bool> SetCloudClipboardActivationStatus(bool activated)
+        {
+            var accountId = CrossSecureStorage.Current.GetValue("RoamitAccountId");
+
+            if (accountId == null)
+                return false;
+
+            return await QuickShare.Common.Service.CloudClipboardService.SetCloudClipboardActivation(accountId, GetDeviceUniqueId(), activated);
+        }
+
+        internal static async Task<bool> GetCloudClipboardActivationStatus()
+        {
+            var accountId = CrossSecureStorage.Current.GetValue("RoamitAccountId");
+            if (accountId == null)
+                return false;
+
+            var deviceId = GetDeviceUniqueId();
+
+            var devices = await QuickShare.Common.Service.CloudClipboardService.GetDevices(accountId);
+            var currentDevice = devices.FirstOrDefault(x => x.DeviceID == deviceId);
+
+            return currentDevice?.CloudClipboardEnabled ?? false;
         }
 
         private static async Task FindUserId()

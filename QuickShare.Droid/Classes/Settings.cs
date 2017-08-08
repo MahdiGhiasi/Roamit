@@ -22,22 +22,6 @@ namespace QuickShare.Droid.Classes
             context = _context;
         }
 
-        internal string RoamitServiceAccountId
-        {
-            get
-            {
-                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-                return prefs.GetString("RoamitServiceAccountId", "");
-            }
-            set
-            {
-                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-                ISharedPreferencesEditor editor = prefs.Edit();
-                editor.PutString("RoamitServiceAccountId", value);
-                editor.Apply();
-            }
-        }
-
         internal string CloudClipboardText
         {
             get
