@@ -1,4 +1,5 @@
-﻿using QuickShare.ToastNotifications;
+﻿using QuickShare.HelperClasses;
+using QuickShare.ToastNotifications;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,6 +20,12 @@ namespace QuickShare.Common
             Debug.WriteLine($"Received CloudClipboard text {text}");
             Toaster.ShowCloudClipboardTextReceivedNotification(text);
             Debug.WriteLine("Updated notification.");
+
+            if (data.ContainsKey("AccountId"))
+                SecureKeyStorage.SetAccountId(data["AccountId"].ToString());
+
+            if (data.ContainsKey("GraphDeviceId"))
+                SecureKeyStorage.SetGraphDeviceId(data["GraphDeviceId"].ToString());
         }
     }
 }

@@ -96,5 +96,15 @@ namespace QuickShare
         {
             await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#browserExtensions"));
         }
+
+        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+
+        }
+
+        private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#cloudClipboard"));
+        }
     }
 }
