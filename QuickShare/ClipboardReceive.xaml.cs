@@ -10,6 +10,7 @@ using Windows.UI.Core;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.Generic;
+using GoogleAnalytics;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -49,6 +50,10 @@ namespace QuickShare
                 {
                     {"Data", content},
                 });
+
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("CloudClipboard", "NotificationTapped").Build());
+#endif
             }
             else
             {
@@ -64,6 +69,10 @@ namespace QuickShare
                 await DataStorageProviders.TextReceiveContentManager.OpenAsync();
                 viewModel["ClipboardContent"] = DataStorageProviders.TextReceiveContentManager.GetItemContent(guid);
                 DataStorageProviders.TextReceiveContentManager.Close();
+
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Clipboard", "NotificationTapped").Build());
+#endif
             }
 
             Window.Current.Activated += Window_Activated;
