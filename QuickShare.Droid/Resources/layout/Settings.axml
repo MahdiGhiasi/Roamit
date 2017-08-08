@@ -21,7 +21,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
       <TextView
-          android:text="Cloud Clipboard mirrors anything you copy on your PC to the clipboard of this device. To get started, open Roamit on your PC and install PC extension from settings."
+          android:text="Cloud Clipboard mirrors any text you copy on your PC to the clipboard of this device automatically. To get started, open Roamit on your PC and install PC extension from settings."
           android:textAppearance="?android:attr/textAppearanceSmall"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
