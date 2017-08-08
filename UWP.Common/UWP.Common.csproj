@@ -110,6 +110,7 @@
     <Compile Include="CloudClipboardHandler.cs" />
     <Compile Include="HelperClasses\DeviceInfo.cs" />
     <Compile Include="HelperClasses\DownloadFolderHelper.cs" />
+    <Compile Include="HelperClasses\SecureKeyStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ToastNotifications\Templates.cs" />
     <Compile Include="ToastNotifications\Toaster.ClipboardTextReceived.cs" />

@@ -7,6 +7,8 @@ using Windows.UI.Xaml;
 using QuickShare.HelperClasses.VersionHelpers;
 using GoogleAnalytics;
 using QuickShare.Common;
+using System.Linq;
+using System.Diagnostics;
 
 namespace QuickShare
 {
@@ -26,6 +28,8 @@ namespace QuickShare
                 extensionsSectionVisibility = Visibility.Collapsed;
                 chromeFirefoxExtensionVisibility = Visibility.Collapsed;
             }
+
+            RetrieveCloudClipboardActivationStatus();
         }
 
         public void CheckTrialStatus()
@@ -177,6 +181,98 @@ namespace QuickShare
         public Visibility ChromeFirefoxExtensionVisibility
         {
             get { return chromeFirefoxExtensionVisibility; }
+        }
+
+        private Visibility receiveCloudClipboardToggleVisibility = (SecureKeyStorage.IsAccountIdStored() && SecureKeyStorage.IsGraphDeviceIdStored()) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility ReceiveCloudClipboardToggleVisibility
+        {
+            get { return receiveCloudClipboardToggleVisibility; }
+        }
+
+        private bool receiveCloudClipboard = false;
+        public bool ReceiveCloudClipboard
+        {
+            get { return receiveCloudClipboard; }
+            set
+            {
+                SetReceiveCloudClipboardValue(value);
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "ReceiveCloudClipboard", value ? "activated" : "deactivated").Build());
+#endif
+            }
+        }
+
+        private async void SetReceiveCloudClipboardValue(bool value)
+        {
+            ReceiveCloudClipboardEnabled = false;
+            ReceiveCloudClipboardProgressRingActive = true;
+
+            await Common.Service.CloudClipboardService.SetCloudClipboardActivation(SecureKeyStorage.GetAccountId(), SecureKeyStorage.GetGraphDeviceId(), value);
+
+            receiveCloudClipboard = value;
+            OnPropertyChanged("ReceiveCloudClipboard");
+
+            ReceiveCloudClipboardEnabled = true;
+            ReceiveCloudClipboardProgressRingActive = false;
+
+        }
+
+        private async void RetrieveCloudClipboardActivationStatus()
+        {
+            if ((!SecureKeyStorage.IsAccountIdStored()) || (!SecureKeyStorage.IsGraphDeviceIdStored()))
+                return;
+
+            ReceiveCloudClipboardEnabled = false;
+            ReceiveCloudClipboardProgressRingActive = true;
+
+            try
+            {
+                var result = await Common.Service.CloudClipboardService.GetDevices(SecureKeyStorage.GetAccountId());
+                var currentDevice = result.FirstOrDefault(x => x.DeviceID == SecureKeyStorage.GetGraphDeviceId());
+
+                if (currentDevice == null)
+                    return;
+
+                receiveCloudClipboard = currentDevice.CloudClipboardEnabled;
+                OnPropertyChanged("ReceiveCloudClipboard");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception in RetrieveCloudClipboardActivationStatus: {ex.Message}");
+            }
+            finally
+            {
+                ReceiveCloudClipboardEnabled = true;
+                ReceiveCloudClipboardProgressRingActive = false;
+            }
+        }
+
+        private bool receiveCloudClipboardEnabled = true;
+        public bool ReceiveCloudClipboardEnabled
+        {
+            get
+            {
+                return receiveCloudClipboardEnabled;
+            }
+            set
+            {
+                receiveCloudClipboardEnabled = value;
+                OnPropertyChanged("ReceiveCloudClipboardEnabled");
+            }
+        }
+
+        private bool receiveCloudClipboardProgressRingActive = false;
+        public bool ReceiveCloudClipboardProgressRingActive
+        {
+            get
+            {
+                return receiveCloudClipboardProgressRingActive;
+            }
+            private set
+            {
+                receiveCloudClipboardProgressRingActive = value;
+                OnPropertyChanged("ReceiveCloudClipboardProgressRingActive");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
