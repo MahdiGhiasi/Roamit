@@ -131,29 +131,33 @@ namespace QuickShare.Droid
 
         private async Task ShowBanner()
         {
-            devicesListLayout.SetPadding(16, 0, 16, 50);
-            bannerLayout.Visibility = ViewStates.Visible;
-
-            if (revmobBanner != null)
+            try
             {
-                revmobBanner.Show();
-                return;
+                devicesListLayout.SetPadding(16, 0, 16, 50);
+                bannerLayout.Visibility = ViewStates.Visible;
+
+                if (revmobBanner != null)
+                {
+                    revmobBanner.Show();
+                    return;
+                }
+
+                var revMob = await RevMobHelper.TryGetAdMobSessionAsync(startSessionListener);
+                if (revMob == null)
+                {
+                    HideBanner();
+                    return;
+                }
+
+                revmobBanner = revMob.CreateBanner(this, "", showBannerAdListener);
+                revmobBanner.SetAutoShow(true);
+
+                ViewGroup view = FindViewById<ViewGroup>(Resource.Id.main_banner);
+
+                view.RemoveAllViews();
+                view.AddView(revmobBanner);
             }
-
-            var revMob = await RevMobHelper.TryGetAdMobSessionAsync(startSessionListener);
-            if (revMob == null)
-            {
-                HideBanner();
-                return;
-            }
-
-            revmobBanner = revMob.CreateBanner(this, "", showBannerAdListener);
-            revmobBanner.SetAutoShow(true);
-
-            ViewGroup view = FindViewById<ViewGroup>(Resource.Id.main_banner);
-
-            view.RemoveAllViews();
-            view.AddView(revmobBanner);
+            catch { }
         }
 
         private async void RefreshUserTrialStatus()
