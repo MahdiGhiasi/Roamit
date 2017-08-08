@@ -1,4 +1,5 @@
-﻿using QuickShare.Desktop.Helpers;
+﻿using QuickShare.Common.Service;
+using QuickShare.Desktop.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +23,7 @@ namespace QuickShare.Desktop.ViewModel
 
         private async void FetchDevicesList()
         {
-            var devices = (await Service.GetDevices(accountId))?.OrderBy(x => x.Name ?? "");
+            var devices = (await CloudClipboardService.GetDevices(accountId))?.OrderBy(x => x.Name ?? "");
 
             if (devices == null)
                 return;
@@ -86,7 +87,7 @@ namespace QuickShare.Desktop.ViewModel
 
         private async void ActiveChanged(bool value)
         {
-            await Service.SetCloudClipboardActivation(AccountID, DeviceID, value);
+            await CloudClipboardService.SetCloudClipboardActivation(AccountID, DeviceID, value);
         }
 
         public DeviceItem(bool _isActive)

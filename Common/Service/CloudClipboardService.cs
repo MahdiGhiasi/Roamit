@@ -7,17 +7,17 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickShare.Desktop.Helpers
+namespace QuickShare.Common.Service
 {
-    internal static class Service
+    public static class CloudClipboardService
     {
-        internal static async Task<bool> SetCloudClipboardActivation(string accountId, string deviceId, bool value)
+        public static async Task<bool> SetCloudClipboardActivation(string accountId, string deviceId, bool value)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var result = await httpClient.GetAsync($"{Config.ServerAddress}/v2/User/{accountId}/{deviceId}/CloudClipboardActivation/?value={value}");
+                    var result = await httpClient.GetAsync($"{Constants.ServerAddress}/v2/User/{accountId}/{deviceId}/CloudClipboardActivation/?value={value}");
                     var s = await result.Content.ReadAsStringAsync();
 
                     if (s == "done")
@@ -28,18 +28,18 @@ namespace QuickShare.Desktop.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception in GetPremiumStatus: {ex.Message}");
+                Debug.WriteLine($"Exception in SetCloudClipboardActivation: {ex.Message}");
                 return false;
             }
         }
 
-        internal static async Task<List<DeviceInformation>> GetDevices(string accountId)
+        public static async Task<List<DeviceInformation>> GetDevices(string accountId)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var result = await httpClient.GetAsync($"{Config.ServerAddress}/v2/User/{accountId}/Graph/Devices");
+                    var result = await httpClient.GetAsync($"{Constants.ServerAddress}/v2/User/{accountId}/Graph/Devices");
                     var s = await result.Content.ReadAsStringAsync();
 
                     return JsonConvert.DeserializeObject<List<DeviceInformation>>(s);
@@ -52,21 +52,19 @@ namespace QuickShare.Desktop.Helpers
             }
         }
 
-        internal static async Task SendCloudClipboard(string accountId, string text)
+        public static async Task SendCloudClipboard(string accountId, string text, string deviceName)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
-                    string deviceName = CurrentDevice.GetDeviceName();
-
                     var formContent = new FormUrlEncodedContent(new[]
                     {
                         new KeyValuePair<string, string>("accountId", accountId ),
                         new KeyValuePair<string, string>("senderName", deviceName),
                         new KeyValuePair<string, string>("text", text),
                     });
-                    var response = await httpClient.PostAsync($"{Config.ServerAddress}/v2/Graph/SendCloudClipboard", formContent);
+                    var response = await httpClient.PostAsync($"{Constants.ServerAddress}/v2/Graph/SendCloudClipboard", formContent);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -85,7 +83,7 @@ namespace QuickShare.Desktop.Helpers
             }
         }
 
-        internal static async Task<PremiumStatus> GetPremiumStatus(string accountId)
+        public static async Task<PremiumStatus> GetPremiumStatus(string accountId)
         {
             try
             {
@@ -93,7 +91,7 @@ namespace QuickShare.Desktop.Helpers
 
                 using (var httpClient = new HttpClient())
                 {
-                    var result = await httpClient.GetAsync($"{Config.ServerAddress}/v2/User/{accountId}/PremiumStatus");
+                    var result = await httpClient.GetAsync($"{Constants.ServerAddress}/v2/User/{accountId}/PremiumStatus");
                     var s = await result.Content.ReadAsStringAsync();
 
                     var parts = s.Split(',');
@@ -126,7 +124,7 @@ namespace QuickShare.Desktop.Helpers
         }
     }
 
-    internal class DeviceInformation
+    public class DeviceInformation
     {
         public string AccountID { get; set; }
         public string DeviceID { get; set; }
@@ -137,13 +135,13 @@ namespace QuickShare.Desktop.Helpers
         public bool CloudClipboardEnabled { get; set; }
     }
 
-    internal class PremiumStatus
+    public class PremiumStatus
     {
-        internal AccountPremiumState State { get; set; }
-        internal DateTime TrialExpireTime { get; set; } = DateTime.MaxValue;
+        public AccountPremiumState State { get; set; }
+        public DateTime TrialExpireTime { get; set; } = DateTime.MaxValue;
     }
 
-    internal enum AccountPremiumState
+    public enum AccountPremiumState
     {
         Free = 1,
         Premium = 2,
