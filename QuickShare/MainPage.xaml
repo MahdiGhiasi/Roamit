@@ -99,7 +99,7 @@
         </VisualStateManager.VisualStateGroups>
 
         <Grid x:Name="BlurGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.5" />
-        <Grid x:Name="Content" Background="#B1000000">
+        <Grid x:Name="Content" Background="#99000000">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
