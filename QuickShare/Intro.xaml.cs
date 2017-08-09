@@ -12,9 +12,10 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using QuickShare.HelperClasses;
+using QuickShare.Classes;
 using QuickShare.Common;
 using System.Threading.Tasks;
+using QuickShare.HelperClasses;
 
 namespace QuickShare
 {

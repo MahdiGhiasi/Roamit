@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Data;
 /*
  * Added Minimum and Maximum operators and modified to run in UWP framework by Mahdi Ghiasi. 
  */
-namespace QuickShare.Common
+namespace QuickShare.Classes.Converters
 {
     /// <summary>
     /// Value converter that performs arithmetic calculations over its argument(s)

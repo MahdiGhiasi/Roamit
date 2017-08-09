@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:QuickShare"
     xmlns:common="using:QuickShare.Common"
+    xmlns:classes="using:QuickShare.Classes"
     xmlns:flyouts="using:QuickShare.Flyouts"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"  
     xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors" 
@@ -11,7 +12,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:logicaltriggers="using:AdaptiveTriggerLibrary.Triggers.LogicalTriggers"
     xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
-    xmlns:versionhelpers="using:QuickShare.HelperClasses.VersionHelpers"
     xmlns:ads="using:Microsoft.Advertising.WinRT.UI"
     xmlns:adduplex="using:AdDuplex"
     mc:Ignorable="d"
@@ -83,7 +83,7 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" common:SizeChange.IsEnabled="True" AllowDrop="True" DragOver="MainGrid_DragOver" Drop="MainGrid_Drop">
+    <Grid Background="{ThemeResource AppBarBackground}" x:Name="MainGrid" classes:SizeChange.IsEnabled="True" AllowDrop="True" DragOver="MainGrid_DragOver" Drop="MainGrid_Drop">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
@@ -196,9 +196,9 @@
             <ListView x:Name="devicesList" 
                       ItemsSource="{x:Bind ViewModel.DevicesList, Mode=OneWay}" 
                       Margin="0,0,0,0" 
-                      SelectionChanged="devicesList_SelectionChanged" 
+                      SelectionChanged="DevicesList_SelectionChanged" 
                       Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" 
-                      Height="{Binding (common:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=(108v(x-464))^56}" 
+                      Height="{Binding (classes:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=(108v(x-464))^56}" 
                       VerticalAlignment="Bottom" 
                       Opacity="0.9">
                 <ListView.ItemTemplate>

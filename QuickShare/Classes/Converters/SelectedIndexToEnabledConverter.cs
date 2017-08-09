@@ -4,24 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
 
-namespace QuickShare.Common
+namespace QuickShare.Classes.Converters
 {
-    public class BrushAlphaModifier : IValueConverter
+    public class SelectedIndexToEnabledConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            SolidColorBrush originalBrush = value as SolidColorBrush;
-
-            if (originalBrush == null)
-                throw new Exception();
-
-            Brush newBrush = new SolidColorBrush(originalBrush.Color)
+            if (value is int)
             {
-                Opacity = double.Parse(parameter.ToString()),
-            };
-            return newBrush;
+                return (((int)value) != -1);
+            }
+            else
+                return false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.Generic;
 using GoogleAnalytics;
+using QuickShare.Classes;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -136,7 +137,7 @@ namespace QuickShare
             circleReverseStoryboard.Begin();
         }
 
-        private void circleReverseStoryboard_Completed(object sender, object e)
+        private void CircleReverseStoryboard_Completed(object sender, object e)
         {
             if ((Frame.BackStackDepth > 0) && (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop))
             {

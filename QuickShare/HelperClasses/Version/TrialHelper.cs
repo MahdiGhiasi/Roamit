@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Store;
 using Windows.UI.Popups;
 
-namespace QuickShare.HelperClasses.VersionHelpers
+namespace QuickShare.HelperClasses.Version
 {
     internal static class TrialHelper
     {

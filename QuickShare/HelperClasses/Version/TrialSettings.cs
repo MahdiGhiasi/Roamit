@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickShare.HelperClasses.VersionHelpers
+namespace QuickShare.HelperClasses.Version
 {
     static class TrialSettings
     {

@@ -1,4 +1,6 @@
 ﻿using GoogleAnalytics;
+using QuickShare.Classes;
+using QuickShare.Classes.ItemSources;
 using QuickShare.HelperClasses;
 using QuickShare.ViewModels.History;
 using System;

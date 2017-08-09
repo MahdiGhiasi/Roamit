@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickShare
+namespace QuickShare.Classes.ItemSources
 {
     public class HistoryItemSource : IIncrementalSource<HistoryItem>
     {

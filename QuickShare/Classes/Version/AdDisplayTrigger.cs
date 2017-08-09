@@ -1,12 +1,13 @@
 ﻿using AdaptiveTriggerLibrary.ConditionModifiers.GenericModifiers;
 using AdaptiveTriggerLibrary.Triggers;
+using QuickShare.HelperClasses.Version;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickShare.HelperClasses.VersionHelpers
+namespace QuickShare.Classes.Version
 {
     public class AdDisplayTrigger : AdaptiveTriggerBase<bool, IGenericModifier>, IDynamicTrigger
     {

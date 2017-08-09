@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace QuickShare
+namespace QuickShare.ViewModels.ShareTarget
 {
     [DataContract]
     internal class ShareTargetDetails

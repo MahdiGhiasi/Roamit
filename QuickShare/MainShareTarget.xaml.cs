@@ -1,4 +1,6 @@
 ﻿using GoogleAnalytics;
+using QuickShare.ViewModels;
+using QuickShare.ViewModels.ShareTarget;
 using System;
 using System.Collections.Generic;
 using System.IO;

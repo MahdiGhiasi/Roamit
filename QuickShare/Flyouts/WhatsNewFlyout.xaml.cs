@@ -1,5 +1,5 @@
 ﻿using QuickShare.Common;
-using QuickShare.HelperClasses;
+using QuickShare.Classes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using QuickShare.HelperClasses;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 

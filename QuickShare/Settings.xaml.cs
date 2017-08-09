@@ -1,6 +1,7 @@
 ﻿using GoogleAnalytics;
-using QuickShare.HelperClasses;
-using QuickShare.HelperClasses.VersionHelpers;
+using QuickShare.Classes;
+using QuickShare.HelperClasses.Version;
+using QuickShare.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ namespace QuickShare
     /// </summary>
     public sealed partial class Settings : Page
     {
-        public SettingsModel Model { get; set; } = new SettingsModel();
+        public SettingsViewModel Model { get; set; } = new SettingsViewModel();
 
         public Settings()
         {

@@ -15,7 +15,7 @@ namespace QuickShare.HelperClasses
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LatestWhatsNewVersion"))
                 return true;
 
-            if (Version.TryParse(ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"].ToString(), out Version v))
+            if (System.Version.TryParse(ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"].ToString(), out System.Version v))
             {
                 if (v < DeviceInfo.ApplicationVersion)
                 {
@@ -38,12 +38,12 @@ namespace QuickShare.HelperClasses
             if (!ShouldShowWhatsNew())
                 return output;
 
-            Version prevVersion = new Version(0, 0, 0, 0);
+            System.Version prevVersion = new System.Version(0, 0, 0, 0);
 
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("LatestWhatsNewVersion"))
-                Version.TryParse(ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"].ToString(), out prevVersion);
+                System.Version.TryParse(ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"].ToString(), out prevVersion);
 
-            if ((prevVersion < new Version("1.2.1.0")) &&
+            if ((prevVersion < new System.Version("1.2.1.0")) &&
                 ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet)))
                 output.Add("1");
 
