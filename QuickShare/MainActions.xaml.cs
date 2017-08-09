@@ -146,7 +146,7 @@ namespace QuickShare
             Frame.Navigate(typeof(MainSend), "file");
         }
 
-        private void sendPictureButton_Tapped(object sender, TappedRoutedEventArgs e)
+        private void SendPictureButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(PicturePicker));
         }

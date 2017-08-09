@@ -96,9 +96,9 @@
     <Compile Include="Flyouts\WhatsNewFlyout.xaml.cs">
       <DependentUpon>WhatsNewFlyout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="HelperClasses\HistoryItemTemplateSelector.cs" />
+    <Compile Include="Classes\TemplateSelectors\HistoryItemTemplateSelector.cs" />
     <Compile Include="HelperClasses\WhatsNewHelper.cs" />
-    <Compile Include="HistoryItemSource.cs" />
+    <Compile Include="Classes\ItemSources\HistoryItemSource.cs" />
     <Compile Include="ViewModels\History\FileInfo.cs" />
     <Compile Include="ViewModels\History\HistoryClipboardTextItem.cs" />
     <Compile Include="ViewModels\History\HistoryMultipleFileItem.cs" />
@@ -106,41 +106,41 @@
     <Compile Include="ViewModels\History\HistoryItem.cs" />
     <Compile Include="ViewModels\History\HistoryWebLinkItem.cs" />
     <None Include="project.json" />
-    <Compile Include="HelperClasses\VersionHelpers\AdDisplayTrigger.cs" />
+    <Compile Include="Classes\Version\AdDisplayTrigger.cs" />
     <Compile Include="Flyouts\SignInNoticeFlyout.xaml.cs">
       <DependentUpon>SignInNoticeFlyout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="HelperClasses\BrushAlphaModifier.cs" />
+    <Compile Include="Classes\Converters\BrushAlphaModifier.cs" />
     <Compile Include="ClipboardReceive.xaml.cs">
       <DependentUpon>ClipboardReceive.xaml</DependentUpon>
     </Compile>
     <Compile Include="HelperClasses\ExternalContentHelper.cs" />
     <Compile Include="HelperClasses\LaunchOperations.cs" />
     <Compile Include="HelperClasses\MSAAuthenticator.cs" />
-    <Compile Include="HelperClasses\VersionHelpers\TrialHelper.cs" />
-    <Compile Include="HelperClasses\VersionHelpers\TrialSettings.cs" />
+    <Compile Include="HelperClasses\Version\TrialHelper.cs" />
+    <Compile Include="HelperClasses\Version\TrialSettings.cs" />
     <Compile Include="HelperClasses\VisualChildFinder.cs" />
     <Compile Include="HelperClasses\WindowTopBarFunctions.cs" />
     <Compile Include="HistoryPage.xaml.cs">
       <DependentUpon>HistoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IKindChangeAware.cs" />
+    <Compile Include="Classes\IKindChangeAware.cs" />
     <Compile Include="Intro.xaml.cs">
       <DependentUpon>Intro.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPageViewModel.cs" />
-    <Compile Include="MainSendViewModel.cs" />
+    <Compile Include="ViewModels\MainPageViewModel.cs" />
+    <Compile Include="ViewModels\MainSendViewModel.cs" />
     <Compile Include="MainShareTarget.xaml.cs">
       <DependentUpon>MainShareTarget.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainShareTargetViewModel.cs" />
-    <Compile Include="RemoteSystemNormalizer.cs" />
+    <Compile Include="ViewModels\MainShareTargetViewModel.cs" />
+    <Compile Include="Classes\RemoteSystemNormalizer.cs" />
     <Compile Include="AdConstants.cs" />
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SettingsModel.cs" />
-    <Compile Include="ShareTargetDetails.cs" />
+    <Compile Include="ViewModels\SettingsModel.cs" />
+    <Compile Include="ViewModels\ShareTarget\ShareTargetDetails.cs" />
     <Compile Include="ShareWaiting.xaml.cs">
       <DependentUpon>ShareWaiting.xaml</DependentUpon>
     </Compile>
@@ -151,11 +151,11 @@
     </Compile>
     <Compile Include="Controls\Arc.cs" />
     <Compile Include="Controls\CircularProgressBar.cs" />
-    <Compile Include="HelperClasses\MathConverter.cs" />
-    <Compile Include="HelperClasses\ObservableDictionary.cs" />
-    <Compile Include="HelperClasses\SizeChange.cs" />
+    <Compile Include="Classes\Converters\MathConverter.cs" />
+    <Compile Include="Classes\ObservableDictionary.cs" />
+    <Compile Include="Classes\SizeChange.cs" />
     <Compile Include="HelperClasses\ToastFunctions.cs" />
-    <Compile Include="IncrementalLoadingCollection.cs" />
+    <Compile Include="Classes\IncrementalLoadingCollection.cs" />
     <Compile Include="MainActions.xaml.cs">
       <DependentUpon>MainActions.xaml</DependentUpon>
     </Compile>
@@ -166,14 +166,14 @@
     <Compile Include="MainSend.xaml.cs">
       <DependentUpon>MainSend.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NotificationHandler.cs" />
+    <Compile Include="HelperClasses\NotificationHandler.cs" />
     <Compile Include="PicturePicker.xaml.cs">
       <DependentUpon>PicturePicker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PicturePickerItem.cs" />
-    <Compile Include="PicturePickerSource.cs" />
+    <Compile Include="ViewModels\PicturePicker\PicturePickerItem.cs" />
+    <Compile Include="Classes\ItemSources\PicturePickerSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectedIndexToEnabledConverter.cs" />
+    <Compile Include="Classes\Converters\SelectedIndexToEnabledConverter.cs" />
     <Compile Include="SendDataTemporaryStorage.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -365,6 +365,7 @@
       <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

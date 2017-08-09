@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using QuickShare.Common;
 using QuickShare.DataStore;
 using QuickShare.FileTransfer;
-using QuickShare.HelperClasses;
+using QuickShare.Classes;
 using QuickShare.TextTransfer;
 using System;
 using System.Collections.Generic;
@@ -31,6 +31,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using QuickShare.HelperClasses;
+using QuickShare.ViewModels.ShareTarget;
 
 namespace QuickShare
 {
@@ -194,19 +196,19 @@ namespace QuickShare
                         break;
                     case "openFolder":
                         hr = await GetHistoryItemGuid(Guid.Parse(args["guid"]));
-                        await HelperClasses.LaunchOperations.LaunchFolderFromPathAsync((hr.Data as ReceivedFileCollection).StoreRootPath);
+                        await LaunchOperations.LaunchFolderFromPathAsync((hr.Data as ReceivedFileCollection).StoreRootPath);
                         if (isJustLaunched)
                             Application.Current.Exit();
                         break;
                     case "openFolderSingleFile":
                         hr = await GetHistoryItemGuid(Guid.Parse(args["guid"]));
-                        await HelperClasses.LaunchOperations.LaunchFolderFromPathAndSelectSingleItemAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
+                        await LaunchOperations.LaunchFolderFromPathAndSelectSingleItemAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
                         if (isJustLaunched)
                             Application.Current.Exit();
                         break;
                     case "openSingleFile":
                         hr = await GetHistoryItemGuid(Guid.Parse(args["guid"]));
-                        await HelperClasses.LaunchOperations.LaunchFileFromPathAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
+                        await LaunchOperations.LaunchFileFromPathAsync((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
                         if (isJustLaunched)
                             Application.Current.Exit();
                         break;

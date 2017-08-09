@@ -5,7 +5,7 @@
     xmlns:local="using:QuickShare"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:helperclasses="using:QuickShare.HelperClasses"
+    xmlns:templateselectors="using:QuickShare.Classes.TemplateSelectors"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
     <Page.Transitions>
@@ -250,7 +250,7 @@
                 </StackPanel>
             </DataTemplate>
 
-            <helperclasses:HistoryItemTemplateSelector x:Name="TemplateSelector"
+            <templateselectors:HistoryItemTemplateSelector x:Name="TemplateSelector"
                                                        ClipboardTextTemplate="{StaticResource ClipboardTextTemplate}"
                                                        WebLinkTemplate="{StaticResource WebLinkTemplate}"
                                                        SingleFileTemplate="{StaticResource SingleFileTemplate}"

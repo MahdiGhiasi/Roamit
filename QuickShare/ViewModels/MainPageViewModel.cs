@@ -1,11 +1,12 @@
-﻿using QuickShare.DevicesListManager;
+﻿using QuickShare.Classes;
+using QuickShare.DevicesListManager;
 using QuickShare.UWP.Rome;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Windows.UI.Xaml;
 
-namespace QuickShare
+namespace QuickShare.ViewModels
 {
     public class MainPageViewModel : INotifyPropertyChanged, IDisposable
     {

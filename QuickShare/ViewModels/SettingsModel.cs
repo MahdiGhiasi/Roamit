@@ -1,20 +1,21 @@
-﻿using QuickShare.HelperClasses;
+﻿using QuickShare.Classes;
 using System.ComponentModel;
 using System;
 using QuickShare.MicrosoftGraphFunctions;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
-using QuickShare.HelperClasses.VersionHelpers;
 using GoogleAnalytics;
 using QuickShare.Common;
 using System.Linq;
 using System.Diagnostics;
+using QuickShare.HelperClasses.Version;
+using QuickShare.HelperClasses;
 
-namespace QuickShare
+namespace QuickShare.ViewModels
 {
-    public class SettingsModel : INotifyPropertyChanged
+    public class SettingsViewModel : INotifyPropertyChanged
     {
-        public SettingsModel()
+        public SettingsViewModel()
         {
             CheckTrialStatus();
 

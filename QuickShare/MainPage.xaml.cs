@@ -13,7 +13,7 @@ using QuickShare.FileTransfer;
 using System.Diagnostics;
 using QuickShare.DevicesListManager;
 using System.Linq;
-using QuickShare.HelperClasses;
+using QuickShare.Classes;
 using Windows.UI.Composition;
 using Windows.UI.Xaml.Hosting;
 using System.Numerics;
@@ -24,9 +24,14 @@ using QuickShare.MicrosoftGraphFunctions;
 using Windows.UI.Popups;
 using Microsoft.Graphics.Canvas.Effects;
 using Windows.ApplicationModel.DataTransfer;
-using QuickShare.HelperClasses.VersionHelpers;
 using GoogleAnalytics;
 using Windows.UI.Core;
+using QuickShare.ViewModels;
+using QuickShare.HelperClasses.Version;
+using QuickShare.ViewModels.ShareTarget;
+using QuickShare.HelperClasses;
+using QuickShare.Classes.ItemSources;
+using QuickShare.ViewModels.PicturePicker;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -356,7 +361,7 @@ namespace QuickShare
             ContentFrame.Navigate(typeof(MainShareTarget), shareTargetDetails);
         }
 
-        private void devicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void DevicesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (devicesList.SelectedItem == null)
                 return;

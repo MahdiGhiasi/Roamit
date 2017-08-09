@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.System.RemoteSystems;
 
-namespace QuickShare
+namespace QuickShare.Classes
 {
     internal class RemoteSystemNormalizer : IAttributesNormalizer
     {

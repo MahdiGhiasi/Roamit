@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Windows.UI.Xaml;
 
-namespace QuickShare
+namespace QuickShare.ViewModels
 {
     public class MainSendViewModel : INotifyPropertyChanged
     {

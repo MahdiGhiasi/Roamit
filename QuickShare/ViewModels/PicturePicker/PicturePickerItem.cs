@@ -1,7 +1,7 @@
 ﻿using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace QuickShare
+namespace QuickShare.ViewModels.PicturePicker
 {
     public class PicturePickerItem
     {

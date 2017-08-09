@@ -1,4 +1,5 @@
 ﻿using QuickShare.Common;
+using QuickShare.ViewModels.PicturePicker;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace QuickShare
+namespace QuickShare.Classes.ItemSources
 {
     public class PicturePickerSource : IIncrementalSource<PicturePickerItem>
     {

@@ -12,7 +12,7 @@
     <Page.Resources>
         <ResourceDictionary>
             <Storyboard x:Name="circleReverseStoryboard" 
-                        Completed="circleReverseStoryboard_Completed">
+                        Completed="CircleReverseStoryboard_Completed">
                 <DoubleAnimation From="359.999"
                                  To="0"
                                  Duration="0:0:1"

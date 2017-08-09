@@ -2,8 +2,7 @@
     x:Class="QuickShare.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:QuickShare"
-    xmlns:common="using:QuickShare.Common"
+    xmlns:converters="using:QuickShare.Classes.Converters"
     xmlns:rome="using:QuickShare.Rome"
     xmlns:logicalModifiers="using:AdaptiveTriggerLibrary.ConditionModifiers.LogicalModifiers"
     xmlns:comparableModifiers="using:AdaptiveTriggerLibrary.ConditionModifiers.ComparableModifiers"
@@ -12,9 +11,9 @@
         <ResourceDictionary>
             <rome:RemoteSystemKindToIconConverter x:Key="RemoteSystemKindToIconConverter"></rome:RemoteSystemKindToIconConverter>
             <rome:RemoteSystemProximityToIconConverter x:Key="RemoteSystemProximityToIconConverter"></rome:RemoteSystemProximityToIconConverter>
-            <common:MathConverter x:Key="MathConverter"></common:MathConverter>
-            <common:BrushAlphaModifier x:Key="BrushAlphaModifier"></common:BrushAlphaModifier>
-            <local:SelectedIndexToEnabledConverter x:Key="SelectedIndexToEnabledConverter"></local:SelectedIndexToEnabledConverter>
+            <converters:MathConverter x:Key="MathConverter"></converters:MathConverter>
+            <converters:BrushAlphaModifier x:Key="BrushAlphaModifier"></converters:BrushAlphaModifier>
+            <converters:SelectedIndexToEnabledConverter x:Key="SelectedIndexToEnabledConverter"></converters:SelectedIndexToEnabledConverter>
 
             <logicalModifiers:OrModifier x:Key="OrModifier" />
             <logicalModifiers:AndModifier x:Key="AndModifier" />

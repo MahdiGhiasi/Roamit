@@ -1,4 +1,5 @@
-﻿using QuickShare.HelperClasses;
+﻿using QuickShare.Classes;
+using QuickShare.HelperClasses;
 using QuickShare.MicrosoftGraphFunctions;
 using System;
 using System.Collections.Generic;

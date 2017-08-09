@@ -1,4 +1,6 @@
-﻿using QuickShare.Common;
+﻿using QuickShare.Classes.ItemSources;
+using QuickShare.Common;
+using QuickShare.ViewModels.PicturePicker;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 
-namespace QuickShare.Common
+namespace QuickShare.Classes
 {
     //From http://stackoverflow.com/a/1481176/942659
 
