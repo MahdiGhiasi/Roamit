@@ -93,6 +93,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="Flyouts\IFlyout.cs" />
     <Compile Include="Flyouts\UpgradeFlyout.xaml.cs">
       <DependentUpon>UpgradeFlyout.xaml</DependentUpon>
     </Compile>

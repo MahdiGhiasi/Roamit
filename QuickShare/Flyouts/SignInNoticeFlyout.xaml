@@ -49,7 +49,7 @@
 
         </StackPanel>
 
-        <ProgressRing Width="100" Height="100" Visibility="Collapsed" IsActive="True" x:Name="progressRing" />
+        <ProgressRing Width="100" Height="100" Visibility="Collapsed" IsActive="True" x:Name="progressRing" Foreground="White" />
 
     </Grid>
 </UserControl>

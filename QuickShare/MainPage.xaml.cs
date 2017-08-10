@@ -479,7 +479,7 @@ namespace QuickShare
             overlayShowStoryboard.Begin();
         }
 
-        private async void SignInNoticeFlyout_FlyoutCloseRequest(EventArgs e)
+        private async void SignInNoticeFlyout_FlyoutCloseRequest(object sender, EventArgs e)
         {
             DiscoverOtherDevices();
 
@@ -626,7 +626,7 @@ namespace QuickShare
             base.OnNavigatingFrom(e);
         }
 
-        private async void WhatsNewFlyout_FlyoutCloseRequest(EventArgs e)
+        private async void WhatsNewFlyout_FlyoutCloseRequest(object sender, EventArgs e)
         {
             if (ViewModel.SignInNoticeVisibility == Visibility.Visible)
             {
