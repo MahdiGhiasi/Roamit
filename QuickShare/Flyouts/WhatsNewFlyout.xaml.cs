@@ -72,7 +72,7 @@ namespace QuickShare.Flyouts
 
         private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#pcExtension"));
+            await Launcher.LaunchUriAsync(new Uri(Constants.PCExtensionUrl));
         }
     }
 }

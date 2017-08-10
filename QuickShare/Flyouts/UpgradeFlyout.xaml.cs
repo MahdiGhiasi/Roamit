@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -63,6 +64,11 @@ namespace QuickShare.Flyouts
 
             TrialHelper.UpgradeFlyoutCompletion.SetResult(true);
             FlyoutCloseRequest?.Invoke(this, new EventArgs());
+        }
+
+        private async void CloudClipboardLearnMore_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri(Common.Constants.PCExtensionUrl));
         }
     }
 }
