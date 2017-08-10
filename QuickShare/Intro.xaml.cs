@@ -48,13 +48,13 @@ namespace QuickShare
 
             if (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone)
             {
-                GetPCExtensionButton.Visibility = Visibility.Collapsed;
-                GetPCExtensionUrl.Visibility = Visibility.Visible;
+                GetPCExtensionPC.Visibility = Visibility.Collapsed;
+                GetPCExtensionPhone.Visibility = Visibility.Visible;
             }
             else
             {
-                GetPCExtensionButton.Visibility = Visibility.Visible;
-                GetPCExtensionUrl.Visibility = Visibility.Collapsed;
+                GetPCExtensionPC.Visibility = Visibility.Visible;
+                GetPCExtensionPhone.Visibility = Visibility.Collapsed;
             }
 
             HideFlipViewButton("PreviousButtonHorizontal");
@@ -158,7 +158,7 @@ namespace QuickShare
 
         private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#pcExtension"));
+            await Launcher.LaunchUriAsync(new Uri(Constants.PCExtensionUrl));
         }
     }
 }
