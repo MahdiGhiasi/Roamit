@@ -16,6 +16,7 @@ using QuickShare.Classes;
 using QuickShare.Common;
 using System.Threading.Tasks;
 using QuickShare.HelperClasses;
+using Windows.System;
 
 namespace QuickShare
 {
@@ -43,6 +44,17 @@ namespace QuickShare
             {
                 WindowTopBarFunctions.ApplyAcrylic();
                 TitleBarStackPanel.Visibility = Visibility.Visible;
+            }
+
+            if (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone)
+            {
+                GetPCExtensionButton.Visibility = Visibility.Collapsed;
+                GetPCExtensionUrl.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                GetPCExtensionButton.Visibility = Visibility.Visible;
+                GetPCExtensionUrl.Visibility = Visibility.Collapsed;
             }
 
             HideFlipViewButton("PreviousButtonHorizontal");
@@ -142,6 +154,11 @@ namespace QuickShare
 
             Windows.Storage.ApplicationData.Current.LocalSettings.Values["FirstRun"] = "false";
             Frame.Navigate(typeof(MainPage));
+        }
+
+        private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#pcExtension"));
         }
     }
 }

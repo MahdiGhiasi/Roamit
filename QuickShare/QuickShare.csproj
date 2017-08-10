@@ -191,6 +191,7 @@
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\chrome-firefox.png" />
     <Content Include="Assets\cloud-clipboard.png" />
+    <Content Include="Assets\Intro\cloud-clipboard.png" />
     <Content Include="Assets\Intro\icon-noborder.png" />
     <Content Include="Assets\Intro\p1.png" />
     <Content Include="Assets\Intro\p2.png" />
