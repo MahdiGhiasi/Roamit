@@ -33,6 +33,8 @@ namespace QuickShare
             WelcomeText.Opacity = 0;
             flipView.Opacity = 0;
             PageIndicators.Opacity = 0;
+
+            flipView.SelectedIndex = 0; // Just in case
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
