@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -221,6 +220,13 @@ namespace QuickShare.Desktop
             Screen.PrimaryScreen.GetScaleFactors(out double scaleFactorX, out double scaleFactorY);
             
             var taskbarInfo = new Taskbar(); // taskbarInfo is not DPI aware (returns values in real pixels, not effective pixels)
+
+            Debug.WriteLine($"Taskbar position is {taskbarInfo.Position.ToString()}");
+            Debug.WriteLine($"Taskbar size is {taskbarInfo.Size.Width}, {taskbarInfo.Size.Height}");
+            Debug.WriteLine($"Taskbar location is {taskbarInfo.Location.X}, {taskbarInfo.Location.Y}");
+            Debug.WriteLine($"Scale factors: X = {scaleFactorX}, Y = {scaleFactorY}");
+            Debug.WriteLine($"SystemParameters.PrimaryScreen(Width, Height) = {SystemParameters.PrimaryScreenWidth}, {SystemParameters.PrimaryScreenHeight}");
+            Debug.WriteLine($"My size: {this.Width}, {this.Height}");
 
             switch (taskbarInfo.Position)
             {
