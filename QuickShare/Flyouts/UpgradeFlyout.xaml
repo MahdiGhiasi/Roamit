@@ -36,9 +36,18 @@
                     <TextBlock Text=" &#x2022;  Sending files larger than 5 MB"
                                TextWrapping="Wrap"
                                Margin="0,0,0,4" />
-                    <TextBlock Text=" &#x2022;  Cloud Clipboard"
-                               TextWrapping="Wrap"
-                               Margin="0,0,0,4" />
+                    <Grid>
+                        <TextBlock Text=" &#x2022;  Cloud Clipboard"
+                                    TextWrapping="Wrap"
+                                    Margin="0,0,0,4" />
+                        <HyperlinkButton Content="What's this?"
+                                         HorizontalAlignment="Right"
+                                         FontSize="12"
+                                         Foreground="SkyBlue"
+                                         Padding="0,0,0,4"
+                                         ToolTipService.ToolTip="Learn more about Cloud Clipboard"
+                                         Tapped="CloudClipboardLearnMore_Tapped" />
+                    </Grid>
                     <TextBlock Text=" &#x2022;  No ads"
                                TextWrapping="Wrap"
                                Margin="0,0,0,4" />

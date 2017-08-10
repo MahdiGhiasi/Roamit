@@ -17,6 +17,8 @@ namespace QuickShare.Common
 
         public static readonly string GooglePlayAppUrl = "http://www.ghiasi.net"; //TODO: enter correct url here
 
+        public static readonly string PCExtensionUrl = "https://roamit.ghiasi.net/#pcExtension";
+
         public static readonly double MaxSizeForTrialVersion = 5.0; //In Megabytes
     }
 }
