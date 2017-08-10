@@ -94,6 +94,14 @@ namespace QuickShare
 #endif
 
             Window.Current.Closed += Window_Closed;
+            TrialHelper.ShowUpgradeFlyout += TrialHelper_ShowUpgradeFlyout;
+        }
+
+        private void TrialHelper_ShowUpgradeFlyout(UpgradeFlyoutState state)
+        {
+            UpgradeFlyoutInstance.InitFlyout(state);
+            ViewModel.UpgradeFlyoutVisibility = Visibility.Visible;
+            overlayShowStoryboard.Begin();
         }
 
         public async Task FileTransferProgress(FileTransferProgressEventArgs e)
@@ -646,6 +654,13 @@ namespace QuickShare
                 $"{Convert.ToChar(8226)} On your Windows devices, make sure your user account is connected to your Microsoft account, 'Continue App Experiences' is activated in system settings, and the operating system is updated to latest version.\r\n" +
                 $"{Convert.ToChar(8226)} On your Android devices, make sure you opened Roamit and logged in with your Microsoft account.", "Not seeing your devices?");
             await dlg.ShowAsync();
+        }
+
+        private async void UpgradeFlyoutInstance_FlyoutCloseRequest(object sender, EventArgs e)
+        {
+            overlayHideStoryboard.Begin();
+            await Task.Delay(250);
+            ViewModel.UpgradeFlyoutVisibility = Visibility.Collapsed;
         }
     }
 }
