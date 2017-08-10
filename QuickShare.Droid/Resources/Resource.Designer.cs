@@ -1840,61 +1840,64 @@ namespace QuickShare.Droid
 			public const int icon_noborder = 2130837619;
 			
 			// aapt resource value: 0x7f020074
-			public const int intro_p1 = 2130837620;
+			public const int intro_cloudclipboard = 2130837620;
 			
 			// aapt resource value: 0x7f020075
-			public const int intro_p2 = 2130837621;
+			public const int intro_p1 = 2130837621;
 			
 			// aapt resource value: 0x7f020076
-			public const int intro_p3 = 2130837622;
+			public const int intro_p2 = 2130837622;
 			
 			// aapt resource value: 0x7f020077
-			public const int laptop = 2130837623;
+			public const int intro_p3 = 2130837623;
 			
 			// aapt resource value: 0x7f020078
-			public const int notification_action_background = 2130837624;
+			public const int laptop = 2130837624;
 			
 			// aapt resource value: 0x7f020079
-			public const int notification_bg = 2130837625;
+			public const int notification_action_background = 2130837625;
 			
 			// aapt resource value: 0x7f02007a
-			public const int notification_bg_low = 2130837626;
+			public const int notification_bg = 2130837626;
 			
 			// aapt resource value: 0x7f02007b
-			public const int notification_bg_low_normal = 2130837627;
+			public const int notification_bg_low = 2130837627;
 			
 			// aapt resource value: 0x7f02007c
-			public const int notification_bg_low_pressed = 2130837628;
+			public const int notification_bg_low_normal = 2130837628;
 			
 			// aapt resource value: 0x7f02007d
-			public const int notification_bg_normal = 2130837629;
+			public const int notification_bg_low_pressed = 2130837629;
 			
 			// aapt resource value: 0x7f02007e
-			public const int notification_bg_normal_pressed = 2130837630;
+			public const int notification_bg_normal = 2130837630;
 			
 			// aapt resource value: 0x7f02007f
-			public const int notification_icon_background = 2130837631;
-			
-			// aapt resource value: 0x7f020085
-			public const int notification_template_icon_bg = 2130837637;
-			
-			// aapt resource value: 0x7f020086
-			public const int notification_template_icon_low_bg = 2130837638;
+			public const int notification_bg_normal_pressed = 2130837631;
 			
 			// aapt resource value: 0x7f020080
-			public const int notification_tile_bg = 2130837632;
+			public const int notification_icon_background = 2130837632;
+			
+			// aapt resource value: 0x7f020086
+			public const int notification_template_icon_bg = 2130837638;
+			
+			// aapt resource value: 0x7f020087
+			public const int notification_template_icon_low_bg = 2130837639;
 			
 			// aapt resource value: 0x7f020081
-			public const int notify_panel_notification_icon_bg = 2130837633;
+			public const int notification_tile_bg = 2130837633;
 			
 			// aapt resource value: 0x7f020082
-			public const int phone = 2130837634;
+			public const int notify_panel_notification_icon_bg = 2130837634;
 			
 			// aapt resource value: 0x7f020083
-			public const int picture = 2130837635;
+			public const int phone = 2130837635;
 			
 			// aapt resource value: 0x7f020084
-			public const int xbox = 2130837636;
+			public const int picture = 2130837636;
+			
+			// aapt resource value: 0x7f020085
+			public const int xbox = 2130837637;
 			
 			static Drawable()
 			{
@@ -2611,85 +2614,88 @@ namespace QuickShare.Droid
 			public const int Intro4 = 2130968613;
 			
 			// aapt resource value: 0x7f040026
-			public const int Intro5 = 2130968614;
+			public const int Intro4_1 = 2130968614;
 			
 			// aapt resource value: 0x7f040027
-			public const int Intro6 = 2130968615;
+			public const int Intro5 = 2130968615;
 			
 			// aapt resource value: 0x7f040028
-			public const int Main = 2130968616;
+			public const int Intro6 = 2130968616;
 			
 			// aapt resource value: 0x7f040029
-			public const int notification_action = 2130968617;
+			public const int Main = 2130968617;
 			
 			// aapt resource value: 0x7f04002a
-			public const int notification_action_tombstone = 2130968618;
+			public const int notification_action = 2130968618;
 			
 			// aapt resource value: 0x7f04002b
-			public const int notification_media_action = 2130968619;
+			public const int notification_action_tombstone = 2130968619;
 			
 			// aapt resource value: 0x7f04002c
-			public const int notification_media_cancel_action = 2130968620;
+			public const int notification_media_action = 2130968620;
 			
 			// aapt resource value: 0x7f04002d
-			public const int notification_template_big_media = 2130968621;
+			public const int notification_media_cancel_action = 2130968621;
 			
 			// aapt resource value: 0x7f04002e
-			public const int notification_template_big_media_custom = 2130968622;
+			public const int notification_template_big_media = 2130968622;
 			
 			// aapt resource value: 0x7f04002f
-			public const int notification_template_big_media_narrow = 2130968623;
+			public const int notification_template_big_media_custom = 2130968623;
 			
 			// aapt resource value: 0x7f040030
-			public const int notification_template_big_media_narrow_custom = 2130968624;
+			public const int notification_template_big_media_narrow = 2130968624;
 			
 			// aapt resource value: 0x7f040031
-			public const int notification_template_custom_big = 2130968625;
+			public const int notification_template_big_media_narrow_custom = 2130968625;
 			
 			// aapt resource value: 0x7f040032
-			public const int notification_template_icon_group = 2130968626;
+			public const int notification_template_custom_big = 2130968626;
 			
 			// aapt resource value: 0x7f040033
-			public const int notification_template_lines_media = 2130968627;
+			public const int notification_template_icon_group = 2130968627;
 			
 			// aapt resource value: 0x7f040034
-			public const int notification_template_media = 2130968628;
+			public const int notification_template_lines_media = 2130968628;
 			
 			// aapt resource value: 0x7f040035
-			public const int notification_template_media_custom = 2130968629;
+			public const int notification_template_media = 2130968629;
 			
 			// aapt resource value: 0x7f040036
-			public const int notification_template_part_chronometer = 2130968630;
+			public const int notification_template_media_custom = 2130968630;
 			
 			// aapt resource value: 0x7f040037
-			public const int notification_template_part_time = 2130968631;
+			public const int notification_template_part_chronometer = 2130968631;
 			
 			// aapt resource value: 0x7f040038
-			public const int select_dialog_item_material = 2130968632;
+			public const int notification_template_part_time = 2130968632;
 			
 			// aapt resource value: 0x7f040039
-			public const int select_dialog_multichoice_material = 2130968633;
+			public const int select_dialog_item_material = 2130968633;
 			
 			// aapt resource value: 0x7f04003a
-			public const int select_dialog_singlechoice_material = 2130968634;
+			public const int select_dialog_multichoice_material = 2130968634;
 			
 			// aapt resource value: 0x7f04003b
-			public const int SendPage = 2130968635;
+			public const int select_dialog_singlechoice_material = 2130968635;
 			
 			// aapt resource value: 0x7f04003c
-			public const int Settings = 2130968636;
+			public const int SendPage = 2130968636;
 			
 			// aapt resource value: 0x7f04003d
-			public const int support_simple_spinner_dropdown_item = 2130968637;
+			public const int Settings = 2130968637;
 			
 			// aapt resource value: 0x7f04003e
-			public const int toolbar = 2130968638;
+			public const int support_simple_spinner_dropdown_item = 2130968638;
 			
 			// aapt resource value: 0x7f04003f
-			public const int TrialNotice = 2130968639;
+			public const int toolbar = 2130968639;
 			
 			// aapt resource value: 0x7f040040
-			public const int Upgrade = 2130968640;
+			public const int TrialNotice = 2130968640;
+			
+			// aapt resource value: 0x7f040041
+			public const int Upgrade = 2130968641;
 			
 			static Layout()
 			{
