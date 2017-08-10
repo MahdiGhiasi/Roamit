@@ -152,7 +152,7 @@
         <TextBlock FontSize="24" x:Name="ReferenceTitle" Visibility="Collapsed" />
         <TextBlock FontSize="16" x:Name="ReferenceText" Visibility="Collapsed" />
 
-        <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged">
+        <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged" SelectedIndex="4">
             <Grid Background="#FF8C0095">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
                     <Image x:Name="AppIconImage"
@@ -287,16 +287,25 @@
                                TextWrapping="Wrap"
                                FontWeight="SemiLight"
                                Margin="0,16,0,0" />
-                    <Button x:Name="GetPCExtensionButton" 
-                            Content="Get Roamit PC Extension"
-                            Tapped="GetPCExtension_Tapped"
-                            Width="200"
-                            Height="40"
-                            Background="#228299"
-                            Margin="0,40,0,0"
-                            VerticalAlignment="Bottom"
-                            HorizontalAlignment="Center" />
-                    <StackPanel x:Name="GetPCExtensionUrl">
+                    <StackPanel x:Name="GetPCExtensionPC">
+                        <Button Content="Get Roamit PC Extension"
+                                Tapped="GetPCExtension_Tapped"
+                                Width="200"
+                                Height="40"
+                                Background="#228299"
+                                Margin="0,40,0,0"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Center" />
+                        <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                                   Text="You can also get it later from settings"
+                                   Opacity="0.7"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   FontWeight="SemiLight"
+                                   FontStyle="Italic"
+                                   Margin="0,12,0,0" />
+                    </StackPanel>
+                    <StackPanel x:Name="GetPCExtensionPhone">
                         <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
                                Text="Get Roamit PC Extension on your PC by visiting"
                                Opacity="0.7"
