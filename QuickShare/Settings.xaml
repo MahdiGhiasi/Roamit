@@ -17,91 +17,101 @@
         </TransitionCollection>
     </Page.Transitions>
 
+    <Page.Resources>
+        <Style x:Key="FullWidthPivotItemStyle"
+           TargetType="PivotItem">
+            <Setter Property="Margin" Value="0" />
+        </Style>
+    </Page.Resources>
+
     <Grid Background="Transparent">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <TextBlock Text="Settings" FontSize="18" Margin="16,12,0,16" FontWeight="Bold" />
-            </Grid>
-            <ScrollViewer Grid.Row="1" ViewChanged="ScrollViewer_ViewChanged">
-                <StackPanel Padding="16,12,16,0">
-                    <StackPanel Margin="0,8,0,8">
-                        <TextBlock Text="General" FontWeight="Bold" />
-                        <TextBlock Text="Show my Android devices" 
-                                   TextWrapping="Wrap"
-                                   Margin="0,8,0,0" />
-                        <RelativePanel>
-                            <ToggleSwitch x:Name="ConnectToOtherDevicesToggle" 
-                                          IsOn="{x:Bind Model.FindOtherDevices, Mode=TwoWay}" 
-                                          IsEnabled="{x:Bind Model.FindOtherDevicesEnabled, Mode=OneWay}" />
-                            <ProgressRing IsActive="{x:Bind Model.FindOtherDevicesProgressRingActive, Mode=OneWay}"
-                                          RelativePanel.RightOf="ConnectToOtherDevicesToggle" 
-                                          RelativePanel.AlignVerticalCenterWithPanel="True" />
-                        </RelativePanel>
-                    </StackPanel>
-                    <StackPanel Margin="0,24,0,8">
-                        <TextBlock Text="Cloud Clipboard" FontWeight="Bold" />
-                        <TextBlock Text="Cloud Clipboard mirrors any text you copy on your PCs to the clipboard of your other devices."
-                                   Margin="0,8,0,0"
-                                   TextWrapping="Wrap"
-                                   Opacity="0.7"/>
-                        <TextBlock Text="To get started, install Roamit PC Extension on your PC."
-                                   Margin="0,8,0,0"
-                                   TextWrapping="Wrap"
-                                   Opacity="0.7"/>
-                        <HyperlinkButton Foreground="SkyBlue" Tapped="GetPCExtension_Tapped">
-                            <HyperlinkButton.Content>
-                                <TextBlock TextWrapping="Wrap">
-                                    <Underline>
-                                        <Run Text="Get Roamit PC Extension" />
-                                    </Underline>
-                                </TextBlock>
-                            </HyperlinkButton.Content>
-                        </HyperlinkButton>
-                        <StackPanel Visibility="{x:Bind Model.ReceiveCloudClipboardToggleVisibility, Mode=OneWay}">
-                            <TextBlock Text="Receive Cloud Clipboard on this device" 
+        <Pivot MaxWidth="700" HorizontalAlignment="Center">
+            <PivotItem Header="Settings" Style="{StaticResource FullWidthPivotItemStyle}">
+                <ScrollViewer Padding="12,0,12,0">
+                    <StackPanel Padding="0,12,0,0">
+                        <StackPanel Margin="0,8,0,8">
+                            <TextBlock Text="General" FontWeight="Bold" />
+                            <TextBlock Text="Show my Android devices" 
                                        TextWrapping="Wrap"
-                                       Margin="0,12,0,0" />
+                                       Margin="0,8,0,0" />
                             <RelativePanel>
-                                <ToggleSwitch x:Name="ReceiveCloudClipboardToggle" 
-                                              IsOn="{x:Bind Model.ReceiveCloudClipboard, Mode=TwoWay}" 
-                                              IsEnabled="{x:Bind Model.ReceiveCloudClipboardEnabled, Mode=OneWay}" />
-                                <ProgressRing IsActive="{x:Bind Model.ReceiveCloudClipboardProgressRingActive, Mode=OneWay}"
-                                              RelativePanel.RightOf="ReceiveCloudClipboardToggle" 
+                                <ToggleSwitch x:Name="ConnectToOtherDevicesToggle" 
+                                              IsOn="{x:Bind Model.FindOtherDevices, Mode=TwoWay}" 
+                                              IsEnabled="{x:Bind Model.FindOtherDevicesEnabled, Mode=OneWay}" />
+                                <ProgressRing IsActive="{x:Bind Model.FindOtherDevicesProgressRingActive, Mode=OneWay}"
+                                              RelativePanel.RightOf="ConnectToOtherDevicesToggle" 
                                               RelativePanel.AlignVerticalCenterWithPanel="True" />
                             </RelativePanel>
                         </StackPanel>
-                    </StackPanel>
-                    <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
-                        <TextBlock Text="Browser Integration" FontWeight="Bold" />
-                        <HyperlinkButton Foreground="SkyBlue" Visibility="{x:Bind Model.ChromeFirefoxExtensionVisibility, Mode=OneWay}" Tapped="GetChromeFirefoxExtension_Tapped">
-                            <HyperlinkButton.Content>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Source="ms-appx:///Assets/chrome-firefox.png"
-                                           Grid.Column="0"
-                                           VerticalAlignment="Top"
-                                           Margin="0,2,0,0"
-                                           Height="20" />
-                                    <TextBlock TextWrapping="Wrap"
-                                               Margin="4,0,0,0"
-                                               Grid.Column="1">
+                        <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
+                            <TextBlock Text="Browser Integration" FontWeight="Bold" />
+                            <HyperlinkButton Foreground="SkyBlue" Visibility="{x:Bind Model.ChromeFirefoxExtensionVisibility, Mode=OneWay}" Tapped="GetChromeFirefoxExtension_Tapped">
+                                <HyperlinkButton.Content>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="ms-appx:///Assets/chrome-firefox.png"
+                                               Grid.Column="0"
+                                               VerticalAlignment="Top"
+                                               Margin="0,2,0,0"
+                                               Height="20" />
+                                        <TextBlock TextWrapping="Wrap"
+                                                   Margin="4,0,0,0"
+                                                   Grid.Column="1">
                                         <Underline>
                                             <Run Text="Get Roamit integration extension for Chrome and Firefox" />
                                         </Underline>
+                                        </TextBlock>
+                                    </Grid>
+                                </HyperlinkButton.Content>
+                            </HyperlinkButton>
+                        </StackPanel>
+                        <StackPanel Margin="0,24,0,8">
+                            <TextBlock Text="Cloud Clipboard (Beta)" FontWeight="Bold" />
+                            <TextBlock Text="Cloud Clipboard mirrors any text you copy on your PCs to the clipboard of your other devices."
+                                       Margin="0,8,0,0"
+                                       TextWrapping="Wrap"
+                                       Opacity="0.7"/>
+                            <TextBlock Text="To get started, install Roamit PC Extension on your PC."
+                                       Margin="0,8,0,0"
+                                       TextWrapping="Wrap"
+                                       Opacity="0.7"/>
+                            <HyperlinkButton Foreground="SkyBlue" Tapped="GetPCExtension_Tapped">
+                                <HyperlinkButton.Content>
+                                    <TextBlock TextWrapping="Wrap">
+                                    <Underline>
+                                        <Run Text="Get Roamit PC Extension" />
+                                    </Underline>
                                     </TextBlock>
-                                </Grid>
-                            </HyperlinkButton.Content>
-                        </HyperlinkButton>
-
+                                </HyperlinkButton.Content>
+                            </HyperlinkButton>
+                            <StackPanel Visibility="{x:Bind Model.ReceiveCloudClipboardToggleVisibility, Mode=OneWay}">
+                                <TextBlock Text="Receive Cloud Clipboard on this device" 
+                                           TextWrapping="Wrap"
+                                           Margin="0,12,0,0" />
+                                <RelativePanel>
+                                    <ToggleSwitch x:Name="ReceiveCloudClipboardToggle" 
+                                                  IsOn="{x:Bind Model.ReceiveCloudClipboard, Mode=TwoWay}" 
+                                                  IsEnabled="{x:Bind Model.ReceiveCloudClipboardEnabled, Mode=OneWay}" />
+                                    <ProgressRing IsActive="{x:Bind Model.ReceiveCloudClipboardProgressRingActive, Mode=OneWay}"
+                                                  RelativePanel.RightOf="ReceiveCloudClipboardToggle" 
+                                                  RelativePanel.AlignVerticalCenterWithPanel="True" />
+                                </RelativePanel>
+                            </StackPanel>
+                            <TextBlock Margin="0,12,0,0"
+                                       TextWrapping="Wrap"
+                                       Foreground="DarkCyan"
+                                       Visibility="{x:Bind Model.FreeVersionBoxVisibility, Mode=OneWay}"
+                                       Text="Cloud Clipboard is available for free users as a 7 day trial. You can upgrade later at any time." />
+                        </StackPanel>
                     </StackPanel>
-                    <StackPanel Margin="0,24,0,8">
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Feedback"  Style="{StaticResource FullWidthPivotItemStyle}">
+                <ScrollViewer Padding="12,0,12,0">
+                    <StackPanel Margin="0,0,0,8">
                         <StackPanel Margin="0,16,0,0">
                             <TextBlock Text="Want to suggest a feature or an improvement?" TextWrapping="Wrap" />
                             <HyperlinkButton Foreground="SkyBlue" Content="Send feedback in Feedback Hub" Tapped="SendFeedbackButton_Tapped" />
@@ -116,7 +126,7 @@
                             <TextBlock Text="{x:Bind Model.PackageVersion, Mode=OneTime}" Margin="4,0,0,0" Opacity="0.7" />
                         </StackPanel>
                         <StackPanel Margin="0,8,0,0" Visibility="{x:Bind Model.FullVersionBoxVisibility, Mode=OneWay}">
-                            <TextBlock Text="Full version" FontStyle="Italic" Foreground="Green" />
+                            <TextBlock Text="Premium version" FontStyle="Italic" Foreground="Green" />
                         </StackPanel>
                         <StackPanel Margin="0,8,0,0" Visibility="{x:Bind Model.FreeVersionBoxVisibility, Mode=OneWay}">
                             <TextBlock Text="Free version" FontStyle="Italic" Foreground="Red" />
@@ -129,8 +139,8 @@
                             <HyperlinkButton Foreground="SkyBlue" Content="Privacy policy" Tapped="PrivacyPolicyButton_Tapped" />
                         </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
+                </ScrollViewer>
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>
