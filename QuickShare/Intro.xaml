@@ -152,7 +152,7 @@
         <TextBlock FontSize="24" x:Name="ReferenceTitle" Visibility="Collapsed" />
         <TextBlock FontSize="16" x:Name="ReferenceText" Visibility="Collapsed" />
 
-        <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged" SelectedIndex="4">
+        <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged">
             <Grid Background="#FF8C0095">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
                     <Image x:Name="AppIconImage"
