@@ -33,6 +33,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
 using QuickShare.ViewModels.ShareTarget;
+using QuickShare.HelperClasses.Version;
 
 namespace QuickShare
 {
@@ -230,8 +231,23 @@ namespace QuickShare
                 {
                     string clipboardData = ParseFastClipboardUri(pEventArgs.Uri.AbsoluteUri);
                     string launchUriData = ParseLaunchUri(pEventArgs.Uri.AbsoluteUri);
+                    bool isUpgrade = ParseUpgrade(pEventArgs.Uri.AbsoluteUri);
 
-                    if (clipboardData.Length > 0)
+                    if (isUpgrade)
+                    {
+                        if (rootFrame == null)
+                        {
+                            LaunchRootFrameIfNecessary(ref rootFrame, false);
+                            rootFrame.Navigate(typeof(MainPage), "upgrade");
+                        }
+                        else
+                        {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                            TrialHelper.AskForUpgrade();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                        }
+                    }
+                    else if (clipboardData.Length > 0)
                     {
                         string[] parts = clipboardData.Split('?');
                         var guid = await TextReceiver.QuickTextReceivedAsync(parts[0].DecodeBase64(), parts[1].DecodeBase64());
@@ -277,6 +293,15 @@ namespace QuickShare
             }
 
             base.OnActivated(e);
+        }
+
+        private bool ParseUpgrade(string s)
+        {
+            s = s.ToLower();
+
+            if ((s == "roamit://upgrade") || (s == "roamit://upgrade/"))
+                return true;
+            return false;
         }
 
         private string ParseFastClipboardUri(string s)
