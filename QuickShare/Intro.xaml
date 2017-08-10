@@ -220,7 +220,6 @@
                                TextAlignment="Center"
                                TextWrapping="Wrap"
                                FontWeight="SemiLight"
-                               FontStyle="Italic"
                                Margin="0,0,0,0" />
                 </StackPanel>
             </Grid>
@@ -264,6 +263,55 @@
                                TextWrapping="Wrap"
                                FontWeight="SemiLight"
                                Margin="0,16,0,0" />
+                </StackPanel>
+            </Grid>
+            <Grid Background="#ff4E0040">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
+                    <Image Source="ms-appx:///Assets/Intro/cloud-clipboard.png" 
+                           Height="{Binding Height, ElementName=ReferenceImage}"
+                           Margin="0,0,0,32" />
+                    <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
+                               Text="Automatic Cloud Clipboard" 
+                               FontWeight="Light"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center" />
+                    <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                               Text="You can also install Roamit PC Extension to your PC, to enable Automatic Cloud Clipboard."
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                    <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                               Text="If you do, every text you copy on your PC will be automatically mirrored to your phone. You won't even need to open the app."
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                    <Button x:Name="GetPCExtensionButton" 
+                            Content="Get Roamit PC Extension"
+                            Tapped="GetPCExtension_Tapped"
+                            Width="200"
+                            Height="40"
+                            Background="#228299"
+                            Margin="0,40,0,0"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Center" />
+                    <StackPanel x:Name="GetPCExtensionUrl">
+                        <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                               Text="Get Roamit PC Extension on your PC by visiting"
+                               Opacity="0.7"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,16,0,0" />
+                        <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                               Text="bit.ly/roamitpc"
+                               Opacity="0.7"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               FontWeight="SemiLight"
+                               Margin="0,0,0,0" />
+                    </StackPanel>
                 </StackPanel>
             </Grid>
             <Grid Background="#ff5133AB">
