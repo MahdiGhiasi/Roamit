@@ -23,8 +23,8 @@ namespace QuickShare.Desktop.Helpers
             screen.GetDpi(DpiType.Effective, out uint dpix_eff, out uint dpiy_eff);
             screen.GetDpi(DpiType.Raw, out uint dpix_raw, out uint dpiy_raw);
 
-            //Debug.WriteLine($"Raw: {dpix_raw}, {dpiy_raw}");
-            //Debug.WriteLine($"Effectve: {dpix_eff}, {dpiy_eff}");
+            Debug.WriteLine($"Raw: {dpix_raw}, {dpiy_raw}");
+            Debug.WriteLine($"Effectve: {dpix_eff}, {dpiy_eff}");
 
             scaleFactorX = ((double)dpix_raw) / ((double)dpix_eff);
             scaleFactorY = ((double)dpiy_raw) / ((double)dpiy_eff);
