@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
+using Windows.System;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -68,6 +69,11 @@ namespace QuickShare.Flyouts
 
             if (!changelogPresent)
                 FlyoutCloseRequest?.Invoke(new EventArgs());
+        }
+
+        private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#pcExtension"));
         }
     }
 }

@@ -6,10 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    d:DesignHeight="400"
     d:DesignWidth="400">
 
     <Grid Background="{Binding Source={ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.7}"
+          BorderBrush="#aaa"
+          BorderThickness="1"
           MaxWidth="400"
           MaxHeight="400">
         <Grid.RowDefinitions>
@@ -31,6 +33,31 @@
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
+                    <StackPanel Tag="2" Margin="0,0,0,24">
+                        <Image Source="ms-appx:///Assets/cloud-clipboard.png"
+                               Height="40"
+                               Margin="0,12,0,0" />
+                        <TextBlock Text="Automatic Cloud Clipboard"
+                                   TextWrapping="Wrap" 
+                                   TextAlignment="Center"
+                                   Margin="0,8,0,12" />
+                        <TextBlock Text="By installing Roamit PC Extension on your PC, every text you copy will be automatically mirrored to your other devices."
+                                   Margin="0,0,0,4"
+                                   TextWrapping="Wrap"
+                                   Opacity="0.7" />
+                        <TextBlock Text="You won't even need to open the app, your clipboard content will be right there!"
+                                   Margin="0,0,0,4"
+                                   TextWrapping="Wrap"
+                                   Opacity="0.7" />
+                        <HyperlinkButton Content="Get Roamit PC Extension"
+                                         Foreground="SkyBlue"
+                                         Tapped="GetPCExtension_Tapped" />
+                        <TextBlock Text="Or you can get it later at any time from Settings."
+                                   Margin="0,0,0,4"
+                                   FontStyle="Oblique"
+                                   TextWrapping="Wrap"
+                                   Opacity="0.4" />
+                    </StackPanel>
                     <StackPanel Tag="1">
                         <Image Source="ms-appx:///Assets/chrome-firefox.png"
                                Height="40"

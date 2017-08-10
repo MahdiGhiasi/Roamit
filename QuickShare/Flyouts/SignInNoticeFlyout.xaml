@@ -11,6 +11,8 @@
 
     <Grid x:Name="SignInNotice" 
                       Background="{Binding Source={ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.7}"
+                      BorderBrush="#aaa"
+                      BorderThickness="1"
                       MaxWidth="500" 
                       Padding="16,24,16,24"
                       HorizontalAlignment="Stretch" 

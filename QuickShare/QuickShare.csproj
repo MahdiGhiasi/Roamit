@@ -93,6 +93,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="Flyouts\UpgradeFlyout.xaml.cs">
+      <DependentUpon>UpgradeFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Flyouts\WhatsNewFlyout.xaml.cs">
       <DependentUpon>WhatsNewFlyout.xaml</DependentUpon>
     </Compile>
@@ -186,6 +189,7 @@
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\chrome-firefox.png" />
+    <Content Include="Assets\cloud-clipboard.png" />
     <Content Include="Assets\Intro\icon-noborder.png" />
     <Content Include="Assets\Intro\p1.png" />
     <Content Include="Assets\Intro\p2.png" />
