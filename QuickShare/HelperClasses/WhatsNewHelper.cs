@@ -43,6 +43,9 @@ namespace QuickShare.HelperClasses
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("LatestWhatsNewVersion"))
                 System.Version.TryParse(ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"].ToString(), out prevVersion);
 
+            if (prevVersion < new System.Version("1.5.2.0"))
+                output.Add("2");
+
             if ((prevVersion < new System.Version("1.2.1.0")) &&
                 ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet)))
                 output.Add("1");
