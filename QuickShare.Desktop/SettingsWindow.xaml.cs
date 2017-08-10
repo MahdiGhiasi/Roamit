@@ -68,5 +68,10 @@ namespace QuickShare.Desktop
         {
             AutoMeasurement.Client.TrackScreenView("SettingsWindow");
         }
+
+        private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("https://roamit.ghiasi.net/privacy");
+        }
     }
 }

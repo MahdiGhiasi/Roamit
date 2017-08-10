@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QuickShare.Desktop"
         mc:Ignorable="d"
-        Height="400" 
+        Height="420" 
         Width="280"
         ResizeMode="CanMinimize" 
         WindowStartupLocation="CenterScreen"
@@ -31,9 +31,17 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+                    <CheckBox Margin="0,16,0,0" 
+                              IsEnabled="{Binding ReceiveCloudClipboardOnThisDeviceEnabled, Mode=TwoWay}"
+                              IsChecked="{Binding ReceiveCloudClipboardOnThisDeviceChecked, Mode=TwoWay}">
+                        <CheckBox.Content>
+                            <TextBlock Text="Receive Cloud Clipboard on this device from my other PCs (if any)"
+                                       TextWrapping="Wrap" />
+                        </CheckBox.Content>
+                    </CheckBox>
                 </StackPanel>
                 <StackPanel Margin="0,8,0,0">
-                    <TextBlock Text="Roamit Cloud Clipboard extension for Windows PC"
+                    <TextBlock Text="Roamit Cloud Clipboard extension for Windows PC (Beta)"
                                FontWeight="Bold"
                                TextWrapping="Wrap"
                                Margin="0,0,0,4" />
@@ -42,6 +50,11 @@
                         <TextBlock Text="{Binding VersionNumber}"
                                    Margin="4,0,0,0" />
                     </StackPanel>
+                    <Button Content="Privacy Policy" 
+                            Style="{StaticResource Link}"
+                            HorizontalAlignment="Left"
+                            Margin="0,0,0,8"
+                            Click="PrivacyPolicy_Click" />
                     <Button Content="Check for updates" 
                             Visibility="Collapsed"
                             Style="{StaticResource Link}"

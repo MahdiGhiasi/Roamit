@@ -14,6 +14,7 @@ namespace QuickShare.Desktop.ViewModel
     public class SettingsViewModel : INotifyPropertyChanged
     {
         string accountId;
+        string currentDeviceId;
 
         public SettingsViewModel(string _accountId)
         {
@@ -31,7 +32,16 @@ namespace QuickShare.Desktop.ViewModel
             foreach (var item in devices)
             {
                 if ((item.Name ?? "").ToLower() == CurrentDevice.GetDeviceName().ToLower())
+                {
+                    currentDeviceId = item.DeviceID;
+
+                    //Don't set the property directly, so we don't send a request with the same value.
+                    receiveCloudClipboardOnThisDeviceChecked = item.CloudClipboardEnabled;
+                    OnPropertyChanged("ReceiveCloudClipboardOnThisDeviceChecked");
+
+                    ReceiveCloudClipboardOnThisDeviceEnabled = true;
                     continue;
+                }
 
                 Devices.Add(new DeviceItem(item.CloudClipboardEnabled)
                 {
@@ -54,6 +64,39 @@ namespace QuickShare.Desktop.ViewModel
 
         public ObservableCollection<DeviceItem> Devices { get; } = new ObservableCollection<DeviceItem>();
 
+        bool receiveCloudClipboardOnThisDeviceEnabled = false;
+        public bool ReceiveCloudClipboardOnThisDeviceEnabled
+        {
+            get
+            {
+                return receiveCloudClipboardOnThisDeviceEnabled;
+            }
+            set
+            {
+                receiveCloudClipboardOnThisDeviceEnabled = value;
+                OnPropertyChanged("ReceiveCloudClipboardOnThisDeviceEnabled");
+            }
+        }
+
+        bool receiveCloudClipboardOnThisDeviceChecked = false;
+        public bool ReceiveCloudClipboardOnThisDeviceChecked
+        {
+            get
+            {
+                return receiveCloudClipboardOnThisDeviceChecked;
+            }
+            set
+            {
+                receiveCloudClipboardOnThisDeviceChecked = value;
+                CurrentDeviceActiveChanged(receiveCloudClipboardOnThisDeviceChecked);
+                OnPropertyChanged("ReceiveCloudClipboardOnThisDeviceChecked");
+            }
+        }
+
+        private async void CurrentDeviceActiveChanged(bool value)
+        {
+            await CloudClipboardService.SetCloudClipboardActivation(accountId, currentDeviceId, value);
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
