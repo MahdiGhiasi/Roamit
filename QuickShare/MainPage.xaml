@@ -301,6 +301,9 @@
                 <flyouts:WhatsNewFlyout x:Name="WhatsNewFlyoutInstance"
                                         Visibility="{x:Bind ViewModel.WhatsNewVisibility, Mode=OneWay}"
                                         FlyoutCloseRequest="WhatsNewFlyout_FlyoutCloseRequest" />
+                <flyouts:UpgradeFlyout x:Name="UpgradeFlyoutInstance"
+                                       Visibility="{x:Bind ViewModel.UpgradeFlyoutVisibility, Mode=OneWay}"
+                                       FlyoutCloseRequest="UpgradeFlyoutInstance_FlyoutCloseRequest" />
             </Grid>
         </Grid>
     </Grid>

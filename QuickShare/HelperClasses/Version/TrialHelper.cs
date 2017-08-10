@@ -17,6 +17,11 @@ namespace QuickShare.HelperClasses.Version
 
         static LicenseInformation licenseInformation;
 
+        public delegate void ShowUpgradeFlyoutEventHandler(UpgradeFlyoutState state);
+        public static event ShowUpgradeFlyoutEventHandler ShowUpgradeFlyout;
+
+        public static TaskCompletionSource<bool> UpgradeFlyoutCompletion;
+
         static TrialHelper()
         {
 #if DEBUG
@@ -28,39 +33,25 @@ namespace QuickShare.HelperClasses.Version
 
         internal static async Task AskForUpgradeWhileSending()
         {
-            var md = new MessageDialog("You can upgrade to full version to unlock this capability and remove the ads.", $"The free version is limited to sending at most {Constants.MaxSizeForTrialVersion} MB of files each time.");
+            if (ShowUpgradeFlyout == null)
+                return;
 
-            md.Commands.Add(new UICommand("Upgrade") { Id = 0 });
-            md.Commands.Add(new UICommand("No, thanks") { Id = 1 });
-
-            md.DefaultCommandIndex = 0;
-            md.CancelCommandIndex = 1;
-
-            var result = await md.ShowAsync();
-            if (result.Id as int? == 0)
-            {
-                await TryUpgrade();
-            }
+            UpgradeFlyoutCompletion = new TaskCompletionSource<bool>();
+            ShowUpgradeFlyout.Invoke(UpgradeFlyoutState.WhileSendingFile);
+            await UpgradeFlyoutCompletion.Task;
         }
 
         internal static async Task AskForUpgrade()
         {
-            var md = new MessageDialog($"The free version is limited to sending at most {Constants.MaxSizeForTrialVersion} MB of files each time.\r\nYou can upgrade to full version to unlock this capability and remove the ads.", $"Upgrade to full version");
-        
-            md.Commands.Add(new UICommand("Upgrade") { Id = 0 });
-            md.Commands.Add(new UICommand("No, thanks") { Id = 1 });
+            if (ShowUpgradeFlyout == null)
+                return;
 
-            md.DefaultCommandIndex = 0;
-            md.CancelCommandIndex = 1;
-
-            var result = await md.ShowAsync();
-            if (result.Id as int? == 0)
-            {
-                await TryUpgrade();
-            }
+            UpgradeFlyoutCompletion = new TaskCompletionSource<bool>();
+            ShowUpgradeFlyout.Invoke(UpgradeFlyoutState.Default);
+            await UpgradeFlyoutCompletion.Task;
         }
 
-        private static async Task TryUpgrade()
+        public static async Task TryUpgrade()
         {
             if (!licenseInformation.ProductLicenses[Token_RemoveAdsAndSizeLimit].IsActive)
             {
@@ -95,5 +86,11 @@ namespace QuickShare.HelperClasses.Version
             else
                 TrialSettings.IsTrial = true;
         }
+    }
+
+    public enum UpgradeFlyoutState
+    {
+        Default,
+        WhileSendingFile
     }
 }

@@ -117,12 +117,25 @@ namespace QuickShare.ViewModels
             }
         }
 
+        private Visibility upgradeFlyoutVisibility = Visibility.Collapsed;
+        public Visibility UpgradeFlyoutVisibility
+        {
+            get { return upgradeFlyoutVisibility; }
+            set
+            {
+                upgradeFlyoutVisibility = value;
+                OnPropertyChanged("UpgradeFlyoutVisibility");
+                OnPropertyChanged("OverlayVisibility");
+            }
+        }
+
         public Visibility OverlayVisibility
         {
             get
             {
                 if ((signInNoticeVisibility == Visibility.Visible) ||
-                    (whatsNewVisibility == Visibility.Visible))
+                    (whatsNewVisibility == Visibility.Visible) || 
+                    (upgradeFlyoutVisibility == Visibility.Visible))
                     return Visibility.Visible;
 
                 return Visibility.Collapsed;
