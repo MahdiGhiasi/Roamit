@@ -100,7 +100,7 @@ namespace QuickShare
 
         private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#cloudClipboard"));
+            await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#pcExtension"));
         }
     }
 }
