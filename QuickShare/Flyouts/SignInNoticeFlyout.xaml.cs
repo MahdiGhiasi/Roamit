@@ -22,10 +22,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace QuickShare.Flyouts
 {
-    public sealed partial class SignInNoticeFlyout : UserControl
+    public sealed partial class SignInNoticeFlyout : UserControl, IFlyout
     {
-        public delegate void FlyoutCloseRequestEventHandler(EventArgs e);
-        public event FlyoutCloseRequestEventHandler FlyoutCloseRequest;
+        public event EventHandler FlyoutCloseRequest;
 
         public SignInNoticeFlyout()
         {
@@ -54,13 +53,18 @@ namespace QuickShare.Flyouts
             finally
             {
                 this.IsEnabled = true;
-                FlyoutCloseRequest?.Invoke(new EventArgs());
+                FlyoutCloseRequest?.Invoke(this, new EventArgs());
             }
         }
 
         private void Cancel_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            FlyoutCloseRequest?.Invoke(new EventArgs());
+            FlyoutCloseRequest?.Invoke(this, new EventArgs());
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

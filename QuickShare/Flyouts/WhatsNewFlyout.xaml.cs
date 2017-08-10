@@ -21,10 +21,9 @@ using Windows.System;
 
 namespace QuickShare.Flyouts
 {
-    public sealed partial class WhatsNewFlyout : UserControl
+    public sealed partial class WhatsNewFlyout : UserControl, IFlyout
     {
-        public delegate void FlyoutCloseRequestEventHandler(EventArgs e);
-        public event FlyoutCloseRequestEventHandler FlyoutCloseRequest;
+        public event EventHandler FlyoutCloseRequest;
 
         public WhatsNewFlyout()
         {
@@ -42,7 +41,7 @@ namespace QuickShare.Flyouts
 
         private void OKButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            FlyoutCloseRequest?.Invoke(new EventArgs());
+            FlyoutCloseRequest?.Invoke(this, new EventArgs());
         }
 
         public void InitFlyout()
@@ -68,7 +67,7 @@ namespace QuickShare.Flyouts
             }
 
             if (!changelogPresent)
-                FlyoutCloseRequest?.Invoke(new EventArgs());
+                FlyoutCloseRequest?.Invoke(this, new EventArgs());
         }
 
         private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
