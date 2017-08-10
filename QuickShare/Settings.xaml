@@ -135,6 +135,7 @@
                         </StackPanel>
                         <StackPanel Margin="0,16,0,0">
                             <TextBlock Text="Developed by Mahdi Ghiasi" Opacity="0.5" Margin="0,0,0,12" />
+                            <HyperlinkButton Foreground="SkyBlue" Content="Follow @RoamitApp on Twitter" Tapped="TwitterButton_Tapped" />
                             <HyperlinkButton Foreground="SkyBlue" Content="Rate and review" Tapped="RateAndReviewButton_Tapped" />
                             <HyperlinkButton Foreground="SkyBlue" Content="Privacy policy" Tapped="PrivacyPolicyButton_Tapped" />
                         </StackPanel>

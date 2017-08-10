@@ -16,8 +16,8 @@ namespace QuickShare.Common
         public static readonly string ServerAddress = "https://qs.services.ghiasi.net"; //"http://192.168.1.100:3000";
 
         public static readonly string GooglePlayAppUrl = "http://www.ghiasi.net"; //TODO: enter correct url here
-
         public static readonly string PCExtensionUrl = "https://roamit.ghiasi.net/#pcExtension";
+        public static readonly string TwitterUrl = "http://twitter.com/roamitapp";
 
         public static readonly double MaxSizeForTrialVersion = 5.0; //In Megabytes
     }
