@@ -58,6 +58,7 @@ namespace QuickShare.Droid
                 Resource.Layout.Intro2,
                 Resource.Layout.Intro3,
                 Resource.Layout.Intro4,
+                Resource.Layout.Intro4_1,
                 Resource.Layout.Intro5,
             };
 
@@ -74,7 +75,7 @@ namespace QuickShare.Droid
 
         private void BtnSkip_Click(object sender, EventArgs e)
         {
-            viewPager.CurrentItem = 4;
+            viewPager.CurrentItem = 5;
         }
 
         private void SetUpPageEvents(View view)

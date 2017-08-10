@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#ffE56C19"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1"
+        android:layout_centerInParent="true">
+        <ImageView
+            android:src="@drawable/intro_cloudclipboard"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:paddingBottom="15dp" />
+        <TextView
+            android:text="Automatic Cloud Clipboard"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView1"
+            android:gravity="center_horizontal" />
+        <TextView
+            android:text="You can also install Roamit PC Extension to your PC, to enable Automatic Cloud Clipboard."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            android:gravity="center_horizontal"
+            android:paddingTop="20dp" />
+        <TextView
+            android:text="If you do, every text you copy on your PC will be automatically mirrored to your phone. You won't even need to open the app."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:gravity="center_horizontal" />
+        <TextView
+            android:text="Get Roamit PC Extension on your PC from bit.ly/roamitpc"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3"
+            android:paddingTop="20dp"
+            android:gravity="center_horizontal"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+</RelativeLayout>
