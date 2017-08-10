@@ -102,5 +102,10 @@ namespace QuickShare
         {
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.PCExtensionUrl));
         }
+
+        private async void TwitterButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri(Common.Constants.TwitterUrl));
+        }
     }
 }
