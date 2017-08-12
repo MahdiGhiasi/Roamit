@@ -5,6 +5,8 @@
     <RootNamespace>QuickShare.DevicesListManager</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Squirrel|AnyCPU'" />
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
