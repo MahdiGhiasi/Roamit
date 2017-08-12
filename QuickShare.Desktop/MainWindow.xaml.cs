@@ -112,6 +112,7 @@ namespace QuickShare.Desktop
 
         private async void CheckForUpdates()
         {
+#if SQUIRREL
             try
             {
                 await Updater.CheckForUpdates();
@@ -120,6 +121,7 @@ namespace QuickShare.Desktop
             {
                 Debug.WriteLine($"Exception occured while checking for updates: {ex.Message}");
             }
+#endif
         }
 
         private void InitNotifyIcon()

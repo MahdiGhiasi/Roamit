@@ -12,6 +12,7 @@ namespace QuickShare.Desktop.Helpers
     {
         internal static async Task CheckForUpdates()
         {
+#if SQUIRREL
             using (var mgr = new UpdateManager("https://roamit.ghiasi.net/pc-extension/releases"))
             {
                 Debug.WriteLine("Checking for updates...");
@@ -32,6 +33,7 @@ namespace QuickShare.Desktop.Helpers
                     UpdateManager.RestartApp();
                 }
             }
+#endif
         }
     }
 }

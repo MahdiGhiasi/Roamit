@@ -21,7 +21,7 @@ namespace QuickShare.Desktop.Helpers
         public string GetExecutablePath()
         {
             var exec = System.Reflection.Assembly.GetExecutingAssembly().Location;
-
+#if SQUIRREL
             var fileName = System.IO.Path.GetFileName(exec);
             var parentDir = System.IO.Path.GetDirectoryName(exec);
             var parentParentDir = System.IO.Path.GetDirectoryName(parentDir);
@@ -31,6 +31,9 @@ namespace QuickShare.Desktop.Helpers
                 return squirrelDummyExe;
             else
                 return exec;
+#else
+            return exec;
+#endif
         }
 
         public void AddApplicationToCurrentUserStartup()
