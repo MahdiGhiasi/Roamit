@@ -99,10 +99,18 @@ namespace QuickShare.Desktop
 
         private static void InitGoogleAnalytics()
         {
+#if SQUIRREL
+            string versionExtension = "-squirrel";
+#elif !DEBUG
+            string versionExtension = "-store";
+#endif
+
+#if !DEBUG
             AutoMeasurement.Instance = new WpfAutoMeasurement();
-            AutoMeasurement.Start(new MeasurementConfiguration(Common.Secrets.GoogleAnalyticsId, "PCExtension", Assembly.GetExecutingAssembly().GetName().Version.ToString()));
+            AutoMeasurement.Start(new MeasurementConfiguration(Common.Secrets.GoogleAnalyticsId, "PCExtension", Assembly.GetExecutingAssembly().GetName().Version.ToString() + versionExtension));
 
             AutoMeasurement.Client.TrackScreenView("MainWindow");
+#endif
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -158,7 +166,7 @@ namespace QuickShare.Desktop
             ShowWindow();
         }
 
-        #region Stuff related to hiding window when clicked away
+#region Stuff related to hiding window when clicked away
         private void Window_Activated(object sender, EventArgs e)
         {
             System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
@@ -190,7 +198,7 @@ namespace QuickShare.Desktop
             lastTimeLostFocus = DateTime.UtcNow;
             this.Visibility = Visibility.Hidden;
         }
-        #endregion
+#endregion
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
