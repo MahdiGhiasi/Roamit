@@ -311,3 +311,5 @@ QuickShare/_scale-150.appx
 QuickShare/_scale-400.appx
 QuickShare.Droid/Resources/Resource.Designer.cs
 QuickShare/AdConstants.cs
+
+QuickShare.Desktop.Package/win32/
