@@ -1,5 +1,4 @@
-﻿using QuickShare.Classes;
-using QuickShare.ToastNotifications;
+﻿using QuickShare.ToastNotifications;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -107,5 +107,10 @@ namespace QuickShare
         {
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.TwitterUrl));
         }
+
+        private void ChooseDownloadFolder_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
     }
 }

@@ -42,6 +42,29 @@
                                               RelativePanel.RightOf="ConnectToOtherDevicesToggle" 
                                               RelativePanel.AlignVerticalCenterWithPanel="True" />
                             </RelativePanel>
+                            <TextBlock Text="Default download folder:" 
+                                       TextWrapping="Wrap"
+                                       Margin="0,18,0,4" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="C:\" 
+                                         IsReadOnly="True"
+                                         Grid.Column="0" />
+                                <Button Content="..."
+                                        Grid.Column="1"
+                                        Width="50"
+                                        Margin="4,0,0,0"
+                                        Tapped="ChooseDownloadFolder_Tapped" />
+                            </Grid>
+                            <TextBlock Text="Put known file types into applicable user folders instead of default download folder" 
+                                       TextWrapping="Wrap"
+                                       Margin="0,24,0,4" />
+                            <TextBlock Text="This applies to Music, Video and Pictures"
+                                       Opacity="0.7" />
+                            <ToggleSwitch  />
                         </StackPanel>
                         <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
                             <TextBlock Text="Browser Integration" FontWeight="Bold" />

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Security.Credentials;
 
-namespace QuickShare.Classes
+namespace QuickShare.Common
 {
     public static class SecureKeyStorage
     {

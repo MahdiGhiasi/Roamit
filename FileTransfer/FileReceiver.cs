@@ -35,7 +35,7 @@ namespace QuickShare.FileTransfer
         static Guid requestGuid;
         static string senderName = "remote device";
 
-        public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, IFolder downloadFolder)
+        public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
         {
             Dictionary<string, object> returnVal = null;
 
@@ -80,7 +80,7 @@ namespace QuickShare.FileTransfer
                     foreach (var item in items)
                     {
                         var info = JsonConvert.DeserializeObject<Dictionary<string, object>>(item);
-                        await ProcessQueueItem(info, downloadFolder);
+                        await ProcessQueueItem(info, downloadFolderDecider);
                     }
 
                     Debug.WriteLine("Processed QueueItemGroup successfully.");
@@ -88,7 +88,7 @@ namespace QuickShare.FileTransfer
             }
             else if ((request.ContainsKey("IsQueueItem")) && (request["IsQueueItem"] as string == "true"))
             {
-                await ProcessQueueItem(request, downloadFolder);
+                await ProcessQueueItem(request, downloadFolderDecider);
             }
             else
             {
@@ -98,6 +98,8 @@ namespace QuickShare.FileTransfer
                 senderName = (string)request["SenderName"];
                 isQueue = false;
 
+                var downloadFolder = await downloadFolderDecider(new string[] { Path.GetExtension((string)request["FileName"]) });
+                
                 await DataStorageProviders.HistoryManager.OpenAsync();
                 DataStorageProviders.HistoryManager.Add(requestGuid,
                     DateTime.Now,
@@ -128,7 +130,7 @@ namespace QuickShare.FileTransfer
             return returnVal;
         }
 
-        private static async Task ProcessQueueItem(Dictionary<string, object> request, IFolder downloadFolder)
+        private static async Task ProcessQueueItem(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
         {
             //Queue data details
             queuedSlicesYet += (int)(long)request["SlicesCount"];
@@ -137,7 +139,7 @@ namespace QuickShare.FileTransfer
             filesCount++;
 
             if (queuedSlicesYet == queueTotalSlices)
-                await BeginProcessingQueue(downloadFolder);
+                await BeginProcessingQueue(downloadFolderDecider);
             else if (queuedSlicesYet > queueTotalSlices)
             {
                 Debug.WriteLine("Queued more slices than expected.");
@@ -150,8 +152,10 @@ namespace QuickShare.FileTransfer
             FileTransferProgress = null;
         }
 
-        private static async Task BeginProcessingQueue(IFolder downloadFolder)
+        private static async Task BeginProcessingQueue(Func<string[], Task<IFolder>> downloadFolderDecider)
         {
+            var downloadFolder = await downloadFolderDecider(queueItems.Select(x => Path.GetExtension((string)x["FileName"])).ToArray());
+
             var logItems = from x in queueItems
                            select new ReceivedFile
                            {

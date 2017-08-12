@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 
 namespace QuickShare.ServiceTask
 {
@@ -39,7 +40,6 @@ namespace QuickShare.ServiceTask
             if (details?.Name == "com.roamit.service") //Remote Activation
             {
                 DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
-                await Classes.DownloadFolderHelper.InitDownloadFolderAsync();
 
                 _appServiceconnection = details.AppServiceConnection;
                 _appServiceconnection.RequestReceived += OnRequestReceived;
@@ -107,10 +107,7 @@ namespace QuickShare.ServiceTask
                     }
                     else if (receiver == "FileReceiver")
                     {
-                        await Classes.DownloadFolderHelper.InitDownloadFolderAsync();
-                        IFolder downloadFolder = new WinRTFolder(await futureAccessList.GetFolderAsync("downloadMainFolder"));
-
-                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, downloadFolder);
+                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, DownloadFolderDecider);
                     }
                     else if (receiver == "TextReceiver")
                     {
@@ -175,6 +172,17 @@ namespace QuickShare.ServiceTask
             {
                 requestDeferral?.Complete();
             }
+        }
+
+        private static async Task<IFolder> DownloadFolderDecider(string[] fileTypes)
+        {
+            IStorageFolder folder;
+            if (false) //TODO: check if option is enabled
+                folder = await DownloadFolderHelper.GetDefaultDownloadFolderAsync();
+            else
+                folder = await DownloadFolderHelper.GetAppropriateDownloadFolderAsync(fileTypes);
+
+            return new WinRTFolder(folder);
         }
 
         public static void SendToast(string text)

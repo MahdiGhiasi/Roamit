@@ -6,26 +6,50 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 
-namespace QuickShare.Classes
+namespace QuickShare.Common
 {
     public static class DownloadFolderHelper
     {
-        public static IAsyncAction InitDownloadFolderAsync()
+        static readonly string _downloadMainFolder = "downloadMainFolder";
+
+        /**
+        public static IAsyncAction InitDefaultDownloadFolderAsync()
         {
-            return InitDownloadFolder().AsAsyncAction();
+            return InitDefaultDownloadFolder().AsAsyncAction();
         }
+        /**/
 
         /**
         public static IAsyncOperation<bool> DownloadFolderExistsAsync()
         {
-            return DownloadFolderExists().AsAsyncOperation();
+            return DefaultDownloadFolderExists().AsAsyncOperation();
         }
         /**/
 
-        private static async Task InitDownloadFolder()
+        public static IAsyncOperation<IStorageFolder> GetDefaultDownloadFolderAsync()
+        {
+            return GetDefaultDownloadFolder().AsAsyncOperation();
+        }
+
+        public static IAsyncOperation<IStorageFolder> TrySetDefaultDownloadFolderAsync()
+        {
+            return GetDefaultDownloadFolder().AsAsyncOperation();
+        }
+
+        public static IAsyncOperation<IStorageFolder> GetAppropriateDownloadFolderAsync(string fileType)
+        {
+            return GetAppropriateDownloadFolder(new string[] { fileType }).AsAsyncOperation();
+        }
+
+        public static IAsyncOperation<IStorageFolder> GetAppropriateDownloadFolderAsync(string[] fileType)
+        {
+            return GetAppropriateDownloadFolder(fileType).AsAsyncOperation();
+        }
+
+        private static async Task InitDefaultDownloadFolder()
         {
             var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
-            if (!(await DownloadFolderExists()))
+            if (!(await DefaultDownloadFolderExists()))
             {
                 bool created = false;
                 int i = 1;
@@ -34,7 +58,7 @@ namespace QuickShare.Classes
                     try
                     {
                         var myfolder = await DownloadsFolder.CreateFolderAsync((i == 1) ? "Received" : $"Received ({i})");
-                        futureAccessList.AddOrReplace("downloadMainFolder", myfolder);
+                        futureAccessList.AddOrReplace(_downloadMainFolder, myfolder);
                         created = true;
                     }
                     catch
@@ -46,23 +70,103 @@ namespace QuickShare.Classes
             }
         }
 
-        private static async Task<bool> DownloadFolderExists()
+        private static async Task<bool> DefaultDownloadFolderExists()
         {
             var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
 
             try
             {
-                if (!futureAccessList.ContainsItem("downloadMainFolder"))
+                if (!futureAccessList.ContainsItem(_downloadMainFolder))
                     return false;
 
-                await futureAccessList.GetItemAsync("downloadMainFolder");
+                await futureAccessList.GetItemAsync(_downloadMainFolder);
                 return true;
             }
             catch
             {
-                futureAccessList.Remove("downloadMainFolder");
+                futureAccessList.Remove(_downloadMainFolder);
                 return false;
             }
+        }
+
+        private static async Task<IStorageFolder> GetDefaultDownloadFolder()
+        {
+            await InitDefaultDownloadFolder();
+
+            var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
+            var folder = (await futureAccessList.GetItemAsync(_downloadMainFolder)) as IStorageFolder;
+            return folder;
+        }
+
+        private static async Task<IStorageFolder> TrySetDownloadFolder(IStorageFolder folder)
+        {
+            var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
+            futureAccessList.AddOrReplace(_downloadMainFolder, folder);
+
+            return await GetDefaultDownloadFolder(); //Make sure everything's fine
+        }
+
+        private static async Task<IStorageFolder> GetAppropriateDownloadFolder(string[] fileType)
+        {
+            IEnumerable<FileTypeCategory> categories = fileType.Select(x => GetFileCategory(x));
+
+            FileTypeCategory preferredCategory;
+            if (categories.Distinct().Count() == 1)
+                preferredCategory = categories.First();
+            else
+                preferredCategory = FileTypeCategory.General;
+
+            switch (preferredCategory)
+            {
+                case FileTypeCategory.Video:
+                    return await CreateOrGetRoamitFolder(KnownFolders.VideosLibrary);
+                case FileTypeCategory.Picture:
+                    //return await CreateOrGetRoamitFolder(KnownFolders.PicturesLibrary);
+                    return KnownFolders.SavedPictures;
+                case FileTypeCategory.Music:
+                    return await CreateOrGetRoamitFolder(KnownFolders.MusicLibrary);
+                default:
+                    return await GetDefaultDownloadFolder();
+            }
+        }
+
+        private static FileTypeCategory GetFileCategory(string fileType)
+        {
+            fileType = fileType.ToLower();
+            switch (fileType)
+            {
+                case "mp4":
+                case "mov":
+                case "avi":
+                case "mkv":
+                    return FileTypeCategory.Video;
+                case "jpg":
+                case "jpeg":
+                case "png":
+                case "gif":
+                case "bmp":
+                    return FileTypeCategory.Picture;
+                case "mp3":
+                case "m4a":
+                case "wav":
+                case "wma":
+                    return FileTypeCategory.Music;
+                default:
+                    return FileTypeCategory.General;
+            }
+        }
+
+        private static async Task<IStorageFolder> CreateOrGetRoamitFolder(StorageFolder parentFolder)
+        {
+            return await parentFolder.CreateFolderAsync("Roamit", CreationCollisionOption.OpenIfExists);
+        }
+
+        enum FileTypeCategory
+        {
+            Picture = 1,
+            Video = 2,
+            Music = 3,
+            General = 4,
         }
     }
 }
