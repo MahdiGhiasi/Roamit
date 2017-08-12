@@ -95,15 +95,6 @@
                         <Setter Target="BottomCommandBar.ClosedDisplayMode" Value="Compact" />
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowHeight="612" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="BehindBottomCommandBar.Height" Value="48" />
-                        <Setter Target="BottomCommandBar.ClosedDisplayMode" Value="Compact" />
-                    </VisualState.Setters>
-                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 

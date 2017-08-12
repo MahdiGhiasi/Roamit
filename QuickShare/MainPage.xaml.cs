@@ -237,14 +237,11 @@ namespace QuickShare
             if (!TrialSettings.IsTrial)
                 AdBanner.Suspend();
 
-<<<<<<< HEAD
             if ((!IsShareContent) && (WhatsNewHelper.ShouldShowWhatsNew()))
             {
                 ShowWhatsNewFlyout();
             }
 
-=======
->>>>>>> UWP: Measure app launch time and send it to Google Analytics
             DiscoverDevices();
             InitDiscoveringOtherDevices();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
@@ -253,20 +250,11 @@ namespace QuickShare
 
 #if !DEBUG
             App.Tracker.Send(HitBuilder.CreateScreenView("MainPage").Build());
-<<<<<<< HEAD
             if (App.LaunchTime != null)
             {
                 var loadTime = DateTime.Now - (DateTime)App.LaunchTime;
                 App.LaunchTime = null;
                 string loadTimeString = $"{(int)Math.Floor(loadTime.TotalSeconds)}.{(int)Math.Floor(loadTime.Milliseconds / 100.0)}";
-=======
-
-            if (App.LaunchTime != null)
-            {
-                App.LaunchTime = null;
-                var loadTime = DateTime.Now - (DateTime)App.LaunchTime;
-                string loadTimeString = $"{loadTime.TotalSeconds}.{loadTime.Milliseconds / 100}";
->>>>>>> UWP: Measure app launch time and send it to Google Analytics
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("AppLoadTime", loadTimeString).Build());
             }
             AdDuplex.AdDuplexClient.Initialize(AdConstants.AdDuplexAppKey);
@@ -397,8 +385,6 @@ namespace QuickShare
         {
             if ((e.Content is MainActions) || (e.Content is MainShareTarget))
             {
-                ViewModel.RefreshIsContentFrameEnabled();
-
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;
             }
