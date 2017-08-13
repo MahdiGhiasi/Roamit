@@ -107,5 +107,10 @@ namespace QuickShare
         {
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.TwitterUrl));
         }
+
+        private void ManageDevices_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(DevicesSettings));
+        }
     }
 }

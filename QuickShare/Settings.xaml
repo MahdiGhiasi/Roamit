@@ -75,18 +75,20 @@
                                        TextWrapping="Wrap"
                                        Opacity="0.7"/>
 
-                            <TextBlock Text="Send clipboard content from device to my other devices" 
+                            <StackPanel Visibility="{x:Bind Model.SendCloudClipboardVisibility, Mode=OneWay}">
+                                <TextBlock Text="Send clipboard content from device to my other devices" 
                                            TextWrapping="Wrap"
                                            Margin="0,12,0,0" />
-                            <RelativePanel>
-                                <ToggleSwitch x:Name="SendCloudClipboardToggle" 
-                                              IsOn="{x:Bind Model.SendCloudClipboard, Mode=TwoWay}" 
-                                              IsEnabled="{x:Bind Model.SendCloudClipboardEnabled, Mode=OneWay}" />
-                                <ProgressRing IsActive="{x:Bind Model.SendCloudClipboardProgressRingActive, Mode=OneWay}"
-                                              RelativePanel.RightOf="SendCloudClipboardToggle" 
-                                              RelativePanel.AlignVerticalCenterWithPanel="True" />
-                            </RelativePanel>
-                            <StackPanel Visibility="{x:Bind Model.ReceiveCloudClipboardToggleVisibility, Mode=OneWay}">
+                                <RelativePanel>
+                                    <ToggleSwitch x:Name="SendCloudClipboardToggle" 
+                                                  IsOn="{x:Bind Model.SendCloudClipboard, Mode=TwoWay}" 
+                                                  IsEnabled="{x:Bind Model.SendCloudClipboardEnabled, Mode=OneWay}" />
+                                    <ProgressRing IsActive="{x:Bind Model.SendCloudClipboardProgressRingActive, Mode=OneWay}"
+                                                  RelativePanel.RightOf="SendCloudClipboardToggle" 
+                                                  RelativePanel.AlignVerticalCenterWithPanel="True" />
+                                </RelativePanel>
+                            </StackPanel>
+                            <StackPanel Visibility="{x:Bind Model.ReceiveCloudClipboardVisibility, Mode=OneWay}">
                                 <TextBlock Text="Receive cloud clipboard on this device" 
                                            TextWrapping="Wrap"
                                            Margin="0,8,0,0" />
@@ -98,9 +100,11 @@
                                                   RelativePanel.RightOf="ReceiveCloudClipboardToggle" 
                                                   RelativePanel.AlignVerticalCenterWithPanel="True" />
                                 </RelativePanel>
+                                <HyperlinkButton Content="Manage cloud clipboard for my other devices"
+                                                Foreground="SkyBlue"
+                                                Tapped="ManageDevices_Tapped" />
                             </StackPanel>
-                            <HyperlinkButton Content="Manage cloud clipboard for my other devices"
-                                             Foreground="SkyBlue" />
+                            
                             <TextBlock Margin="0,12,0,0"
                                        TextWrapping="Wrap"
                                        Foreground="DarkCyan"

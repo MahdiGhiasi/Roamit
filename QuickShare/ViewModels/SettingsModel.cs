@@ -16,6 +16,8 @@ namespace QuickShare.ViewModels
 {
     public class SettingsViewModel : INotifyPropertyChanged
     {
+        string deviceId = "";
+        
         public SettingsViewModel()
         {
             CheckTrialStatus();
@@ -191,10 +193,16 @@ namespace QuickShare.ViewModels
             get { return chromeFirefoxExtensionVisibility; }
         }
 
-        private Visibility receiveCloudClipboardToggleVisibility = (SecureKeyStorage.IsAccountIdStored() && SecureKeyStorage.IsGraphDeviceIdStored()) ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility ReceiveCloudClipboardToggleVisibility
+        private Visibility sendCloudClipboardVisibility = (PCExtensionHelper.IsSupported) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility SendCloudClipboardVisibility
         {
-            get { return receiveCloudClipboardToggleVisibility; }
+            get { return sendCloudClipboardVisibility; }
+        }
+
+        private Visibility receiveCloudClipboardVisibility = (SecureKeyStorage.IsAccountIdStored()) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility ReceiveCloudClipboardVisibility
+        {
+            get { return receiveCloudClipboardVisibility; }
         }
 
         private bool receiveCloudClipboard = false;
@@ -215,7 +223,7 @@ namespace QuickShare.ViewModels
             ReceiveCloudClipboardEnabled = false;
             ReceiveCloudClipboardProgressRingActive = true;
 
-            await Common.Service.CloudClipboardService.SetCloudClipboardActivation(SecureKeyStorage.GetAccountId(), SecureKeyStorage.GetGraphDeviceId(), value);
+            await Common.Service.CloudClipboardService.SetCloudClipboardActivation(SecureKeyStorage.GetAccountId(), deviceId, value);
 
             receiveCloudClipboard = value;
             OnPropertyChanged("ReceiveCloudClipboard");
@@ -236,13 +244,16 @@ namespace QuickShare.ViewModels
             try
             {
                 var result = await Common.Service.CloudClipboardService.GetDevices(SecureKeyStorage.GetAccountId());
-                var currentDevice = result.FirstOrDefault(x => x.DeviceID == SecureKeyStorage.GetGraphDeviceId());
+                var deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
+                var currentDevice = result.FirstOrDefault(x => (x.Name ?? "").ToLower() == deviceName.ToLower());
 
                 if (currentDevice == null)
                     return;
 
+                deviceId = currentDevice.DeviceID;
                 receiveCloudClipboard = currentDevice.CloudClipboardEnabled;
                 OnPropertyChanged("ReceiveCloudClipboard");
+                ReceiveCloudClipboardEnabled = true;
             }
             catch (Exception ex)
             {
@@ -250,7 +261,6 @@ namespace QuickShare.ViewModels
             }
             finally
             {
-                ReceiveCloudClipboardEnabled = true;
                 ReceiveCloudClipboardProgressRingActive = false;
             }
         }
