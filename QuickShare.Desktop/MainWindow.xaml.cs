@@ -73,6 +73,25 @@ namespace QuickShare.Desktop
 
                 AutoMeasurement.Client.TrackEvent("UnhandledException", "Fatal", exceptionMessage);
             }
+
+#if !SQUIRREL
+            //Close squirrel version of the app, if running
+            Process[] processes = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
+            if (processes.Length > 1)
+            {
+                processes.Where(p => p.Id != Process.GetCurrentProcess().Id).FirstOrDefault()?.Kill();
+
+                try
+                {
+                    var s = new StartupManager("Roamit Cloud Clipboard");
+                    s.RemoveApplicationFromCurrentUserStartup();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to remove squirrel version from startup: {ex.Message}");
+                }
+            }
+#endif
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -125,10 +144,17 @@ namespace QuickShare.Desktop
         private void InitNotifyIcon()
         {
             var contextMenu = new System.Windows.Forms.ContextMenu();
+
+#if SQUIRREL
             contextMenu.MenuItems.Add("&Open", OpenContextMenuItem_Click);
             contextMenu.MenuItems.Add("&Settings", SettingsContextMenuItem_Click);
             contextMenu.MenuItems.Add("-");
             contextMenu.MenuItems.Add("E&xit", ExitContextMenuItem_Click);
+#else
+            contextMenu.MenuItems.Add("&Open Clipboard Pane", OpenContextMenuItem_Click);
+            contextMenu.MenuItems.Add("Open &Roamit", OpenRoamitContextMenuItem_Click);
+            contextMenu.MenuItems.Add("&Settings", SettingsContextMenuItem_Click);
+#endif
 
             notifyIcon = new NotifyIcon
             {
@@ -138,6 +164,11 @@ namespace QuickShare.Desktop
                 Text = "Roamit PC Extension",
             };
             notifyIcon.MouseClick += NotifyIcon_MouseClick;
+        }
+
+        private void OpenRoamitContextMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenApp_Click(this, new RoutedEventArgs());
         }
 
         private void ExitContextMenuItem_Click(object sender, EventArgs e)
@@ -156,7 +187,7 @@ namespace QuickShare.Desktop
             ShowWindow();
         }
 
-        #region Stuff related to hiding window when clicked away
+#region Stuff related to hiding window when clicked away
         private void Window_Activated(object sender, EventArgs e)
         {
             System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
@@ -188,7 +219,7 @@ namespace QuickShare.Desktop
             lastTimeLostFocus = DateTime.UtcNow;
             this.Visibility = Visibility.Hidden;
         }
-        #endregion
+#endregion
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -385,7 +416,7 @@ namespace QuickShare.Desktop
 
         private void TryRegisterForStartup()
         {
-#if !DEBUG
+#if SQUIRREL
             try
             {
                 var startupManager = new StartupManager("Roamit Cloud Clipboard");
@@ -405,11 +436,15 @@ namespace QuickShare.Desktop
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            if (settingsWindow == null)
+#if SQUIRREL
+             if (settingsWindow == null)
                 InitSettingsWindow();
 
             settingsWindow.Show();
             settingsWindow.Activate();
+#else
+            Process.Start("roamit://settings");
+#endif
         }
 
         private void InitSettingsWindow()

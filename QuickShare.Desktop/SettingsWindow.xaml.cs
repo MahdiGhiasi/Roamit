@@ -46,7 +46,7 @@ namespace QuickShare.Desktop
                 Settings.Data.AccountId = "";
                 Settings.Save();
 
-#if !DEBUG
+#if SQUIRREL
                 try
                 {
                     var startupManager = new StartupManager("Roamit Cloud Clipboard");
