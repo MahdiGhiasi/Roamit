@@ -74,23 +74,22 @@
                                        Margin="0,8,0,0"
                                        TextWrapping="Wrap"
                                        Opacity="0.7"/>
-                            <TextBlock Text="To get started, install Roamit PC Extension on your PC."
-                                       Margin="0,8,0,0"
-                                       TextWrapping="Wrap"
-                                       Opacity="0.7"/>
-                            <HyperlinkButton Foreground="SkyBlue" Tapped="GetPCExtension_Tapped">
-                                <HyperlinkButton.Content>
-                                    <TextBlock TextWrapping="Wrap">
-                                    <Underline>
-                                        <Run Text="Get Roamit PC Extension" />
-                                    </Underline>
-                                    </TextBlock>
-                                </HyperlinkButton.Content>
-                            </HyperlinkButton>
-                            <StackPanel Visibility="{x:Bind Model.ReceiveCloudClipboardToggleVisibility, Mode=OneWay}">
-                                <TextBlock Text="Receive Cloud Clipboard on this device" 
+
+                            <TextBlock Text="Send clipboard content from device to my other devices" 
                                            TextWrapping="Wrap"
                                            Margin="0,12,0,0" />
+                            <RelativePanel>
+                                <ToggleSwitch x:Name="SendCloudClipboardToggle" 
+                                              IsOn="{x:Bind Model.SendCloudClipboard, Mode=TwoWay}" 
+                                              IsEnabled="{x:Bind Model.SendCloudClipboardEnabled, Mode=OneWay}" />
+                                <ProgressRing IsActive="{x:Bind Model.SendCloudClipboardProgressRingActive, Mode=OneWay}"
+                                              RelativePanel.RightOf="SendCloudClipboardToggle" 
+                                              RelativePanel.AlignVerticalCenterWithPanel="True" />
+                            </RelativePanel>
+                            <StackPanel Visibility="{x:Bind Model.ReceiveCloudClipboardToggleVisibility, Mode=OneWay}">
+                                <TextBlock Text="Receive cloud clipboard on this device" 
+                                           TextWrapping="Wrap"
+                                           Margin="0,8,0,0" />
                                 <RelativePanel>
                                     <ToggleSwitch x:Name="ReceiveCloudClipboardToggle" 
                                                   IsOn="{x:Bind Model.ReceiveCloudClipboard, Mode=TwoWay}" 
@@ -100,6 +99,8 @@
                                                   RelativePanel.AlignVerticalCenterWithPanel="True" />
                                 </RelativePanel>
                             </StackPanel>
+                            <HyperlinkButton Content="Manage cloud clipboard for my other devices"
+                                             Foreground="SkyBlue" />
                             <TextBlock Margin="0,12,0,0"
                                        TextWrapping="Wrap"
                                        Foreground="DarkCyan"

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Diagnostics;
 using QuickShare.HelperClasses.Version;
 using QuickShare.HelperClasses;
+using Windows.Storage;
 
 namespace QuickShare.ViewModels
 {
@@ -28,6 +29,12 @@ namespace QuickShare.ViewModels
             {
                 extensionsSectionVisibility = Visibility.Collapsed;
                 chromeFirefoxExtensionVisibility = Visibility.Collapsed;
+            }
+
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
+            {
+                if (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc))
+                    sendCloudClipboard = scc;
             }
 
             RetrieveCloudClipboardActivationStatus();
@@ -273,6 +280,65 @@ namespace QuickShare.ViewModels
             {
                 receiveCloudClipboardProgressRingActive = value;
                 OnPropertyChanged("ReceiveCloudClipboardProgressRingActive");
+            }
+        }
+
+        private bool sendCloudClipboard = false;
+        public bool SendCloudClipboard
+        {
+            get { return sendCloudClipboard; }
+            set
+            {
+                SetSendCloudClipboardValue(value);
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "SendCloudClipboard", value ? "activated" : "deactivated").Build());
+#endif
+            }
+        }
+
+        private async void SetSendCloudClipboardValue(bool value)
+        {
+            SendCloudClipboardProgressRingActive = true;
+            SendCloudClipboardEnabled = false;
+
+            sendCloudClipboard = value;
+            ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = value.ToString();
+            if (value == true)
+                await PCExtensionHelper.StartPCExtension();
+            else
+                await PCExtensionHelper.StopPCExtension();
+
+            OnPropertyChanged("SendCloudClipboard");
+
+            SendCloudClipboardProgressRingActive = false;
+            SendCloudClipboardEnabled = true;
+        }
+
+        private bool sendCloudClipboardEnabled = true;
+        public bool SendCloudClipboardEnabled
+        {
+            get
+            {
+                return sendCloudClipboardEnabled;
+            }
+            set
+            {
+                sendCloudClipboardEnabled = value;
+                OnPropertyChanged("SendCloudClipboardEnabled");
+            }
+        }
+
+        private bool sendCloudClipboardProgressRingActive = false;
+        public bool SendCloudClipboardProgressRingActive
+        {
+            get
+            {
+                return sendCloudClipboardProgressRingActive;
+            }
+            private set
+            {
+                sendCloudClipboardProgressRingActive = value;
+                OnPropertyChanged("SendCloudClipboardProgressRingActive");
             }
         }
 

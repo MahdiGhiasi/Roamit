@@ -266,6 +266,8 @@ namespace QuickShare
 
             TrialSettings.IsTrialChanged += TrialSettings_IsTrialChanged;
             TrialHelper.CheckIfFullVersion();
+
+            await PCExtensionHelper.StartPCExtension();
         }
 
         private async void TrialSettings_IsTrialChanged()

@@ -109,6 +109,7 @@
     <Compile Include="ViewModels\History\HistorySingleFileItem.cs" />
     <Compile Include="ViewModels\History\HistoryItem.cs" />
     <Compile Include="ViewModels\History\HistoryWebLinkItem.cs" />
+    <None Include="PCExtension\RoamitPCExtension.exe.config" />
     <None Include="project.json" />
     <Compile Include="Classes\Version\AdDisplayTrigger.cs" />
     <Compile Include="Flyouts\SignInNoticeFlyout.xaml.cs">
@@ -236,6 +237,50 @@
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="PCExtension\Common.dll" />
+    <Content Include="PCExtension\Common.pdb" />
+    <Content Include="PCExtension\CSharpAnalytics.Net45.dll" />
+    <Content Include="PCExtension\DataStore.dll" />
+    <Content Include="PCExtension\DataStore.pdb" />
+    <Content Include="PCExtension\DeltaCompressionDotNet.dll" />
+    <Content Include="PCExtension\DeltaCompressionDotNet.MsDelta.dll" />
+    <Content Include="PCExtension\DeltaCompressionDotNet.PatchApi.dll" />
+    <Content Include="PCExtension\DevicesListManager.dll" />
+    <Content Include="PCExtension\DevicesListManager.pdb" />
+    <Content Include="PCExtension\Mono.Cecil.dll" />
+    <Content Include="PCExtension\Mono.Cecil.Mdb.dll" />
+    <Content Include="PCExtension\Mono.Cecil.Pdb.dll" />
+    <Content Include="PCExtension\Mono.Cecil.Rocks.dll" />
+    <Content Include="PCExtension\Newtonsoft.Json.dll" />
+    <TransformFile Include="PCExtension\Newtonsoft.Json.xml" />
+    <Content Include="PCExtension\NuGet.Squirrel.dll" />
+    <Content Include="PCExtension\NuGet.Squirrel.pdb" />
+    <Content Include="PCExtension\Resources\green-tick.png" />
+    <Content Include="PCExtension\Resources\icon.ico" />
+    <Content Include="PCExtension\Resources\icon16.png" />
+    <Content Include="PCExtension\Resources\icon3_BUo_icon.ico" />
+    <Content Include="PCExtension\Resources\icon48.png" />
+    <Content Include="PCExtension\Resources\icon_white.ico" />
+    <Content Include="PCExtension\Resources\settings.png" />
+    <Content Include="PCExtension\RoamitPCExtension.exe" />
+    <Content Include="PCExtension\RoamitPCExtension.pdb" />
+    <Content Include="PCExtension\SharpCompress.dll" />
+    <Content Include="PCExtension\Splat.dll" />
+    <Content Include="PCExtension\Splat.pdb" />
+    <Content Include="PCExtension\Squirrel.dll" />
+    <Content Include="PCExtension\Squirrel.pdb" />
+    <Content Include="PCExtension\System.Runtime.WindowsRuntime.dll" />
+    <Content Include="PCExtension\System.Runtime.WindowsRuntime.UI.Xaml.dll" />
+    <TransformFile Include="PCExtension\System.Runtime.WindowsRuntime.UI.Xaml.xml" />
+    <TransformFile Include="PCExtension\System.Runtime.WindowsRuntime.xml" />
+    <Content Include="PCExtension\Xamarin.Forms.Core.dll" />
+    <Content Include="PCExtension\Xamarin.Forms.Core.pdb" />
+    <TransformFile Include="PCExtension\Xamarin.Forms.Core.xml" />
+    <Content Include="PCExtension\Xamarin.Forms.Platform.dll" />
+    <Content Include="PCExtension\Xamarin.Forms.Platform.pdb" />
+    <Content Include="PCExtension\Xamarin.Forms.Xaml.dll" />
+    <Content Include="PCExtension\Xamarin.Forms.Xaml.pdb" />
+    <TransformFile Include="PCExtension\Xamarin.Forms.Xaml.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -360,6 +405,9 @@
     </SDKReference>
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsDesktop, Version=10.0.15063.0">
+      <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
     <SDKReference Include="WindowsMobile, Version=10.0.15063.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
