@@ -17,7 +17,7 @@ namespace QuickShare
         public static EventHandler PCExtensionAccountIdSet;
         public static EventHandler PCExtensionLoginFailed;
 
-        private void OnPCAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private async void OnPCAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             AppServiceDeferral messageDeferral = args.GetDeferral();
             try
@@ -35,6 +35,18 @@ namespace QuickShare
                 {
                     ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = false.ToString();
                     PCExtensionLoginFailed?.Invoke(this, new EventArgs());
+                }
+                else if (action == "ShouldIRun")
+                {
+                    bool shouldItRun = false;
+
+                    if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
+                        bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out shouldItRun);
+
+                    var status = await args.Request.SendResponseAsync(new Windows.Foundation.Collections.ValueSet
+                    {
+                        {"Answer", shouldItRun ? "Yes" : "No" },
+                    });
                 }
             }
             catch (Exception ex)

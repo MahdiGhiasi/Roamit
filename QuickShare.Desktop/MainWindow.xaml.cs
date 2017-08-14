@@ -55,6 +55,13 @@ namespace QuickShare.Desktop
             this.Opacity = 0;
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
 
+            InitApp();
+        }
+
+        private async void InitApp()
+        {
+            await ConfirmActiveStatus();
+
             InitNotifyIcon();
 
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
@@ -95,6 +102,32 @@ namespace QuickShare.Desktop
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Failed to remove squirrel version from startup: {ex.Message}");
+                }
+            }
+#endif
+        }
+
+        private async Task ConfirmActiveStatus()
+        {
+#if ((!SQUIRREL) && (!DEBUG))
+            AppServiceConnection connection = new AppServiceConnection()
+            {
+                AppServiceName = "com.roamit.pcservice",
+                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+            };
+            var result = await connection.OpenAsync();
+            if (result == AppServiceConnectionStatus.Success)
+            {
+                ValueSet valueSet = new ValueSet
+                {
+                    { "Action", "ShouldIRun" },
+                };
+                var response = await connection.SendMessageAsync(valueSet);
+
+                if ((response.Message.ContainsKey("Answer")) && (response.Message["Answer"] as string == "No"))
+                {
+                    System.Windows.Application.Current.Shutdown();
+                    return;
                 }
             }
 #endif

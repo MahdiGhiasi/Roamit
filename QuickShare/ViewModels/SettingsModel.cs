@@ -317,6 +317,8 @@ namespace QuickShare.ViewModels
 
             sendCloudClipboard = value;
             ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = value.ToString();
+            OnPropertyChanged("SendCloudClipboard");
+
             if (value == true)
             {
                 await PCExtensionHelper.StartPCExtension();
@@ -327,8 +329,6 @@ namespace QuickShare.ViewModels
                 SendCloudClipboardProgressRingActive = false;
                 SendCloudClipboardEnabled = true;
             }
-
-            OnPropertyChanged("SendCloudClipboard");
         }
 
         private bool sendCloudClipboardEnabled = true;
