@@ -232,6 +232,7 @@ namespace QuickShare
                     string clipboardData = ParseFastClipboardUri(pEventArgs.Uri.AbsoluteUri);
                     string launchUriData = ParseLaunchUri(pEventArgs.Uri.AbsoluteUri);
                     bool isUpgrade = ParseUpgrade(pEventArgs.Uri.AbsoluteUri);
+                    bool isSettings = ParseSettings(pEventArgs.Uri.AbsoluteUri);
 
                     if (isUpgrade)
                     {
@@ -246,6 +247,14 @@ namespace QuickShare
                             TrialHelper.AskForUpgrade();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         }
+                    }
+                    else if (isSettings)
+                    {
+                        if (rootFrame == null)
+                        {
+                            LaunchRootFrameIfNecessary(ref rootFrame, false);
+                        }
+                        rootFrame.Navigate(typeof(MainPage), "settings");
                     }
                     else if (clipboardData.Length > 0)
                     {
@@ -300,6 +309,15 @@ namespace QuickShare
             s = s.ToLower();
 
             if ((s == "roamit://upgrade") || (s == "roamit://upgrade/"))
+                return true;
+            return false;
+        }
+
+        private bool ParseSettings(string s)
+        {
+            s = s.ToLower();
+
+            if ((s == "roamit://settings") || (s == "roamit://settings/"))
                 return true;
             return false;
         }

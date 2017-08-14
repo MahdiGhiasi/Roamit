@@ -194,6 +194,11 @@ namespace QuickShare
                 ContentFrame.Navigate(typeof(MainActions));
                 await Task.Delay(2000);
             }
+            else if ((e.Parameter != null) && (e.Parameter.ToString() == "settings"))
+            {
+                ContentFrame.Navigate(typeof(Settings));
+                ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
+            }
             else
             {
                 ContentFrame.Navigate(typeof(MainActions));
