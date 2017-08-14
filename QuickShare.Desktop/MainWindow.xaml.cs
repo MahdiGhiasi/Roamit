@@ -40,7 +40,9 @@ namespace QuickShare.Desktop
 
         bool isExpired = false;
 
+#if SQUIRREL
         DispatcherTimer updateTimer;
+#endif
 
         public MainWindow()
         {
@@ -57,11 +59,13 @@ namespace QuickShare.Desktop
 
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
 
+#if SQUIRREL
             updateTimer = new DispatcherTimer()
             {
                 Interval = TimeSpan.FromMinutes(30),
             };
             updateTimer.Tick += UpdateTimer_Tick;
+#endif
 
             CheckAccountId(true);
 
@@ -126,10 +130,12 @@ namespace QuickShare.Desktop
             AutoMeasurement.Client.TrackScreenView("MainWindow");
         }
 
+#if SQUIRREL
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             CheckForUpdates();
         }
+#endif
 
         private async void CheckForUpdates()
         {
@@ -385,9 +391,11 @@ namespace QuickShare.Desktop
 
                 TryRegisterForStartup();
 
+#if SQUIRREL
                 if (!updateTimer.IsEnabled)
                     updateTimer.Start();
                 CheckForUpdates();
+#endif
 
                 return true;
             }
