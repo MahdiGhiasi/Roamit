@@ -107,6 +107,9 @@
     <Compile Include="HelperClasses\PCExtensionHelper.cs" />
     <Compile Include="HelperClasses\WhatsNewHelper.cs" />
     <Compile Include="Classes\ItemSources\HistoryItemSource.cs" />
+    <Compile Include="ServiceControllers\MessageCarrierService.cs" />
+    <Compile Include="ServiceControllers\NotificationService.cs" />
+    <Compile Include="ServiceControllers\PCExtensionService.cs" />
     <Compile Include="ViewModels\DevicesSettingsViewModel.cs" />
     <Compile Include="ViewModels\History\FileInfo.cs" />
     <Compile Include="ViewModels\History\HistoryClipboardTextItem.cs" />
@@ -274,10 +277,10 @@
     <Content Include="PCExtension\Splat.pdb" />
     <Content Include="PCExtension\Squirrel.dll" />
     <Content Include="PCExtension\Squirrel.pdb" />
-    <Content Include="PCExtension\System.Runtime.WindowsRuntime.dll" />
-    <Content Include="PCExtension\System.Runtime.WindowsRuntime.UI.Xaml.dll" />
     <TransformFile Include="PCExtension\System.Runtime.WindowsRuntime.UI.Xaml.xml" />
     <TransformFile Include="PCExtension\System.Runtime.WindowsRuntime.xml" />
+    <Content Include="PCExtension\System.Runtime.WindowsRuntime.dll" />
+    <Content Include="PCExtension\System.Runtime.WindowsRuntime.UI.Xaml.dll" />
     <Content Include="PCExtension\Xamarin.Forms.Core.dll" />
     <Content Include="PCExtension\Xamarin.Forms.Core.pdb" />
     <TransformFile Include="PCExtension\Xamarin.Forms.Core.xml" />

@@ -11,10 +11,11 @@ using System.Diagnostics;
 using QuickShare.HelperClasses.Version;
 using QuickShare.HelperClasses;
 using Windows.Storage;
+using Windows.UI.Core;
 
 namespace QuickShare.ViewModels
 {
-    public class SettingsViewModel : INotifyPropertyChanged
+    public class SettingsViewModel : INotifyPropertyChanged, IDisposable
     {
         string deviceId = "";
         
@@ -40,6 +41,9 @@ namespace QuickShare.ViewModels
             }
 
             RetrieveCloudClipboardActivationStatus();
+
+            App.PCExtensionAccountIdSet += PCExtension_AccountIdSet;
+            App.PCExtensionLoginFailed += PCExtension_LoginFailed;
         }
 
         public void CheckTrialStatus()
@@ -314,14 +318,17 @@ namespace QuickShare.ViewModels
             sendCloudClipboard = value;
             ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = value.ToString();
             if (value == true)
+            {
                 await PCExtensionHelper.StartPCExtension();
+            }
             else
-                await PCExtensionHelper.StopPCExtension();
+            {
+                await PCExtensionHelper.StopPCExtensionIfRunning();
+                SendCloudClipboardProgressRingActive = false;
+                SendCloudClipboardEnabled = true;
+            }
 
             OnPropertyChanged("SendCloudClipboard");
-
-            SendCloudClipboardProgressRingActive = false;
-            SendCloudClipboardEnabled = true;
         }
 
         private bool sendCloudClipboardEnabled = true;
@@ -350,6 +357,29 @@ namespace QuickShare.ViewModels
                 sendCloudClipboardProgressRingActive = value;
                 OnPropertyChanged("SendCloudClipboardProgressRingActive");
             }
+        }
+
+        private async void PCExtension_AccountIdSet(object sender, EventArgs e)
+        {
+            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
+            {
+                SendCloudClipboardProgressRingActive = false;
+                SendCloudClipboardEnabled = true;
+            });
+        }
+
+        private async void PCExtension_LoginFailed(object sender, EventArgs e)
+        {
+            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
+            {
+                SendCloudClipboard = false;
+            });
+        }
+
+        public void Dispose()
+        {
+            App.PCExtensionAccountIdSet -= PCExtension_AccountIdSet;
+            App.PCExtensionLoginFailed -= PCExtension_LoginFailed;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

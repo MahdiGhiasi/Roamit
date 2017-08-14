@@ -26,7 +26,7 @@ namespace QuickShare.HelperClasses
             await Windows.ApplicationModel.FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }
 
-        internal static async Task StopPCExtension()
+        internal static async Task StopPCExtensionIfRunning()
         {
             if (!IsSupported)
                 return;

@@ -359,11 +359,14 @@ namespace QuickShare
             deferral.Complete();
         }
 
-        private AppServiceConnection appServiceConnection;
-        private BackgroundTaskDeferral appServiceDeferral;
+        private AppServiceConnection notificationAppServiceConnection;
+        private BackgroundTaskDeferral notificationAppServiceDeferral;
 
         private AppServiceConnection messageCarrierAppServiceConnection;
         private BackgroundTaskDeferral messageCarrierAppServiceDeferral;
+
+        private AppServiceConnection pcAppServiceConnection;
+        private BackgroundTaskDeferral pcAppServiceDeferral;
 
         protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
@@ -374,11 +377,11 @@ namespace QuickShare
 
             if (appService?.Name == "com.roamit.notificationservice")
             {
-                appServiceDeferral = taskInstance.GetDeferral();
-                taskInstance.Canceled += OnAppServicesCanceled;
-                appServiceConnection = appService.AppServiceConnection;
-                appServiceConnection.RequestReceived += OnAppServiceRequestReceived;
-                appServiceConnection.ServiceClosed += AppServiceConnection_ServiceClosed;
+                notificationAppServiceDeferral = taskInstance.GetDeferral();
+                taskInstance.Canceled += OnNotificationAppServicesCanceled;
+                notificationAppServiceConnection = appService.AppServiceConnection;
+                notificationAppServiceConnection.RequestReceived += OnNotificationAppServiceRequestReceived;
+                notificationAppServiceConnection.ServiceClosed += NotificationAppServiceConnection_ServiceClosed;
             }
             else if (appService?.Name == "com.roamit.messagecarrierservice")
             {
@@ -388,96 +391,13 @@ namespace QuickShare
                 messageCarrierAppServiceConnection.RequestReceived += OnMessageCarrierAppServiceRequestReceived;
                 messageCarrierAppServiceConnection.ServiceClosed += MessageCarrierAppServiceConnection_ServiceClosed;
             }
-        }
-
-        private async void OnAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
-        {
-            try
+            else if (appService?.Name == "com.roamit.pcservice")
             {
-                AppServiceDeferral messageDeferral = args.GetDeferral();
-                ValueSet message = args.Request.Message;
-
-                if (message["Type"].ToString() == "FileTransferProgress")
-                {
-                    await DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
-                    {
-                        await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<FileTransferProgressEventArgs>(message["Data"] as string));
-                    });
-                }
-                else if (message["Type"].ToString() == "TextReceive")
-                {
-                    await DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
-                    {
-                        await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<TextReceiveEventArgs>(message["Data"] as string));
-                    });
-                }
-
-                ValueSet returnMessage = new ValueSet();
-                returnMessage.Add("Status", "OK");
-                await args.Request.SendResponseAsync(returnMessage);
-
-                messageDeferral.Complete();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Unhandled exception in OnAppServiceRequestReceived():");
-                Debug.WriteLine(ex.ToString());
-                await (new MessageDialog(ex.ToString(), "Unhandled exception in OnAppServiceRequestReceived()")).ShowAsync();
-            }
-        }
-
-        private void OnAppServicesCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
-        {
-            appServiceDeferral?.Complete();
-        }
-
-        private void AppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
-        {
-            appServiceDeferral?.Complete();
-        }
-
-        private void MessageCarrierAppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
-        {
-            messageCarrierAppServiceDeferral?.Complete();
-        }
-
-        private void OnMessageCarrierAppServicesCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
-        {
-            messageCarrierAppServiceDeferral?.Complete();
-        }
-
-        DateTime lastCall = DateTime.MinValue;
-        private async void OnMessageCarrierAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
-        {
-            var deferral = args.GetDeferral();
-
-            try
-            {
-                Debug.WriteLine("A message carrier received. Processing...");
-                await MainPage.Current.AndroidPackageManager.MessageCarrierReceivedAsync(args.Request);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Error while processing MessageCarrier.");
-                Debug.WriteLine(ex.ToString());
-            }
-
-            lastCall = DateTime.Now;
-            CheckIfIsOver(lastCall);
-
-            deferral.Complete();
-        }
-
-        private async void CheckIfIsOver(DateTime callTime)
-        {
-            await Task.Delay(TimeSpan.FromSeconds(4));
-            if (lastCall != callTime)
-                return;
-
-            if (!MainPage.Current.AndroidPackageManager.HasWaitingMessageCarrier)
-            {
-                Debug.WriteLine("We're done here.");
-                messageCarrierAppServiceDeferral.Complete();
+                pcAppServiceDeferral = taskInstance.GetDeferral();
+                taskInstance.Canceled += OnPCAppServicesCanceled;
+                pcAppServiceConnection = appService.AppServiceConnection;
+                pcAppServiceConnection.RequestReceived += OnPCAppServiceRequestReceived;
+                pcAppServiceConnection.ServiceClosed += PCAppServiceConnection_ServiceClosed;
             }
         }
 

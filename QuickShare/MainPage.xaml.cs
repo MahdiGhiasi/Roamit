@@ -267,7 +267,10 @@ namespace QuickShare
             TrialSettings.IsTrialChanged += TrialSettings_IsTrialChanged;
             TrialHelper.CheckIfFullVersion();
 
-            await PCExtensionHelper.StartPCExtension();
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
+                if (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc))
+                    if (scc == true)
+                        await PCExtensionHelper.StartPCExtension();
         }
 
         private async void TrialSettings_IsTrialChanged()

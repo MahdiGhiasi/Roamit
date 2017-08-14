@@ -35,6 +35,9 @@
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="com.roamit.notificationservice" />
         </uap:Extension>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="com.roamit.pcservice" />
+        </uap:Extension>
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="roamit">
             <uap:Logo>Assets\Logo.png</uap:Logo>

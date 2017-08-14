@@ -20,6 +20,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
 
 namespace QuickShare.Desktop
 {
@@ -397,7 +399,7 @@ namespace QuickShare.Desktop
             signInWindow.Closed += SignInWindow_Closed;
         }
 
-        private void SignInWindow_Closed(object sender, EventArgs e)
+        private async void SignInWindow_Closed(object sender, EventArgs e)
         {
             signInWindow.Closed -= SignInWindow_Closed;
             signInWindow = null;
@@ -411,6 +413,48 @@ namespace QuickShare.Desktop
                     "You can check the status and change settings by clicking the Roamit icon in the system tray.", ToolTipIcon.None);
 
                 TryRegisterForStartup();
+
+#if !SQUIRREL
+                AppServiceConnection connection = new AppServiceConnection()
+                {
+                    AppServiceName = "com.roamit.pcservice",
+                    PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+                };
+                var result = await connection.OpenAsync();
+                if (result == AppServiceConnectionStatus.Success)
+                {
+                    ValueSet valueSet = new ValueSet
+                    {
+                        { "Action", "SetAccountId" },
+                        { "AccountId", Settings.Data.AccountId },
+                    };
+                    var response = await connection.SendMessageAsync(valueSet);
+                }
+#endif
+            }
+            else
+            {
+#if !SQUIRREL
+                AppServiceConnection connection = new AppServiceConnection()
+                {
+                    AppServiceName = "com.roamit.pcservice",
+                    PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+                };
+                var result = await connection.OpenAsync();
+                if (result == AppServiceConnectionStatus.Success)
+                {
+                    ValueSet valueSet = new ValueSet
+                    {
+                        { "Action", "LoginFailed" },
+                    };
+                    var response = await connection.SendMessageAsync(valueSet);
+                    if (response.Status == AppServiceResponseStatus.Success)
+                    {
+                        notifyIcon.Visible = false;
+                        System.Windows.Application.Current.Shutdown();
+                    }
+                }
+#endif
             }
         }
 
