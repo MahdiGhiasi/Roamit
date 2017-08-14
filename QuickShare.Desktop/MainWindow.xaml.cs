@@ -76,6 +76,10 @@ namespace QuickShare.Desktop
 
             CheckAccountId(true);
 
+#if !SQUIRREL
+            ApplicationRestart.RegisterForRestart();
+#endif
+
             if (Properties.Settings.Default.HasLastExceptionMessage)
             {
                 var exceptionMessage = Properties.Settings.Default.LastExceptionMessage ?? "null";
