@@ -197,6 +197,7 @@ namespace QuickShare
             else if ((e.Parameter != null) && (e.Parameter.ToString() == "settings"))
             {
                 ContentFrame.Navigate(typeof(Settings));
+                ContentFrame.BackStack.Clear();
                 ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
             }
             else
