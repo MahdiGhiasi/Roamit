@@ -83,6 +83,7 @@ namespace QuickShare
             finally
             {
                 messageDeferral.Complete();
+                pcAppServiceDeferral?.Complete();
             }
         }
 
