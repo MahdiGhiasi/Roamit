@@ -25,6 +25,8 @@ namespace QuickShare.HelperClasses
 
             App.PCExtensionCurrentPurpose = App.PCExtensionPurpose.Default;
             await Windows.ApplicationModel.FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+
+            await Task.Delay(TimeSpan.FromSeconds(1));
         }
 
         internal static async Task StopPCExtensionIfRunning()
@@ -34,6 +36,8 @@ namespace QuickShare.HelperClasses
 
             App.PCExtensionCurrentPurpose = App.PCExtensionPurpose.Genocide;
             await Windows.ApplicationModel.FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
         }
     }
 }
