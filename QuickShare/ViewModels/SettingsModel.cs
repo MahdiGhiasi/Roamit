@@ -10,6 +10,7 @@ using System.Linq;
 using System.Diagnostics;
 using QuickShare.HelperClasses.Version;
 using QuickShare.HelperClasses;
+using Windows.Storage;
 
 namespace QuickShare.ViewModels
 {
@@ -30,7 +31,18 @@ namespace QuickShare.ViewModels
                 chromeFirefoxExtensionVisibility = Visibility.Collapsed;
             }
 
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("TypeBasedDownloadFolder"))
+                ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] = false;
+            typeBasedDownloadFolderToggle = (ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] as bool?) ?? false;
+
+            InitDownloadLocation();
+
             RetrieveCloudClipboardActivationStatus();
+        }
+
+        private async void InitDownloadLocation()
+        {
+            DefaultDownloadLocation = (await DownloadFolderHelper.GetDefaultDownloadFolderAsync()).Path;
         }
 
         public void CheckTrialStatus()
@@ -273,6 +285,35 @@ namespace QuickShare.ViewModels
             {
                 receiveCloudClipboardProgressRingActive = value;
                 OnPropertyChanged("ReceiveCloudClipboardProgressRingActive");
+            }
+        }
+
+        private string defaultDownloadLocation = "";
+        public string DefaultDownloadLocation
+        {
+            get
+            {
+                return defaultDownloadLocation;
+            }
+            set
+            {
+                defaultDownloadLocation = value;
+                OnPropertyChanged("DefaultDownloadLocation");
+            }
+        }
+
+        private bool typeBasedDownloadFolderToggle = false;
+        public bool TypeBasedDownloadFolderToggle
+        {
+            get
+            {
+                return typeBasedDownloadFolderToggle;
+            }
+            set
+            {
+                typeBasedDownloadFolderToggle = value;
+                ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] = value;
+                OnPropertyChanged("TypeBasedDownloadFolderToggle");
             }
         }
 

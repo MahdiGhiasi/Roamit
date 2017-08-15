@@ -50,7 +50,7 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBox Text="C:\" 
+                                <TextBox Text="{x:Bind Model.DefaultDownloadLocation, Mode=OneWay}" 
                                          IsReadOnly="True"
                                          Grid.Column="0" />
                                 <Button Content="..."
@@ -64,7 +64,7 @@
                                        Margin="0,24,0,4" />
                             <TextBlock Text="This applies to Music, Video and Pictures"
                                        Opacity="0.7" />
-                            <ToggleSwitch  />
+                            <ToggleSwitch IsOn="{x:Bind Model.TypeBasedDownloadFolderToggle, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
                             <TextBlock Text="Browser Integration" FontWeight="Bold" />

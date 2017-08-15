@@ -1,5 +1,6 @@
 ﻿using GoogleAnalytics;
 using QuickShare.Classes;
+using QuickShare.Common;
 using QuickShare.HelperClasses.Version;
 using QuickShare.ViewModels;
 using System;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -108,9 +110,20 @@ namespace QuickShare
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.TwitterUrl));
         }
 
-        private void ChooseDownloadFolder_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void ChooseDownloadFolder_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            FolderPicker fp = new FolderPicker()
+            {
+                SuggestedStartLocation = PickerLocationId.Downloads,
+            };
+            fp.FileTypeFilter.Add("*");
+            var selectedFolder = await fp.PickSingleFolderAsync();
 
+            if (selectedFolder == null)
+                return;
+
+            var downloadFolder = await DownloadFolderHelper.TrySetDefaultDownloadFolderAsync(selectedFolder);
+            Model.DefaultDownloadLocation = downloadFolder.Path;
         }
     }
 }

@@ -86,10 +86,6 @@ namespace QuickShare.ServiceTask
                 Debug.WriteLine("A request received");
                 if (args.Request.Message.ContainsKey("Receiver"))
                 {
-                    var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
-                    if (!futureAccessList.ContainsItem("downloadMainFolder"))
-                        return;
-
                     string receiver = args.Request.Message["Receiver"] as string;
 
                     Debug.WriteLine($"Receiver is {receiver}");
@@ -134,7 +130,7 @@ namespace QuickShare.ServiceTask
 
                                 System.Diagnostics.Debug.WriteLine("Goodbye");
                                 _appServiceconnection.Dispose();
-                                _deferral.Complete();
+                                _deferral?.Complete();
                                 _deferral = null;
                             }
                         }
@@ -177,10 +173,11 @@ namespace QuickShare.ServiceTask
         private static async Task<IFolder> DownloadFolderDecider(string[] fileTypes)
         {
             IStorageFolder folder;
-            if (false) //TODO: check if option is enabled
-                folder = await DownloadFolderHelper.GetDefaultDownloadFolderAsync();
-            else
+            bool typeBasedDownloadFolder = (ApplicationData.Current.LocalSettings.Values.ContainsKey("TypeBasedDownloadFolder")) ? ((ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] as bool?) ?? false) : false;
+            if (typeBasedDownloadFolder)
                 folder = await DownloadFolderHelper.GetAppropriateDownloadFolderAsync(fileTypes);
+            else
+                folder = await DownloadFolderHelper.GetDefaultDownloadFolderAsync();
 
             return new WinRTFolder(folder);
         }

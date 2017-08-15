@@ -62,5 +62,7 @@
     <Capability Name="privateNetworkClientServer" />
     <uap3:Capability Name="remoteSystem" />
     <uap:Capability Name="picturesLibrary" />
+    <uap:Capability Name="musicLibrary" />
+    <uap:Capability Name="videosLibrary" />
   </Capabilities>
 </Package>

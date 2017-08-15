@@ -31,9 +31,9 @@ namespace QuickShare.Common
             return GetDefaultDownloadFolder().AsAsyncOperation();
         }
 
-        public static IAsyncOperation<IStorageFolder> TrySetDefaultDownloadFolderAsync()
+        public static IAsyncOperation<IStorageFolder> TrySetDefaultDownloadFolderAsync(IStorageFolder folder)
         {
-            return GetDefaultDownloadFolder().AsAsyncOperation();
+            return TrySetDownloadFolder(folder).AsAsyncOperation();
         }
 
         public static IAsyncOperation<IStorageFolder> GetAppropriateDownloadFolderAsync(string fileType)
@@ -135,21 +135,21 @@ namespace QuickShare.Common
             fileType = fileType.ToLower();
             switch (fileType)
             {
-                case "mp4":
-                case "mov":
-                case "avi":
-                case "mkv":
+                case ".mp4":
+                case ".mov":
+                case ".avi":
+                case ".mkv":
                     return FileTypeCategory.Video;
-                case "jpg":
-                case "jpeg":
-                case "png":
-                case "gif":
-                case "bmp":
+                case ".jpg":
+                case ".jpeg":
+                case ".png":
+                case ".gif":
+                case ".bmp":
                     return FileTypeCategory.Picture;
-                case "mp3":
-                case "m4a":
-                case "wav":
-                case "wma":
+                case ".mp3":
+                case ".m4a":
+                case ".wav":
+                case ".wma":
                     return FileTypeCategory.Music;
                 default:
                     return FileTypeCategory.General;
