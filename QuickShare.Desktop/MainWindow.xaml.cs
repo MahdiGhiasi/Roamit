@@ -60,7 +60,8 @@ namespace QuickShare.Desktop
 
         private async void InitApp()
         {
-            await ConfirmActiveStatus();
+            if ((await PurposeHelper.ConfirmPurpose()) == false)
+                return;
 
             InitNotifyIcon();
 
@@ -93,45 +94,25 @@ namespace QuickShare.Desktop
 
 #if !SQUIRREL
             //Close squirrel version of the app, if running
-            Process[] processes = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
+            var currentProcess = Process.GetCurrentProcess();
+            Process[] processes = Process.GetProcessesByName(currentProcess.ProcessName);
             if (processes.Length > 1)
             {
-                processes.Where(p => p.Id != Process.GetCurrentProcess().Id).FirstOrDefault()?.Kill();
+                var squirrelProcess = processes.Where(p => p.Id != currentProcess.Id && p.MainModule.FileName != currentProcess.MainModule.FileName).FirstOrDefault();
 
-                try
+                if (squirrelProcess != null)
                 {
-                    var s = new StartupManager("Roamit Cloud Clipboard");
-                    s.RemoveApplicationFromCurrentUserStartup();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Failed to remove squirrel version from startup: {ex.Message}");
-                }
-            }
-#endif
-        }
+                    squirrelProcess.CloseApp();
 
-        private async Task ConfirmActiveStatus()
-        {
-#if ((!SQUIRREL) && (!DEBUG))
-            AppServiceConnection connection = new AppServiceConnection()
-            {
-                AppServiceName = "com.roamit.pcservice",
-                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
-            };
-            var result = await connection.OpenAsync();
-            if (result == AppServiceConnectionStatus.Success)
-            {
-                ValueSet valueSet = new ValueSet
-                {
-                    { "Action", "ShouldIRun" },
-                };
-                var response = await connection.SendMessageAsync(valueSet);
-
-                if ((response.Message.ContainsKey("Answer")) && (response.Message["Answer"] as string == "No"))
-                {
-                    System.Windows.Application.Current.Shutdown();
-                    return;
+                    try
+                    {
+                        var s = new StartupManager("Roamit Cloud Clipboard");
+                        s.RemoveApplicationFromCurrentUserStartup();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Failed to remove squirrel version from startup: {ex.Message}");
+                    }
                 }
             }
 #endif
@@ -232,7 +213,7 @@ namespace QuickShare.Desktop
             ShowWindow();
         }
 
-#region Stuff related to hiding window when clicked away
+        #region Stuff related to hiding window when clicked away
         private void Window_Activated(object sender, EventArgs e)
         {
             System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
@@ -264,7 +245,7 @@ namespace QuickShare.Desktop
             lastTimeLostFocus = DateTime.UtcNow;
             this.Visibility = Visibility.Hidden;
         }
-#endregion
+        #endregion
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -274,7 +255,7 @@ namespace QuickShare.Desktop
                 {
                     this.Visibility = Visibility.Hidden;
                 }
-                else if ((DateTime.UtcNow -lastTimeLostFocus) > TimeSpan.FromSeconds(1))
+                else if ((DateTime.UtcNow - lastTimeLostFocus) > TimeSpan.FromSeconds(1))
                 {
                     ShowWindow();
                 }
@@ -294,7 +275,7 @@ namespace QuickShare.Desktop
         private void SetWindowPosition()
         {
             Screen.PrimaryScreen.GetScaleFactors(out double scaleFactorX, out double scaleFactorY);
-            
+
             var taskbarInfo = new Taskbar(); // taskbarInfo is not DPI aware (returns values in real pixels, not effective pixels)
 
             Debug.WriteLine($"Taskbar position is {taskbarInfo.Position.ToString()}");
@@ -390,7 +371,7 @@ namespace QuickShare.Desktop
                 Debug.WriteLine("Sending...");
 
                 lastSendTime = DateTime.UtcNow;
-                
+
                 await CloudClipboardService.SendCloudClipboard(Settings.Data.AccountId, text, CurrentDevice.GetDeviceName());
             }
             catch (Exception ex)
@@ -432,6 +413,10 @@ namespace QuickShare.Desktop
                 if (!updateTimer.IsEnabled)
                     updateTimer.Start();
                 CheckForUpdates();
+#elif !DEBUG
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                SendAccountIdToModernApp();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 #endif
 
                 return true;
@@ -460,46 +445,56 @@ namespace QuickShare.Desktop
                 TryRegisterForStartup();
 
 #if !SQUIRREL
-                AppServiceConnection connection = new AppServiceConnection()
-                {
-                    AppServiceName = "com.roamit.pcservice",
-                    PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
-                };
-                var result = await connection.OpenAsync();
-                if (result == AppServiceConnectionStatus.Success)
-                {
-                    ValueSet valueSet = new ValueSet
-                    {
-                        { "Action", "SetAccountId" },
-                        { "AccountId", Settings.Data.AccountId },
-                    };
-                    var response = await connection.SendMessageAsync(valueSet);
-                }
+                await SendAccountIdToModernApp();
 #endif
             }
             else
             {
 #if !SQUIRREL
-                AppServiceConnection connection = new AppServiceConnection()
-                {
-                    AppServiceName = "com.roamit.pcservice",
-                    PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
-                };
-                var result = await connection.OpenAsync();
-                if (result == AppServiceConnectionStatus.Success)
-                {
-                    ValueSet valueSet = new ValueSet
+                await SendLoginFailedToModernApp();
+#endif
+            }
+        }
+
+        private static async Task SendLoginFailedToModernApp()
+        {
+            AppServiceConnection connection = new AppServiceConnection()
+            {
+                AppServiceName = "com.roamit.pcservice",
+                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+            };
+            var result = await connection.OpenAsync();
+            if (result == AppServiceConnectionStatus.Success)
+            {
+                ValueSet valueSet = new ValueSet
                     {
                         { "Action", "LoginFailed" },
                     };
-                    var response = await connection.SendMessageAsync(valueSet);
-                    if (response.Status == AppServiceResponseStatus.Success)
-                    {
-                        notifyIcon.Visible = false;
-                        System.Windows.Application.Current.Shutdown();
-                    }
+                var response = await connection.SendMessageAsync(valueSet);
+                if (response.Status == AppServiceResponseStatus.Success)
+                {
+                    notifyIcon.Visible = false;
+                    System.Windows.Application.Current.Shutdown();
                 }
-#endif
+            }
+        }
+
+        private static async Task SendAccountIdToModernApp()
+        {
+            AppServiceConnection connection = new AppServiceConnection()
+            {
+                AppServiceName = "com.roamit.pcservice",
+                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+            };
+            var result = await connection.OpenAsync();
+            if (result == AppServiceConnectionStatus.Success)
+            {
+                ValueSet valueSet = new ValueSet
+                    {
+                        { "Action", "SetAccountId" },
+                        { "AccountId", Settings.Data.AccountId },
+                    };
+                var response = await connection.SendMessageAsync(valueSet);
             }
         }
 
@@ -603,6 +598,12 @@ namespace QuickShare.Desktop
             }
 
             knowTrialStatus = true;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (notifyIcon != null)
+                notifyIcon.Visible = false;
         }
 
         private void UpdateExpireTimeText()

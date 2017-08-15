@@ -17,6 +17,15 @@ namespace QuickShare
         public static EventHandler PCExtensionAccountIdSet;
         public static EventHandler PCExtensionLoginFailed;
 
+        public static PCExtensionPurpose PCExtensionCurrentPurpose = PCExtensionPurpose.Default;
+
+        public enum PCExtensionPurpose
+        {
+            Default,
+            Genocide,
+            ForgetEverything,
+        }
+
         private async void OnPCAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             AppServiceDeferral messageDeferral = args.GetDeferral();
@@ -36,17 +45,35 @@ namespace QuickShare
                     ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = false.ToString();
                     PCExtensionLoginFailed?.Invoke(this, new EventArgs());
                 }
-                else if (action == "ShouldIRun")
+                else if (action == "WhyImHere")
                 {
-                    bool shouldItRun = false;
-
-                    if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
-                        bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out shouldItRun);
-
-                    var status = await args.Request.SendResponseAsync(new Windows.Foundation.Collections.ValueSet
+                    if (PCExtensionCurrentPurpose == PCExtensionPurpose.Default)
                     {
-                        {"Answer", shouldItRun ? "Yes" : "No" },
-                    });
+                        bool shouldItRun = false;
+                        if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
+                            bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out shouldItRun);
+
+                        var status = await args.Request.SendResponseAsync(new Windows.Foundation.Collections.ValueSet
+                        {
+                            { "Answer", shouldItRun ? "Alone" : "Die" },
+                        });
+                    }
+                    else if (PCExtensionCurrentPurpose == PCExtensionPurpose.Genocide)
+                    {
+                        var status = await args.Request.SendResponseAsync(new Windows.Foundation.Collections.ValueSet
+                        {
+                            { "Answer", "Genocide" },
+                        });
+                    }
+                    else if (PCExtensionCurrentPurpose == PCExtensionPurpose.ForgetEverything)
+                    {
+                        var status = await args.Request.SendResponseAsync(new Windows.Foundation.Collections.ValueSet
+                        {
+                            { "Answer", "ForgetEverything" },
+                        });
+                    }
+
+                    PCExtensionCurrentPurpose = PCExtensionPurpose.Default;
                 }
             }
             catch (Exception ex)

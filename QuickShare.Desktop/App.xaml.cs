@@ -25,6 +25,7 @@ namespace QuickShare.Desktop
         [STAThread]
         public static void Main()
         {
+#if SQUIRREL
             if (SingleInstance<App>.InitializeAsFirstInstance(Unique))
             {
                 var application = new App();
@@ -35,6 +36,13 @@ namespace QuickShare.Desktop
                 // Allow single instance code to perform cleanup operations
                 SingleInstance<App>.Cleanup();
             }
+#else
+            var application = new App();
+
+            application.InitializeComponent();
+            application.Run();
+#endif
+
         }
 
 #region ISingleInstanceApp Members

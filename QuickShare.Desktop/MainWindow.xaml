@@ -9,6 +9,7 @@
         Activated="Window_Activated"
         MouseDown="Window_MouseDown"
         MouseMove="Window_MouseMove"
+        Closing="Window_Closing"
         Title="Roamit" 
         Height="400" 
         Width="300" 

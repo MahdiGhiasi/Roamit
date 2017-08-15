@@ -116,6 +116,8 @@
     <Compile Include="Config.cs" />
     <Compile Include="Helpers\ApplicationRestart.cs" />
     <Compile Include="Helpers\CurrentDevice.cs" />
+    <Compile Include="Helpers\ProcessHelper.cs" />
+    <Compile Include="Helpers\PurposeHelper.cs" />
     <Compile Include="Helpers\ScreenExtensions.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\Taskbar.cs" />

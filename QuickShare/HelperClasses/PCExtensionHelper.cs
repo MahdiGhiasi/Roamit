@@ -23,6 +23,7 @@ namespace QuickShare.HelperClasses
             if (!IsSupported)
                 return;
 
+            App.PCExtensionCurrentPurpose = App.PCExtensionPurpose.Default;
             await Windows.ApplicationModel.FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }
 
@@ -31,7 +32,8 @@ namespace QuickShare.HelperClasses
             if (!IsSupported)
                 return;
 
-            //TODO
+            App.PCExtensionCurrentPurpose = App.PCExtensionPurpose.Genocide;
+            await Windows.ApplicationModel.FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
         }
     }
 }
