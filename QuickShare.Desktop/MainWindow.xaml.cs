@@ -38,6 +38,9 @@ namespace QuickShare.Desktop
 
         bool isExpired = false;
 
+        double myHeight;
+        double myWidth;
+
         DispatcherTimer updateTimer;
 
         public MainWindow()
@@ -47,6 +50,11 @@ namespace QuickShare.Desktop
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             InitGoogleAnalytics();
+
+            myHeight = this.Height;
+            myWidth = this.Width;
+            this.Height = 0;
+            this.Width = 0;
 
             this.Opacity = 0;
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
@@ -217,6 +225,8 @@ namespace QuickShare.Desktop
 
         private void ShowWindow()
         {
+            this.Height = myHeight;
+            this.Width = myWidth;
             SetWindowPosition();
 
             this.Visibility = Visibility.Visible;
