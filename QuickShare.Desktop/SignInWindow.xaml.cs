@@ -35,10 +35,21 @@ namespace QuickShare.Desktop
         {
             Page1.Visibility = Visibility.Collapsed;
             Page2.Visibility = Visibility.Visible;
+
+            webBrowser.Navigate($"{Config.ServerAddress}/v2/Authenticate/Graph");
+        }
+
+        private void WebBrowser_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
+        {
+            browserLoading.Visibility = Visibility.Visible;
+            webBrowser.Visibility = Visibility.Collapsed;
         }
 
         private void WebBrowser_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
+            browserLoading.Visibility = Visibility.Collapsed;
+            webBrowser.Visibility = Visibility.Visible;
+
             if ((e.Uri.AbsolutePath.Contains("/v2/Graph/Welcome")) && (e.Uri.Query.Length > 12))
             {
                 Page2.Visibility = Visibility.Collapsed;
@@ -64,7 +75,6 @@ namespace QuickShare.Desktop
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            webBrowser.Navigate($"{Config.ServerAddress}/v2/Authenticate/Graph");
 #if !DEBUG
             AutoMeasurement.Client.TrackScreenView("SignInWindow");
 #endif
