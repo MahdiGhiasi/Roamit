@@ -79,7 +79,9 @@ namespace QuickShare.Desktop
                 Properties.Settings.Default.LastExceptionMessage = "";
                 Properties.Settings.Default.Save();
 
+#if !DEBUG
                 AutoMeasurement.Client.TrackEvent("UnhandledException", "Fatal", exceptionMessage);
+#endif
             }
         }
 

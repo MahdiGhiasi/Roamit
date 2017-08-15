@@ -66,7 +66,9 @@ namespace QuickShare.Desktop
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+#if !DEBUG
             AutoMeasurement.Client.TrackScreenView("SettingsWindow");
+#endif
         }
 
         private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)

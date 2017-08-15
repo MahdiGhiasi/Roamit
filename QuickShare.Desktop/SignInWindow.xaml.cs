@@ -52,7 +52,9 @@ namespace QuickShare.Desktop
                 Page3.Visibility = Visibility.Visible;
             }
 
+#if !DEBUG
             AutoMeasurement.Client.TrackEvent("SignInBrowser", "Navigated", System.Net.WebUtility.UrlEncode(e.Uri.OriginalString));
+#endif
         }
 
         private void FinishButton_Click(object sender, RoutedEventArgs e)
@@ -63,7 +65,9 @@ namespace QuickShare.Desktop
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             webBrowser.Navigate($"{Config.ServerAddress}/v2/Authenticate/Graph");
+#if !DEBUG
             AutoMeasurement.Client.TrackScreenView("SignInWindow");
+#endif
         }
     }
 }
