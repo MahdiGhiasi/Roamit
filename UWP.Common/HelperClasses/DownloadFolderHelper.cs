@@ -121,8 +121,8 @@ namespace QuickShare.Common
                 case FileTypeCategory.Video:
                     return await CreateOrGetRoamitFolder(KnownFolders.VideosLibrary);
                 case FileTypeCategory.Picture:
-                    //return await CreateOrGetRoamitFolder(KnownFolders.PicturesLibrary);
-                    return KnownFolders.SavedPictures;
+                    return await CreateOrGetRoamitFolder(KnownFolders.PicturesLibrary);
+                    //return KnownFolders.SavedPictures;
                 case FileTypeCategory.Music:
                     return await CreateOrGetRoamitFolder(KnownFolders.MusicLibrary);
                 default:
