@@ -59,10 +59,10 @@
                                         Margin="4,0,0,0"
                                         Tapped="ChooseDownloadFolder_Tapped" />
                             </Grid>
-                            <TextBlock Text="Put known file types into applicable user folders instead of default download folder" 
+                            <TextBlock Text="Put known file types into appropriate user folders (libraries) instead of default download folder" 
                                        TextWrapping="Wrap"
                                        Margin="0,24,0,4" />
-                            <TextBlock Text="This applies to Music, Video and Pictures"
+                            <TextBlock Text="This applies to Music, Video and Pictures."
                                        Opacity="0.7" />
                             <ToggleSwitch IsOn="{x:Bind Model.TypeBasedDownloadFolderToggle, Mode=TwoWay}" />
                         </StackPanel>
