@@ -93,21 +93,37 @@ namespace QuickShare
         private async void ContactButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri($"mailto:roamitapp@gmail.com?subject={Model.PackageName}%20v{Model.PackageVersion}"));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "Contact").Build());
+#endif
         }
 
         private async void GetChromeFirefoxExtension_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#browserExtensions"));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "GetBrowserExtensions").Build());
+#endif
         }
 
         private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.PCExtensionUrl));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "GetPCExtension").Build());
+#endif
         }
 
         private async void TwitterButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.TwitterUrl));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "Twitter").Build());
+#endif
         }
 
         private async void ChooseDownloadFolder_Tapped(object sender, TappedRoutedEventArgs e)

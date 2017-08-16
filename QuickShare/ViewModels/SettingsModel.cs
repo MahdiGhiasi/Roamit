@@ -314,6 +314,9 @@ namespace QuickShare.ViewModels
                 typeBasedDownloadFolderToggle = value;
                 ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] = value;
                 OnPropertyChanged("TypeBasedDownloadFolderToggle");
+#if !DEBUG
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "TypeBasedDownloadFolderToggle", value ? "activated" : "deactivated").Build());
+#endif
             }
         }
 
