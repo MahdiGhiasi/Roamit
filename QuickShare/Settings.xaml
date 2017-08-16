@@ -42,7 +42,7 @@
                                               RelativePanel.RightOf="ConnectToOtherDevicesToggle" 
                                               RelativePanel.AlignVerticalCenterWithPanel="True" />
                             </RelativePanel>
-                            <TextBlock Text="Default download folder:" 
+                            <TextBlock Text="Default file receive location:" 
                                        TextWrapping="Wrap"
                                        Margin="0,18,0,4" />
                             <Grid>
@@ -59,7 +59,7 @@
                                         Margin="4,0,0,0"
                                         Tapped="ChooseDownloadFolder_Tapped" />
                             </Grid>
-                            <TextBlock Text="Put known file types into appropriate user folders (libraries) instead of default download folder" 
+                            <TextBlock Text="Put known file types into appropriate user folders (libraries) instead of default receive location" 
                                        TextWrapping="Wrap"
                                        Margin="0,24,0,4" />
                             <TextBlock Text="This applies to Music, Video and Pictures."
