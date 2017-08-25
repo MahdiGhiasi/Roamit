@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
 using Windows.System;
+using Windows.ApplicationModel;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -36,7 +37,8 @@ namespace QuickShare.Flyouts
                     sp.Visibility = Visibility.Collapsed;
             }
 
-            VersionText.Text = DeviceInfo.ApplicationVersionString;
+            var pv = DeviceInfo.ApplicationVersion;
+            VersionText.Text = $"{pv.Major}.{pv.Minor}";
         }
 
         private void OKButton_Tapped(object sender, TappedRoutedEventArgs e)

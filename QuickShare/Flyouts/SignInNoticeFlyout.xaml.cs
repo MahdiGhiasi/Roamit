@@ -1,4 +1,5 @@
 ﻿using QuickShare.Classes;
+using QuickShare.Common;
 using QuickShare.HelperClasses;
 using QuickShare.MicrosoftGraphFunctions;
 using System;
@@ -42,7 +43,6 @@ namespace QuickShare.Flyouts
                 //await (new MessageDialog(await graph.GetUserUniqueIdAsync())).ShowAsync();
                 var userId = await graph.GetUserUniqueIdAsync();
                 SecureKeyStorage.SetUserId(userId);
-
             }
             catch (Exception ex)
             {

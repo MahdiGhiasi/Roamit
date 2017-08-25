@@ -80,8 +80,12 @@ namespace QuickShare
 
         private async void LogExceptionMessage(string msg)
         {
-            var message = new MessageDialog(msg, "Unhandled exception occured.");
-            await message.ShowAsync();
+            try
+            {
+                var message = new MessageDialog(msg, "Unhandled exception occured.");
+                await message.ShowAsync();
+            }
+            catch { }
         }
 
         /// <summary>

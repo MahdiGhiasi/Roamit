@@ -5,6 +5,8 @@
     <RootNamespace>QuickShare.DataStore</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Squirrel|AnyCPU'" />
+
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="3.1.0" />
   </ItemGroup>

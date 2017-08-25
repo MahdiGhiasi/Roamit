@@ -442,11 +442,11 @@ namespace QuickShare.FileTransfer
                     FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = keyTable[key].lastSliceId + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.Error, Message = message });
                 }
 
-                fileSendTcs?.SetResult(message);
+                fileSendTcs?.TrySetResult(message);
             }
             catch (Exception ex)
             {
-                fileSendTcs?.SetResult(ex.Message);
+                fileSendTcs?.TrySetResult(ex.Message);
             }
 
             return "OK";
@@ -464,11 +464,11 @@ namespace QuickShare.FileTransfer
                 if (!success)
                     message = query["message"][0];
 
-                queueFinishTcs.SetResult(message);
+                queueFinishTcs.TrySetResult(message);
             }
             catch (Exception ex)
             {
-                queueFinishTcs.SetResult(ex.Message);
+                queueFinishTcs.TrySetResult(ex.Message);
             }
 
             return "OK";

@@ -127,9 +127,10 @@ namespace System.Net.Http
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Diagnostics.Debug.WriteLine($"Exception in HttpListener.StartListenerAsync: {ex.Message}");
+                //throw;
             }
             finally
             {

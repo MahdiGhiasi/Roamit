@@ -41,6 +41,9 @@ namespace QuickShare.Desktop
         bool isExpired = false;
 
 #if SQUIRREL
+        double myHeight;
+        double myWidth;
+
         DispatcherTimer updateTimer;
 #endif
 
@@ -51,6 +54,11 @@ namespace QuickShare.Desktop
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             InitGoogleAnalytics();
+
+            myHeight = this.Height;
+            myWidth = this.Width;
+            this.Height = 0;
+            this.Width = 0;
 
             this.Opacity = 0;
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
@@ -89,7 +97,9 @@ namespace QuickShare.Desktop
                 Properties.Settings.Default.LastExceptionMessage = "";
                 Properties.Settings.Default.Save();
 
+#if !DEBUG
                 AutoMeasurement.Client.TrackEvent("UnhandledException", "Fatal", exceptionMessage);
+#endif
             }
 
 #if !SQUIRREL
@@ -142,10 +152,18 @@ namespace QuickShare.Desktop
 
         private static void InitGoogleAnalytics()
         {
+#if SQUIRREL
+            string versionExtension = "-squirrel";
+#elif !DEBUG
+            string versionExtension = "-store";
+#endif
+
+#if !DEBUG
             AutoMeasurement.Instance = new WpfAutoMeasurement();
-            AutoMeasurement.Start(new MeasurementConfiguration(Common.Secrets.GoogleAnalyticsId, "PCExtension", Assembly.GetExecutingAssembly().GetName().Version.ToString()));
+            AutoMeasurement.Start(new MeasurementConfiguration(Common.Secrets.GoogleAnalyticsId, "PCExtension", Assembly.GetExecutingAssembly().GetName().Version.ToString() + versionExtension));
 
             AutoMeasurement.Client.TrackScreenView("MainWindow");
+#endif
         }
 
 #if SQUIRREL
@@ -157,6 +175,7 @@ namespace QuickShare.Desktop
 
         private async void CheckForUpdates()
         {
+#if SQUIRREL
             try
             {
                 await Updater.CheckForUpdates();
@@ -165,6 +184,7 @@ namespace QuickShare.Desktop
             {
                 Debug.WriteLine($"Exception occured while checking for updates: {ex.Message}");
             }
+#endif
         }
 
         private void InitNotifyIcon()
@@ -213,7 +233,7 @@ namespace QuickShare.Desktop
             ShowWindow();
         }
 
-        #region Stuff related to hiding window when clicked away
+#region Stuff related to hiding window when clicked away
         private void Window_Activated(object sender, EventArgs e)
         {
             System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
@@ -245,7 +265,7 @@ namespace QuickShare.Desktop
             lastTimeLostFocus = DateTime.UtcNow;
             this.Visibility = Visibility.Hidden;
         }
-        #endregion
+#endregion
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -264,6 +284,8 @@ namespace QuickShare.Desktop
 
         private void ShowWindow()
         {
+            this.Height = myHeight;
+            this.Width = myWidth;
             SetWindowPosition();
 
             this.Visibility = Visibility.Visible;

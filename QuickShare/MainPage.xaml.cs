@@ -252,8 +252,6 @@ namespace QuickShare
             InitDiscoveringOtherDevices();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
-            await DownloadFolderHelper.InitDownloadFolderAsync();
-
 #if !DEBUG
             App.Tracker.Send(HitBuilder.CreateScreenView("MainPage").Build());
             if (App.LaunchTime != null)
@@ -396,6 +394,9 @@ namespace QuickShare
         {
             if ((e.Content is MainActions) || (e.Content is MainShareTarget))
             {
+                //TODO: Check what was this?
+                //ViewModel.RefreshIsContentFrameEnabled(); 
+
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;
             }

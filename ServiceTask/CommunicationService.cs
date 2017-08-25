@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 
 namespace QuickShare.ServiceTask
 {
@@ -39,7 +40,6 @@ namespace QuickShare.ServiceTask
             if (details?.Name == "com.roamit.service") //Remote Activation
             {
                 DataStore.DataStorageProviders.Init(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
-                await Classes.DownloadFolderHelper.InitDownloadFolderAsync();
 
                 _appServiceconnection = details.AppServiceConnection;
                 _appServiceconnection.RequestReceived += OnRequestReceived;
@@ -86,10 +86,6 @@ namespace QuickShare.ServiceTask
                 Debug.WriteLine("A request received");
                 if (args.Request.Message.ContainsKey("Receiver"))
                 {
-                    var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
-                    if (!futureAccessList.ContainsItem("downloadMainFolder"))
-                        return;
-
                     string receiver = args.Request.Message["Receiver"] as string;
 
                     Debug.WriteLine($"Receiver is {receiver}");
@@ -107,10 +103,7 @@ namespace QuickShare.ServiceTask
                     }
                     else if (receiver == "FileReceiver")
                     {
-                        await Classes.DownloadFolderHelper.InitDownloadFolderAsync();
-                        IFolder downloadFolder = new WinRTFolder(await futureAccessList.GetFolderAsync("downloadMainFolder"));
-
-                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, downloadFolder);
+                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, DownloadFolderDecider);
                     }
                     else if (receiver == "TextReceiver")
                     {
@@ -137,7 +130,7 @@ namespace QuickShare.ServiceTask
 
                                 System.Diagnostics.Debug.WriteLine("Goodbye");
                                 _appServiceconnection.Dispose();
-                                _deferral.Complete();
+                                _deferral?.Complete();
                                 _deferral = null;
                             }
                         }
@@ -175,6 +168,18 @@ namespace QuickShare.ServiceTask
             {
                 requestDeferral?.Complete();
             }
+        }
+
+        private static async Task<IFolder> DownloadFolderDecider(string[] fileTypes)
+        {
+            IStorageFolder folder;
+            bool typeBasedDownloadFolder = (ApplicationData.Current.LocalSettings.Values.ContainsKey("TypeBasedDownloadFolder")) ? ((ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] as bool?) ?? false) : false;
+            if (typeBasedDownloadFolder)
+                folder = await DownloadFolderHelper.GetAppropriateDownloadFolderAsync(fileTypes);
+            else
+                folder = await DownloadFolderHelper.GetDefaultDownloadFolderAsync();
+
+            return new WinRTFolder(folder);
         }
 
         public static void SendToast(string text)

@@ -31,7 +31,12 @@
         </Grid>
         <Grid x:Name="Page2" Visibility="Collapsed">
             <WebBrowser x:Name="webBrowser"
-                        Navigated="WebBrowser_Navigated" />
+                        Navigated="WebBrowser_Navigated"
+                        Navigating="WebBrowser_Navigating" />
+            <TextBlock x:Name="browserLoading" 
+                       Text="Loading..."
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center" />
         </Grid>
         <Grid x:Name="Page3" Visibility="Visible">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">

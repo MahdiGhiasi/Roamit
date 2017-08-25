@@ -1,5 +1,6 @@
 ﻿using GoogleAnalytics;
 using QuickShare.Classes;
+using QuickShare.Common;
 using QuickShare.HelperClasses.Version;
 using QuickShare.ViewModels;
 using System;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -91,21 +93,53 @@ namespace QuickShare
         private async void ContactButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri($"mailto:roamitapp@gmail.com?subject={Model.PackageName}%20v{Model.PackageVersion}"));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "Contact").Build());
+#endif
         }
 
         private async void GetChromeFirefoxExtension_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#browserExtensions"));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "GetBrowserExtensions").Build());
+#endif
         }
 
         private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.PCExtensionUrl));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "GetPCExtension").Build());
+#endif
         }
 
         private async void TwitterButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.TwitterUrl));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "Twitter").Build());
+#endif
+        }
+
+        private async void ChooseDownloadFolder_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            FolderPicker fp = new FolderPicker()
+            {
+                SuggestedStartLocation = PickerLocationId.Downloads,
+            };
+            fp.FileTypeFilter.Add("*");
+            var selectedFolder = await fp.PickSingleFolderAsync();
+
+            if (selectedFolder == null)
+                return;
+
+            var downloadFolder = await DownloadFolderHelper.TrySetDefaultDownloadFolderAsync(selectedFolder);
+            Model.DefaultDownloadLocation = downloadFolder.Path;
         }
 
         private void ManageDevices_Tapped(object sender, TappedRoutedEventArgs e)

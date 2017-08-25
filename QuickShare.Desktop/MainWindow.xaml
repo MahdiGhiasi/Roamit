@@ -94,7 +94,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" Grid.Column="0">
-                        <TextBlock Text="Trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
+                        <TextBlock Text="PC Extension trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
                         <TextBlock Text="7 days" x:Name="TrialExpireTime" Foreground="DarkRed" FontWeight="Bold" />
                     </StackPanel>
                     <Grid Grid.Column="1">

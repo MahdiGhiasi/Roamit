@@ -33,6 +33,18 @@
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
+                    <StackPanel Tag="3" Margin="0,0,0,24">
+                        <TextBlock Text="You can now set a custom folder to store received files."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="Also, you can choose to receive known file types (Pictures, Music, and Video) to appropriate user folders instead of Roamit receive folder."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="You can view and change these from the settings page."
+                                   Margin="0,0,0,4"
+                                   TextWrapping="Wrap"
+                                   Opacity="0.7" />
+                    </StackPanel>
                     <StackPanel Tag="2" Margin="0,0,0,24">
                         <Image Source="ms-appx:///Assets/cloud-clipboard.png"
                                Height="40"

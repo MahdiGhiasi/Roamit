@@ -42,6 +42,29 @@
                                               RelativePanel.RightOf="ConnectToOtherDevicesToggle" 
                                               RelativePanel.AlignVerticalCenterWithPanel="True" />
                             </RelativePanel>
+                            <TextBlock Text="Default file receive location:" 
+                                       TextWrapping="Wrap"
+                                       Margin="0,18,0,4" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{x:Bind Model.DefaultDownloadLocation, Mode=OneWay}" 
+                                         IsReadOnly="True"
+                                         Grid.Column="0" />
+                                <Button Content="..."
+                                        Grid.Column="1"
+                                        Width="50"
+                                        Margin="4,0,0,0"
+                                        Tapped="ChooseDownloadFolder_Tapped" />
+                            </Grid>
+                            <TextBlock Text="Put known file types into appropriate user folders (libraries) instead of default receive location" 
+                                       TextWrapping="Wrap"
+                                       Margin="0,24,0,4" />
+                            <TextBlock Text="This applies to Music, Video and Pictures."
+                                       Opacity="0.7" />
+                            <ToggleSwitch IsOn="{x:Bind Model.TypeBasedDownloadFolderToggle, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
                             <TextBlock Text="Browser Integration" FontWeight="Bold" />

@@ -40,10 +40,21 @@ namespace QuickShare.ViewModels
                     sendCloudClipboard = scc;
             }
 
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("TypeBasedDownloadFolder"))
+                ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] = false;
+            typeBasedDownloadFolderToggle = (ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] as bool?) ?? false;
+
+            InitDownloadLocation();
+
             RetrieveCloudClipboardActivationStatus();
 
             App.PCExtensionAccountIdSet += PCExtension_AccountIdSet;
             App.PCExtensionLoginFailed += PCExtension_LoginFailed;
+        }
+
+        private async void InitDownloadLocation()
+        {
+            DefaultDownloadLocation = (await DownloadFolderHelper.GetDefaultDownloadFolderAsync()).Path;
         }
 
         public void CheckTrialStatus()
@@ -380,6 +391,38 @@ namespace QuickShare.ViewModels
         {
             App.PCExtensionAccountIdSet -= PCExtension_AccountIdSet;
             App.PCExtensionLoginFailed -= PCExtension_LoginFailed;
+        }
+
+        private string defaultDownloadLocation = "";
+        public string DefaultDownloadLocation
+        {
+            get
+            {
+                return defaultDownloadLocation;
+            }
+            set
+            {
+                defaultDownloadLocation = value;
+                OnPropertyChanged("DefaultDownloadLocation");
+            }
+        }
+
+        private bool typeBasedDownloadFolderToggle = false;
+        public bool TypeBasedDownloadFolderToggle
+        {
+            get
+            {
+                return typeBasedDownloadFolderToggle;
+            }
+            set
+            {
+                typeBasedDownloadFolderToggle = value;
+                ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] = value;
+                OnPropertyChanged("TypeBasedDownloadFolderToggle");
+#if !DEBUG
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "TypeBasedDownloadFolderToggle", value ? "activated" : "deactivated").Build());
+#endif
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
