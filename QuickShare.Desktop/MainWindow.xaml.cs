@@ -40,10 +40,11 @@ namespace QuickShare.Desktop
 
         bool isExpired = false;
 
-#if SQUIRREL
+
         double myHeight;
         double myWidth;
 
+#if SQUIRREL
         DispatcherTimer updateTimer;
 #endif
 
