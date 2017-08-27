@@ -10,8 +10,7 @@ namespace QuickShare.Common
     public static class SecureKeyStorage
     {
         static readonly string _userId = "userId";
-        static readonly string _accountId = "accountId";
-        static readonly string _graphDeviceId = "graphDeviceId";
+        static readonly string _accountId = "accountId8";
 
         public static bool IsUserIdStored()
         {
@@ -21,11 +20,6 @@ namespace QuickShare.Common
         public static bool IsAccountIdStored()
         {
             return IsStored(_accountId);
-        }
-
-        public static bool IsGraphDeviceIdStored()
-        {
-            return IsStored(_graphDeviceId);
         }
 
         private static bool IsStored(string key)
@@ -47,11 +41,6 @@ namespace QuickShare.Common
         public static string GetAccountId()
         {
             return Get(_accountId);
-        }
-
-        public static string GetGraphDeviceId()
-        {
-            return Get(_graphDeviceId);
         }
 
         private static string Get(string key)
@@ -76,11 +65,6 @@ namespace QuickShare.Common
             Set(_accountId, value);
         }
 
-        public static void SetGraphDeviceId(string value)
-        {
-            Set(_graphDeviceId, value);
-        }
-
         private static void Set(string key, string value)
         {
             var vault = new PasswordVault();
@@ -96,11 +80,6 @@ namespace QuickShare.Common
         public static void DeleteAccountId()
         {
             Delete(_accountId);
-        }
-
-        public static void DeleteGraphDeviceId()
-        {
-            Delete(_graphDeviceId);
         }
 
         private static void Delete(string key)

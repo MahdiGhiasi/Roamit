@@ -13,7 +13,7 @@ namespace QuickShare.Desktop.Helpers
     {
         internal static async Task<bool> ConfirmPurpose()
         {
-#if ((!SQUIRREL) && (DEBUG))
+#if ((!SQUIRREL) && (!DEBUG))
             AppServiceConnection connection = new AppServiceConnection()
             {
                 AppServiceName = "com.roamit.pcservice",
@@ -42,7 +42,9 @@ namespace QuickShare.Desktop.Helpers
                     {
                         // Gonna kill everyone, and then myself.
 
-                        Genocide();
+                        await StopRunningOnStartup();
+                        await Genocide();
+
                         return false;
                     }
                     else if (answer == "Alone")
@@ -54,14 +56,17 @@ namespace QuickShare.Desktop.Helpers
                         if (siblings.Count() > 0)
                         {
                             // I do.
-                            // Goodbye cruel world...
-                            
+                            // I'll die then...
                             System.Windows.Application.Current.Shutdown();
+                            
+                            //// I will kill them all.
+                            //CloseSiblings();
+
                             return false;
                         }
                         else
                         {
-                            // I don't, so I shall live.
+                            // I don't, so I shall live in peace
                             return true;
                         }
                     }
@@ -70,7 +75,9 @@ namespace QuickShare.Desktop.Helpers
                         Settings.Data.AccountId = "";
                         Settings.Save();
 
-                        Genocide();
+                        await StopRunningOnStartup();
+                        await Genocide();
+
                         return false;
                     }
                     else
@@ -95,6 +102,12 @@ namespace QuickShare.Desktop.Helpers
 #endif
         }
 
+        private static async Task StopRunningOnStartup()
+        {
+            var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("RoamitStartupTask");
+            startupTask.Disable();
+        }
+
         private static IEnumerable<Process> GetSiblings()
         {
             var currentProcess = Process.GetCurrentProcess();
@@ -104,7 +117,16 @@ namespace QuickShare.Desktop.Helpers
             return siblings;
         }
 
-        private static void Genocide()
+        private static async Task Genocide()
+        {
+            CloseSiblings();
+
+            await Task.Delay(500);
+
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        private static void CloseSiblings()
         {
             var siblings = GetSiblings();
 
@@ -112,8 +134,6 @@ namespace QuickShare.Desktop.Helpers
             {
                 item.CloseApp();
             }
-
-            System.Windows.Application.Current.Shutdown();
         }
     }
 }

@@ -114,16 +114,6 @@ namespace QuickShare.Desktop
                 if (squirrelProcess != null)
                 {
                     squirrelProcess.CloseApp();
-
-                    try
-                    {
-                        var s = new StartupManager("Roamit Cloud Clipboard");
-                        s.RemoveApplicationFromCurrentUserStartup();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Failed to remove squirrel version from startup: {ex.Message}");
-                    }
                 }
             }
 #endif
@@ -234,7 +224,7 @@ namespace QuickShare.Desktop
             ShowWindow();
         }
 
-#region Stuff related to hiding window when clicked away
+        #region Stuff related to hiding window when clicked away
         private void Window_Activated(object sender, EventArgs e)
         {
             System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
@@ -266,7 +256,7 @@ namespace QuickShare.Desktop
             lastTimeLostFocus = DateTime.UtcNow;
             this.Visibility = Visibility.Hidden;
         }
-#endregion
+        #endregion
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -481,59 +471,78 @@ namespace QuickShare.Desktop
 
         private static async Task SendLoginFailedToModernApp()
         {
-            AppServiceConnection connection = new AppServiceConnection()
+
+            using (AppServiceConnection connection = new AppServiceConnection
             {
                 AppServiceName = "com.roamit.pcservice",
                 PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
-            };
-            var result = await connection.OpenAsync();
-            if (result == AppServiceConnectionStatus.Success)
+            })
             {
-                ValueSet valueSet = new ValueSet
-                    {
-                        { "Action", "LoginFailed" },
-                    };
-                var response = await connection.SendMessageAsync(valueSet);
-                if (response.Status == AppServiceResponseStatus.Success)
+                var result = await connection.OpenAsync();
+                if (result == AppServiceConnectionStatus.Success)
                 {
-                    notifyIcon.Visible = false;
-                    System.Windows.Application.Current.Shutdown();
+                    ValueSet valueSet = new ValueSet
+                {
+                    { "Action", "LoginFailed" },
+                };
+                    var response = await connection.SendMessageAsync(valueSet);
                 }
             }
+            await Task.Delay(1000);
+
+            notifyIcon.Visible = false;
+            System.Windows.Application.Current.Shutdown();
         }
 
         private static async Task SendAccountIdToModernApp()
         {
-            AppServiceConnection connection = new AppServiceConnection()
+            using (AppServiceConnection connection = new AppServiceConnection
             {
                 AppServiceName = "com.roamit.pcservice",
                 PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
-            };
-            var result = await connection.OpenAsync();
-            if (result == AppServiceConnectionStatus.Success)
+            })
             {
-                ValueSet valueSet = new ValueSet
+                var result = await connection.OpenAsync();
+                if (result == AppServiceConnectionStatus.Success)
+                {
+                    ValueSet valueSet = new ValueSet
                     {
                         { "Action", "SetAccountId" },
                         { "AccountId", Settings.Data.AccountId },
                     };
-                var response = await connection.SendMessageAsync(valueSet);
+                    var response = await connection.SendMessageAsync(valueSet);
+                }
             }
         }
 
-        private void TryRegisterForStartup()
+        private async void TryRegisterForStartup()
         {
-#if SQUIRREL
             try
             {
+#if SQUIRREL
                 var startupManager = new StartupManager("Roamit Cloud Clipboard");
                 startupManager.AddApplicationToCurrentUserStartup();
+#else
+                var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("RoamitStartupTask");
+                if (startupTask.State != Windows.ApplicationModel.StartupTaskState.Enabled)
+                {
+                    var state = await startupTask.RequestEnableAsync();
+                    if (state == Windows.ApplicationModel.StartupTaskState.DisabledByUser)
+                    {
+                        notifyIcon?.ShowBalloonTip(int.MaxValue, "Roamit is not allowed to run on startup",
+                            "For best Cloud Clipboard experience, please allow Roamit to run on startup from Task Manager", ToolTipIcon.Warning);
+                    }
+                }
+#endif
             }
-            catch
+            catch (Exception ex)
             {
                 Debug.WriteLine("Failed to register program to run at startup.");
-            }
+#if !SQUIRREL
+                notifyIcon?.ShowBalloonTip(int.MaxValue, "Failed to register Roamit to run on startup",
+                    ex.Message, ToolTipIcon.Warning);
 #endif
+            }
         }
 
         private void OpenApp_Click(object sender, RoutedEventArgs e)
@@ -627,6 +636,28 @@ namespace QuickShare.Desktop
         {
             if (notifyIcon != null)
                 notifyIcon.Visible = false;
+
+#if SQUIRREL
+            var currentProcess = Process.GetCurrentProcess();
+            Process[] processes = Process.GetProcessesByName(currentProcess.ProcessName);
+            if (processes.Length > 1)
+            {
+                var proc = processes.Where(p => p.Id != currentProcess.Id && p.MainModule.FileName != currentProcess.MainModule.FileName).FirstOrDefault();
+
+                if (proc != null)
+                {
+                    try
+                    {
+                        var startupManager = new StartupManager("Roamit Cloud Clipboard");
+                        startupManager.RemoveApplicationFromCurrentUserStartup();
+                    }
+                    catch
+                    {
+                        Debug.WriteLine("Failed to register program to run at startup.");
+                    }
+                }
+            }
+#endif
         }
 
         private void UpdateExpireTimeText()

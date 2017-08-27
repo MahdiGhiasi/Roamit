@@ -208,19 +208,17 @@ namespace QuickShare.ViewModels
             get { return chromeFirefoxExtensionVisibility; }
         }
 
-        private Visibility sendCloudClipboardVisibility = (PCExtensionHelper.IsSupported) ? Visibility.Visible : Visibility.Collapsed;
         public Visibility SendCloudClipboardVisibility
         {
-            get { return sendCloudClipboardVisibility; }
+            get { return (PCExtensionHelper.IsSupported) ? Visibility.Visible : Visibility.Collapsed; }
         }
 
-        private Visibility receiveCloudClipboardVisibility = (SecureKeyStorage.IsAccountIdStored()) ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility ReceiveCloudClipboardVisibility
+        public bool IsAccountIdStored
         {
-            get { return receiveCloudClipboardVisibility; }
+            get { return (SecureKeyStorage.IsAccountIdStored()); }
         }
 
-        private bool receiveCloudClipboard = false;
+        private bool receiveCloudClipboard = true;
         public bool ReceiveCloudClipboard
         {
             get { return receiveCloudClipboard; }
@@ -250,7 +248,7 @@ namespace QuickShare.ViewModels
 
         private async void RetrieveCloudClipboardActivationStatus()
         {
-            if ((!SecureKeyStorage.IsAccountIdStored()) || (!SecureKeyStorage.IsGraphDeviceIdStored()))
+            if (!SecureKeyStorage.IsAccountIdStored())
                 return;
 
             ReceiveCloudClipboardEnabled = false;
@@ -285,7 +283,7 @@ namespace QuickShare.ViewModels
         {
             get
             {
-                return receiveCloudClipboardEnabled;
+                return receiveCloudClipboardEnabled && IsAccountIdStored;
             }
             set
             {
@@ -376,6 +374,9 @@ namespace QuickShare.ViewModels
             {
                 SendCloudClipboardProgressRingActive = false;
                 SendCloudClipboardEnabled = true;
+
+                OnPropertyChanged("IsAccountIdStored");
+                OnPropertyChanged("ReceiveCloudClipboardEnabled");
             });
         }
 
@@ -384,6 +385,9 @@ namespace QuickShare.ViewModels
             await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
             {
                 SendCloudClipboard = false;
+
+                OnPropertyChanged("IsAccountIdStored");
+                OnPropertyChanged("ReceiveCloudClipboardEnabled");
             });
         }
 

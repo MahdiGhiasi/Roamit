@@ -26,9 +26,17 @@ namespace QuickShare.Desktop
         {
             InitializeComponent();
 
+#if SQUIRREL
             Page1.Visibility = Visibility.Visible;
             Page2.Visibility = Visibility.Collapsed;
             Page3.Visibility = Visibility.Collapsed;
+#else
+            Page1.Visibility = Visibility.Collapsed;
+            Page2.Visibility = Visibility.Visible;
+            Page3.Visibility = Visibility.Collapsed;
+
+            webBrowser.Navigate($"{Config.ServerAddress}/v2/Authenticate/Graph");
+#endif
         }
 
         private void SignInButton_Click(object sender, RoutedEventArgs e)

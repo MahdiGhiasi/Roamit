@@ -58,7 +58,7 @@
         </uap:Extension>
         <desktop:Extension Category="windows.fullTrustProcess" Executable="PCExtension/RoamitPCExtension.exe" />
         <desktop:Extension Category="windows.startupTask" Executable="PCExtension/RoamitPCExtension.exe" EntryPoint="Windows.FullTrustApplication">
-          <desktop:StartupTask TaskId="RoamitStartupTask" Enabled="true" DisplayName="Roamit" />
+          <desktop:StartupTask TaskId="RoamitStartupTask" Enabled="false" DisplayName="Roamit" />
         </desktop:Extension>
       </Extensions>
     </Application>

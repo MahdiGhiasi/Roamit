@@ -8,17 +8,17 @@
         Loaded="Window_Loaded"
         Title="Sign in - Roamit" Height="600" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Grid>
-        <Grid x:Name="Page1" Visibility="Collapsed">
+        <Grid x:Name="Page1" Visibility="Visible">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
                 <Image Source="pack://application:,,,/Resources/icon.ico"
                        Width="75" />
-                <TextBlock Text="Welcome to Roamit Cloud Clipboard"
+                <TextBlock Text="Welcome to Roamit Automatic Cloud Clipboard"
                            TextAlignment="Center"
                            TextWrapping="Wrap"
                            FontSize="22"
                            FontWeight="Bold"
                            Margin="0,0,0,16" />
-                <TextBlock Text="You need to sign in to Roamit Cloud Service, then you can enjoy Cloud Clipboard on your other devices."
+                <TextBlock Text="You need to sign in to Roamit Cloud Service, then you can enjoy Automatic Cloud Clipboard on your other devices."
                            TextWrapping="Wrap"
                            TextAlignment="Center"
                            FontSize="14"
@@ -38,7 +38,7 @@
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center" />
         </Grid>
-        <Grid x:Name="Page3" Visibility="Visible">
+        <Grid x:Name="Page3" Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16">
                 <Image Source="pack://application:,,,/Resources/green-tick.png"
                        Width="75" />

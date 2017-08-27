@@ -1,4 +1,5 @@
 ﻿using QuickShare.Classes;
+using QuickShare.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml;
 
@@ -28,6 +30,7 @@ namespace QuickShare
 
         private async void OnPCAppServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
+            Debug.WriteLine("OnPCAppServiceRequestReceived");
             AppServiceDeferral messageDeferral = args.GetDeferral();
             try
             {
@@ -35,6 +38,8 @@ namespace QuickShare
                     throw new Exception("Invalid message received.");
 
                 string action = args.Request.Message["Action"] as string;
+
+                Debug.WriteLine($"Action: {action}");
                 if (action == "SetAccountId")
                 {
                     SecureKeyStorage.SetAccountId(args.Request.Message["AccountId"] as string);
@@ -45,29 +50,38 @@ namespace QuickShare
                     ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = false.ToString();
                     PCExtensionLoginFailed?.Invoke(this, new EventArgs());
                 }
+                else if (action == "Hello")
+                {
+                    ValueSet vs = new ValueSet
+                    {
+                        { "Hey", "Hey" }
+                    };
+                    await args.Request.SendResponseAsync(vs);
+                }
                 else if (action == "WhyImHere")
                 {
+                    Debug.WriteLine($"Win32 process asked for its purpose, which is {PCExtensionCurrentPurpose}");
                     if (PCExtensionCurrentPurpose == PCExtensionPurpose.Default)
                     {
                         bool shouldItRun = false;
                         if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
                             bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out shouldItRun);
 
-                        var status = await args.Request.SendResponseAsync(new Windows.Foundation.Collections.ValueSet
+                        var status = await args.Request.SendResponseAsync(new ValueSet
                         {
                             { "Answer", shouldItRun ? "Alone" : "Die" },
                         });
                     }
                     else if (PCExtensionCurrentPurpose == PCExtensionPurpose.Genocide)
                     {
-                        var status = await args.Request.SendResponseAsync(new Windows.Foundation.Collections.ValueSet
+                        var status = await args.Request.SendResponseAsync(new ValueSet
                         {
                             { "Answer", "Genocide" },
                         });
                     }
                     else if (PCExtensionCurrentPurpose == PCExtensionPurpose.ForgetEverything)
                     {
-                        var status = await args.Request.SendResponseAsync(new Windows.Foundation.Collections.ValueSet
+                        var status = await args.Request.SendResponseAsync(new ValueSet
                         {
                             { "Answer", "ForgetEverything" },
                         });
@@ -84,6 +98,7 @@ namespace QuickShare
             {
                 messageDeferral.Complete();
                 pcAppServiceDeferral?.Complete();
+                Debug.WriteLine("Request finished.");
             }
         }
 

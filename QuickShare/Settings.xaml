@@ -94,14 +94,13 @@
                         <StackPanel Margin="0,24,0,8">
                             <TextBlock Text="Cloud Clipboard (Beta)" FontWeight="Bold" />
                             <TextBlock Text="Cloud Clipboard mirrors any text you copy on your PCs to the clipboard of your other devices."
-                                       Margin="0,8,0,0"
+                                       Margin="0,8,0,12"
                                        TextWrapping="Wrap"
                                        Opacity="0.7"/>
 
                             <StackPanel Visibility="{x:Bind Model.SendCloudClipboardVisibility, Mode=OneWay}">
                                 <TextBlock Text="Send clipboard content from device to my other devices" 
-                                           TextWrapping="Wrap"
-                                           Margin="0,12,0,0" />
+                                           TextWrapping="Wrap" />
                                 <RelativePanel>
                                     <ToggleSwitch x:Name="SendCloudClipboardToggle" 
                                                   IsOn="{x:Bind Model.SendCloudClipboard, Mode=TwoWay}" 
@@ -111,10 +110,9 @@
                                                   RelativePanel.AlignVerticalCenterWithPanel="True" />
                                 </RelativePanel>
                             </StackPanel>
-                            <StackPanel Visibility="{x:Bind Model.ReceiveCloudClipboardVisibility, Mode=OneWay}">
+                            <StackPanel>
                                 <TextBlock Text="Receive cloud clipboard on this device" 
-                                           TextWrapping="Wrap"
-                                           Margin="0,8,0,0" />
+                                           TextWrapping="Wrap" />
                                 <RelativePanel>
                                     <ToggleSwitch x:Name="ReceiveCloudClipboardToggle" 
                                                   IsOn="{x:Bind Model.ReceiveCloudClipboard, Mode=TwoWay}" 
@@ -124,8 +122,9 @@
                                                   RelativePanel.AlignVerticalCenterWithPanel="True" />
                                 </RelativePanel>
                                 <HyperlinkButton Content="Manage cloud clipboard for my other devices"
-                                                Foreground="SkyBlue"
-                                                Tapped="ManageDevices_Tapped" />
+                                                 IsEnabled="{x:Bind Model.IsAccountIdStored, Mode=OneWay}"
+                                                 Foreground="SkyBlue"
+                                                 Tapped="ManageDevices_Tapped" />
                             </StackPanel>
                             
                             <TextBlock Margin="0,12,0,0"
