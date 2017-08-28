@@ -180,7 +180,7 @@ namespace QuickShare
 
         private async void PCExtension_LoginFailed(object sender, EventArgs e)
         {
-            await (new MessageDialog("You can enable it later from settings.", "Automatic cloud clipboard setup cancelled.")).ShowAsync();
+            await (new MessageDialog("You can enable it later from settings.", "Universal clipboard setup cancelled.")).ShowAsync();
 
             App.PCExtensionLoginFailed -= PCExtension_LoginFailed;
         }

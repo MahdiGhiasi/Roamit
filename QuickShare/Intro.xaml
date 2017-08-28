@@ -276,7 +276,7 @@
                            Height="{Binding Height, ElementName=ReferenceImage}"
                            Margin="0,0,0,32" />
                     <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
-                               Text="Automatic Cloud Clipboard" 
+                               Text="Universal clipboard" 
                                FontWeight="Light"
                                TextWrapping="Wrap"
                                TextAlignment="Center" />
@@ -288,7 +288,7 @@
                                Margin="0,16,0,0" />
                     <StackPanel x:Name="ActivatePCExtensionPrompt" Margin="0,32,0,0">
                         <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
-                                   Text="Do you want to enable Automatic Cloud Clipboard?"
+                                   Text="Do you want to enable universal clipboard?"
                                    TextAlignment="Center"
                                    TextWrapping="Wrap"
                                    FontWeight="Bold" />

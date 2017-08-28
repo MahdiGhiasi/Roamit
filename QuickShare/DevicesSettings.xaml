@@ -20,7 +20,7 @@
         <Grid MaxWidth="700">
             <ScrollViewer>
                 <StackPanel HorizontalAlignment="Stretch" Margin="16">
-                    <TextBlock Text="Receive Cloud Clipboard on these devices:" 
+                    <TextBlock Text="Receive universal clipboard content on these devices:" 
                                TextWrapping="Wrap"
                                Opacity="0.8" />
                     <ListView ItemsSource="{x:Bind Model.Devices, Mode=OneWay}"

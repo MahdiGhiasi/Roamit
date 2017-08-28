@@ -92,8 +92,8 @@
                             </HyperlinkButton>
                         </StackPanel>
                         <StackPanel Margin="0,24,0,8">
-                            <TextBlock Text="Cloud Clipboard (Beta)" FontWeight="Bold" />
-                            <TextBlock Text="Cloud Clipboard mirrors any text you copy on your PCs to the clipboard of your other devices."
+                            <TextBlock Text="Universal clipboard (Beta)" FontWeight="Bold" />
+                            <TextBlock Text="Universal clipboard mirrors any text you copy on your PCs to the clipboard of your other devices."
                                        Margin="0,8,0,12"
                                        TextWrapping="Wrap"
                                        Opacity="0.7"/>
@@ -111,7 +111,7 @@
                                 </RelativePanel>
                             </StackPanel>
                             <StackPanel>
-                                <TextBlock Text="Receive cloud clipboard on this device" 
+                                <TextBlock Text="Receive universal clipboard content on this device" 
                                            TextWrapping="Wrap" />
                                 <RelativePanel>
                                     <ToggleSwitch x:Name="ReceiveCloudClipboardToggle" 
@@ -121,7 +121,7 @@
                                                   RelativePanel.RightOf="ReceiveCloudClipboardToggle" 
                                                   RelativePanel.AlignVerticalCenterWithPanel="True" />
                                 </RelativePanel>
-                                <HyperlinkButton Content="Manage cloud clipboard for my other devices"
+                                <HyperlinkButton Content="Manage universal clipboard for my other devices"
                                                  IsEnabled="{x:Bind Model.IsAccountIdStored, Mode=OneWay}"
                                                  Foreground="SkyBlue"
                                                  Tapped="ManageDevices_Tapped" />
@@ -131,7 +131,7 @@
                                        TextWrapping="Wrap"
                                        Foreground="DarkCyan"
                                        Visibility="{x:Bind Model.FreeVersionBoxVisibility, Mode=OneWay}"
-                                       Text="Cloud Clipboard is available for free users as a 7 day trial. You can upgrade later at any time." />
+                                       Text="Universal clipboard is available for free users as a 7 day trial. You can upgrade later at any time." />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

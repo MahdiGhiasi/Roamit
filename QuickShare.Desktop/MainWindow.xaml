@@ -49,7 +49,7 @@
                         Grid.Row="1" 
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
-                <TextBlock Text="Please sign in to enable Cloud Clipboard." 
+                <TextBlock Text="Please sign in to enable universal clipboard." 
                            TextWrapping="Wrap"
                            Margin="0,0,0,16" />
                 <Button Content="Sign in"
@@ -90,7 +90,7 @@
             <Grid Grid.Row="2">
                 <StackPanel x:Name="TrialExpireNoticeContainer" Margin="4" Visibility="Collapsed">
                     <StackPanel Orientation="Horizontal" Grid.Column="0">
-                        <TextBlock Text="Your cloud clipboard trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
+                        <TextBlock Text="Your universal clipboard trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
                         <TextBlock Text="7 days" x:Name="TrialExpireTime" Foreground="DarkRed" FontWeight="Bold" />
                     </StackPanel>
                     <Grid>

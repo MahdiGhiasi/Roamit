@@ -462,7 +462,7 @@ namespace QuickShare.Desktop
                 ViewModel.ClipboardActivities.Clear();
                 ClipboardActivity.Visibility = Visibility.Collapsed;
 
-                notifyIcon.ShowBalloonTip(int.MaxValue, "Roamit Cloud Clipboard is running in the background.",
+                notifyIcon.ShowBalloonTip(int.MaxValue, "Roamit universal clipboard is running in the background.",
                     "You can check the status and change settings by clicking the Roamit icon in the system tray.", ToolTipIcon.None);
 
                 TryRegisterForStartup();
@@ -540,7 +540,7 @@ namespace QuickShare.Desktop
                     if (state == Windows.ApplicationModel.StartupTaskState.DisabledByUser)
                     {
                         notifyIcon?.ShowBalloonTip(int.MaxValue, "Roamit is not allowed to run on startup",
-                            "For best Cloud Clipboard experience, please allow Roamit to run on startup from Task Manager", ToolTipIcon.Warning);
+                            "For best universal clipboard experience, please allow Roamit to run on startup from Task Manager", ToolTipIcon.Warning);
                     }
                 }
 #endif

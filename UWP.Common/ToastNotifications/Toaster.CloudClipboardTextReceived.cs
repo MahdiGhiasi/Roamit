@@ -42,7 +42,7 @@ namespace QuickShare.ToastNotifications
                     SuppressPopup = true,
                     NotificationMirroring = NotificationMirroring.Disabled,
                     Tag = CloudClipboardTag,
-                    Data = new NotificationData(new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("title", "Cloud clipboard - Tap to copy"),
+                    Data = new NotificationData(new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("title", "Universal clipboard - Tap to copy"),
                                                                                          new KeyValuePair<string, string>("subtitle", text) })
                 };
 
@@ -60,7 +60,7 @@ namespace QuickShare.ToastNotifications
 
         private static void ShowCloudClipboardTextReceivedNotificationPreCreators(string text)
         {
-            string toastXml = Templates.BasicText.Replace("{title}", "Cloud clipboard - Tap to copy")
+            string toastXml = Templates.BasicText.Replace("{title}", "Universal clipboard - Tap to copy")
                                                  .Replace("{subtitle}", text)
                                                  .Replace("{argsLaunch}", $"action=cloudClipboard");
 
