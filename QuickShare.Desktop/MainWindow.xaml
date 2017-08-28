@@ -88,21 +88,18 @@
                 </ListView>
             </Grid>
             <Grid Grid.Row="2">
-                <Grid x:Name="TrialExpireNoticeContainer" Margin="4" Visibility="Collapsed">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                <StackPanel x:Name="TrialExpireNoticeContainer" Margin="4" Visibility="Collapsed">
                     <StackPanel Orientation="Horizontal" Grid.Column="0">
-                        <TextBlock Text="PC Extension trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
+                        <TextBlock Text="Your cloud clipboard trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
                         <TextBlock Text="7 days" x:Name="TrialExpireTime" Foreground="DarkRed" FontWeight="Bold" />
                     </StackPanel>
-                    <Grid Grid.Column="1">
+                    <Grid>
                         <Button Content="Upgrade" 
+                                HorizontalAlignment="Right"
                                 Style="{StaticResource Link}"
                                 Click="Upgrade_Click" />
                     </Grid>
-                </Grid>
+                </StackPanel>
             </Grid>
         </Grid>
     </Grid>
