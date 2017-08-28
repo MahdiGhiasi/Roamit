@@ -33,6 +33,48 @@
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
+                    <StackPanel Tag="4" Margin="0,0,0,24">
+                        <Image Source="ms-appx:///Assets/cloud-clipboard.png"
+                               Height="40"
+                               Margin="0,12,0,0" />
+                        <TextBlock Text="Universal Clipboard"
+                                   TextWrapping="Wrap" 
+                                   TextAlignment="Center"
+                                   Margin="0,8,0,12" />
+                        <TextBlock Text="Now every text you copy will be automatically mirrored to your other devices."
+                                   Margin="0,0,0,4"
+                                   TextWrapping="Wrap"
+                                   Opacity="0.7" />
+                        <TextBlock Text="You won't even need to open the app, your clipboard content will be right there!"
+                                   Margin="0,0,0,4"
+                                   TextWrapping="Wrap"
+                                   Opacity="0.7" />
+                        <StackPanel Margin="0,8,0,4" x:Name="UniversalClipboardPC" Visibility="Visible">
+                            <Button Content="Enable universal clipboard on this PC"
+                                    HorizontalAlignment="Center"
+                                    Tapped="EnableUniversalClipboard_Tapped" />
+                            <TextBlock Text="Or you can enable it at any time from Settings."
+                                       Margin="0,4,0,12"
+                                       FontStyle="Oblique"
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"
+                                       Opacity="0.4" />
+                        </StackPanel>
+                        <StackPanel Margin="0,8,0,4" x:Name="UniversalClipboardPhone">
+                            <TextBlock Text="You can enable it at any time from Roamit Settings on your PC."
+                                       Margin="0,0,0,12"
+                                       FontStyle="Oblique"
+                                       TextWrapping="Wrap"
+                                       Foreground="SkyBlue"
+                                       Opacity="0.7" />
+                        </StackPanel>
+                        <TextBlock Text="This feature was previously known as 'Cloud clipboard', and required an extension to be installed on PC. But now it's integrated into the Roamit app itself."
+                                   FontSize="12"
+                                   Opacity="0.4"
+                                   Margin="0,0,0,4"
+                                   FontStyle="Oblique"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
                     <StackPanel Tag="3" Margin="0,0,0,24">
                         <TextBlock Text="You can now set a custom folder to store received files."
                                    Margin="0,0,0,8"

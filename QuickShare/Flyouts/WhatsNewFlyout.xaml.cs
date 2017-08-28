@@ -39,6 +39,17 @@ namespace QuickShare.Flyouts
 
             var pv = DeviceInfo.ApplicationVersion;
             VersionText.Text = $"{pv.Major}.{pv.Minor}";
+
+            if (PCExtensionHelper.IsSupported)
+            {
+                UniversalClipboardPC.Visibility = Visibility.Visible;
+                UniversalClipboardPhone.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                UniversalClipboardPC.Visibility = Visibility.Collapsed;
+                UniversalClipboardPhone.Visibility = Visibility.Visible;
+            }
         }
 
         private void OKButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -75,6 +86,16 @@ namespace QuickShare.Flyouts
         private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri(Constants.PCExtensionUrl));
+        }
+
+        private async void EnableUniversalClipboard_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ((Button)sender).IsEnabled = false;
+
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = true;
+            await PCExtensionHelper.StartPCExtension();
+
+            FlyoutCloseRequest?.Invoke(this, new EventArgs());
         }
     }
 }
