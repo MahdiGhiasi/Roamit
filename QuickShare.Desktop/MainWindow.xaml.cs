@@ -103,20 +103,26 @@ namespace QuickShare.Desktop
 #endif
             }
 
-#if !SQUIRREL
-            //Close squirrel version of the app, if running
+
             var currentProcess = Process.GetCurrentProcess();
             Process[] processes = Process.GetProcessesByName(currentProcess.ProcessName);
             if (processes.Length > 1)
             {
-                var squirrelProcess = processes.Where(p => p.Id != currentProcess.Id && p.MainModule.FileName != currentProcess.MainModule.FileName).FirstOrDefault();
+                var otherProcess = processes.Where(p => p.Id != currentProcess.Id && p.MainModule.FileName != currentProcess.MainModule.FileName).FirstOrDefault();
 
-                if (squirrelProcess != null)
+                if (otherProcess != null)
                 {
-                    squirrelProcess.CloseApp();
+#if SQUIRREL
+                    //Store version is running, so I'll open roamit and close myself
+                    Process.Start("roamit://");
+                    notifyIcon.Visible = false;
+                    System.Windows.Application.Current.Shutdown();
+#else
+                    //Close squirrel version of the app, if running
+                    otherProcess.CloseApp();
+#endif
                 }
             }
-#endif
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -198,7 +204,11 @@ namespace QuickShare.Desktop
                 Visible = true,
                 Icon = Properties.Resources.icon_white,
                 ContextMenu = contextMenu,
+#if SQUIRREL
                 Text = "Roamit PC Extension",
+#else
+                Text = "Roamit",
+#endif
             };
             notifyIcon.MouseClick += NotifyIcon_MouseClick;
         }
@@ -224,7 +234,7 @@ namespace QuickShare.Desktop
             ShowWindow();
         }
 
-        #region Stuff related to hiding window when clicked away
+#region Stuff related to hiding window when clicked away
         private void Window_Activated(object sender, EventArgs e)
         {
             System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
@@ -256,7 +266,7 @@ namespace QuickShare.Desktop
             lastTimeLostFocus = DateTime.UtcNow;
             this.Visibility = Visibility.Hidden;
         }
-        #endregion
+#endregion
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -646,6 +656,8 @@ namespace QuickShare.Desktop
 
                 if (proc != null)
                 {
+                    //Store version is present, so I'll stop running at startup
+
                     try
                     {
                         var startupManager = new StartupManager("Roamit Cloud Clipboard");
@@ -653,7 +665,7 @@ namespace QuickShare.Desktop
                     }
                     catch
                     {
-                        Debug.WriteLine("Failed to register program to run at startup.");
+                        Debug.WriteLine("Failed to unregister program to run at startup.");
                     }
                 }
             }
