@@ -164,7 +164,6 @@ namespace QuickShare
                         ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
 
                         await SendText(packageManager, deviceName, text);
-                        await SendFinishService(packageManager);
                     }
                 }
                 else if (mode == "file")
@@ -203,7 +202,6 @@ namespace QuickShare
                         Frame.GoBack();
                         return;
                     }
-                    await SendFinishService(packageManager);
                 }
                 else
                 {
@@ -401,6 +399,8 @@ namespace QuickShare
             }
             else
             {
+                await SendFinishService(packageManager);
+
                 ViewModel.SendStatus = "Finished.";
             }
 
@@ -434,9 +434,14 @@ namespace QuickShare
             bool sendResult = await ts.Send(text, ContentType.ClipboardContent);
 
             if (sendResult)
+            {
+                await SendFinishService(packageManager);
                 ViewModel.SendStatus = "Finished.";
+            }
             else
+            {
                 ViewModel.SendStatus = "Failed :(";
+            }
 
             ViewModel.ProgressIsIndeterminate = false;
             ViewModel.ProgressValue = ViewModel.ProgressMaximum;
