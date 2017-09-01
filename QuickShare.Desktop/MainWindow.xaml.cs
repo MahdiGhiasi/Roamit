@@ -132,6 +132,7 @@ namespace QuickShare.Desktop
 
             notifyIcon.Visible = false;
 
+#if SQUIRREL
             Properties.Settings.Default.LastExceptionMessage = e.ExceptionObject.ToString();
             Properties.Settings.Default.HasLastExceptionMessage = true;
             Properties.Settings.Default.Save();
@@ -145,6 +146,7 @@ namespace QuickShare.Desktop
             };
             Process.Start(Info);
             System.Windows.Application.Current.Shutdown();
+#endif
         }
 
         private static void InitGoogleAnalytics()

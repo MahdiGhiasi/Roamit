@@ -34,6 +34,14 @@ namespace QuickShare.Desktop.Helpers
 
             if (scaleFactorY < 1)
                 scaleFactorY = 1.0 / scaleFactorY;
+
+            // When raw dpi is not available (observed in a virtualbox vm), assume 1. 
+            //TODO: Find an alternate way when this happens.
+            if ((dpix_raw == 0) || (dpiy_raw == 0))
+            {
+                scaleFactorX = 1.0;
+                scaleFactorY = 1.0;
+            }
         }
 
         //https://msdn.microsoft.com/en-us/library/windows/desktop/dd145062(v=vs.85).aspx

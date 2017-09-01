@@ -142,9 +142,20 @@ namespace QuickShare.ViewModels
             }
         }
 
-        public bool ContentFrameNeedsRemoteSystemSelection { get; set; } = false;
+        private bool contentFrameNeedsRemoteSystemSelection = false;
+        public bool ContentFrameNeedsRemoteSystemSelection
+        {
+            get
+            {
+                return contentFrameNeedsRemoteSystemSelection;
+            }
+            set
+            {
+                contentFrameNeedsRemoteSystemSelection = value;
+                OnPropertyChanged("IsContentFrameEnabled");
+            }
+        }
 
-        private bool isContentFrameEnabled = false;
         public bool IsContentFrameEnabled
         {
             get

@@ -258,6 +258,9 @@ namespace QuickShare.ViewModels
             {
                 var result = await Common.Service.CloudClipboardService.GetDevices(SecureKeyStorage.GetAccountId());
                 var deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
+
+                Debug.WriteLine($"Current device name is '{deviceName}'");
+
                 var currentDevice = result.FirstOrDefault(x => (x.Name ?? "").ToLower() == deviceName.ToLower());
 
                 if (currentDevice == null)

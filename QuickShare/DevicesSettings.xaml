@@ -24,6 +24,7 @@
                                TextWrapping="Wrap"
                                Opacity="0.8" />
                     <ListView ItemsSource="{x:Bind Model.Devices, Mode=OneWay}"
+                              IsEnabled="True"
                               Margin="0,12,0,4"
                               SelectionMode="None">
                         <ListView.ItemTemplate>

@@ -89,11 +89,9 @@
             </Grid>
             <Grid Grid.Row="2">
                 <StackPanel x:Name="TrialExpireNoticeContainer" Margin="4" Visibility="Collapsed">
-                    <StackPanel Orientation="Horizontal" Grid.Column="0">
-                        <TextBlock Text="Your universal clipboard trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
-                        <TextBlock Text="7 days" x:Name="TrialExpireTime" Foreground="DarkRed" FontWeight="Bold" />
-                    </StackPanel>
+                    <TextBlock Text="Your universal clipboard trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
                     <Grid>
+                        <TextBlock Text="7 days" x:Name="TrialExpireTime" Foreground="DarkRed" FontWeight="Bold" />
                         <Button Content="Upgrade" 
                                 HorizontalAlignment="Right"
                                 Style="{StaticResource Link}"
