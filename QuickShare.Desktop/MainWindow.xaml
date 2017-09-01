@@ -9,6 +9,7 @@
         Activated="Window_Activated"
         MouseDown="Window_MouseDown"
         MouseMove="Window_MouseMove"
+        Closing="Window_Closing"
         Title="Roamit" 
         Height="400" 
         Width="300" 
@@ -48,7 +49,7 @@
                         Grid.Row="1" 
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
-                <TextBlock Text="Please sign in to enable Cloud Clipboard." 
+                <TextBlock Text="Please sign in to enable universal clipboard." 
                            TextWrapping="Wrap"
                            Margin="0,0,0,16" />
                 <Button Content="Sign in"
@@ -87,21 +88,16 @@
                 </ListView>
             </Grid>
             <Grid Grid.Row="2">
-                <Grid x:Name="TrialExpireNoticeContainer" Margin="4" Visibility="Collapsed">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Horizontal" Grid.Column="0">
-                        <TextBlock Text="PC Extension trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
+                <StackPanel x:Name="TrialExpireNoticeContainer" Margin="4" Visibility="Collapsed">
+                    <TextBlock Text="Your universal clipboard trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
+                    <Grid>
                         <TextBlock Text="7 days" x:Name="TrialExpireTime" Foreground="DarkRed" FontWeight="Bold" />
-                    </StackPanel>
-                    <Grid Grid.Column="1">
                         <Button Content="Upgrade" 
+                                HorizontalAlignment="Right"
                                 Style="{StaticResource Link}"
                                 Click="Upgrade_Click" />
                     </Grid>
-                </Grid>
+                </StackPanel>
             </Grid>
         </Grid>
     </Grid>

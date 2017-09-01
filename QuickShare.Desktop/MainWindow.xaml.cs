@@ -20,6 +20,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
 
 namespace QuickShare.Desktop
 {
@@ -38,10 +40,14 @@ namespace QuickShare.Desktop
 
         bool isExpired = false;
 
+
         double myHeight;
         double myWidth;
 
+#if SQUIRREL
         DispatcherTimer updateTimer;
+        DispatcherTimer checkForStoreVersionTimer;
+#endif
 
         public MainWindow()
         {
@@ -59,17 +65,37 @@ namespace QuickShare.Desktop
             this.Opacity = 0;
             ClipboardActivity.ItemsSource = ViewModel.ClipboardActivities;
 
+            InitApp();
+        }
+
+        private async void InitApp()
+        {
+            if ((await PurposeHelper.ConfirmPurpose()) == false)
+                return;
+
             InitNotifyIcon();
 
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
 
+#if SQUIRREL
             updateTimer = new DispatcherTimer()
             {
                 Interval = TimeSpan.FromMinutes(30),
             };
             updateTimer.Tick += UpdateTimer_Tick;
 
+            checkForStoreVersionTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(5),
+            };
+            checkForStoreVersionTimer.Tick += CheckForStoreVersionTimer_Tick;
+#endif
+
             CheckAccountId(true);
+
+#if !SQUIRREL
+            ApplicationRestart.RegisterForRestart();
+#endif
 
             if (Properties.Settings.Default.HasLastExceptionMessage)
             {
@@ -83,7 +109,50 @@ namespace QuickShare.Desktop
                 AutoMeasurement.Client.TrackEvent("UnhandledException", "Fatal", exceptionMessage);
 #endif
             }
+
+
+#if !SQUIRREL
+            Settings.Save();
+#endif
+
+            var currentProcess = Process.GetCurrentProcess();
+            Process[] processes = Process.GetProcessesByName(currentProcess.ProcessName);
+            if (processes.Length > 1)
+            {
+                var otherProcess = processes.Where(p => p.Id != currentProcess.Id && p.MainModule.FileName != currentProcess.MainModule.FileName).FirstOrDefault();
+
+                if (otherProcess != null)
+                {
+#if SQUIRREL
+                    //Store version is running, so I'll open roamit and close myself
+                    Process.Start("roamit://");
+                    notifyIcon.Visible = false;
+                    System.Windows.Application.Current.Shutdown();
+#else
+                    //Close squirrel version of the app, if running
+                    otherProcess.CloseApp();
+#endif
+                }
+            }
         }
+
+#if SQUIRREL
+        private void CheckForStoreVersionTimer_Tick(object sender, EventArgs e)
+        {
+            var currentProcess = Process.GetCurrentProcess();
+            Process[] processes = Process.GetProcessesByName(currentProcess.ProcessName);
+            if (processes.Length > 1)
+            {
+                var otherProcess = processes.Where(p => p.Id != currentProcess.Id && p.MainModule.FileName != currentProcess.MainModule.FileName).FirstOrDefault();
+
+                if (otherProcess != null)
+                {
+                    notifyIcon.Visible = false;
+                    System.Windows.Application.Current.Shutdown();
+                }
+            }
+        }
+#endif
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -92,6 +161,7 @@ namespace QuickShare.Desktop
 
             notifyIcon.Visible = false;
 
+#if SQUIRREL
             Properties.Settings.Default.LastExceptionMessage = e.ExceptionObject.ToString();
             Properties.Settings.Default.HasLastExceptionMessage = true;
             Properties.Settings.Default.Save();
@@ -105,6 +175,7 @@ namespace QuickShare.Desktop
             };
             Process.Start(Info);
             System.Windows.Application.Current.Shutdown();
+#endif
         }
 
         private static void InitGoogleAnalytics()
@@ -123,10 +194,12 @@ namespace QuickShare.Desktop
 #endif
         }
 
+#if SQUIRREL
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             CheckForUpdates();
         }
+#endif
 
         private async void CheckForUpdates()
         {
@@ -145,19 +218,35 @@ namespace QuickShare.Desktop
         private void InitNotifyIcon()
         {
             var contextMenu = new System.Windows.Forms.ContextMenu();
+
+#if SQUIRREL
             contextMenu.MenuItems.Add("&Open", OpenContextMenuItem_Click);
             contextMenu.MenuItems.Add("&Settings", SettingsContextMenuItem_Click);
             contextMenu.MenuItems.Add("-");
             contextMenu.MenuItems.Add("E&xit", ExitContextMenuItem_Click);
+#else
+            contextMenu.MenuItems.Add("&Open Clipboard Pane", OpenContextMenuItem_Click);
+            contextMenu.MenuItems.Add("Open &Roamit", OpenRoamitContextMenuItem_Click);
+            contextMenu.MenuItems.Add("&Settings", SettingsContextMenuItem_Click);
+#endif
 
             notifyIcon = new NotifyIcon
             {
                 Visible = true,
                 Icon = Properties.Resources.icon_white,
                 ContextMenu = contextMenu,
+#if SQUIRREL
                 Text = "Roamit PC Extension",
+#else
+                Text = "Roamit",
+#endif
             };
             notifyIcon.MouseClick += NotifyIcon_MouseClick;
+        }
+
+        private void OpenRoamitContextMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenApp_Click(this, new RoutedEventArgs());
         }
 
         private void ExitContextMenuItem_Click(object sender, EventArgs e)
@@ -218,7 +307,7 @@ namespace QuickShare.Desktop
                 {
                     this.Visibility = Visibility.Hidden;
                 }
-                else if ((DateTime.UtcNow -lastTimeLostFocus) > TimeSpan.FromSeconds(1))
+                else if ((DateTime.UtcNow - lastTimeLostFocus) > TimeSpan.FromSeconds(1))
                 {
                     ShowWindow();
                 }
@@ -240,7 +329,7 @@ namespace QuickShare.Desktop
         private void SetWindowPosition()
         {
             Screen.PrimaryScreen.GetScaleFactors(out double scaleFactorX, out double scaleFactorY);
-            
+
             var taskbarInfo = new Taskbar(); // taskbarInfo is not DPI aware (returns values in real pixels, not effective pixels)
 
             Debug.WriteLine($"Taskbar position is {taskbarInfo.Position.ToString()}");
@@ -336,7 +425,7 @@ namespace QuickShare.Desktop
                 Debug.WriteLine("Sending...");
 
                 lastSendTime = DateTime.UtcNow;
-                
+
                 await CloudClipboardService.SendCloudClipboard(Settings.Data.AccountId, text, CurrentDevice.GetDeviceName());
             }
             catch (Exception ex)
@@ -374,9 +463,15 @@ namespace QuickShare.Desktop
 
                 TryRegisterForStartup();
 
+#if SQUIRREL
                 if (!updateTimer.IsEnabled)
                     updateTimer.Start();
                 CheckForUpdates();
+#elif !DEBUG
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                SendAccountIdToModernApp();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+#endif
 
                 return true;
             }
@@ -388,7 +483,7 @@ namespace QuickShare.Desktop
             signInWindow.Closed += SignInWindow_Closed;
         }
 
-        private void SignInWindow_Closed(object sender, EventArgs e)
+        private async void SignInWindow_Closed(object sender, EventArgs e)
         {
             signInWindow.Closed -= SignInWindow_Closed;
             signInWindow = null;
@@ -398,26 +493,97 @@ namespace QuickShare.Desktop
                 ViewModel.ClipboardActivities.Clear();
                 ClipboardActivity.Visibility = Visibility.Collapsed;
 
-                notifyIcon.ShowBalloonTip(int.MaxValue, "Roamit Cloud Clipboard is running in the background.",
+                notifyIcon.ShowBalloonTip(int.MaxValue, "Roamit universal clipboard is running in the background.",
                     "You can check the status and change settings by clicking the Roamit icon in the system tray.", ToolTipIcon.None);
 
                 TryRegisterForStartup();
+
+#if !SQUIRREL
+                await SendAccountIdToModernApp();
+#endif
+            }
+            else
+            {
+#if !SQUIRREL
+                await SendLoginFailedToModernApp();
+#endif
             }
         }
 
-        private void TryRegisterForStartup()
+        private static async Task SendLoginFailedToModernApp()
         {
-#if !DEBUG
+
+            using (AppServiceConnection connection = new AppServiceConnection
+            {
+                AppServiceName = "com.roamit.pcservice",
+                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+            })
+            {
+                var result = await connection.OpenAsync();
+                if (result == AppServiceConnectionStatus.Success)
+                {
+                    ValueSet valueSet = new ValueSet
+                {
+                    { "Action", "LoginFailed" },
+                };
+                    var response = await connection.SendMessageAsync(valueSet);
+                }
+            }
+            await Task.Delay(1000);
+
+            notifyIcon.Visible = false;
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        private static async Task SendAccountIdToModernApp()
+        {
+            using (AppServiceConnection connection = new AppServiceConnection
+            {
+                AppServiceName = "com.roamit.pcservice",
+                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+            })
+            {
+                var result = await connection.OpenAsync();
+                if (result == AppServiceConnectionStatus.Success)
+                {
+                    ValueSet valueSet = new ValueSet
+                    {
+                        { "Action", "SetAccountId" },
+                        { "AccountId", Settings.Data.AccountId },
+                    };
+                    var response = await connection.SendMessageAsync(valueSet);
+                }
+            }
+        }
+
+        private async void TryRegisterForStartup()
+        {
             try
             {
+#if SQUIRREL
                 var startupManager = new StartupManager("Roamit Cloud Clipboard");
                 startupManager.AddApplicationToCurrentUserStartup();
+#else
+                var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("RoamitStartupTask");
+                if (startupTask.State != Windows.ApplicationModel.StartupTaskState.Enabled)
+                {
+                    var state = await startupTask.RequestEnableAsync();
+                    if (state == Windows.ApplicationModel.StartupTaskState.DisabledByUser)
+                    {
+                        notifyIcon?.ShowBalloonTip(int.MaxValue, "Roamit is not allowed to run on startup",
+                            "For best universal clipboard experience, please allow Roamit to run on startup from Task Manager", ToolTipIcon.Warning);
+                    }
+                }
+#endif
             }
-            catch
+            catch (Exception ex)
             {
                 Debug.WriteLine("Failed to register program to run at startup.");
-            }
+#if !SQUIRREL
+                notifyIcon?.ShowBalloonTip(int.MaxValue, "Failed to register Roamit to run on startup",
+                    ex.Message, ToolTipIcon.Warning);
 #endif
+            }
         }
 
         private void OpenApp_Click(object sender, RoutedEventArgs e)
@@ -427,11 +593,15 @@ namespace QuickShare.Desktop
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            if (settingsWindow == null)
+#if SQUIRREL
+             if (settingsWindow == null)
                 InitSettingsWindow();
 
             settingsWindow.Show();
             settingsWindow.Activate();
+#else
+            Process.Start("roamit://settings");
+#endif
         }
 
         private void InitSettingsWindow()
@@ -501,6 +671,36 @@ namespace QuickShare.Desktop
             }
 
             knowTrialStatus = true;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (notifyIcon != null)
+                notifyIcon.Visible = false;
+
+#if SQUIRREL
+            var currentProcess = Process.GetCurrentProcess();
+            Process[] processes = Process.GetProcessesByName(currentProcess.ProcessName);
+            if (processes.Length > 1)
+            {
+                var proc = processes.Where(p => p.Id != currentProcess.Id && p.MainModule.FileName != currentProcess.MainModule.FileName).FirstOrDefault();
+
+                if (proc != null)
+                {
+                    //Store version is present, so I'll stop running at startup
+
+                    try
+                    {
+                        var startupManager = new StartupManager("Roamit Cloud Clipboard");
+                        startupManager.RemoveApplicationFromCurrentUserStartup();
+                    }
+                    catch
+                    {
+                        Debug.WriteLine("Failed to unregister program to run at startup.");
+                    }
+                }
+            }
+#endif
         }
 
         private void UpdateExpireTimeText()

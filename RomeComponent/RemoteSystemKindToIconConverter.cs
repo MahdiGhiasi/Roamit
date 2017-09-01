@@ -15,15 +15,15 @@ namespace QuickShare.Rome
             {
                 var system = value as string;
                 
-                switch (system)
+                switch (system?.ToLower() ?? "")
                 {
-                    case "Xbox":
+                    case "xbox":
                         return Char.ConvertFromUtf32(0xE7FC);
-                    case "Mobile":
-                    case "Phone":
-                    case "QS_Android":
+                    case "mobile":
+                    case "phone":
+                    case "qs_android":
                         return Char.ConvertFromUtf32(0xE8EA);
-                    case "Unknown":
+                    case "unknown":
                         return Char.ConvertFromUtf32(0xEC64);
                     default:
                         return Char.ConvertFromUtf32(0xE7F8);

@@ -152,7 +152,7 @@
         <TextBlock FontSize="24" x:Name="ReferenceTitle" Visibility="Collapsed" />
         <TextBlock FontSize="16" x:Name="ReferenceText" Visibility="Collapsed" />
 
-        <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged">
+        <FlipView x:Name="flipView" Background="Transparent" SelectionChanged="FlipView_SelectionChanged" SelectedIndex="4">
             <Grid Background="#FF8C0095">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
                     <Image x:Name="AppIconImage"
@@ -266,60 +266,67 @@
                 </StackPanel>
             </Grid>
             <Grid Background="#ff4E0040">
+                <Grid.Transitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition />
+                    </TransitionCollection>
+                </Grid.Transitions>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="16,0,16,0">
                     <Image Source="ms-appx:///Assets/Intro/cloud-clipboard.png" 
                            Height="{Binding Height, ElementName=ReferenceImage}"
                            Margin="0,0,0,32" />
                     <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceTitle}"
-                               Text="Automatic Cloud Clipboard" 
+                               Text="Universal clipboard" 
                                FontWeight="Light"
                                TextWrapping="Wrap"
                                TextAlignment="Center" />
                     <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
-                               Text="You can also install Roamit PC Extension to your PC, to enable Automatic Cloud Clipboard."
+                               Text="Every text you copy on your PC will be automatically mirrored to your phone. You won't even need to open the app."
                                TextAlignment="Center"
                                TextWrapping="Wrap"
                                FontWeight="SemiLight"
                                Margin="0,16,0,0" />
-                    <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
-                               Text="If you do, every text you copy on your PC will be automatically mirrored to your phone. You won't even need to open the app."
-                               TextAlignment="Center"
-                               TextWrapping="Wrap"
-                               FontWeight="SemiLight"
-                               Margin="0,16,0,0" />
-                    <StackPanel x:Name="GetPCExtensionPC">
-                        <Button Content="Get Roamit PC Extension"
-                                Tapped="GetPCExtension_Tapped"
-                                Width="200"
-                                Height="40"
-                                Background="#228299"
-                                Margin="0,40,0,0"
-                                VerticalAlignment="Bottom"
-                                HorizontalAlignment="Center" />
+                    <StackPanel x:Name="ActivatePCExtensionPrompt" Margin="0,32,0,0">
                         <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
-                                   Text="You can also get it later from settings"
+                                   Text="Do you want to enable universal clipboard?"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   FontWeight="Bold" />
+                        <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                                   Text="(You can also enable it later from settings)"
+                                   Opacity="0.7"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   FontWeight="SemiLight"
+                                   FontStyle="Italic"
+                                   Margin="0,8,0,0" />
+                        <Grid Margin="0,16,0,0" MaxWidth="300">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Yes"
+                                    Grid.Column="0"
+                                    Tapped="ActivePCExtensionButton_Tapped"
+                                    Height="40"
+                                    Background="#228299"
+                                    Margin="0,0,4,0"
+                                    HorizontalAlignment="Stretch" />
+                            <Button Content="No, thanks"
+                                    Grid.Column="1"
+                                    Tapped="FinishButton_Tapped"
+                                    Height="40"
+                                    Margin="4,0,0,0"
+                                    HorizontalAlignment="Stretch" />
+                        </Grid>
+                        <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
+                                   Text="You'll be asked to login to your Microsoft account for this feature."
                                    Opacity="0.7"
                                    TextAlignment="Center"
                                    TextWrapping="Wrap"
                                    FontWeight="SemiLight"
                                    FontStyle="Italic"
                                    Margin="0,12,0,0" />
-                    </StackPanel>
-                    <StackPanel x:Name="GetPCExtensionPhone">
-                        <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
-                               Text="Get Roamit PC Extension on your PC by visiting"
-                               Opacity="0.7"
-                               TextAlignment="Center"
-                               TextWrapping="Wrap"
-                               FontWeight="SemiLight"
-                               Margin="0,16,0,0" />
-                        <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
-                               Text="bit.ly/roamitpc"
-                               Opacity="0.7"
-                               TextAlignment="Center"
-                               TextWrapping="Wrap"
-                               FontWeight="SemiLight"
-                               Margin="0,0,0,0" />
                     </StackPanel>
                 </StackPanel>
             </Grid>

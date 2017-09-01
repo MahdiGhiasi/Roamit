@@ -15,7 +15,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="12">
                 <StackPanel Margin="0,0,0,16">
-                    <TextBlock Text="Send Cloud Clipboard to these devices:"
+                    <TextBlock Text="Send universal clipboard to these devices:"
                                TextWrapping="Wrap"
                                Margin="0,0,0,8" />
                     <ListBox Height="140" ItemsSource="{Binding Devices}">
@@ -35,13 +35,13 @@
                               IsEnabled="{Binding ReceiveCloudClipboardOnThisDeviceEnabled, Mode=TwoWay}"
                               IsChecked="{Binding ReceiveCloudClipboardOnThisDeviceChecked, Mode=TwoWay}">
                         <CheckBox.Content>
-                            <TextBlock Text="Receive Cloud Clipboard on this device from my other PCs (if any)"
+                            <TextBlock Text="Receive universal clipboard on this device from my other PCs (if any)"
                                        TextWrapping="Wrap" />
                         </CheckBox.Content>
                     </CheckBox>
                 </StackPanel>
                 <StackPanel Margin="0,8,0,0">
-                    <TextBlock Text="Roamit Cloud Clipboard extension for Windows PC (Beta)"
+                    <TextBlock Text="Roamit universal clipboard extension for Windows PC (Beta)"
                                FontWeight="Bold"
                                TextWrapping="Wrap"
                                Margin="0,0,0,4" />

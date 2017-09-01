@@ -24,15 +24,22 @@ namespace QuickShare.HelperClasses.Version
 
         static TrialHelper()
         {
+            try
+            {
 #if DEBUG
-            licenseInformation = CurrentAppSimulator.LicenseInformation;
+                licenseInformation = CurrentAppSimulator.LicenseInformation;
 #else
-            licenseInformation = CurrentApp.LicenseInformation;
+                licenseInformation = CurrentApp.LicenseInformation;
 #endif
+            }
+            catch { }
         }
 
         internal static async Task AskForUpgradeWhileSending()
         {
+            if (licenseInformation == null)
+                return;
+
             if (ShowUpgradeFlyout == null)
                 return;
 
@@ -43,6 +50,9 @@ namespace QuickShare.HelperClasses.Version
 
         internal static async Task AskForUpgrade()
         {
+            if (licenseInformation == null)
+                return;
+
             if (ShowUpgradeFlyout == null)
                 return;
 
@@ -53,6 +63,9 @@ namespace QuickShare.HelperClasses.Version
 
         public static async Task TryUpgrade()
         {
+            if (licenseInformation == null)
+                return;
+
             if (!licenseInformation.ProductLicenses[Token_RemoveAdsAndSizeLimit].IsActive)
             {
                 try
@@ -81,6 +94,9 @@ namespace QuickShare.HelperClasses.Version
 
         internal static void CheckIfFullVersion()
         {
+            if (licenseInformation == null)
+                return;
+
             if (licenseInformation.ProductLicenses[Token_RemoveAdsAndSizeLimit].IsActive)
                 TrialSettings.IsTrial = false;
             else

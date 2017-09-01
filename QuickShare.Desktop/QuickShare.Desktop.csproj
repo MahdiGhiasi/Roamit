@@ -30,7 +30,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\QuickShare\PCExtension\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -134,7 +134,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Config.cs" />
+    <Compile Include="Helpers\ApplicationRestart.cs" />
     <Compile Include="Helpers\CurrentDevice.cs" />
+    <Compile Include="Helpers\ProcessHelper.cs" />
+    <Compile Include="Helpers\PurposeHelper.cs" />
     <Compile Include="Helpers\ScreenExtensions.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\Taskbar.cs" />

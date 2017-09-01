@@ -194,6 +194,12 @@ namespace QuickShare
                 ContentFrame.Navigate(typeof(MainActions));
                 await Task.Delay(2000);
             }
+            else if ((e.Parameter != null) && (e.Parameter.ToString() == "settings"))
+            {
+                ContentFrame.Navigate(typeof(Settings));
+                ContentFrame.BackStack.Clear();
+                ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
+            }
             else
             {
                 ContentFrame.Navigate(typeof(MainActions));
@@ -264,6 +270,11 @@ namespace QuickShare
 
             TrialSettings.IsTrialChanged += TrialSettings_IsTrialChanged;
             TrialHelper.CheckIfFullVersion();
+
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
+                if (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc))
+                    if (scc == true)
+                        await PCExtensionHelper.StartPCExtension();
         }
 
         private async void TrialSettings_IsTrialChanged()
@@ -298,26 +309,30 @@ namespace QuickShare
         int AcrylicStatus = -1;
         private void InitAcrylicUI()
         {
-            DeviceInfo.RefreshFormFactorType();
-            if ((DeviceInfo.SystemVersion > DeviceInfo.CreatorsUpdate) && (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop))
+            try
             {
-                if (AcrylicStatus != 1)
+                DeviceInfo.RefreshFormFactorType();
+                if ((DeviceInfo.SystemVersion > DeviceInfo.CreatorsUpdate) && (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop))
                 {
-                    AcrylicStatus = 1;
-                    WindowTopBarFunctions.ApplyAcrylic();
-                    ViewModel.IsAcrylicEnabled = true;
+                    if (AcrylicStatus != 1)
+                    {
+                        AcrylicStatus = 1;
+                        WindowTopBarFunctions.ApplyAcrylic();
+                        ViewModel.IsAcrylicEnabled = true;
+                    }
+                    ApplyAcrylicAccent();
                 }
-                ApplyAcrylicAccent();
-            }
-            else
-            {
-                if (AcrylicStatus != 0)
+                else
                 {
-                    AcrylicStatus = 0;
-                    WindowTopBarFunctions.DisableAcrylic();
-                    ViewModel.IsAcrylicEnabled = false;
+                    if (AcrylicStatus != 0)
+                    {
+                        AcrylicStatus = 0;
+                        WindowTopBarFunctions.DisableAcrylic();
+                        ViewModel.IsAcrylicEnabled = false;
+                    }
                 }
             }
+            catch { }
         }
 
         private async void RemoteSystems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -383,9 +398,6 @@ namespace QuickShare
         {
             if ((e.Content is MainActions) || (e.Content is MainShareTarget))
             {
-                //TODO: Check what was this?
-                //ViewModel.RefreshIsContentFrameEnabled(); 
-
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;
             }
@@ -412,7 +424,7 @@ namespace QuickShare
                 BottomCommandBar.Visibility = Visibility.Collapsed;
             }
 
-            ViewModel.ContentFrameNeedsRemoteSystemSelection = !(((e.Content is Settings) || (e.Content is HistoryPage)));
+            ViewModel.ContentFrameNeedsRemoteSystemSelection = !(((e.Content is Settings) || (e.Content is HistoryPage) || (e.Content is DevicesSettings)));
             ViewModel.RemoteSystemCollectionChanged();
         }
 

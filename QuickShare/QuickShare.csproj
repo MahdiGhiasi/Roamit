@@ -21,6 +21,7 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>A5BB95FAF6C7FAD857E22AA5229FBA06320009B8</PackageCertificateThumbprint>
+    <AppxPackageDir>C:\Users\Mahdi\Projects\QuickShare\QuickShare\AppPackages\</AppxPackageDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -93,6 +94,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="DevicesSettings.xaml.cs">
+      <DependentUpon>DevicesSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Flyouts\IFlyout.cs" />
     <Compile Include="Flyouts\UpgradeFlyout.xaml.cs">
       <DependentUpon>UpgradeFlyout.xaml</DependentUpon>
@@ -101,14 +105,22 @@
       <DependentUpon>WhatsNewFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\TemplateSelectors\HistoryItemTemplateSelector.cs" />
+    <Compile Include="HelperClasses\PCExtensionHelper.cs" />
     <Compile Include="HelperClasses\WhatsNewHelper.cs" />
     <Compile Include="Classes\ItemSources\HistoryItemSource.cs" />
+    <Compile Include="ServiceControllers\MessageCarrierService.cs" />
+    <Compile Include="ServiceControllers\NotificationService.cs" />
+    <Compile Include="ServiceControllers\PCExtensionService.cs" />
+    <Compile Include="ViewModels\DevicesSettingsViewModel.cs" />
     <Compile Include="ViewModels\History\FileInfo.cs" />
     <Compile Include="ViewModels\History\HistoryClipboardTextItem.cs" />
     <Compile Include="ViewModels\History\HistoryMultipleFileItem.cs" />
     <Compile Include="ViewModels\History\HistorySingleFileItem.cs" />
     <Compile Include="ViewModels\History\HistoryItem.cs" />
     <Compile Include="ViewModels\History\HistoryWebLinkItem.cs" />
+    <None Include="PCExtension\RoamitPCExtension.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="project.json" />
     <Compile Include="Classes\Version\AdDisplayTrigger.cs" />
     <Compile Include="Flyouts\SignInNoticeFlyout.xaml.cs">
@@ -236,6 +248,138 @@
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="PCExtension\Common.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Common.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\CSharpAnalytics.Net45.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\DataStore.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\DataStore.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\DeltaCompressionDotNet.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\DeltaCompressionDotNet.MsDelta.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\DeltaCompressionDotNet.PatchApi.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\DevicesListManager.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\DevicesListManager.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Mono.Cecil.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Mono.Cecil.Mdb.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Mono.Cecil.Pdb.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Mono.Cecil.Rocks.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <TransformFile Include="PCExtension\Newtonsoft.Json.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TransformFile>
+    <Content Include="PCExtension\NuGet.Squirrel.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\NuGet.Squirrel.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Resources\green-tick.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Resources\icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Resources\icon16.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Resources\icon3_BUo_icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Resources\icon48.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Resources\icon_white.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Resources\settings.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\RoamitPCExtension.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\RoamitPCExtension.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\SharpCompress.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Splat.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Splat.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Squirrel.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Squirrel.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <TransformFile Include="PCExtension\System.Runtime.WindowsRuntime.UI.Xaml.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TransformFile>
+    <TransformFile Include="PCExtension\System.Runtime.WindowsRuntime.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TransformFile>
+    <Content Include="PCExtension\System.Runtime.WindowsRuntime.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\System.Runtime.WindowsRuntime.UI.Xaml.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Xamarin.Forms.Core.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Xamarin.Forms.Core.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <TransformFile Include="PCExtension\Xamarin.Forms.Core.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TransformFile>
+    <Content Include="PCExtension\Xamarin.Forms.Platform.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Xamarin.Forms.Platform.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Xamarin.Forms.Xaml.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PCExtension\Xamarin.Forms.Xaml.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <TransformFile Include="PCExtension\Xamarin.Forms.Xaml.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TransformFile>
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -250,6 +394,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="ClipboardReceive.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DevicesSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -360,6 +508,9 @@
     </SDKReference>
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsDesktop, Version=10.0.15063.0">
+      <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
     <SDKReference Include="WindowsMobile, Version=10.0.15063.0">
       <Name>Windows Mobile Extensions for the UWP</Name>

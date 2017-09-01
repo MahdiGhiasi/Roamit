@@ -37,7 +37,7 @@
                                TextWrapping="Wrap"
                                Margin="0,0,0,4" />
                     <Grid>
-                        <TextBlock Text=" &#x2022;  Cloud Clipboard"
+                        <TextBlock Text=" &#x2022;  Universal clipboard"
                                     TextWrapping="Wrap"
                                     Margin="0,0,0,4" />
                         <HyperlinkButton Content="What's this?"
@@ -45,7 +45,7 @@
                                          FontSize="12"
                                          Foreground="SkyBlue"
                                          Padding="0,0,0,4"
-                                         ToolTipService.ToolTip="Learn more about Cloud Clipboard"
+                                         ToolTipService.ToolTip="Learn more about Universal clipboard"
                                          Tapped="CloudClipboardLearnMore_Tapped" />
                     </Grid>
                     <TextBlock Text=" &#x2022;  No ads"

@@ -17,6 +17,7 @@ using QuickShare.Common;
 using System.Threading.Tasks;
 using QuickShare.HelperClasses;
 using Windows.System;
+using Windows.UI.Popups;
 
 namespace QuickShare
 {
@@ -34,6 +35,11 @@ namespace QuickShare
             flipView.Opacity = 0;
             PageIndicators.Opacity = 0;
 
+            if (PCExtensionHelper.IsSupported)
+            {
+                flipView.Items.RemoveAt(flipView.Items.Count - 1);
+            }
+
             flipView.SelectedIndex = 0; // Just in case
         }
 
@@ -48,16 +54,9 @@ namespace QuickShare
                 TitleBarStackPanel.Visibility = Visibility.Visible;
             }
 
-            if (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone)
-            {
-                GetPCExtensionPC.Visibility = Visibility.Collapsed;
-                GetPCExtensionPhone.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                GetPCExtensionPC.Visibility = Visibility.Visible;
-                GetPCExtensionPhone.Visibility = Visibility.Collapsed;
-            }
+
+            ActivatePCExtensionPrompt.Visibility = PCExtensionHelper.IsSupported ? Visibility.Visible : Visibility.Collapsed;
+
 
             HideFlipViewButton("PreviousButtonHorizontal");
             HideFlipViewButton("NextButtonHorizontal");
@@ -87,7 +86,7 @@ namespace QuickShare
 
         private void FlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((SkipButton == null) || (NextButton == null))
+            if ((SkipButton == null) || (NextButton == null) || (indicators == null))
                 return;
 
             for (int i = 0; i < flipView.Items.Count; i++)
@@ -143,7 +142,10 @@ namespace QuickShare
 
         private void SkipButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            FinishIntro();
+            if (PCExtensionHelper.IsSupported)
+                flipView.SelectedIndex = flipView.Items.Count - 1;
+            else
+                FinishIntro();
         }
 
         private async void FinishIntro()
@@ -158,9 +160,29 @@ namespace QuickShare
             Frame.Navigate(typeof(MainPage));
         }
 
-        private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void ActivePCExtensionButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri(Constants.PCExtensionUrl));
+            progressRing.Visibility = Visibility.Visible;
+            progressRing.IsActive = true;
+            endStoryboard.Begin();
+
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = true;
+
+            App.PCExtensionLoginFailed += PCExtension_LoginFailed;
+
+            await PCExtensionHelper.StartPCExtension();
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values["FirstRun"] = "false";
+            Frame.Navigate(typeof(MainPage));
+        }
+
+        private async void PCExtension_LoginFailed(object sender, EventArgs e)
+        {
+            await (new MessageDialog("You can enable it later from settings.", "Universal clipboard setup cancelled.")).ShowAsync();
+
+            App.PCExtensionLoginFailed -= PCExtension_LoginFailed;
         }
     }
 }

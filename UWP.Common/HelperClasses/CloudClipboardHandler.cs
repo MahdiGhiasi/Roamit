@@ -23,8 +23,8 @@ namespace QuickShare.Common
             if (data.ContainsKey("AccountId"))
                 SecureKeyStorage.SetAccountId(data["AccountId"].ToString());
 
-            if (data.ContainsKey("GraphDeviceId"))
-                SecureKeyStorage.SetGraphDeviceId(data["GraphDeviceId"].ToString());
+            //if (data.ContainsKey("GraphDeviceId"))
+            //    SecureKeyStorage.SetGraphDeviceId(data["GraphDeviceId"].ToString());
         }
     }
 }

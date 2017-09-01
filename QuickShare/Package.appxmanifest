@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap mp uap3">
-  <Identity Name="36835MahdiGhiasi.Roamit" Publisher="CN=980F2E87-1831-4300-B1DC-4FDADD353F32" Version="1.6.2.0" />
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap mp uap3 rescap desktop">
+  <Identity Name="36835MahdiGhiasi.Roamit" Publisher="CN=980F2E87-1831-4300-B1DC-4FDADD353F32" Version="2.0.2.0" />
   <mp:PhoneIdentity PhoneProductId="7a5f9ba7-c071-47b3-9aba-d0fba6f57503" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Roamit</DisplayName>
@@ -9,6 +9,7 @@
   </Properties>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.15063.0" />
   </Dependencies>
   <Resources>
     <Resource Language="x-generate" />
@@ -35,6 +36,9 @@
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="com.roamit.notificationservice" />
         </uap:Extension>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="com.roamit.pcservice" />
+        </uap:Extension>
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="roamit">
             <uap:Logo>Assets\Logo.png</uap:Logo>
@@ -53,6 +57,10 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="PCExtension/RoamitPCExtension.exe" />
+        <desktop:Extension Category="windows.startupTask" Executable="PCExtension/RoamitPCExtension.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="RoamitStartupTask" Enabled="false" DisplayName="Roamit" />
+        </desktop:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -64,5 +72,6 @@
     <uap:Capability Name="picturesLibrary" />
     <uap:Capability Name="musicLibrary" />
     <uap:Capability Name="videosLibrary" />
+    <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 </Package>
