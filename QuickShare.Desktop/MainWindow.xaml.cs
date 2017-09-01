@@ -46,6 +46,7 @@ namespace QuickShare.Desktop
 
 #if SQUIRREL
         DispatcherTimer updateTimer;
+        DispatcherTimer checkForStoreVersionTimer;
 #endif
 
         public MainWindow()
@@ -82,6 +83,12 @@ namespace QuickShare.Desktop
                 Interval = TimeSpan.FromMinutes(30),
             };
             updateTimer.Tick += UpdateTimer_Tick;
+
+            checkForStoreVersionTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(5),
+            };
+            checkForStoreVersionTimer.Tick += CheckForStoreVersionTimer_Tick;
 #endif
 
             CheckAccountId(true);
@@ -104,6 +111,10 @@ namespace QuickShare.Desktop
             }
 
 
+#if !SQUIRREL
+            Settings.Save();
+#endif
+
             var currentProcess = Process.GetCurrentProcess();
             Process[] processes = Process.GetProcessesByName(currentProcess.ProcessName);
             if (processes.Length > 1)
@@ -124,6 +135,24 @@ namespace QuickShare.Desktop
                 }
             }
         }
+
+#if SQUIRREL
+        private void CheckForStoreVersionTimer_Tick(object sender, EventArgs e)
+        {
+            var currentProcess = Process.GetCurrentProcess();
+            Process[] processes = Process.GetProcessesByName(currentProcess.ProcessName);
+            if (processes.Length > 1)
+            {
+                var otherProcess = processes.Where(p => p.Id != currentProcess.Id && p.MainModule.FileName != currentProcess.MainModule.FileName).FirstOrDefault();
+
+                if (otherProcess != null)
+                {
+                    notifyIcon.Visible = false;
+                    System.Windows.Application.Current.Shutdown();
+                }
+            }
+        }
+#endif
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
