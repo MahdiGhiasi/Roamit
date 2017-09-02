@@ -228,6 +228,8 @@ namespace QuickShare.Desktop
             contextMenu.MenuItems.Add("&Open Clipboard Pane", OpenContextMenuItem_Click);
             contextMenu.MenuItems.Add("Open &Roamit", OpenRoamitContextMenuItem_Click);
             contextMenu.MenuItems.Add("&Settings", SettingsContextMenuItem_Click);
+            contextMenu.MenuItems.Add("-");
+            contextMenu.MenuItems.Add("&Close", CloseRoamitContextMenuItem_Click);
 #endif
 
             notifyIcon = new NotifyIcon
@@ -242,6 +244,41 @@ namespace QuickShare.Desktop
 #endif
             };
             notifyIcon.MouseClick += NotifyIcon_MouseClick;
+        }
+
+        private async void CloseRoamitContextMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialogResult = System.Windows.MessageBox.Show("Do you want to close Roamit?\r\n\r\nYour clipboard will no longer mirrored to your other devices, until you open Roamit again or restart your computer.", "Roamit", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+            if (dialogResult == System.Windows.MessageBoxResult.Yes)
+            {
+                //Tell UWP app to shut down if is open right now.
+                try
+                {
+                    using (AppServiceConnection connection = new AppServiceConnection
+                    {
+                        AppServiceName = "com.roamit.pcservice",
+                        PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+                    })
+                    {
+                        var result = await connection.OpenAsync();
+                        if (result == AppServiceConnectionStatus.Success)
+                        {
+                            ValueSet valueSet = new ValueSet
+                            {
+                                { "Action", "Die" },
+                            };
+                            var response = await connection.SendMessageAsync(valueSet);
+                        }
+                    }
+                }
+                catch { }
+
+                await Task.Delay(1000);
+
+                //Exit
+                notifyIcon.Visible = false;
+                System.Windows.Application.Current.Shutdown();
+            }
         }
 
         private void OpenRoamitContextMenuItem_Click(object sender, EventArgs e)

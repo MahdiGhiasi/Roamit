@@ -89,6 +89,10 @@ namespace QuickShare
 
                     PCExtensionCurrentPurpose = PCExtensionPurpose.Default;
                 }
+                else if (action == "Die")
+                {
+                    Application.Current.Exit();
+                }
             }
             catch (Exception ex)
             {
