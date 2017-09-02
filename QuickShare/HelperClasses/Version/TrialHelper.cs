@@ -6,40 +6,25 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Store;
+using Windows.Services.Store;
 using Windows.UI.Popups;
 
 namespace QuickShare.HelperClasses.Version
 {
     internal static class TrialHelper
     {
-        static readonly string Token_RemoveAdsAndSizeLimit = "RemoveAdsAndSizeLimit";
-
-        static LicenseInformation licenseInformation;
+        static readonly string RemoveAdsAndSizeLimit_Token = "RemoveAdsAndSizeLimit";
+        static readonly string RemoveAdsAndSizeLimit_StoreID = "9msqqgzbc1s5";
 
         public delegate void ShowUpgradeFlyoutEventHandler(UpgradeFlyoutState state);
         public static event ShowUpgradeFlyoutEventHandler ShowUpgradeFlyout;
 
-        public static TaskCompletionSource<bool> UpgradeFlyoutCompletion;
+        private static StoreContext context = null;
 
-        static TrialHelper()
-        {
-            try
-            {
-#if DEBUG
-                licenseInformation = CurrentAppSimulator.LicenseInformation;
-#else
-                licenseInformation = CurrentApp.LicenseInformation;
-#endif
-            }
-            catch { }
-        }
+        public static TaskCompletionSource<bool> UpgradeFlyoutCompletion;
 
         internal static async Task AskForUpgradeWhileSending()
         {
-            if (licenseInformation == null)
-                return;
-
             if (ShowUpgradeFlyout == null)
                 return;
 
@@ -50,9 +35,6 @@ namespace QuickShare.HelperClasses.Version
 
         internal static async Task AskForUpgrade()
         {
-            if (licenseInformation == null)
-                return;
-
             if (ShowUpgradeFlyout == null)
                 return;
 
@@ -61,46 +43,66 @@ namespace QuickShare.HelperClasses.Version
             await UpgradeFlyoutCompletion.Task;
         }
 
+        static bool b = true;
         public static async Task TryUpgrade()
         {
-            if (licenseInformation == null)
-                return;
+            if (context == null)
+                context = StoreContext.GetDefault();
 
-            if (!licenseInformation.ProductLicenses[Token_RemoveAdsAndSizeLimit].IsActive)
+            b = false;
+
+            try
             {
-                try
-                {
-#if DEBUG
-                    var result = await CurrentAppSimulator.RequestProductPurchaseAsync(Token_RemoveAdsAndSizeLimit);
-#else
-                    var result = await CurrentApp.RequestProductPurchaseAsync(Token_RemoveAdsAndSizeLimit);
-#endif
+                StorePurchaseResult result = await context.RequestPurchaseAsync(RemoveAdsAndSizeLimit_StoreID);
 
-                    CheckIfFullVersion();
+                Debug.WriteLine($"In app purchase of {RemoveAdsAndSizeLimit_Token} finished with status: {result.Status}");
+
+                CheckIfFullVersion();
 
 #if !DEBUG
-                    App.Tracker.Send(HitBuilder.CreateCustomEvent("TryUpgrade", "Upgraded").Build());
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("TryUpgrade", "Upgraded", result.Status.ToString()).Build());
 #endif
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"In app purchase of {Token_RemoveAdsAndSizeLimit} failed: {ex.Message}");
-#if !DEBUG
-                    App.Tracker.Send(HitBuilder.CreateCustomEvent("TryUpgrade", "Failed", ex.Message).Build());
-#endif
-                }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"In app purchase of {RemoveAdsAndSizeLimit_Token} failed: {ex.Message}");
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("TryUpgrade", "Failed", ex.Message).Build());
+#endif
+            }
+            
         }
 
-        internal static void CheckIfFullVersion()
+        internal static async void CheckIfFullVersion()
         {
-            if (licenseInformation == null)
-                return;
-
-            if (licenseInformation.ProductLicenses[Token_RemoveAdsAndSizeLimit].IsActive)
-                TrialSettings.IsTrial = false;
-            else
+            if (b)
+            {
                 TrialSettings.IsTrial = true;
+                return;
+            }
+
+            if (context == null)
+                context = StoreContext.GetDefault();
+
+            StoreAppLicense appLicense = await context.GetAppLicenseAsync();
+
+            if ((appLicense == null) ||
+                (appLicense.AddOnLicenses == null) || (appLicense.AddOnLicenses.Count == 0))
+            {
+                TrialSettings.IsTrial = false;
+                return;
+            }
+            
+            foreach (KeyValuePair<string, StoreLicense> item in appLicense.AddOnLicenses)
+            {
+                if (item.Value.InAppOfferToken == RemoveAdsAndSizeLimit_Token)
+                {
+                    if (item.Value.IsActive)
+                        TrialSettings.IsTrial = false;
+                    else
+                        TrialSettings.IsTrial = true;
+                }
+            }
         }
     }
 
