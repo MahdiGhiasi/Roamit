@@ -251,6 +251,9 @@ namespace QuickShare.Desktop
             var dialogResult = System.Windows.MessageBox.Show("Do you want to close Roamit?\r\n\r\nYour clipboard will no longer mirrored to your other devices, until you open Roamit again or restart your computer.", "Roamit", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
             if (dialogResult == System.Windows.MessageBoxResult.Yes)
             {
+                //Hide app icon
+                notifyIcon.Visible = false;
+
                 //Tell UWP app to shut down if is open right now.
                 try
                 {
@@ -276,7 +279,6 @@ namespace QuickShare.Desktop
                 await Task.Delay(1000);
 
                 //Exit
-                notifyIcon.Visible = false;
                 System.Windows.Application.Current.Shutdown();
             }
         }
