@@ -43,13 +43,10 @@ namespace QuickShare.HelperClasses.Version
             await UpgradeFlyoutCompletion.Task;
         }
 
-        static bool b = true;
         public static async Task TryUpgrade()
         {
             if (context == null)
                 context = StoreContext.GetDefault();
-
-            b = false;
 
             try
             {
@@ -75,12 +72,6 @@ namespace QuickShare.HelperClasses.Version
 
         internal static async void CheckIfFullVersion()
         {
-            if (b)
-            {
-                TrialSettings.IsTrial = true;
-                return;
-            }
-
             if (context == null)
                 context = StoreContext.GetDefault();
 
