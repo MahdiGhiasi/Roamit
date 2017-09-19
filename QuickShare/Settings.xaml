@@ -147,6 +147,7 @@
                         <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Background="#aa333333"
                                     Margin="0,8,0,12"
+                                    HorizontalAlignment="Left"
                                     Padding="12">
                             <TextBlock Text="{x:Bind Model.SignedInText, Mode=OneWay}" 
                                            TextWrapping="Wrap" />

@@ -429,7 +429,7 @@ namespace QuickShare.ViewModels
         {
             get
             {
-                return $"Signed in to Roamit Cloud Service as {UserName}";
+                return $"Signed in to Roamit Cloud Service as '{UserName}'";
             }
         }
 
