@@ -153,29 +153,18 @@ namespace QuickShare
             progressRing.Visibility = Visibility.Visible;
             progressRing.IsActive = true;
             endStoryboard.Begin();
-            
+
             await Task.Delay(TimeSpan.FromSeconds(0.1));
 
             Windows.Storage.ApplicationData.Current.LocalSettings.Values["FirstRun"] = "false";
             Frame.Navigate(typeof(MainPage));
         }
 
-        private async void ActivePCExtensionButton_Tapped(object sender, TappedRoutedEventArgs e)
+        private void ActivePCExtensionButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            progressRing.Visibility = Visibility.Visible;
-            progressRing.IsActive = true;
-            endStoryboard.Begin();
-
             Windows.Storage.ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = true;
 
-            App.PCExtensionLoginFailed += PCExtension_LoginFailed;
-
-            await PCExtensionHelper.StartPCExtension();
-
-            await Task.Delay(TimeSpan.FromSeconds(2));
-
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values["FirstRun"] = "false";
-            Frame.Navigate(typeof(MainPage));
+            FinishIntro();
         }
 
         private async void PCExtension_LoginFailed(object sender, EventArgs e)

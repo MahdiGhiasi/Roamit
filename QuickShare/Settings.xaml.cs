@@ -1,6 +1,7 @@
 ﻿using GoogleAnalytics;
 using QuickShare.Classes;
 using QuickShare.Common;
+using QuickShare.HelperClasses;
 using QuickShare.HelperClasses.Version;
 using QuickShare.ViewModels;
 using System;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Popups;
@@ -145,6 +147,22 @@ namespace QuickShare
         private void ManageDevices_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(DevicesSettings));
+        }
+
+        private void SignInToCloudService_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(CloudServiceLogin));
+        }
+
+        private async void SignOutFromCloudService_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await PCExtensionHelper.StopPCExtensionIfRunning();
+
+            SecureKeyStorage.DeleteAccountId();
+
+            ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = false.ToString();
+            Model.SendCloudClipboard = false;
+            Model.RefreshCloudClipboardBindings();
         }
     }
 }

@@ -400,25 +400,34 @@ namespace QuickShare
             if (appService?.Name == "com.roamit.notificationservice")
             {
                 notificationAppServiceDeferral = taskInstance.GetDeferral();
+                taskInstance.Canceled -= OnNotificationAppServicesCanceled;
                 taskInstance.Canceled += OnNotificationAppServicesCanceled;
                 notificationAppServiceConnection = appService.AppServiceConnection;
+                notificationAppServiceConnection.RequestReceived -= OnNotificationAppServiceRequestReceived;
                 notificationAppServiceConnection.RequestReceived += OnNotificationAppServiceRequestReceived;
+                notificationAppServiceConnection.ServiceClosed -= NotificationAppServiceConnection_ServiceClosed;
                 notificationAppServiceConnection.ServiceClosed += NotificationAppServiceConnection_ServiceClosed;
             }
             else if (appService?.Name == "com.roamit.messagecarrierservice")
             {
                 messageCarrierAppServiceDeferral = taskInstance.GetDeferral();
+                taskInstance.Canceled -= OnMessageCarrierAppServicesCanceled;
                 taskInstance.Canceled += OnMessageCarrierAppServicesCanceled;
                 messageCarrierAppServiceConnection = appService.AppServiceConnection;
+                messageCarrierAppServiceConnection.RequestReceived -= OnMessageCarrierAppServiceRequestReceived;
                 messageCarrierAppServiceConnection.RequestReceived += OnMessageCarrierAppServiceRequestReceived;
+                messageCarrierAppServiceConnection.ServiceClosed -= MessageCarrierAppServiceConnection_ServiceClosed;
                 messageCarrierAppServiceConnection.ServiceClosed += MessageCarrierAppServiceConnection_ServiceClosed;
             }
             else if (appService?.Name == "com.roamit.pcservice")
             {
                 pcAppServiceDeferral = taskInstance.GetDeferral();
+                taskInstance.Canceled -= OnPCAppServicesCanceled;
                 taskInstance.Canceled += OnPCAppServicesCanceled;
                 pcAppServiceConnection = appService.AppServiceConnection;
+                pcAppServiceConnection.RequestReceived -= OnPCAppServiceRequestReceived;
                 pcAppServiceConnection.RequestReceived += OnPCAppServiceRequestReceived;
+                pcAppServiceConnection.ServiceClosed -= PCAppServiceConnection_ServiceClosed;
                 pcAppServiceConnection.ServiceClosed += PCAppServiceConnection_ServiceClosed;
             }
         }

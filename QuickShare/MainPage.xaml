@@ -138,7 +138,7 @@
                 </Grid>
             </Grid>
             <Grid Grid.Row="2" RenderTransformOrigin="0.5,0.5">
-                <Frame Grid.Row="2" x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Padding="0,10,0,0" />
+                <Frame Grid.Row="2" x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Navigating="ContentFrame_Navigating" Padding="0,10,0,0" />
             </Grid>
         </Grid>
 

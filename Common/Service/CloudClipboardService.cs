@@ -122,6 +122,27 @@ namespace QuickShare.Common.Service
                 return null;
             }
         }
+
+        public static async Task<string> GetUserName(string accountId)
+        {
+            try
+            {
+                string userName = "";
+
+                using (var httpClient = new HttpClient())
+                {
+                    var result = await httpClient.GetAsync($"{Constants.ServerAddress}/v2/User/{accountId}/UserName");
+                    userName = await result.Content.ReadAsStringAsync();
+                }
+
+                return userName;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception in GetUserName: {ex.Message}");
+                return null;
+            }
+        }
     }
 
     public class DeviceInformation

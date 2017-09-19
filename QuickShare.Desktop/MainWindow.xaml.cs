@@ -484,6 +484,7 @@ namespace QuickShare.Desktop
         {
             if (Settings.Data.AccountId == "")
             {
+#if SQUIRREL
                 if (showWindow)
                 {
                     InitSignInWindow();
@@ -493,6 +494,7 @@ namespace QuickShare.Desktop
                 NotSignedIn.Visibility = Visibility.Visible;
                 ActivityContainer.Visibility = Visibility.Collapsed;
 
+#endif
                 return false;
             }
             else
@@ -506,10 +508,6 @@ namespace QuickShare.Desktop
                 if (!updateTimer.IsEnabled)
                     updateTimer.Start();
                 CheckForUpdates();
-#elif !DEBUG
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                SendAccountIdToModernApp();
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 #endif
 
                 return true;
@@ -522,7 +520,7 @@ namespace QuickShare.Desktop
             signInWindow.Closed += SignInWindow_Closed;
         }
 
-        private async void SignInWindow_Closed(object sender, EventArgs e)
+        private void SignInWindow_Closed(object sender, EventArgs e)
         {
             signInWindow.Closed -= SignInWindow_Closed;
             signInWindow = null;
@@ -536,62 +534,6 @@ namespace QuickShare.Desktop
                     "You can check the status and change settings by clicking the Roamit icon in the system tray.", ToolTipIcon.None);
 
                 TryRegisterForStartup();
-
-#if !SQUIRREL
-                await SendAccountIdToModernApp();
-#endif
-            }
-            else
-            {
-#if !SQUIRREL
-                await SendLoginFailedToModernApp();
-#endif
-            }
-        }
-
-        private static async Task SendLoginFailedToModernApp()
-        {
-
-            using (AppServiceConnection connection = new AppServiceConnection
-            {
-                AppServiceName = "com.roamit.pcservice",
-                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
-            })
-            {
-                var result = await connection.OpenAsync();
-                if (result == AppServiceConnectionStatus.Success)
-                {
-                    ValueSet valueSet = new ValueSet
-                {
-                    { "Action", "LoginFailed" },
-                };
-                    var response = await connection.SendMessageAsync(valueSet);
-                }
-            }
-            await Task.Delay(1000);
-
-            notifyIcon.Visible = false;
-            System.Windows.Application.Current.Shutdown();
-        }
-
-        private static async Task SendAccountIdToModernApp()
-        {
-            using (AppServiceConnection connection = new AppServiceConnection
-            {
-                AppServiceName = "com.roamit.pcservice",
-                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
-            })
-            {
-                var result = await connection.OpenAsync();
-                if (result == AppServiceConnectionStatus.Success)
-                {
-                    ValueSet valueSet = new ValueSet
-                    {
-                        { "Action", "SetAccountId" },
-                        { "AccountId", Settings.Data.AccountId },
-                    };
-                    var response = await connection.SendMessageAsync(valueSet);
-                }
             }
         }
 

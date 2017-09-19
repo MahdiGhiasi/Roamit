@@ -98,40 +98,57 @@
                                        TextWrapping="Wrap"
                                        Opacity="0.7"/>
 
-                            <StackPanel Visibility="{x:Bind Model.SendCloudClipboardVisibility, Mode=OneWay}">
-                                <TextBlock Text="Send clipboard content from device to my other devices" 
-                                           TextWrapping="Wrap" />
-                                <RelativePanel>
-                                    <ToggleSwitch x:Name="SendCloudClipboardToggle" 
-                                                  IsOn="{x:Bind Model.SendCloudClipboard, Mode=TwoWay}" 
-                                                  IsEnabled="{x:Bind Model.SendCloudClipboardEnabled, Mode=OneWay}" />
-                                    <ProgressRing IsActive="{x:Bind Model.SendCloudClipboardProgressRingActive, Mode=OneWay}"
-                                                  RelativePanel.RightOf="SendCloudClipboardToggle" 
-                                                  RelativePanel.AlignVerticalCenterWithPanel="True" />
-                                </RelativePanel>
+                            <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Reverse}">
+                                <TextBlock Text="To use this feature, you need to sign in to Roamit Cloud Service first."
+                                           TextWrapping="Wrap"
+                                           Foreground="Red" />
+                                <Button Content="Sign in" Margin="0,8,0,8" Width="130" Tapped="SignInToCloudService_Tapped" />
                             </StackPanel>
-                            <StackPanel>
-                                <TextBlock Text="Receive universal clipboard content on this device" 
-                                           TextWrapping="Wrap" />
-                                <RelativePanel>
-                                    <ToggleSwitch x:Name="ReceiveCloudClipboardToggle" 
-                                                  IsOn="{x:Bind Model.ReceiveCloudClipboard, Mode=TwoWay}" 
-                                                  IsEnabled="{x:Bind Model.ReceiveCloudClipboardEnabled, Mode=OneWay}" />
-                                    <ProgressRing IsActive="{x:Bind Model.ReceiveCloudClipboardProgressRingActive, Mode=OneWay}"
-                                                  RelativePanel.RightOf="ReceiveCloudClipboardToggle" 
-                                                  RelativePanel.AlignVerticalCenterWithPanel="True" />
-                                </RelativePanel>
-                                <HyperlinkButton Content="Manage universal clipboard for my other devices"
-                                                 IsEnabled="{x:Bind Model.IsAccountIdStored, Mode=OneWay}"
-                                                 Foreground="SkyBlue"
-                                                 Tapped="ManageDevices_Tapped" />
+
+                            <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel Visibility="{x:Bind Model.SendCloudClipboardVisibility, Mode=OneWay}">
+                                    <TextBlock Text="Send clipboard content from device to my other devices" 
+                                               TextWrapping="Wrap" />
+                                    <RelativePanel>
+                                        <ToggleSwitch x:Name="SendCloudClipboardToggle" 
+                                                      IsOn="{x:Bind Model.SendCloudClipboard, Mode=TwoWay}" 
+                                                      IsEnabled="{x:Bind Model.SendCloudClipboardEnabled, Mode=OneWay}" />
+                                        <ProgressRing IsActive="{x:Bind Model.SendCloudClipboardProgressRingActive, Mode=OneWay}"
+                                                      RelativePanel.RightOf="SendCloudClipboardToggle" 
+                                                      RelativePanel.AlignVerticalCenterWithPanel="True" />
+                                    </RelativePanel>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="Receive universal clipboard content on this device" 
+                                               TextWrapping="Wrap" />
+                                    <RelativePanel>
+                                        <ToggleSwitch x:Name="ReceiveCloudClipboardToggle" 
+                                                      IsOn="{x:Bind Model.ReceiveCloudClipboard, Mode=TwoWay}" 
+                                                      IsEnabled="{x:Bind Model.ReceiveCloudClipboardEnabled, Mode=OneWay}" />
+                                        <ProgressRing IsActive="{x:Bind Model.ReceiveCloudClipboardProgressRingActive, Mode=OneWay}"
+                                                      RelativePanel.RightOf="ReceiveCloudClipboardToggle" 
+                                                      RelativePanel.AlignVerticalCenterWithPanel="True" />
+                                    </RelativePanel>
+                                    <HyperlinkButton Content="Manage universal clipboard for my other devices"
+                                                     IsEnabled="{x:Bind Model.IsAccountIdStored, Mode=OneWay}"
+                                                     Foreground="SkyBlue"
+                                                     Tapped="ManageDevices_Tapped" />
+                                </StackPanel>
+
+                                <TextBlock Margin="0,12,0,0"
+                                           TextWrapping="Wrap"
+                                           Foreground="DarkCyan"
+                                           Visibility="{x:Bind Model.FreeVersionBoxVisibility, Mode=OneWay}"
+                                           Text="Universal clipboard is available for free users as a 7 day trial. You can upgrade later at any time." />
                             </StackPanel>
-                            
-                            <TextBlock Margin="0,12,0,0"
-                                       TextWrapping="Wrap"
-                                       Foreground="DarkCyan"
-                                       Visibility="{x:Bind Model.FreeVersionBoxVisibility, Mode=OneWay}"
-                                       Text="Universal clipboard is available for free users as a 7 day trial. You can upgrade later at any time." />
+                        </StackPanel>
+                        <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    Background="#aa333333"
+                                    Margin="0,8,0,12"
+                                    Padding="12">
+                            <TextBlock Text="{x:Bind Model.SignedInText, Mode=OneWay}" 
+                                           TextWrapping="Wrap" />
+                            <HyperlinkButton Content="Sign out" Foreground="SkyBlue" Tapped="SignOutFromCloudService_Tapped" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

@@ -40,17 +40,7 @@ namespace QuickShare
                 string action = args.Request.Message["Action"] as string;
 
                 Debug.WriteLine($"Action: {action}");
-                if (action == "SetAccountId")
-                {
-                    SecureKeyStorage.SetAccountId(args.Request.Message["AccountId"] as string);
-                    PCExtensionAccountIdSet?.Invoke(this, new EventArgs());
-                }
-                else if (action == "LoginFailed")
-                {
-                    ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = false.ToString();
-                    PCExtensionLoginFailed?.Invoke(this, new EventArgs());
-                }
-                else if (action == "Hello")
+                if (action == "Hello")
                 {
                     ValueSet vs = new ValueSet
                     {
@@ -67,9 +57,13 @@ namespace QuickShare
                         if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
                             bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out shouldItRun);
 
+                        if (SecureKeyStorage.IsAccountIdStored() == false)
+                            shouldItRun = false;
+
                         var status = await args.Request.SendResponseAsync(new ValueSet
                         {
                             { "Answer", shouldItRun ? "Alone" : "Die" },
+                            { "AccountId", SecureKeyStorage.GetAccountId() }
                         });
                     }
                     else if (PCExtensionCurrentPurpose == PCExtensionPurpose.Genocide)

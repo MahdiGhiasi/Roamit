@@ -52,6 +52,12 @@ namespace QuickShare.Desktop.Helpers
                         }
                         else if (answer == "Alone")
                         {
+                            if (response.Message.ContainsKey("AccountId"))
+                            {
+                                Settings.Data.AccountId = response.Message["AccountId"].ToString();
+                                Settings.Save();
+                            }
+
                             // Do I have any brothers or sisters?
 
                             var siblings = GetSiblings();

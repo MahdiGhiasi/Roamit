@@ -200,8 +200,14 @@ namespace QuickShare
                 ContentFrame.BackStack.Clear();
                 ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
             }
-            else
+            else if ((ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard")) && (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc)) && (scc == true) && (!SecureKeyStorage.IsAccountIdStored()))
             {
+                ContentFrame.Navigate(typeof(CloudServiceLogin));
+                ContentFrame.BackStack.Clear();
+                ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
+            }
+            else
+            {            
                 ContentFrame.Navigate(typeof(MainActions));
 
                 if ((e.Parameter != null) && (e.Parameter.ToString() == "upgrade"))
@@ -210,6 +216,8 @@ namespace QuickShare
                     TrialHelper.AskForUpgrade();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 }
+
+                await PCExtensionHelper.StartPCExtension();
             }
             Current = this;
 
@@ -270,11 +278,6 @@ namespace QuickShare
 
             TrialSettings.IsTrialChanged += TrialSettings_IsTrialChanged;
             TrialHelper.CheckIfFullVersion();
-
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
-                if (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc))
-                    if (scc == true)
-                        await PCExtensionHelper.StartPCExtension();
         }
 
         private async void TrialSettings_IsTrialChanged()
@@ -394,6 +397,15 @@ namespace QuickShare
             ViewModel.RemoteSystemCollectionChanged();
         }
 
+        private void ContentFrame_Navigating(object sender, NavigatingCancelEventArgs e)
+        {
+            if (ContentFrame.Content is CloudServiceLogin)
+            {
+                if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually))
+                    ViewModel.ListManager.SelectHighScoreItem();
+            }
+        }
+
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
             if ((e.Content is MainActions) || (e.Content is MainShareTarget))
@@ -423,8 +435,8 @@ namespace QuickShare
                 BottomBar.Visibility = Visibility.Collapsed;
                 BottomCommandBar.Visibility = Visibility.Collapsed;
             }
-
-            ViewModel.ContentFrameNeedsRemoteSystemSelection = !(((e.Content is Settings) || (e.Content is HistoryPage) || (e.Content is DevicesSettings)));
+            
+            ViewModel.ContentFrameNeedsRemoteSystemSelection = !(((e.Content is Settings) || (e.Content is HistoryPage) || (e.Content is DevicesSettings) || (e.Content is CloudServiceLogin)));
             ViewModel.RemoteSystemCollectionChanged();
         }
 

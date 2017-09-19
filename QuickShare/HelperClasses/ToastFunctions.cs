@@ -9,28 +9,23 @@ namespace QuickShare.HelperClasses
 {
     public static class ToastFunctions
     {
-        public static void SendToast(string text)
+        public static void SendToast(string title, string text)
         {
-            const ToastTemplateType toastTemplate = ToastTemplateType.ToastText01;
+            const ToastTemplateType toastTemplate = ToastTemplateType.ToastText02;
             var toastXml = ToastNotificationManager.GetTemplateContent(toastTemplate);
 
             var toastTextElements = toastXml.GetElementsByTagName("text");
-            toastTextElements[0].AppendChild(toastXml.CreateTextNode(text));
+            toastTextElements[0].AppendChild(toastXml.CreateTextNode(title));
+            toastTextElements[1].AppendChild(toastXml.CreateTextNode(text));
 
             var toast = new ToastNotification(toastXml);
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
-        public static void SendToast2(string text)
+        public static void SendUniversalClipboardNoticeToast()
         {
-            const ToastTemplateType toastTemplate = ToastTemplateType.ToastText01;
-            var toastXml = ToastNotificationManager.GetTemplateContent(toastTemplate);
-
-            var toastTextElements = toastXml.GetElementsByTagName("text");
-            toastTextElements[0].AppendChild(toastXml.CreateTextNode(text));
-
-            var toast = new ScheduledToastNotification(toastXml, DateTimeOffset.Now.AddSeconds(20));
-            ToastNotificationManager.CreateToastNotifier().AddToSchedule(toast);
+            SendToast("Universal clipboard will continue to run in the background",
+                "You can always see its status by tapping the Roamit icon in the system tray.");
         }
     }
 }

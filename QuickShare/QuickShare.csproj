@@ -94,6 +94,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="Classes\Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="CloudServiceLogin.xaml.cs">
+      <DependentUpon>CloudServiceLogin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DevicesSettings.xaml.cs">
       <DependentUpon>DevicesSettings.xaml</DependentUpon>
     </Compile>
@@ -394,6 +398,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="ClipboardReceive.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CloudServiceLogin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,53 @@
+﻿<Page
+    x:Class="QuickShare.CloudServiceLogin"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid>
+            <WebView x:Name="webView"
+                     DefaultBackgroundColor="White" 
+                     NavigationStarting="WebView_NavigationStarting"
+                     NavigationCompleted="WebView_NavigationCompleted"
+                     NavigationFailed="WebView_NavigationFailed" />
+            <ProgressBar x:Name="loadingProgress"
+                         VerticalAlignment="Top"
+                         IsIndeterminate="True" />
+            <Grid x:Name="navigationFailedGrid">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Something went wrong"
+                               Margin="0,0,0,16"
+                               FontSize="22"
+                               TextWrapping="Wrap" 
+                               TextAlignment="Center" />
+                    <TextBlock Text="We weren't able to open this page. Please check your internet connection."
+                               FontSize="14"
+                               TextWrapping="Wrap" 
+                               TextAlignment="Center" />
+                    <TextBlock x:Name="navigationFailedMessage"
+                               Text="Unknown error"
+                               Margin="0,8,0,0"
+                               Opacity="0.6"
+                               FontSize="14"
+                               TextWrapping="Wrap" 
+                               TextAlignment="Center" />
+                    <Grid MaxWidth="300" MinWidth="200" HorizontalAlignment="Center" Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Retry" Grid.Column="0" HorizontalAlignment="Stretch" Tapped="Retry_Tapped" />
+                        <Button Content="Cancel" Grid.Column="2" HorizontalAlignment="Stretch" Tapped="Cancel_Tapped" />
+                    </Grid>
+                    
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

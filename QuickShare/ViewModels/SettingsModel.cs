@@ -15,7 +15,7 @@ using Windows.UI.Core;
 
 namespace QuickShare.ViewModels
 {
-    public class SettingsViewModel : INotifyPropertyChanged, IDisposable
+    public class SettingsViewModel : INotifyPropertyChanged
     {
         string deviceId = "";
         
@@ -47,9 +47,18 @@ namespace QuickShare.ViewModels
             InitDownloadLocation();
 
             RetrieveCloudClipboardActivationStatus();
+            RetrieveCloudServiceUserName();
+        }
 
-            App.PCExtensionAccountIdSet += PCExtension_AccountIdSet;
-            App.PCExtensionLoginFailed += PCExtension_LoginFailed;
+        private async void RetrieveCloudServiceUserName()
+        {
+            if (!SecureKeyStorage.IsAccountIdStored())
+                return;
+
+            UserName = await Common.Service.CloudClipboardService.GetUserName(SecureKeyStorage.GetAccountId());
+
+            if (string.IsNullOrWhiteSpace(UserName))
+                UserName = "User";
         }
 
         private async void InitDownloadLocation()
@@ -332,15 +341,12 @@ namespace QuickShare.ViewModels
             OnPropertyChanged("SendCloudClipboard");
 
             if (value == true)
-            {
                 await PCExtensionHelper.StartPCExtension();
-            }
             else
-            {
                 await PCExtensionHelper.StopPCExtensionIfRunning();
-                SendCloudClipboardProgressRingActive = false;
-                SendCloudClipboardEnabled = true;
-            }
+
+            SendCloudClipboardProgressRingActive = false;
+            SendCloudClipboardEnabled = true;
         }
 
         private bool sendCloudClipboardEnabled = true;
@@ -348,7 +354,7 @@ namespace QuickShare.ViewModels
         {
             get
             {
-                return sendCloudClipboardEnabled;
+                return sendCloudClipboardEnabled && IsAccountIdStored;
             }
             set
             {
@@ -369,35 +375,6 @@ namespace QuickShare.ViewModels
                 sendCloudClipboardProgressRingActive = value;
                 OnPropertyChanged("SendCloudClipboardProgressRingActive");
             }
-        }
-
-        private async void PCExtension_AccountIdSet(object sender, EventArgs e)
-        {
-            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
-            {
-                SendCloudClipboardProgressRingActive = false;
-                SendCloudClipboardEnabled = true;
-
-                OnPropertyChanged("IsAccountIdStored");
-                OnPropertyChanged("ReceiveCloudClipboardEnabled");
-            });
-        }
-
-        private async void PCExtension_LoginFailed(object sender, EventArgs e)
-        {
-            await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
-            {
-                SendCloudClipboard = false;
-
-                OnPropertyChanged("IsAccountIdStored");
-                OnPropertyChanged("ReceiveCloudClipboardEnabled");
-            });
-        }
-
-        public void Dispose()
-        {
-            App.PCExtensionAccountIdSet -= PCExtension_AccountIdSet;
-            App.PCExtensionLoginFailed -= PCExtension_LoginFailed;
         }
 
         private string defaultDownloadLocation = "";
@@ -430,6 +407,37 @@ namespace QuickShare.ViewModels
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "TypeBasedDownloadFolderToggle", value ? "activated" : "deactivated").Build());
 #endif
             }
+        }
+
+        private string userName = "";
+        public string UserName
+        {
+            get
+            {
+                return userName;
+            }
+            set
+            {
+                userName = value;
+
+                OnPropertyChanged("UserName");
+                OnPropertyChanged("SignedInText");
+            }
+        }
+
+        public string SignedInText
+        {
+            get
+            {
+                return $"Signed in to Roamit Cloud Service as {UserName}";
+            }
+        }
+
+        public void RefreshCloudClipboardBindings()
+        {
+            OnPropertyChanged("SendCloudClipboardEnabled");
+            OnPropertyChanged("ReceiveCloudClipboardEnabled");
+            OnPropertyChanged("IsAccountIdStored");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
