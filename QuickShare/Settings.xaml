@@ -5,6 +5,7 @@
     xmlns:local="using:QuickShare"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:classes="using:QuickShare.Classes"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <Page.Transitions>
@@ -22,13 +23,14 @@
            TargetType="PivotItem">
             <Setter Property="Margin" Value="0" />
         </Style>
+        <classes:ActualSizePropertyProxy Element="{Binding ElementName=pivot}" x:Name="pivotProxy" />
     </Page.Resources>
 
-    <Grid Background="Transparent">
-        <Pivot MaxWidth="700" HorizontalAlignment="Center">
+    <Grid Background="Transparent" x:Name="mainGrid">
+        <Pivot x:Name="pivot">
             <PivotItem Header="Settings" Style="{StaticResource FullWidthPivotItemStyle}">
                 <ScrollViewer Padding="12,0,12,0">
-                    <StackPanel Padding="0,12,0,0">
+                    <StackPanel Padding="0,12,24,0" Width="{Binding ActualWidthValue, ElementName=pivotProxy, Mode=OneWay, Converter={StaticResource MathConverter}, ConverterParameter=xv700}">
                         <StackPanel Margin="0,8,0,8">
                             <TextBlock Text="General" FontWeight="Bold" />
                             <TextBlock Text="Show my Android devices" 
@@ -155,7 +157,7 @@
             </PivotItem>
             <PivotItem Header="Feedback"  Style="{StaticResource FullWidthPivotItemStyle}">
                 <ScrollViewer Padding="12,0,12,0">
-                    <StackPanel Margin="0,0,0,8">
+                    <StackPanel Padding="0,12,24,8" Width="{Binding ActualWidthValue, ElementName=pivotProxy, Mode=OneWay, Converter={StaticResource MathConverter}, ConverterParameter=xv700}">
                         <StackPanel Margin="0,16,0,0">
                             <TextBlock Text="Want to suggest a feature or an improvement?" TextWrapping="Wrap" />
                             <HyperlinkButton Foreground="SkyBlue" Content="Send feedback in Feedback Hub" Tapped="SendFeedbackButton_Tapped" />

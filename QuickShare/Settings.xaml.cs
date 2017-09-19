@@ -79,6 +79,8 @@ namespace QuickShare
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            VisualChildFinder.FindVisualChild<ContentControl>(pivot, "HeaderClipper").MaxWidth = 720;
+
 #if !DEBUG
             App.Tracker.Send(HitBuilder.CreateScreenView("Settings").Build());
 #endif
