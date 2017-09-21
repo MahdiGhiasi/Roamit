@@ -66,5 +66,32 @@ namespace QuickShare.Common.Service
             FullVersion = 2,
             Unknown = 3,
         }
+
+        public static async Task<bool> SetUpgradeStatus2(string accountId, bool isFullVersion)
+        {
+            try
+            {
+                var httpClient = new HttpClient();
+                var formContent = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("isFullVersion", isFullVersion.ToString()),
+                });
+                var response = await httpClient.PostAsync($"{Constants.ServerAddress}/v2/User/{accountId}/SetAccountDetails", formContent);
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                if (responseText != "1, done")
+                {
+                    Debug.WriteLine($"Received unexpected message from SetUpgradeStatus: '{responseText}'");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"An exception was thrown in SetUpgradeStatus: {ex.Message}");
+                return false;
+            }
+
+            return true;
+        }
     }
 }

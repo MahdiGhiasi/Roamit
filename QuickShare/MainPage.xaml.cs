@@ -291,6 +291,8 @@ namespace QuickShare
 
                 if (SecureKeyStorage.IsUserIdStored())
                     await Common.Service.UpgradeDetails.SetUpgradeStatus(SecureKeyStorage.GetUserId(), !TrialSettings.IsTrial);
+                else if (SecureKeyStorage.IsAccountIdStored())
+                    await Common.Service.UpgradeDetails.SetUpgradeStatus2(SecureKeyStorage.GetAccountId(), !TrialSettings.IsTrial);
             }
             catch { } //Temporary fix for share window threading issues.
         }
