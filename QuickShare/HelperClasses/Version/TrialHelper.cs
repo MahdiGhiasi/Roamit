@@ -75,20 +75,19 @@ namespace QuickShare.HelperClasses.Version
             if (context == null)
                 context = StoreContext.GetDefault();
 
-            StoreAppLicense appLicense = await context.GetAppLicenseAsync();
+            StoreProductQueryResult queryResult = await context.GetAssociatedStoreProductsAsync(new string[] { "Durable" });
 
-            if ((appLicense == null) ||
-                (appLicense.AddOnLicenses == null) || (appLicense.AddOnLicenses.Count == 0))
+            if (queryResult.ExtendedError != null)
             {
                 TrialSettings.IsTrial = false;
                 return;
             }
             
-            foreach (KeyValuePair<string, StoreLicense> item in appLicense.AddOnLicenses)
+            foreach (KeyValuePair<string, StoreProduct> item in queryResult.Products)
             {
                 if (item.Value.InAppOfferToken == RemoveAdsAndSizeLimit_Token)
                 {
-                    if (item.Value.IsActive)
+                    if (item.Value.IsInUserCollection)
                         TrialSettings.IsTrial = false;
                     else
                         TrialSettings.IsTrial = true;
