@@ -77,9 +77,11 @@ namespace QuickShare.Controls
             Width = Height = 2 * (Radius + StrokeThickness);
             var _EndAngle = StartAngle + Angle;
 
+            var thicknessMargin = StrokeThickness / 2.0;
+
             // path container
-            var _StartX = Radius + Math.Sin(StartAngle * Math.PI / 180) * Radius;
-            var _StartY = Radius - Math.Cos(StartAngle * Math.PI / 180) * Radius;
+            var _StartX = Radius + Math.Sin(StartAngle * Math.PI / 180) * Radius + thicknessMargin;
+            var _StartY = Radius - Math.Cos(StartAngle * Math.PI / 180) * Radius + thicknessMargin;
             var _StartP = new Point(_StartX, _StartY);
             var _Figure = new PathFigure
             {
@@ -88,8 +90,8 @@ namespace QuickShare.Controls
             };
 
             // outer arc
-            var _ArcX = Radius + Math.Sin(_EndAngle * Math.PI / 180) * Radius;
-            var _ArcY = Radius - Math.Cos(_EndAngle * Math.PI / 180) * Radius;
+            var _ArcX = Radius + Math.Sin(_EndAngle * Math.PI / 180) * Radius + thicknessMargin;
+            var _ArcY = Radius - Math.Cos(_EndAngle * Math.PI / 180) * Radius + thicknessMargin;
             var _ArcS = new Size(Radius, Radius);
             var _ArcP = new Point(_ArcX, _ArcY);
             var _Arc = new ArcSegment

@@ -234,7 +234,6 @@ namespace QuickShare.Controls
                 return;
 
             indicatorArc.StrokeThickness = thickness;
-            indicatorArc.Margin = new Thickness(thickness, thickness, 0, 0);
             SetArcRadius();
         }
 
@@ -246,7 +245,7 @@ namespace QuickShare.Controls
             indicatorPercent.Visibility = PercentIndicatorVisibility;
 
             UpdateArcValues();
-            SetArcRadius();
+            SetArcThickness();
 
             if (stroke != null)
                 indicatorArc.Stroke = Stroke;

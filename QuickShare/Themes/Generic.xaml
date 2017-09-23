@@ -18,8 +18,7 @@
                                       StartAngle="0" 
                                       Stroke="{ThemeResource ProgressBarForegroundThemeBrush}"
                                       HorizontalAlignment="Stretch" 
-                                      VerticalAlignment="Stretch" 
-                                      Margin="2,2,0,0" />
+                                      VerticalAlignment="Stretch" />
                         <TextBlock Text="0%" VerticalAlignment="Center" TextAlignment="Center" x:Name="indicatorPercent" />
                     </Grid>
                 </ControlTemplate>
