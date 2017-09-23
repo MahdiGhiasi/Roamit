@@ -187,24 +187,32 @@ namespace QuickShare
                     await Current.WaitForShare();
                     await Task.Delay(2000);
                 }
+
+                Current = this;
             }
             else if ((e.Parameter != null) && (e.Parameter.ToString() == "BackFromShareTarget"))
             {
                 loadWait = true;
                 ContentFrame.Navigate(typeof(MainActions));
                 await Task.Delay(2000);
+
+                Current = this;
             }
             else if ((e.Parameter != null) && (e.Parameter.ToString() == "settings"))
             {
                 ContentFrame.Navigate(typeof(Settings));
                 ContentFrame.BackStack.Clear();
                 ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
+
+                Current = this;
             }
             else if ((ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard")) && (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc)) && (scc == true) && (!SecureKeyStorage.IsAccountIdStored()))
             {
                 ContentFrame.Navigate(typeof(CloudServiceLogin));
                 ContentFrame.BackStack.Clear();
                 ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
+
+                Current = this;
             }
             else
             {            
@@ -217,9 +225,10 @@ namespace QuickShare
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 }
 
+                Current = this;
+
                 await PCExtensionHelper.StartPCExtension();
             }
-            Current = this;
 
             base.OnNavigatedTo(e);
 
