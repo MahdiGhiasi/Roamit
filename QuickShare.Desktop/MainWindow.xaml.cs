@@ -389,7 +389,7 @@ namespace QuickShare.Desktop
                     this.Top = (taskbarInfo.Size.Height / scaleFactorY);
                     break;
                 case TaskbarPosition.Right:
-                    this.Left = SystemParameters.PrimaryScreenWidth - this.Width - (taskbarInfo.Size.Width / scaleFactorX);
+                    this.Left = (Screen.PrimaryScreen.Bounds.Width / scaleFactorX) - this.Width - (taskbarInfo.Size.Width / scaleFactorX);
                     this.Top = (taskbarInfo.Size.Height / scaleFactorY) - this.Height;
                     break;
                 case TaskbarPosition.Bottom:
@@ -398,6 +398,7 @@ namespace QuickShare.Desktop
                     this.Top = (taskbarInfo.Location.Y / scaleFactorY) - this.Height;
                     break;
             }
+            Debug.WriteLine($"Window position: {this.Left}, {this.Top}");
         }
 
         protected override void OnSourceInitialized(EventArgs e)

@@ -21,14 +21,16 @@ namespace QuickShare.Desktop.Helpers
         public static void GetScaleFactors(this System.Windows.Forms.Screen screen, out double scaleFactorX, out double scaleFactorY)
         {
             screen.GetDpi(DpiType.Effective, out uint dpix_eff, out uint dpiy_eff);
-            screen.GetDpi(DpiType.Raw, out uint dpix_raw, out uint dpiy_raw);
+            //screen.GetDpi(DpiType.Raw, out uint dpix_raw, out uint dpiy_raw);
+            //screen.GetDpi(DpiType.Angular, out uint dpix_ang, out uint dpiy_ang);
 
-            Debug.WriteLine($"Raw: {dpix_raw}, {dpiy_raw}");
+            //Debug.WriteLine($"Raw: {dpix_raw}, {dpiy_raw}");
             Debug.WriteLine($"Effectve: {dpix_eff}, {dpiy_eff}");
 
-            scaleFactorX = ((double)dpix_raw) / ((double)dpix_eff);
-            scaleFactorY = ((double)dpiy_raw) / ((double)dpiy_eff);
+            scaleFactorX = ((double)dpix_eff) / 96.0;
+            scaleFactorY = ((double)dpiy_eff) / 96.0;
 
+            /**
             if (scaleFactorX < 1)
                 scaleFactorX = 1.0 / scaleFactorX;
 
@@ -42,6 +44,7 @@ namespace QuickShare.Desktop.Helpers
                 scaleFactorX = 1.0;
                 scaleFactorY = 1.0;
             }
+            /**/
         }
 
         //https://msdn.microsoft.com/en-us/library/windows/desktop/dd145062(v=vs.85).aspx
