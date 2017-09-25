@@ -346,7 +346,7 @@ namespace QuickShare.Desktop
                 {
                     this.Visibility = Visibility.Hidden;
                 }
-                else if ((DateTime.UtcNow - lastTimeLostFocus) > TimeSpan.FromSeconds(1))
+                else if ((DateTime.UtcNow - lastTimeLostFocus) > TimeSpan.FromSeconds(0.5))
                 {
                     ShowWindow();
                 }
