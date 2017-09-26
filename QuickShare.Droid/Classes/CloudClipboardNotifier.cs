@@ -29,7 +29,7 @@ namespace QuickShare.Droid.Classes
                 new NotificationCompat.Builder(context)
                     .SetSmallIcon(Resource.Drawable.Icon)
                     .SetPriority((int)NotificationPriority.Min)
-                    .SetContentTitle("Cloud clipboard - Tap to copy")
+                    .SetContentTitle("Universal clipboard - Tap to copy")
                     .SetContentText(receivedText)
                     .SetOngoing(true)
                     .SetContentIntent(pendingIntent);
