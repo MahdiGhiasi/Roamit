@@ -13,7 +13,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#111111"
+            android:background="#eeeeee"
             android:padding="20dp">
             <TextView
                 android:text="Universal clipboard"
@@ -48,6 +48,24 @@
                 android:text="Reflect clipboard changes from my PC to this device automatically" />
             <TextView
                 android:text="If this option is turned off, a notification will appear in the notificaion center of this device containg latest clipboard text. Tapping it will copy it to the local clipboard of this device."
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp" />
+          <TextView
+                android:text="Advanced"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_marginBottom="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Switch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_uiModeSwitch"
+                android:text="Legacy UI mode" />
+            <TextView
+                android:text="You'll see the change next time you start the app."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

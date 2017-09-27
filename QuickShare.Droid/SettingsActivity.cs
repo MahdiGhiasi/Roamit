@@ -22,7 +22,7 @@ namespace QuickShare.Droid
     {
         TextView txtVersionNumber, txtTrialStatus;
         Button btnUpgrade;
-        Switch swCloudClipboardActivity, swCloudClipboardMode;
+        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -39,6 +39,7 @@ namespace QuickShare.Droid
             btnUpgrade = FindViewById<Button>(Resource.Id.settings_btn_upgrade);
             swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
+            swUiMode = FindViewById<Switch>(Resource.Id.settings_uiModeSwitch);
 
             txtVersionNumber.Text = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
 
@@ -64,6 +65,9 @@ namespace QuickShare.Droid
         {
             Settings settings = new Settings(this);
 
+            swUiMode.Checked = settings.UseLegacyUI;
+            swUiMode.CheckedChange += SwUiMode_CheckedChange;
+
             swCloudClipboardMode.Checked = (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic);
             swCloudClipboardMode.CheckedChange += SwCloudClipboardMode_CheckedChange;
 
@@ -72,15 +76,24 @@ namespace QuickShare.Droid
             if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
             {
                 swCloudClipboardMode.Enabled = false;
+                swCloudClipboardActivity.Enabled = false;
 
                 var cloudClipboardActivated = await ServiceFunctions.GetCloudClipboardActivationStatus();
                 swCloudClipboardActivity.Checked = cloudClipboardActivated;
 
+                swCloudClipboardActivity.Enabled = true;
                 if (cloudClipboardActivated)
                     swCloudClipboardMode.Enabled = true;
 
                 swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
             }
+        }
+
+        private void SwUiMode_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            Settings settings = new Settings(this);
+
+            settings.UseLegacyUI = e.IsChecked;
         }
 
         private void SwCloudClipboardMode_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)

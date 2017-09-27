@@ -208,6 +208,7 @@
     <Compile Include="Classes\FilePathHelper.cs" />
     <Compile Include="Classes\Notification.cs" />
     <Compile Include="Classes\ProgressNotifier.cs" />
+    <Compile Include="Classes\TrialHelper.cs" />
     <Compile Include="IntroActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
@@ -226,12 +227,13 @@
     <Compile Include="Services\CloudClipboardService.cs" />
     <Compile Include="Services\MessageCarrierService.cs" />
     <Compile Include="SettingsActivity.cs" />
-    <Compile Include="TrialHelper.cs" />
+    <Compile Include="WebViewContainerActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <AndroidAsset Include="Assets\html\materialicons.woff2" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
@@ -272,6 +274,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\Intro4_1.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\WebViewContainer.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -403,6 +408,27 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\intro_cloudclipboard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\style.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\home.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\material.red-deep_orange.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\material.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\jquery-3.2.1.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\progressbar.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\material-icons-font.css" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

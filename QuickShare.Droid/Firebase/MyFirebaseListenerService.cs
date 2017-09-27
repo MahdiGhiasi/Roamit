@@ -19,6 +19,11 @@ namespace QuickShare.Droid.Firebase
     {
         readonly string TAG = "MyFirebaseListenerService";
 
+        public MyFirebaseListenerService()
+        {
+            SecureStorageImplementation.StoragePassword = Config.Secrets.SecureStoragePassword;
+        }
+
         public override async void OnMessageReceived(RemoteMessage message)
         {
             base.OnMessageReceived(message);
@@ -108,7 +113,7 @@ namespace QuickShare.Droid.Firebase
             }
             catch (InvalidOperationException)
             {
-                SendNotification("Action not supported.", "Please make sure the app is updated to enjoy latest features.");
+                SendNotification($"Action '{message.Data["Action"]}' not supported.", "Please make sure the app is updated to enjoy latest features.");
             }
         }
 

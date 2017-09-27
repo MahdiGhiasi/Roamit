@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using QuickShare.Common.Service;
 using static QuickShare.Common.Service.UpgradeDetails;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Classes
 {
     internal static class TrialHelper
     {

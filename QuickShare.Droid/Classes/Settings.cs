@@ -53,6 +53,22 @@ namespace QuickShare.Droid.Classes
                 editor.Apply();
             }
         }
+
+        internal bool UseLegacyUI
+        {
+            get
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                return prefs.GetBoolean("UseLegacyUI", false);
+            }
+            set
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutBoolean("UseLegacyUI", value);
+                editor.Apply();
+            }
+        }
     }
 
     internal enum CloudClipboardReceiveMode

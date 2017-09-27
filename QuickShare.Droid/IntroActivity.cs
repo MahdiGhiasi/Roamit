@@ -144,7 +144,12 @@ namespace QuickShare.Droid
 
         private void LaunchHomeScreen()
         {
-            StartActivity(new Intent(this, typeof(MainActivity)));
+            Classes.Settings settings = new Classes.Settings(this);
+
+            if (settings.UseLegacyUI)
+                StartActivity(new Intent(this, typeof(MainActivity)));
+            else
+                StartActivity(new Intent(this, typeof(WebViewContainerActivity)));
             Finish();
         }
 

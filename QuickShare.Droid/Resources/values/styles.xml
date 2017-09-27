@@ -5,15 +5,15 @@
   </style>
 
   <!-- Base theme applied no matter what API -->
-  <style name="MyTheme.Base" parent="Theme.AppCompat">
+  <style name="MyTheme.Base" parent="Theme.AppCompat.Light">
     <item name="windowNoTitle">true</item>
     <!--We will be using the toolbar so no need to show ActionBar-->
     <item name="windowActionBar">false</item>
     <!-- Set theme colors from http://www.google.com/design/spec/style/color.html#color-color-palette-->
     <!-- colorPrimary is used for the default action bar background -->
-    <item name="colorPrimary">#3F51B5</item>
+    <item name="colorPrimary">#F44336</item>
     <!-- colorPrimaryDark is used for the status bar -->
-    <item name="colorPrimaryDark">#303F9F</item>
+    <item name="colorPrimaryDark">#CCCCCC</item>
     <!-- colorAccent is used as the default value for colorControlActivated
          which is used to tint widgets -->
     <item name="colorAccent">#448AFF</item>

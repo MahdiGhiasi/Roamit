@@ -1,0 +1,457 @@
+﻿<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+
+    <link rel="stylesheet" href="material-icons-font.css">
+    <link rel="stylesheet" href="material.red-deep_orange.min.css">
+    <script defer src="material.min.js"></script>
+    <script src="jquery-3.2.1.min.js"></script>
+    <script src="progressbar.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress;
+
+        $(document).ready(function () {
+            // progressbar.js@1.0.0 version is used
+            // Docs: http://progressbarjs.readthedocs.org/en/1.0.0/
+            var bar = new ProgressBar.Circle(document.getElementById("spinner2"), {
+                color: '#aaa',
+                // This has to be the same size as the maximum width to
+                // prevent clipping
+                strokeWidth: 4,
+                trailWidth: 1,
+                easing: 'easeOut',
+                duration: 500,
+                text: {
+                    autoStyleContainer: false
+                },
+                from: { color: '#F44336', width: 3 },
+                to: { color: '#F44336', width: 3 },
+                // Set default step function for all animate calls
+                step: function (state, circle) {
+                    circle.path.setAttribute('stroke', state.color);
+                    circle.path.setAttribute('stroke-width', state.width);
+
+                    var value = Math.round(circle.value() * 100);
+                    if (value === 0) {
+                        circle.setText('');
+                    } else {
+                        circle.setText(value);
+                    }
+                }
+            });
+
+            var itemTemplate = '<li class="mdl-list__item mdl-button deviceItem" data-deviceId="{id}"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-icon">{type}</i>{name}</span></li>';
+            var items = new Array();
+            var selectedItem = null;
+            var clipboardText = "";
+
+            function sortList()
+            {
+                function compare(a,b) {
+                    if (a.name < b.name)
+                        return -1;
+                    if (a.name > b.name)
+                        return 1;
+                    return 0;
+                }
+
+                items.sort(compare);
+            }
+
+            function updateList()
+            {
+                if ((selectedItem == null) && (items.length == 0)) {
+                    updateButtonsEnabledOrDisabled();
+                    return;
+                }
+                else if (selectedItem == null)
+                    selectedItem = items[0];
+
+                sortList();
+
+                $("#selectedItemName").text(selectedItem.name);
+                $("#selectedItemType").text(selectedItem.type);
+
+                var listData = "";
+                for (i = 0; i < items.length; i++)
+                {
+                    if (items[i].id != selectedItem.id)
+                    {
+                        listData += itemTemplate.replace("{type}", items[i].type).replace("{name}", items[i].name).replace("{id}", items[i].id);
+                    }
+                }
+
+                $("#devicesList").html(listData);
+
+                updateButtonsEnabledOrDisabled();
+            }
+
+            function updateButtonsEnabledOrDisabled() {
+                $("#sendFileButton, #sendPhotoButton, #sendClipboardButton").removeAttr("disabled");
+                $("#sendUrlButton").removeClass("inlinebutton-disabled");
+                $(".actionbutton-clipboardpreview-container").css("visibility", "visible");
+                $("#sendUrlButton").css("visibility", "collapse");
+
+                if (selectedItem == null) {
+                    $("#sendFileButton, #sendPhotoButton, #sendClipboardButton").attr("disabled", "disabled");
+                    $("#sendUrlButton").addClass("inlinebutton-disabled");
+                }
+                else if (selectedItem.type == "videogame_asset") {
+                    $("#sendFileButton, #sendPhotoButton, #sendClipboardButton").attr("disabled", "disabled");
+                }
+
+                if (clipboardText.length == 0) {
+                    $("#sendClipboardButton, #sendUrlButton").attr("disabled", "disabled");
+                    $(".actionbutton-clipboardpreview-container").css("visibility", "collapse");
+                }
+                else {
+                    if (clipboardText.indexOf("://") > 0) {
+                        $("#sendUrlButton").css("visibility", "visible");
+                    }                    
+                }
+                    
+            }
+
+            showProgress = function () {
+                window.location.hash = "progress";
+            }
+
+            addItem = function(_name, _type, _id) {
+                items.push({name: _name, type: _type, id: _id});
+
+                updateList();
+            }
+
+            removeItem = function (_id) {
+                for (i = 0; i < items.length; i++) {
+                    if (items[i].id == _id) {
+                        items.splice(i, 1);
+                        break;
+                    }
+                }
+
+                updateList();
+            }
+
+            selectItem = function(_id) {
+                if (selectedItem.id == _id)
+                    return;
+
+                $(".footer-text").css("opacity", "0");
+
+                setTimeout(function() {
+                    for (i = 0; i < items.length; i++)
+                    {
+                        if (items[i].id == _id)
+                        {
+                            selectedItem = items[i];
+                            break;
+                        }
+                    }
+                    
+                    updateList();
+                    $(".footer-text").css("opacity", "1");
+                }, 200);
+            }
+
+            setProgressText = function(_text) {
+                $(".progress-status").text(_text);
+            }
+
+            setProgressValue = function(_d) {
+                if (_d < 0)
+                {
+                    $("#spinner1").addClass("spinner-show").removeClass("spinner-hidden");
+                    $("#spinner2").removeClass("spinner-show").addClass("spinner-hidden");
+
+                    bar.animate(0);
+                }
+                else
+                {
+                    $("#spinner1").removeClass("spinner-show").addClass("spinner-hidden");
+                    $("#spinner2").addClass("spinner-show").removeClass("spinner-hidden");
+
+                    bar.animate(_d);
+                }
+            }
+
+            setClipboardText = function (_text) {
+                $(".actionbutton-clipboardpreview").text(_text);
+                clipboardText = _text;
+
+                updateButtonsEnabledOrDisabled();
+            }
+
+            var footerExpanded = false;
+
+            function OnResizeShareDialog() {
+                $(".sharedialog-preview").css("max-height", ($(window).height() - (footerExpanded ? 315 : 95) - 56 - 120) + "px");
+            }
+
+            function goToMinimalMode() {
+                $(".actionbutton-bottomleft-container").addClass("actionbutton-bottomleft-container-minimal");
+                $(".actionbutton-bottomright").addClass("actionbutton-bottomright-minimal");
+                $(".actionbutton-big").addClass("actionbutton-big-minimal");
+            }
+
+            function goToNormalMode() {
+                $(".actionbutton-bottomleft-container").removeClass("actionbutton-bottomleft-container-minimal");
+                $(".actionbutton-bottomright").removeClass("actionbutton-bottomright-minimal");
+                $(".actionbutton-big").removeClass("actionbutton-big-minimal");
+            }
+
+            function onResize() {
+                $(".footer-triangle").css("border-left-width", $(window).width());
+
+                if ($(window).width() > $(window).height()) //landscape
+                {
+                    $(".actionbuttons").addClass("actionbuttons-landscape");
+                    goToMinimalMode();
+                }
+                else {
+                    $(".actionbuttons").removeClass("actionbuttons-landscape");
+
+                    if (footerExpanded == false)
+                        goToNormalMode();
+                }
+
+                OnResizeShareDialog();
+            }
+
+            function initialAnimation() {
+                setTimeout(function () {
+                    $(".actionbutton-bottomleft-container").removeClass("actionbutton-bottomleft-container-initial");
+                    $(".actionbutton-bottomright").removeClass("actionbutton-bottomright-initial");
+                    $(".actionbutton-big").removeClass("actionbutton-big-initial");
+                }, 50);
+
+                setTimeout(function () {
+                    $(".footer").removeClass("footer-hide");
+                }, 200);
+            }
+			
+			function shrinkFooter() {
+				$(".footer, .footer-extra").removeClass("footer-expanded");
+				$(".footer-expand-icon").text("keyboard_arrow_up");
+                $(".sharedialog").addClass("sharedialog-expanded");
+
+				footerExpanded = false;
+				onResize();			
+                OnResizeShareDialog();
+			}
+			
+			function expandFooter()	{
+				$(".footer, .footer-extra").addClass("footer-expanded");
+				$(".footer-expand-icon").text("keyboard_arrow_down");
+                $(".sharedialog").removeClass("sharedialog-expanded");
+
+				footerExpanded = true;
+				goToMinimalMode();
+                OnResizeShareDialog();
+
+                window.location = "stopAutomaticSelection.html";
+			}
+			
+			function checkHash() {
+                var type = window.location.hash.substr(1);
+                if (type == "progress") {
+                    $(".progress").addClass("progress-show");
+                    setProgressText("‌"); //This is not empty. it contains a zero-width joiner.
+                    setProgressValue(-1);
+                }
+                else {
+                    $(".progress").removeClass("progress-show");
+                }
+				
+				if (type == "share") {
+					$(".actionbuttons").addClass("actionbuttons-hide");
+					$(".sharedialog").removeClass("sharedialog-hide");
+					
+                    if ($(window).width() < $(window).height())
+					    expandFooter();
+					
+					$("header").removeClass("header-transparent");
+					$(".mdl-layout-title").text("Share");
+				}
+				else {
+					$(".actionbuttons").removeClass("actionbuttons-hide");
+					$(".sharedialog").addClass("sharedialog-hide");
+					
+					shrinkFooter();
+					
+					$("header").addClass("header-transparent");
+					$(".mdl-layout-title").text("");
+				}
+            }
+
+            onResize();
+            initialAnimation();
+            checkHash();
+            updateButtonsEnabledOrDisabled();
+
+            $(window).on('resize', onResize);
+            $("#expandFooter").on('click', function () {
+                if (footerExpanded == false) {
+                    expandFooter();
+                }
+                else {
+					shrinkFooter();
+                }
+            });
+
+            $(window).on('hashchange', checkHash);
+
+            $(document).on("click", ".deviceItem", function () {
+                var id = $(this).attr("data-deviceId");
+                selectItem(id);
+
+                console.log("Selected item is " + selectedItem.name);
+
+                window.location = "selectItem.html?" + id;
+            });
+
+            $("#settingsMenuItem").on("click", function () {
+                window.location = "settings.html";
+            });
+
+            $("#sendFileButton").on("click", function () {
+                window.location = "sendFile.html";
+            });
+
+            $("#sendPhotoButton").on("click", function () {
+                window.location = "sendPhoto.html";
+            });
+
+            $("#sendClipboardButton").on("click", function () {
+                window.location = "sendClipboard.html";
+            });
+
+            $("#sendUrlButton").on("click", function () {
+                if ($(this).hasClass("inlinebutton-disabled"))
+                    return;
+
+                window.location = "sendUrl.html";
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <!-- Simple header with scrollable tabs. -->
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header mdl-layout__header--scroll header-transparent">
+            <div class="mdl-layout__header-row" style="padding-left: 16px;">
+                <!-- Title -->
+                <span class="mdl-layout-title"></span>
+                <div class="mdl-layout-spacer"></div>
+                <!-- Right aligned menu below button -->
+                <button id="demo-menu-lower-right" class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="material-icons">more_vert</i>
+                    </button>
+
+                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-right">
+                    <li class="mdl-menu__item" id="settingsMenuItem">Settings</li>
+                    <!--<li disabled class="mdl-menu__item">Disabled Action</li>-->
+                </ul>
+            </div>
+        </header>
+        <main class="mdl-layout__content">
+            <div class="actionbuttons">
+                <div class="actionbutton-center">
+                    <button id="sendFileButton" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored actionbutton-big actionbutton-big-initial">
+                        <div class="actionbutton-content">
+                            <div class="actionbutton-content-inner">
+                                <div>
+                                    <i class='material-icons actionbutton-icon' >insert_drive_file</i>
+                                </div>
+                                <div class="actionbutton-content-text">Send file</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div class="actionbutton-center">
+                    <button id="sendPhotoButton" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored actionbutton-bottomright actionbutton-bottomright-initial">
+                        <div class="actionbutton-content">
+                            <div class="actionbutton-content-inner">
+                                <div>
+                                    <i class='material-icons actionbutton-icon'>photo</i>
+                                </div>
+                                <div class="actionbutton-content-text-small">Photo</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div class="actionbutton-center">
+                    <div class="actionbutton-bottomleft-container actionbutton-bottomleft-container-initial">
+                        <button id="sendClipboardButton" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored actionbutton-bottomleft">
+                            <div class="actionbutton-content">
+                                <div class="actionbutton-content-inner">
+                                    <div>
+                                        <i class='material-icons actionbutton-icon' >assignment</i>
+                                    </div>
+                                    <div class="actionbutton-content-text-small">Clipboard</div>
+                                </div>
+                            </div>
+                        </button>
+                        <div class="actionbutton-clipboardpreview-container">
+                            <div class="line actionbutton-center" style="transform: translate(10.6px, -4.39px) rotate(-45deg); height: 30px;"></div>
+                            <div class="line2 actionbutton-center" style="transform: translate(21.21px, 21.21px); width: 15px;"></div>
+                            <div class="actionbutton-center actionbutton-clipboardpreview">Hello world!</div>
+                            <div id="sendUrlButton" class="actionbutton-center actionbutton-clipboardOpenLink">Open this link on the device</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<div class="sharedialog sharedialog-hide">
+				<div class="sharedialog-content actionbutton-center">
+					<div class="sharedialog-preview">
+                        Sample text<br />Multiline<br />Even more<br />And more<br />To infinity, and beyond<br />Yeah...<br />I'm tired.<br />But I have to keep going<br />Because<br />Idk...<br />
+                        Sample text<br />Multiline<br />Even more<br />And more<br />To infinity, and beyond<br />Yeah...<br />I'm tired.<br />But I have to keep going<br />Because<br />Idk...
+                    </div>
+					<div class="sharedialog-buttons">
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+							Open link
+						</button>
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+							Send
+						</button>
+					</div>
+				</div>
+			</div>
+            <div class="footer footer-hide">
+                <div class="footer-triangle">
+                </div>
+                <div class="footer-inside">
+                    <div class="footer-text opacity-animation">
+                        <i class='material-icons footer-text-icon' id="selectedItemType"></i><span id="selectedItemName">Searching...</span>
+                    </div>
+                    <button class="mdl-button mdl-js-button mdl-js-ripple-effect footer-expand-button" id="expandFooter">
+                        <i class='material-icons footer-expand-icon'>keyboard_arrow_up</i>
+                    </button>
+                </div>
+            </div>
+            <div class="footer-extra">
+                <ul class="mdl-list mdl-js-ripple-effect" id="devicesList">
+
+                </ul>
+            </div>
+        </main>
+        <div class="progress opacity-animation">
+            <div class="progress-content">
+                <div class="progress-status">...</div>
+                <div class="spinner-container progress-spinner">
+                    <div style="position:absolute">
+                        <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active progress-spinner spinner-hidden" id="spinner1"></div>
+                    </div>
+                    <div>
+                        <div id="spinner2" class="progress-spinner spinner-show"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
