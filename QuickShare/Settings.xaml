@@ -141,7 +141,7 @@
                                            TextWrapping="Wrap"
                                            Foreground="DarkCyan"
                                            Visibility="{x:Bind Model.FreeVersionBoxVisibility, Mode=OneWay}"
-                                           Text="Universal clipboard is available for free users as a 7 day trial. You can upgrade later at any time." />
+                                           Text="Universal clipboard is available for free users as a 14 day trial. You can upgrade later at any time." />
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
