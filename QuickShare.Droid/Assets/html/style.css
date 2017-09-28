@@ -354,6 +354,14 @@ body {
 	background-color: transparent;
 }
 
+.mdl-layout__header {
+    transition: transform ease-out 0.3s;
+}
+
+.header-hide {
+    transform: translateY(-56px);
+}
+
 
 .sharedialog {
 	position: fixed;

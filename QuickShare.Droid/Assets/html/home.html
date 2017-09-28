@@ -237,6 +237,7 @@
                         goToNormalMode();
                 }
 
+                updateHeaderVisibility();
                 OnResizeShareDialog();
             }
 
@@ -260,14 +261,24 @@
 				footerExpanded = false;
 				onResize();			
                 OnResizeShareDialog();
-			}
+            }
+
+            function updateHeaderVisibility() {
+                if (footerExpanded && ($(window).width() > $(window).height())) {
+                    $(".mdl-layout__header").addClass("header-hide");
+                }
+                else {
+                    $(".mdl-layout__header").removeClass("header-hide");
+                }
+            }
 			
 			function expandFooter()	{
 				$(".footer, .footer-extra").addClass("footer-expanded");
 				$(".footer-expand-icon").text("keyboard_arrow_down");
                 $(".sharedialog").removeClass("sharedialog-expanded");
 
-				footerExpanded = true;
+                footerExpanded = true;
+                updateHeaderVisibility();
 				goToMinimalMode();
                 OnResizeShareDialog();
 
