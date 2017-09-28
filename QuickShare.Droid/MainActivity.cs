@@ -194,6 +194,7 @@ namespace QuickShare.Droid
             //Toolbar will now take on default actionbar characteristics
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = "Share to device";
+            toolbar.Background = new Android.Graphics.Drawables.ColorDrawable(Android.Graphics.Color.ParseColor("#111111"));
 
             mainActions.Visibility = ViewStates.Gone;
             mainShare.Visibility = ViewStates.Visible;
@@ -292,6 +293,7 @@ namespace QuickShare.Droid
             //Toolbar will now take on default actionbar characteristics
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = "Roamit";
+            toolbar.Background = new Android.Graphics.Drawables.ColorDrawable(Android.Graphics.Color.ParseColor("#111111"));
 
             FindViewById<RelativeLayout>(Resource.Id.main_actions).Visibility = ViewStates.Visible;
             FindViewById<RelativeLayout>(Resource.Id.main_share).Visibility = ViewStates.Gone;
