@@ -14,9 +14,14 @@
 				<category android:name="${applicationId}" />
 			</intent-filter>
 		</receiver>
-		<activity android:name="com.ghiasi.quickshare.sendpage" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
+		<activity android:name="com.ghiasi.quickshare.sendpage" android:theme="@style/MyTheme.Legacy" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
     <activity android:name="com.ghiasi.quickshare.webviewcontainerpage" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
-		<activity android:name="com.ghiasi.quickshare.mainpage" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+    <activity android:name="com.ghiasi.quickshare.mainpage" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize"></activity>
+    <activity android:name="com.ghiasi.quickshare.intro" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />

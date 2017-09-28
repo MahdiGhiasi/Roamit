@@ -14,7 +14,7 @@ using QuickShare.Droid.OnlineServiceHelpers;
 
 namespace QuickShare.Droid
 {
-    [Activity(Label = "Roamit", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "Roamit", Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.intro")]
     [IntentFilter(new[] { Intent.ActionSend, Intent.ActionSendMultiple }, Categories = new[] { Intent.CategoryDefault }, DataMimeType = "*/*", Label = "Roamit")]
     public class IntroActivity : Activity
     {

@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
   <style name="MyTheme" parent="MyTheme.Base">
+  </style>
 
+  <style name="MyTheme.Legacy" parent="MyTheme.Base">
   </style>
 
   <!-- Base theme applied no matter what API -->
@@ -21,5 +23,14 @@
     <item name="colorControlHighlight">#448AFF</item>
     <!-- You can also set colorControlNormal, colorControlActivated
          colorControlHighlight and colorSwitchThumbNormal. -->
+  </style>
+
+  <style name="MyTheme.Legacy.Base" parent="Theme.AppCompat">
+    <item name="windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
+    <item name="colorPrimary">#3F51B5</item>
+    <item name="colorPrimaryDark">#303F9F</item>
+    <item name="colorAccent">#448AFF</item>
+    <item name="colorControlHighlight">#448AFF</item>
   </style>
 </resources>

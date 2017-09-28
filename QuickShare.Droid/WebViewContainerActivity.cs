@@ -361,9 +361,27 @@ namespace QuickShare.Droid
             }
         }
 
-        private void SelectDevice(string id)
+        private async void SelectDevice(string id)
         {
-            var item = Common.ListManager.RemoteSystems.First(x => x.Id == id);
+            if ((Common.ListManager.SelectedRemoteSystem != null) && (Common.ListManager.SelectedRemoteSystem.Id == id))
+                return;
+
+            var item = Common.ListManager.RemoteSystems.FirstOrDefault(x => x.Id == id);
+
+            if (item == null)
+            {
+                await Task.Delay(1000);
+
+                item = Common.ListManager.RemoteSystems.FirstOrDefault(x => x.Id == id);
+                if (item == null)
+                {
+                    Common.ListManager.SelectedRemoteSystem = null;
+                    SelectItemIfNecessary();
+
+                    return;
+                }
+            }
+
             Common.ListManager.Select(item);
         }
 
@@ -762,12 +780,24 @@ namespace QuickShare.Droid
                     }
 
                     context.SendJavascriptToWebView($"setSharePreview('{previewText.NormalizeForJsCall()}');");
-                }
-                else
-                {
-                    foreach (var item in Common.ListManager.RemoteSystems)
+
+                    if ((Common.ListManager != null) && (Common.ListManager.RemoteSystems != null) && (Common.ListManager.RemoteSystems.Count > 0))
                     {
-                        AddRemoteSystemToList(item);
+                        foreach (var item in Common.ListManager.RemoteSystems)
+                            context.AddRemoteSystemToList(item);
+
+                        if (Common.ListManager.SelectedRemoteSystem == null)
+                        {
+                            context.SelectItemIfNecessary();
+                        }
+                        else
+                        {
+                            context.AddRemoteSystemToList(Common.ListManager.SelectedRemoteSystem);
+                            context.automaticRemoteSystemSelectionAllowed = false;
+
+                            var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall()}');";
+                            context.SendJavascriptToWebView(s);
+                        }
                     }
                 }
 
