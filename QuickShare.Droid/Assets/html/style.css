@@ -153,7 +153,12 @@ body {
     left: 50%;
     top: 50%;
     transform: translate( -50%, -50%);
+    pointer-events: none;
 }
+
+    .actionbutton-center button {
+        pointer-events: all;
+    }
 
 .actionbutton-big {
     width: 190px;
