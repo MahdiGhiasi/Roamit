@@ -26,6 +26,9 @@ using QuickShare.FileTransfer;
 using Plugin.DeviceInfo;
 using QuickShare.TextTransfer;
 using Firebase.Iid;
+using QuickShare.Droid.Classes.RevMob;
+using Com.Revmob.Ads.Banner;
+using Com.Revmob;
 
 namespace QuickShare.Droid
 {
@@ -46,6 +49,12 @@ namespace QuickShare.Droid
         System.Timers.Timer finishLoadingTimer = null, checkClipboardTextTimer = null;
         Object finishLoadingLock = new Object();
 
+        internal static CallbackStartSessionListener startSessionListener;
+        internal static CallbackShowBanner showBannerAdListener;
+        RevMobBanner revmobBanner;
+        LinearLayout devicesListLayout;
+        RelativeLayout bannerLayout;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -61,6 +70,16 @@ namespace QuickShare.Droid
                 InitShareDialog();
             else
                 webView.LoadUrl(homeUrl);
+
+
+            bannerLayout = FindViewById<RelativeLayout>(Resource.Id.webViewContainer_banner);
+            startSessionListener = new CallbackStartSessionListener(this);
+            showBannerAdListener = new CallbackShowBanner(this);
+            RevMob.StartWithListener(this, startSessionListener, Droid.Config.Secrets.RevMobId);
+            UserTrialStatusUpdated();
+            TrialHelper.UserTrialStatusChanged += UserTrialStatusUpdated;
+            RefreshUserTrialStatus();
+
 
             checkClipboardTextTimer = new System.Timers.Timer()
             {
@@ -94,6 +113,52 @@ namespace QuickShare.Droid
             });
 
             Analytics.TrackPage("WebViewContainerActivity");
+        }
+
+        private async void UserTrialStatusUpdated()
+        {
+            if (TrialHelper.UserTrialStatus == QuickShare.Common.Service.UpgradeDetails.VersionStatus.TrialVersion)
+                await ShowBanner();
+            else
+                HideBanner();
+        }
+
+        private void HideBanner()
+        {
+            bannerLayout.Visibility = ViewStates.Gone;
+
+            if (revmobBanner != null)
+                revmobBanner.Hide();
+        }
+
+        private async Task ShowBanner()
+        {
+            try
+            {
+                bannerLayout.Visibility = ViewStates.Visible;
+
+                if (revmobBanner != null)
+                {
+                    revmobBanner.Show();
+                    return;
+                }
+
+                var revMob = await RevMobHelper.TryGetAdMobSessionAsync(startSessionListener);
+                if (revMob == null)
+                {
+                    HideBanner();
+                    return;
+                }
+
+                revmobBanner = revMob.CreateBanner(this, "", showBannerAdListener);
+                revmobBanner.SetAutoShow(true);
+
+                ViewGroup view = FindViewById<ViewGroup>(Resource.Id.webViewContainer_banner);
+
+                view.RemoveAllViews();
+                view.AddView(revmobBanner);
+            }
+            catch { }
         }
 
         private bool IsShareDialog()

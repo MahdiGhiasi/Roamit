@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     android:minWidth="25px"
     android:minHeight="25px">
+    <RelativeLayout
+        android:id="@+id/webViewContainer_banner"
+        android:layout_width="fill_parent"
+        android:gravity="top|center_horizontal"
+        android:layout_gravity="top"
+        android:background="#cccccc"
+        android:layout_height="50dp" />
     <android.webkit.WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

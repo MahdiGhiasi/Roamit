@@ -2218,8 +2218,8 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0d009b
 			public const int media_actions = 2131558555;
 			
-			// aapt resource value: 0x7f0d00b8
-			public const int menu_settings = 2131558584;
+			// aapt resource value: 0x7f0d00b9
+			public const int menu_settings = 2131558585;
 			
 			// aapt resource value: 0x7f0d0024
 			public const int middle = 2131558436;
@@ -2455,8 +2455,11 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0d001a
 			public const int useLogo = 2131558426;
 			
+			// aapt resource value: 0x7f0d00b8
+			public const int webView = 2131558584;
+			
 			// aapt resource value: 0x7f0d00b7
-			public const int webView = 2131558583;
+			public const int webViewContainer_banner = 2131558583;
 			
 			// aapt resource value: 0x7f0d000e
 			public const int wide = 2131558414;
