@@ -815,18 +815,22 @@ namespace QuickShare.Droid
                 }
                 else if (url == "file:///android_asset/html/sendFile.html")
                 {
+                    context.automaticRemoteSystemSelectionAllowed = false;
                     ProcessRequest("File");
                 }
                 else if (url == "file:///android_asset/html/sendPhoto.html")
                 {
+                    context.automaticRemoteSystemSelectionAllowed = false;
                     ProcessRequest("Photo");
                 }
                 else if (url == "file:///android_asset/html/sendClipboard.html")
                 {
+                    context.automaticRemoteSystemSelectionAllowed = false;
                     ProcessRequest("Clipboard");
                 }
                 else if (url == "file:///android_asset/html/sendUrl.html")
                 {
+                    context.automaticRemoteSystemSelectionAllowed = false;
                     ProcessRequest("Url");
                 }
                 else if (url.Contains("file:///android_asset/html/selectItem.html"))
@@ -837,14 +841,17 @@ namespace QuickShare.Droid
                 }
                 else if (url == "file:///android_asset/html/shareFile.html")
                 {
+                    context.automaticRemoteSystemSelectionAllowed = false;
                     ProcessRequest("Share_File");
                 }
                 else if (url == "file:///android_asset/html/shareClipboard.html")
                 {
+                    context.automaticRemoteSystemSelectionAllowed = false;
                     ProcessRequest("Share_Text");
                 }
                 else if (url == "file:///android_asset/html/shareLink.html")
                 {
+                    context.automaticRemoteSystemSelectionAllowed = false;
                     ProcessRequest("Share_Url");
                 }
                 else
