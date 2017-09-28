@@ -30,7 +30,6 @@ using QuickShare.Droid.Classes.RevMob;
 namespace QuickShare.Droid
 {
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.mainpage")]
-    [IntentFilter(new[] { Intent.ActionSend }, Categories = new[] { Intent.CategoryDefault }, DataMimeType = "*/*", Label = "Roamit")]
     public class MainActivity : AppCompatActivity
     {
         DevicesListAdapter devicesAdapter;

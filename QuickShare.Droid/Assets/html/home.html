@@ -10,7 +10,8 @@
     <script src="progressbar.js"></script>
     <link rel="stylesheet" href="style.css">
     <script>
-        var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress;
+        var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview;
+        var allowRedirects = true; //false only when debugging on browser.
 
         $(document).ready(function () {
             // progressbar.js@1.0.0 version is used
@@ -47,6 +48,13 @@
             var selectedItem = null;
             var clipboardText = "";
 
+            function redirect(url)
+            {
+                console.log("Received redirect request to " + url);
+                if (allowRedirects)
+                    window.location = url;
+            }
+
             function sortList()
             {
                 function compare(a,b) {
@@ -66,18 +74,18 @@
                     updateButtonsEnabledOrDisabled();
                     return;
                 }
-                else if (selectedItem == null)
-                    selectedItem = items[0];
 
                 sortList();
 
-                $("#selectedItemName").text(selectedItem.name);
-                $("#selectedItemType").text(selectedItem.type);
+                if (selectedItem != null) {
+                    $("#selectedItemName").text(selectedItem.name);
+                    $("#selectedItemType").text(selectedItem.type);
+                }
 
                 var listData = "";
                 for (i = 0; i < items.length; i++)
                 {
-                    if (items[i].id != selectedItem.id)
+                    if ((selectedItem == null) || (items[i].id != selectedItem.id))
                     {
                         listData += itemTemplate.replace("{type}", items[i].type).replace("{name}", items[i].name).replace("{id}", items[i].id);
                     }
@@ -89,17 +97,17 @@
             }
 
             function updateButtonsEnabledOrDisabled() {
-                $("#sendFileButton, #sendPhotoButton, #sendClipboardButton").removeAttr("disabled");
+                $("#sendFileButton, #sendPhotoButton, #sendClipboardButton, .sharedialog-button").removeAttr("disabled");
                 $("#sendUrlButton").removeClass("inlinebutton-disabled");
                 $(".actionbutton-clipboardpreview-container").css("visibility", "visible");
                 $("#sendUrlButton").css("visibility", "collapse");
 
                 if (selectedItem == null) {
-                    $("#sendFileButton, #sendPhotoButton, #sendClipboardButton").attr("disabled", "disabled");
+                    $("#sendFileButton, #sendPhotoButton, #sendClipboardButton, .sharedialog-button").attr("disabled", "disabled");
                     $("#sendUrlButton").addClass("inlinebutton-disabled");
                 }
                 else if (selectedItem.type == "videogame_asset") {
-                    $("#sendFileButton, #sendPhotoButton, #sendClipboardButton").attr("disabled", "disabled");
+                    $("#sendFileButton, #sendPhotoButton, #sendClipboardButton, .sharedialog-button[data-submitType!='shareLink']").attr("disabled", "disabled");
                 }
 
                 if (clipboardText.length == 0) {
@@ -118,7 +126,13 @@
                 window.location.hash = "progress";
             }
 
-            addItem = function(_name, _type, _id) {
+            addItem = function (_name, _type, _id) {
+                for (i = 0; i < items.length; i++) {
+                    if (items[i].id == _id) {
+                        return;
+                    }
+                }
+
                 items.push({name: _name, type: _type, id: _id});
 
                 updateList();
@@ -136,12 +150,14 @@
             }
 
             selectItem = function(_id) {
-                if (selectedItem.id == _id)
+                if ((selectedItem != null) && (selectedItem.id == _id))
                     return;
 
                 $(".footer-text").css("opacity", "0");
 
-                setTimeout(function() {
+                setTimeout(function () {
+                    $(".footer-spinner-container").css("display", "none");
+
                     for (i = 0; i < items.length; i++)
                     {
                         if (items[i].id == _id)
@@ -154,6 +170,10 @@
                     updateList();
                     $(".footer-text").css("opacity", "1");
                 }, 200);
+            }
+
+            setSharePreview = function (_text) {
+                $(".sharedialog-preview").text(_text.replace())
             }
 
             setProgressText = function(_text) {
@@ -251,7 +271,7 @@
 				goToMinimalMode();
                 OnResizeShareDialog();
 
-                window.location = "stopAutomaticSelection.html";
+                //redirect("stopAutomaticSelection.html");
 			}
 			
 			function checkHash() {
@@ -265,7 +285,7 @@
                     $(".progress").removeClass("progress-show");
                 }
 				
-				if (type == "share") {
+				if (type.substr(0, 5) == "share") {
 					$(".actionbuttons").addClass("actionbuttons-hide");
 					$(".sharedialog").removeClass("sharedialog-hide");
 					
@@ -273,7 +293,11 @@
 					    expandFooter();
 					
 					$("header").removeClass("header-transparent");
-					$(".mdl-layout-title").text("Share");
+                    $(".mdl-layout-title").text("Share");
+
+                    var subtype = type.substr(5);
+                    $(".sharedialog-buttons").css("display", "none");
+                    $("#sharedialog-buttons-" + subtype).css("display", "block");
 				}
 				else {
 					$(".actionbuttons").removeClass("actionbuttons-hide");
@@ -309,30 +333,38 @@
 
                 console.log("Selected item is " + selectedItem.name);
 
-                window.location = "selectItem.html?" + id;
+                redirect("selectItem.html?" + id);
+            });
+
+            $(".sharedialog-button").on("click", function () {
+                var submitType = $(this).attr("data-submitType");
+
+                redirect(submitType + ".html");
             });
 
             $("#settingsMenuItem").on("click", function () {
-                window.location = "settings.html";
+                setTimeout(function () {
+                    redirect("settings.html");
+                }, 100);
             });
 
             $("#sendFileButton").on("click", function () {
-                window.location = "sendFile.html";
+                redirect("sendFile.html");
             });
 
             $("#sendPhotoButton").on("click", function () {
-                window.location = "sendPhoto.html";
+                redirect("sendPhoto.html");
             });
 
             $("#sendClipboardButton").on("click", function () {
-                window.location = "sendClipboard.html";
+                redirect("sendClipboard.html");
             });
 
             $("#sendUrlButton").on("click", function () {
                 if ($(this).hasClass("inlinebutton-disabled"))
                     return;
 
-                window.location = "sendUrl.html";
+                redirect("sendUrl.html");
             });
         });
     </script>
@@ -364,7 +396,7 @@
                         <div class="actionbutton-content">
                             <div class="actionbutton-content-inner">
                                 <div>
-                                    <i class='material-icons actionbutton-icon' >insert_drive_file</i>
+                                    <i class='material-icons actionbutton-icon'>insert_drive_file</i>
                                 </div>
                                 <div class="actionbutton-content-text">Send file</div>
                             </div>
@@ -406,18 +438,25 @@
             </div>
 			<div class="sharedialog sharedialog-hide">
 				<div class="sharedialog-content actionbutton-center">
-					<div class="sharedialog-preview">
-                        Sample text<br />Multiline<br />Even more<br />And more<br />To infinity, and beyond<br />Yeah...<br />I'm tired.<br />But I have to keep going<br />Because<br />Idk...<br />
-                        Sample text<br />Multiline<br />Even more<br />And more<br />To infinity, and beyond<br />Yeah...<br />I'm tired.<br />But I have to keep going<br />Because<br />Idk...
-                    </div>
-					<div class="sharedialog-buttons">
-						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-							Open link
+					<div class="sharedialog-preview"></div>
+					<div class="sharedialog-buttons" id="sharedialog-buttons-link">
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent sharedialog-button" data-submitType="shareClipboard">
+							Send to clipboard
 						</button>
-						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-							Send
-						</button>
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent sharedialog-button" data-submitType="shareLink">
+                            Open link
+                        </button>
 					</div>
+                    <div class="sharedialog-buttons" id="sharedialog-buttons-clipboard">
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent sharedialog-button" data-submitType="shareClipboard">
+                            Send to clipboard
+                        </button>
+                    </div>
+                    <div class="sharedialog-buttons" id="sharedialog-buttons-file">
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent sharedialog-button" data-submitType="shareFile">
+                            Send
+                        </button>
+                    </div>
 				</div>
 			</div>
             <div class="footer footer-hide">
@@ -425,6 +464,9 @@
                 </div>
                 <div class="footer-inside">
                     <div class="footer-text opacity-animation">
+                        <div class="footer-spinner-container">
+                            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active footer-spinner" id="footerSpinner"></div>
+                        </div>
                         <i class='material-icons footer-text-icon' id="selectedItemType"></i><span id="selectedItemName">Searching...</span>
                     </div>
                     <button class="mdl-button mdl-js-button mdl-js-ripple-effect footer-expand-button" id="expandFooter">

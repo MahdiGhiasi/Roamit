@@ -69,13 +69,28 @@ body {
     border-color: transparent transparent #F44336 transparent;
 }
 
+.footer-spinner {
+    width: 35px;
+    height: 35px;
+    filter: grayscale(100%) brightness(500%);
+    position: absolute;
+    top: 8px;
+}
+
+.footer-spinner-container {
+    display: inline-block;
+    position: relative;
+    width: 35px;
+    height: 35px;
+}
+
 .footer-text {
     display: block;
     position: relative;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-size: 22px;
     letter-spacing: .02em;
-    font-weight: 100;
+    font-weight: 400;
     box-sizing: border-box;
     float: left;
     width: calc(100% - 96px);
@@ -373,27 +388,38 @@ body {
 }
 
 .sharedialog-preview {
-	display: block;
-	text-align: center;
-	max-height: 100px;
-	overflow: scroll;
-	
-	padding-left: 20px;
+    display: block;
+    text-align: center;
+    max-height: 100px;
+    overflow: scroll;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+
+    padding-left: 20px;
     padding-right: 20px;
-    
+
     transition: max-height 0.4s ease-out;
 }
 
 .sharedialog-buttons {
 	margin-top: 40px;
-	
-	padding-left: 20px;
-	padding-right: 20px;
-	
-	text-align: right;
+    text-align: center;	
+    display:none;
 }
 
-.sharedialog-buttons button {
-	margin-left: 10px;
-	font-weight: 700;
+    .sharedialog-buttons button {
+        margin-left: 10px;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+@media (min-width: 360px) {
+    .sharedialog-buttons {
+        padding-left: 20px;
+        padding-right: 20px;
+        text-align: right;
+    }
+        .sharedialog-buttons button {
+            margin-bottom: 0;
+        }
 }

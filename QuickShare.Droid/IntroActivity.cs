@@ -15,6 +15,7 @@ using QuickShare.Droid.OnlineServiceHelpers;
 namespace QuickShare.Droid
 {
     [Activity(Label = "Roamit", MainLauncher = true, Icon = "@drawable/icon")]
+    [IntentFilter(new[] { Intent.ActionSend, Intent.ActionSendMultiple }, Categories = new[] { Intent.CategoryDefault }, DataMimeType = "*/*", Label = "Roamit")]
     public class IntroActivity : Activity
     {
         private ViewPager viewPager;
@@ -146,10 +147,22 @@ namespace QuickShare.Droid
         {
             Classes.Settings settings = new Classes.Settings(this);
 
-            if (settings.UseLegacyUI)
-                StartActivity(new Intent(this, typeof(MainActivity)));
+            if ((Intent.Action == Intent.ActionSend) || (Intent.Action == Intent.ActionSendMultiple))
+            {
+                if (settings.UseLegacyUI)
+                    Intent.SetClass(this, typeof(MainActivity));
+                else
+                    Intent.SetClass(this, typeof(WebViewContainerActivity));
+
+                StartActivity(Intent);
+            }
             else
-                StartActivity(new Intent(this, typeof(WebViewContainerActivity)));
+            {
+                if (settings.UseLegacyUI)
+                    StartActivity(new Intent(this, typeof(MainActivity)));
+                else
+                    StartActivity(new Intent(this, typeof(WebViewContainerActivity)));
+            }
             Finish();
         }
 

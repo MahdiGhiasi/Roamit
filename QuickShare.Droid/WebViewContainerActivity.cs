@@ -53,10 +53,14 @@ namespace QuickShare.Droid
             SetContentView(Resource.Layout.WebViewContainer);
 
             webView = FindViewById<WebView>(Resource.Id.webView);
-            webView.SetWebViewClient(new HybridWebViewClient(this));
+            var client = new HybridWebViewClient(this);
+            webView.SetWebViewClient(client);
             webView.Settings.JavaScriptEnabled = true;
-            webView.LoadUrl(homeUrl);
-            //webView.LoadDataWithBaseURL("file:///android_asset/", "<h1>Hello</h1>", "text/html", "UTF-8", "");
+
+            if (IsShareDialog())
+                InitShareDialog();
+            else
+                webView.LoadUrl(homeUrl);
 
             checkClipboardTextTimer = new System.Timers.Timer()
             {
@@ -66,7 +70,10 @@ namespace QuickShare.Droid
             checkClipboardTextTimer.Start();
 
             if (IsInitialized)
+            {
+                Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
                 return;
+            }
             IsInitialized = true;
 
             Common.PackageManager = new RomePackageManager(this);
@@ -80,13 +87,58 @@ namespace QuickShare.Droid
             Task.Run(async () =>
             {
 #if DEBUG
-                FirebaseInstanceId.Instance.DeleteInstanceId();          
+                FirebaseInstanceId.Instance.DeleteInstanceId();
 #endif
                 await ServiceFunctions.RegisterDevice();
                 RefreshUserTrialStatus();
             });
 
             Analytics.TrackPage("WebViewContainerActivity");
+        }
+
+        private bool IsShareDialog()
+        {
+            return (Intent.Action == Intent.ActionSend) || (Intent.Action == Intent.ActionSendMultiple);
+        }
+
+        private void InitShareDialog()
+        {
+            if ((Intent.Action == Intent.ActionSend) && (Intent.Extras.ContainsKey(Intent.ExtraStream)))
+            {
+                var fileUrl = FilePathHelper.GetPath(this, (Android.Net.Uri)Intent.Extras.GetParcelable(Intent.ExtraStream));
+
+                Common.ShareFiles = new string[] { fileUrl };
+
+                webView.LoadUrl($"{homeUrl}#sharefile");
+            }
+            else if (Intent.Action == Intent.ActionSendMultiple && Intent.Extras.ContainsKey(Intent.ExtraStream))
+            {
+                string[] urls = Intent.Extras.GetParcelableArrayList(Intent.ExtraStream)
+                    .Cast<Android.Net.Uri>()
+                    .Select(x => FilePathHelper.GetPath(this, x))
+                    .ToArray();
+
+                Common.ShareFiles = urls;
+
+                webView.LoadUrl($"{homeUrl}#sharefile");
+            }
+            else if ((Intent.Action == Intent.ActionSend) && (Intent.Type == "text/plain"))
+            {
+                string sharedText = Intent.GetStringExtra(Intent.ExtraText);
+
+                Common.ShareFiles = null;
+                Common.ShareText = sharedText;
+
+                bool isValidUri = System.Uri.TryCreate(sharedText, UriKind.Absolute, out _);
+                if (isValidUri)
+                    webView.LoadUrl($"{homeUrl}#sharelink");
+                else
+                    webView.LoadUrl($"{homeUrl}#shareclipboard");
+            }
+            else
+            {
+                webView.LoadUrl($"{homeUrl}#share");
+            }
         }
 
         private async void RefreshUserTrialStatus()
@@ -111,7 +163,7 @@ namespace QuickShare.Droid
 
         public override void OnBackPressed()
         {
-            if (webView.Url != homeUrl)
+            if ((webView.Url != homeUrl) && (!IsShareDialog()))
             {
                 //TODO: Stop pending operations
                 WebViewBack();
@@ -125,9 +177,19 @@ namespace QuickShare.Droid
         private async void SendJavascriptToWebView(string jsContent)
         {
             await jsSendSemaphore.WaitAsync();
-            webView.EvaluateJavascript(jsContent, null);
-            await Task.Delay(10);
-            jsSendSemaphore.Release();
+            try
+            {
+                webView.EvaluateJavascript(jsContent, null);
+                await Task.Delay(20);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"*** ERROR IN SendJavascriptToWebView ({jsContent}): {ex.Message}");
+            }
+            finally
+            {
+                jsSendSemaphore.Release();
+            }
         }
 
         private async void InitDiscovery()
@@ -153,8 +215,7 @@ namespace QuickShare.Droid
                         {
                             Common.ListManager.AddDevice(item);
                             var nrs = normalizer.Normalize(item);
-
-                            SendJavascriptToWebView($"addItem('{nrs.DisplayName.Replace("'", "\\'")}', '{TranslateDeviceKindToWebViewFormat(nrs.Kind).Replace("'", "\\'")}', '{nrs.Id.Replace("'", "\\'")}');");
+                            AddRemoteSystemToList(nrs);
                         }
 
                     if (e.OldItems != null)
@@ -162,15 +223,10 @@ namespace QuickShare.Droid
                         {
                             Common.ListManager.RemoveDevice(item);
                             var nrs = normalizer.Normalize(item);
-                            SendJavascriptToWebView($"removeItem('{nrs.Id.Replace("'", "\\'")}');");
+                            RemoveRemoteSystemFromList(nrs);
                         }
 
-                    if ((Common.ListManager.RemoteSystems.Count > 0) && (automaticRemoteSystemSelectionAllowed) && (Common.ListManager.RemoteSystems.Count > remoteSystemPrevCount))
-                    {
-                        remoteSystemPrevCount = Common.ListManager.RemoteSystems.Count;
-                        Common.ListManager.SelectHighScoreItem();
-                        SendJavascriptToWebView($"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id.Replace("'", "\\'")}');");
-                    }
+                    SelectItemIfNecessary();
 
                     try
                     {
@@ -208,6 +264,28 @@ namespace QuickShare.Droid
             finally
             {
                 rsChangeSemaphore.Release();
+            }
+        }
+
+        private void RemoveRemoteSystemFromList(NormalizedRemoteSystem nrs)
+        {
+            SendJavascriptToWebView($"removeItem('{nrs.Id.NormalizeForJsCall()}');");
+        }
+
+        private void AddRemoteSystemToList(NormalizedRemoteSystem nrs)
+        {
+            SendJavascriptToWebView($"addItem('{nrs.DisplayName.NormalizeForJsCall()}', '{TranslateDeviceKindToWebViewFormat(nrs.Kind).NormalizeForJsCall()}', '{nrs.Id.NormalizeForJsCall()}');");
+        }
+
+        private void SelectItemIfNecessary()
+        {
+            if ((Common.ListManager.RemoteSystems.Count > 0) &&
+                (((automaticRemoteSystemSelectionAllowed) /*&& (Common.ListManager.RemoteSystems.Count > remoteSystemPrevCount)*/) || (Common.ListManager.SelectedRemoteSystem == null)))
+            {
+                remoteSystemPrevCount = Common.ListManager.RemoteSystems.Count;
+                Common.ListManager.SelectHighScoreItem();
+                var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall()}');";
+                SendJavascriptToWebView(s);
             }
         }
 
@@ -274,7 +352,7 @@ namespace QuickShare.Droid
                     while (contentPreview.Contains("  "))
                         contentPreview = contentPreview.Replace("  ", " ");
 
-                    SendJavascriptToWebView($"setClipboardText('{contentPreview.Replace("'", "\\'")}');");
+                    SendJavascriptToWebView($"setClipboardText('{contentPreview.NormalizeForJsCall()}');");
                 });
             }
             catch (Exception ex)
@@ -300,7 +378,7 @@ namespace QuickShare.Droid
 
         private void SetProgressText(string text)
         {
-            SendJavascriptToWebView($"setProgressText('{text.Replace("'", "\\'")}');");
+            SendJavascriptToWebView($"setProgressText('{text.NormalizeForJsCall()}');");
         }
 
         private void SetProgressValue(double val, double max)
@@ -665,6 +743,37 @@ namespace QuickShare.Droid
                 context = _context;
             }
 
+            public override void OnPageFinished(WebView view, string url)
+            {
+                if ((context.Intent.Action == Intent.ActionSend) || (context.Intent.Action == Intent.ActionSendMultiple))
+                {
+                    string previewText = "Unsupported content.";
+
+                    if (Common.ShareFiles != null)
+                    {
+                        if (Common.ShareFiles.Length == 1)
+                            previewText = Common.ShareFiles[0];
+                        else
+                            previewText = $"{Common.ShareFiles.Length} files";
+                    }
+                    else if (Common.ShareText.Length > 0)
+                    {
+                        previewText = Common.ShareText;
+                    }
+
+                    context.SendJavascriptToWebView($"setSharePreview('{previewText.NormalizeForJsCall()}');");
+                }
+                else
+                {
+                    foreach (var item in Common.ListManager.RemoteSystems)
+                    {
+                        AddRemoteSystemToList(item);
+                    }
+                }
+
+                base.OnPageFinished(view, url);
+            }
+
             [Obsolete]
             public override bool ShouldOverrideUrlLoading(WebView webView, string url)
             {
@@ -696,8 +805,21 @@ namespace QuickShare.Droid
                 }
                 else if (url.Contains("file:///android_asset/html/selectItem.html"))
                 {
+                    context.automaticRemoteSystemSelectionAllowed = false;
                     var id = url.Split('?')[1];
                     context.SelectDevice(id);
+                }
+                else if (url == "file:///android_asset/html/shareFile.html")
+                {
+                    ProcessRequest("Share_File");
+                }
+                else if (url == "file:///android_asset/html/shareClipboard.html")
+                {
+                    ProcessRequest("Share_Text");
+                }
+                else if (url == "file:///android_asset/html/shareLink.html")
+                {
+                    ProcessRequest("Share_Url");
                 }
                 else
                 {

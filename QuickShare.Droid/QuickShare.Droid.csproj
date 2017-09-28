@@ -199,6 +199,7 @@
     <Compile Include="Classes\RevMob\CallbackStartSessionListener.cs" />
     <Compile Include="Classes\RevMob\RevMobHelper.cs" />
     <Compile Include="Classes\Settings.cs" />
+    <Compile Include="Classes\StringExtension.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="DevicesListAdapter.cs" />
     <Compile Include="Firebase\MyFirebaseInstanceIdService.cs" />
