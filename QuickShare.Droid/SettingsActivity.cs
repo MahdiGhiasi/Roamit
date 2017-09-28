@@ -20,7 +20,7 @@ namespace QuickShare.Droid
     [Activity]
     internal class SettingsActivity : AppCompatActivity
     {
-        TextView txtVersionNumber, txtTrialStatus;
+        TextView txtVersionNumber, txtTrialStatus, txtCloudClipboardModeDescription;
         Button btnUpgrade;
         Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode;
 
@@ -36,6 +36,7 @@ namespace QuickShare.Droid
 
             txtVersionNumber = FindViewById<TextView>(Resource.Id.settings_txt_version);
             txtTrialStatus = FindViewById<TextView>(Resource.Id.settings_txt_trialStatus);
+            txtCloudClipboardModeDescription = FindViewById<TextView>(Resource.Id.settings_cloudClipboardModeDescription);
             btnUpgrade = FindViewById<Button>(Resource.Id.settings_btn_upgrade);
             swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
@@ -72,6 +73,8 @@ namespace QuickShare.Droid
             swCloudClipboardMode.CheckedChange += SwCloudClipboardMode_CheckedChange;
 
             swCloudClipboardActivity.Visibility = CrossSecureStorage.Current.HasKey("RoamitAccountId") ? ViewStates.Visible : ViewStates.Gone;
+            swCloudClipboardMode.Visibility = swCloudClipboardActivity.Visibility;
+            txtCloudClipboardModeDescription.Visibility = swCloudClipboardActivity.Visibility;
 
             if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
             {
