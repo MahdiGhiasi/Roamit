@@ -434,9 +434,6 @@ namespace QuickShare.Droid
             {
                 if ((resultCode == Result.Ok) && (data != null))
                 {
-                    ShowProgress();
-                    SetProgressText("Connecting...");
-
                     List<string> files = new List<string>();
 
                     ClipData clipData = data.ClipData;
@@ -458,7 +455,6 @@ namespace QuickShare.Droid
 
                     if (files.Count == 0)
                     {
-                        WebViewBack();
                         return;
                     }
 
