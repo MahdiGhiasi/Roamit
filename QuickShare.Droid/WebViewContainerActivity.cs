@@ -919,6 +919,28 @@ namespace QuickShare.Droid
                     context.automaticRemoteSystemSelectionAllowed = false;
                     ProcessRequest("Share_Url");
                 }
+                else if (url == "file:///android_asset/html/rate.html")
+                {
+                    var uri = Android.Net.Uri.Parse("market://details?id=" + Application.Context.PackageName);
+                    Intent rateAppIntent = new Intent(Intent.ActionView, uri);
+
+                    if (context.PackageManager.QueryIntentActivities(rateAppIntent, 0).Count > 0)
+                    {
+                        context.StartActivity(rateAppIntent);
+                    }
+                }
+                else if (url == "file:///android_asset/html/contact.html")
+                {
+                    var mailto = "mailto:roamitapp@gmail.com?subject=Roamit%20for%20Android%20v" + Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
+
+                    var email = new Intent(Intent.ActionSendto);
+                    email.SetData(Android.Net.Uri.Parse(mailto));
+
+                    if (context.PackageManager.QueryIntentActivities(email, 0).Count > 0)
+                    {
+                        context.StartActivity(email);
+                    }
+                }
                 else
                 {
                     return false;
