@@ -58,6 +58,7 @@
     <Compile Include="Common.cs" />
     <Compile Include="FileDetails.cs" />
     <Compile Include="FileReceiver.cs" />
+    <Compile Include="FileReceiveState.cs" />
     <Compile Include="FileSender.cs" />
     <Compile Include="FileTransferProgressEventArgs.cs" />
     <Compile Include="IPDetectionCompletedEventArgs.cs" />

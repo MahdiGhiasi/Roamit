@@ -1,4 +1,4 @@
-﻿#define NOTIFICATIONHANDLER_DEBUGINFO
+﻿//#define NOTIFICATIONHANDLER_DEBUGINFO
 
 using System;
 using System.Threading.Tasks;

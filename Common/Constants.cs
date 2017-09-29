@@ -11,7 +11,7 @@ namespace QuickShare.Common
         public static int CommunicationPort = 8081;
         public static int IPFinderCommunicationPort = 8082;
 
-        public static ulong FileSliceMaxLength = 512 * 1024; // 512 Kilobytes
+        public static ulong FileSliceMaxLength = 10; //512 * 1024; // 512 Kilobytes
 
         public static readonly string ServerAddress = "https://qs.services.ghiasi.net"; //"http://192.168.1.100:3000";
 

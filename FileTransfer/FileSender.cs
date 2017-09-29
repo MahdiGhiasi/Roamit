@@ -12,6 +12,7 @@ using QuickShare.Common.Rome;
 using PCLStorage;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace QuickShare.FileTransfer
 {
@@ -19,6 +20,7 @@ namespace QuickShare.FileTransfer
     {
         readonly int maxQueueInfoMessageSize = 1536;
         readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(6);
+        readonly TimeSpan downloadSliceTimeout = TimeSpan.FromSeconds(5);
 
         object remoteSystem;
 
@@ -44,6 +46,10 @@ namespace QuickShare.FileTransfer
         public delegate void FileTransferProgressEventHandler(object sender, FileTransferProgressEventArgs e);
         public event FileTransferProgressEventHandler FileTransferProgress;
         private event FileTransferProgressEventHandler FileTransferProgressInternal;
+
+        Guid sendTaskGuid = Guid.NewGuid();
+
+        Timer retryTimer = null;
 
         public FileSender(object _remoteSystem, IWebServerGenerator _webServerGenerator, IRomePackageManager _packageManager, IEnumerable<string> _myIPs, string _deviceName)
         {
@@ -333,6 +339,8 @@ namespace QuickShare.FileTransfer
 
         private async Task<bool> SendQueueInit(ulong totalSlices, string queueFinishKey, string parentDirectoryName)
         {
+            sendTaskGuid = Guid.NewGuid();
+
             Dictionary<string, object> qInit = new Dictionary<string, object>
             {
                 { "Receiver", "FileReceiver" },
@@ -340,7 +348,7 @@ namespace QuickShare.FileTransfer
                 { "TotalSlices", (long)totalSlices },
                 { "QueueFinishKey", queueFinishKey },
                 { "ServerIP", ipFinderResult.MyIP },
-                { "Guid", Guid.NewGuid().ToString() },
+                { "Guid", sendTaskGuid.ToString() },
                 { "SenderName", deviceName },
                 { "parentDirectoryName", parentDirectoryName }
             };
@@ -389,7 +397,9 @@ namespace QuickShare.FileTransfer
             };
             if (!isQueue)
             {
-                vs.Add("Guid", Guid.NewGuid().ToString());
+                sendTaskGuid = Guid.NewGuid();
+
+                vs.Add("Guid", sendTaskGuid.ToString());
                 vs.Add("SenderName", deviceName);
             }
             else
@@ -426,6 +436,8 @@ namespace QuickShare.FileTransfer
         {
             try
             {
+                retryTimer.Change(Timeout.Infinite, Timeout.Infinite);
+
                 var query = QueryHelpers.ParseQuery(request.Url.Query);
 
                 var success = (query["success"][0].ToLower() == "true");
@@ -483,6 +495,10 @@ namespace QuickShare.FileTransfer
                 var key = parts[0];
                 ulong id = ulong.Parse(parts[1]);
 
+                PrepareForEmergencyRetry();
+
+                Debug.WriteLine($"Sending slice {id + 1} / {keyTable[key].lastSliceId + 1}");
+
                 if (id >= keyTable[key].lastPieceAccessed)
                 {
                     FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = id + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.DataTransfer });
@@ -507,6 +523,67 @@ namespace QuickShare.FileTransfer
             {
                 Debug.WriteLine("Exception in GetFileSlice(): " + ex.Message);
                 return "Invalid Request".Select(c => (byte)c).ToArray();
+            }
+        }
+
+        private void PrepareForEmergencyRetry()
+        {
+            if (retryTimer != null)
+                retryTimer.Change(10000, Timeout.Infinite);
+            else
+                retryTimer = new Timer(RetryTimerCallback, 0, 10000, Timeout.Infinite);
+        }
+
+        private async void RetryTimerCallback(object state)
+        {
+            int tryNum = (int)state;
+
+            Debug.WriteLine("Performing emergency retry...");
+            Debug.WriteLine("Stage 1: Closing the old instance...");
+
+            Dictionary<string, object> vs = new Dictionary<string, object>
+            {
+                { "Receiver", "System" },
+                { "FinishService2", "FinishService2" },
+            };
+
+            var result = await packageManager.Send(vs);
+
+            if (result == null)
+            {
+                Debug.WriteLine($"Emergecy retry request #{tryNum} failed ({result.Status.ToString()}).");
+
+                if (tryNum < 5)
+                    RetryTimerCallback(tryNum + 1);
+                else
+                    Debug.WriteLine($"Emergency retry request failed.");
+
+                return;
+            }
+
+            await Task.Delay(1000);
+
+            vs = new Dictionary<string, object>
+            {
+                { "Receiver", "FileReceiver" },
+                { "Type", "EmergencyRetry" },
+                { "Guid", sendTaskGuid.ToString() },
+            };
+
+            result = await packageManager.Send(vs);
+
+            if (result.Status == RomeAppServiceResponseStatus.Success)
+            {
+                Debug.WriteLine("Emergecy retry request sent.");
+            }
+            else
+            {
+                Debug.WriteLine($"Emergecy retry request #{tryNum} failed ({result.Status.ToString()}).");
+
+                if (tryNum < 5)
+                    RetryTimerCallback(tryNum + 1);
+                else
+                    Debug.WriteLine($"Emergency retry request failed.");
             }
         }
 

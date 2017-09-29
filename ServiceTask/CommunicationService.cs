@@ -119,8 +119,16 @@ namespace QuickShare.ServiceTask
                     }
                     else if (receiver == "System")
                     {
-                        if (args.Request.Message.ContainsKey("FinishService"))
+                        if (args.Request.Message.ContainsKey("FinishService") || (args.Request.Message.ContainsKey("FinishService2")))
                         {
+                            if (args.Request.Message.ContainsKey("FinishService2"))
+                            {
+                                ValueSet vs = new ValueSet
+                                {
+                                    {"Bye", "Bye"},
+                                };
+                                await args.Request.SendResponseAsync(vs);
+                            }
                             if (_deferral != null)
                             {
                                 System.Diagnostics.Debug.WriteLine("Let's say goodbye");
