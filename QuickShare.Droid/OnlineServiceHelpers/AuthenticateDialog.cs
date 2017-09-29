@@ -35,7 +35,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
         {
             authenticateTcs = new TaskCompletionSource<MsaAuthResult>();
 
-            authDialog = new Dialog(context);
+            authDialog = new Dialog(context, Android.Resource.Style.ThemeLightNoTitleBarFullScreen);
 
             authDialog.CancelEvent += (ss, ee) => 
             {

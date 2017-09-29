@@ -391,7 +391,7 @@ namespace QuickShare.Droid
 
                 if (result != MsaAuthResult.Success)
                 {
-                    Toast.MakeText(this, "The app can't work without your permission.", ToastLength.Long);
+                    Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
                 }
             });
         }
