@@ -210,7 +210,7 @@ namespace QuickShare.UWP.Rome
                         System.Diagnostics.Debug.WriteLine("Connecting timeout");
 
                     RemoteSystem rsNew2 = await RediscoverRemoteSystem(rs);
-                    System.Diagnostics.Debug.WriteLine(rsNew2.IsAvailableByProximity);
+                    
                     if (rsNew2 == null)
                         return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
                     else
