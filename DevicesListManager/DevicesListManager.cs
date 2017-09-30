@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace QuickShare.DevicesListManager
@@ -233,18 +234,26 @@ namespace QuickShare.DevicesListManager
         {
             lock (RemoteSystems)
             {
-                if (RemoteSystems.Count == 0)
+                try
+                {
+                    if (RemoteSystems.Count == 0)
+                        return null;
+
+                    SelectedRemoteSystem = null;
+                    Sort();
+
+                    if (RemoteSystems.Count == 0)
+                        return null;
+
+                    NormalizedRemoteSystem output = RemoteSystems[0];
+                    Select(output, false);
+                    return output;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Exception in SelectHighScoreItem(): {ex.Message}");
                     return null;
-
-                SelectedRemoteSystem = null;
-                Sort();
-
-                if (RemoteSystems.Count == 0)
-                    return null;
-
-                NormalizedRemoteSystem output = RemoteSystems[0];
-                Select(output, false);
-                return output;
+                }
             }
         }
     }
