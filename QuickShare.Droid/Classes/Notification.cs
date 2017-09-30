@@ -112,5 +112,29 @@ namespace QuickShare.Droid.Classes
             var notificationManager = NotificationManager.FromContext(context);
             notificationManager.Notify(0, notificationBuilder.Build());
         }
+
+        public static void SendDebugNotification(Context context, string title, string body)
+        {
+#if DEBUG
+            var intent = new Intent(context, typeof(MainActivity));
+            intent.AddFlags(ActivityFlags.ClearTop);
+
+            var pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.OneShot);
+
+            var defaultSoundUri = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
+
+            var notificationBuilder =
+                new NotificationCompat.Builder(context)
+                    .SetSmallIcon(Resource.Drawable.Icon)
+                    .SetContentTitle(title)
+                    .SetContentText(body)
+                    .SetAutoCancel(true)
+                    .SetSound(defaultSoundUri)
+                    .SetContentIntent(pendingIntent);
+
+            var notificationManager = NotificationManager.FromContext(context);
+            notificationManager.Notify(0, notificationBuilder.Build());
+#endif
+        }
     }
 }

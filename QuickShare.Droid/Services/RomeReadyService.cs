@@ -91,6 +91,7 @@ namespace QuickShare.Droid.Services
 
         public override void OnDestroy()
         {
+            Classes.Notification.SendDebugNotification(this, "RomeReadyService", "OnDestroy()");
 #if ROMEREADY_TIMER
             timer.Dispose();
             timer = null;
@@ -98,7 +99,7 @@ namespace QuickShare.Droid.Services
             isStarted = false;
 
             TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
-            Log.Debug(TAG, $"Service destroyed at {DateTime.UtcNow} after running for {runtime:c}.");
+            Log.Debug(TAG, $"Service destroyed at {DateTime.Now} after running for {runtime:c}.");
             base.OnDestroy();
         }
 
