@@ -239,6 +239,9 @@ namespace QuickShare.DevicesListManager
                 SelectedRemoteSystem = null;
                 Sort();
 
+                if (RemoteSystems.Count == 0)
+                    return null;
+
                 NormalizedRemoteSystem output = RemoteSystems[0];
                 Select(output, false);
                 return output;
