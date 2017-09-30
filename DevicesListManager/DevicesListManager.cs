@@ -65,51 +65,69 @@ namespace QuickShare.DevicesListManager
 
         public void AddDevice(object o)
         {
-            var newId = attrNormalizer.Normalize(o).Id;
-            var existing = devices.FirstOrDefault(x => attrNormalizer.Normalize(x).Id == newId);
-            if (existing != null)
-                devices.Remove(existing);
+            lock (RemoteSystems)
+            {
+                var newId = attrNormalizer.Normalize(o).Id;
+                var existing = devices.FirstOrDefault(x => attrNormalizer.Normalize(x).Id == newId);
+                if (existing != null)
+                    devices.Remove(existing);
 
-            devices.Add(o);
-            Sort();
+                devices.Add(o);
+                Sort();
+            }
         }
 
         public void RemoveDevice(object o)
         {
-            devices.Remove(o);
+            lock (RemoteSystems)
+            {
+                devices.Remove(o);
+            }
         }
 
         public void RemoveDeviceById(string id)
         {
-            var d = devices.FirstOrDefault(x => attrNormalizer.Normalize(x).Id == id);
-            if (d != null)
-                RemoveDevice(d);
+            lock (RemoteSystems)
+            {
+                var d = devices.FirstOrDefault(x => attrNormalizer.Normalize(x).Id == id);
+                if (d != null)
+                    RemoveDevice(d);
+            }
         }
 
         public void RemoveDeviceByName(string name)
         {
-            var d = devices.Where(x => attrNormalizer.Normalize(x).DisplayName == name);
-            if (d == null)
-                return;
-            foreach (var i in d)
+            lock (RemoteSystems)
             {
-                RemoveDevice(i);
+                var d = devices.Where(x => attrNormalizer.Normalize(x).DisplayName == name);
+                if (d == null)
+                    return;
+                foreach (var i in d)
+                {
+                    RemoveDevice(i);
+                }
             }
         }
 
         public void RemoveAndroidDevices()
         {
-            devices.RemoveAll(x => ((x is NormalizedRemoteSystem) && ((x as NormalizedRemoteSystem).Kind == "QS_Android")));
-
-            if (SelectedRemoteSystem.Kind == "QS_Android")
+            lock (RemoteSystems)
             {
-                SelectHighScoreItem();
+                devices.RemoveAll(x => ((x is NormalizedRemoteSystem) && ((x as NormalizedRemoteSystem).Kind == "QS_Android")));
+
+                if (SelectedRemoteSystem.Kind == "QS_Android")
+                {
+                    SelectHighScoreItem();
+                }
             }
         }
 
         public void Select(object o)
         {
-            Select(o, true);
+            lock (RemoteSystems)
+            {
+                Select(o, true);
+            }
         }
 
         Object dbLock = new Object();
@@ -177,14 +195,17 @@ namespace QuickShare.DevicesListManager
 
         public List<NormalizedRemoteSystem> GetSortedList(NormalizedRemoteSystem selected)
         {
-            var output = new List<NormalizedRemoteSystem>();
-            foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown").OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
+            lock (RemoteSystems)
             {
-                if (item.Id != selected?.Id)
-                    output.Add(item);
-            }
+                var output = new List<NormalizedRemoteSystem>();
+                foreach (var item in devices.Select(x => attrNormalizer.Normalize(x)).Where(x => x.Kind != "Unknown").OrderBy(x => x.DisplayName).OrderBy(x => CalculateScore(x)).OrderByDescending(x => x.IsAvailableByProximity))
+                {
+                    if (item.Id != selected?.Id)
+                        output.Add(item);
+                }
 
-            return output;
+                return output;
+            }
         }
 
         public void Sort()
@@ -210,15 +231,18 @@ namespace QuickShare.DevicesListManager
 
         public NormalizedRemoteSystem SelectHighScoreItem()
         {
-            if (RemoteSystems.Count == 0)
-                return null;
+            lock (RemoteSystems)
+            {
+                if (RemoteSystems.Count == 0)
+                    return null;
 
-            SelectedRemoteSystem = null;
-            Sort();
+                SelectedRemoteSystem = null;
+                Sort();
 
-            NormalizedRemoteSystem output = RemoteSystems[0];
-            Select(output, false);
-            return output;
+                NormalizedRemoteSystem output = RemoteSystems[0];
+                Select(output, false);
+                return output;
+            }
         }
     }
 }
