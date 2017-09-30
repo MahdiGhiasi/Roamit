@@ -169,7 +169,7 @@
                     
                     updateList();
                     $(".footer-text").css("opacity", "1");
-                }, 200);
+                }, 125);
             }
 
             setSharePreview = function (_text) {
@@ -342,9 +342,10 @@
                 var id = $(this).attr("data-deviceId");
                 selectItem(id);
 
-                console.log("Selected item is " + selectedItem.name);
-
-                redirect("selectItem.html?" + id);
+                setTimeout(function () {
+                    console.log("Selected item is " + selectedItem.name);
+                    redirect("selectItem.html?" + id);
+                }, 300);
             });
 
             $(".sharedialog-button").on("click", function () {
@@ -477,7 +478,7 @@
                 <div class="footer-triangle">
                 </div>
                 <div class="footer-inside">
-                    <div class="footer-text opacity-animation">
+                    <div class="footer-text opacity-animation-fast">
                         <div class="footer-spinner-container">
                             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active footer-spinner" id="footerSpinner"></div>
                         </div>
