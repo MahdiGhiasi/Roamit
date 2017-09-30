@@ -17,8 +17,8 @@ namespace QuickShare.Droid
 {
     internal static class Common
     {
-        internal static RomePackageManager PackageManager { get; set; }
-        internal static RomePackageManager MessageCarrierPackageManager { get; set; }
+        internal static RomePackageManager PackageManager { get; set; } = null;
+        internal static RomePackageManager MessageCarrierPackageManager { get; set; } = null;
         internal static DevicesListManager.DevicesListManager ListManager { get; } = new DevicesListManager.DevicesListManager("", new RemoteSystemNormalizer());
 
         internal static string ShareText { get; set; }

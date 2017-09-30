@@ -90,16 +90,24 @@ namespace QuickShare.Droid
 
             if (IsInitialized)
             {
+                //TODO: Load already available devices to UI
                 Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
                 return;
             }
             IsInitialized = true;
 
-            Common.PackageManager = new RomePackageManager(this);
-            Common.PackageManager.Initialize("com.roamit.service");
+            if (Common.PackageManager == null)
+            {
+                Common.PackageManager = new RomePackageManager(this);
+                Common.PackageManager.Initialize("com.roamit.service");
+            }
+            //TODO: else: Load already available devices to UI
 
-            Common.MessageCarrierPackageManager = new RomePackageManager(this);
-            Common.MessageCarrierPackageManager.Initialize("com.roamit.messagecarrierservice");
+            if (Common.MessageCarrierPackageManager == null)
+            {
+                Common.MessageCarrierPackageManager = new RomePackageManager(this);
+                Common.MessageCarrierPackageManager.Initialize("com.roamit.messagecarrierservice");
+            }
 
             InitDiscovery();
 
@@ -113,6 +121,8 @@ namespace QuickShare.Droid
             });
 
             Analytics.TrackPage("WebViewContainerActivity");
+
+            StartService(new Intent(this, typeof(Services.RomeReadyService)));
         }
 
         private async void UserTrialStatusUpdated()

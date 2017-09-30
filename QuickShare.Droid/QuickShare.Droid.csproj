@@ -227,6 +227,7 @@
     <Compile Include="SendPageActivity.cs" />
     <Compile Include="Services\CloudClipboardService.cs" />
     <Compile Include="Services\MessageCarrierService.cs" />
+    <Compile Include="Services\RomeReadyService.cs" />
     <Compile Include="SettingsActivity.cs" />
     <Compile Include="WebViewContainerActivity.cs" />
   </ItemGroup>
