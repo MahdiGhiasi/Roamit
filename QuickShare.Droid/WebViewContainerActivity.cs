@@ -370,7 +370,18 @@ namespace QuickShare.Droid
                 Common.ListManager.SelectHighScoreItem();
                 var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall()}');";
                 SendJavascriptToWebView(s);
+
+                BlockAutomaticRemoteSystemSelection();
             }
+        }
+
+        private async void BlockAutomaticRemoteSystemSelection()
+        {
+            if (!automaticRemoteSystemSelectionAllowed)
+                return;
+
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            automaticRemoteSystemSelectionAllowed = false;
         }
 
         private void FinishLoadingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
