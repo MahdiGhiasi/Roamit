@@ -854,44 +854,44 @@ namespace QuickShare.Droid
 
             public override void OnPageFinished(WebView view, string url)
             {
-                if (url == context.homeUrl)
+                if (url.Contains("#progress"))
+                    return;
+
+                if ((context.Intent.Action == Intent.ActionSend) || (context.Intent.Action == Intent.ActionSendMultiple))
                 {
-                    if ((context.Intent.Action == Intent.ActionSend) || (context.Intent.Action == Intent.ActionSendMultiple))
+                    string previewText = "Unsupported content.";
+
+                    if (Common.ShareFiles != null)
                     {
-                        string previewText = "Unsupported content.";
-
-                        if (Common.ShareFiles != null)
-                        {
-                            if (Common.ShareFiles.Length == 1)
-                                previewText = Common.ShareFiles[0];
-                            else
-                                previewText = $"{Common.ShareFiles.Length} files";
-                        }
-                        else if (Common.ShareText.Length > 0)
-                        {
-                            previewText = Common.ShareText;
-                        }
-
-                        context.SendJavascriptToWebView($"setSharePreview('{previewText.NormalizeForJsCall()}');");
+                        if (Common.ShareFiles.Length == 1)
+                            previewText = Common.ShareFiles[0];
+                        else
+                            previewText = $"{Common.ShareFiles.Length} files";
+                    }
+                    else if (Common.ShareText.Length > 0)
+                    {
+                        previewText = Common.ShareText;
                     }
 
-                    if ((Common.ListManager != null) && (Common.ListManager.RemoteSystems != null) && (Common.ListManager.RemoteSystems.Count > 0))
+                    context.SendJavascriptToWebView($"setSharePreview('{previewText.NormalizeForJsCall()}');");
+                }
+
+                if ((Common.ListManager != null) && (Common.ListManager.RemoteSystems != null) && (Common.ListManager.RemoteSystems.Count > 0))
+                {
+                    foreach (var item in Common.ListManager.RemoteSystems)
+                        context.AddRemoteSystemToList(item);
+
+                    if (Common.ListManager.SelectedRemoteSystem == null)
                     {
-                        foreach (var item in Common.ListManager.RemoteSystems)
-                            context.AddRemoteSystemToList(item);
+                        context.SelectItemIfNecessary();
+                    }
+                    else
+                    {
+                        context.AddRemoteSystemToList(Common.ListManager.SelectedRemoteSystem);
+                        context.automaticRemoteSystemSelectionAllowed = false;
 
-                        if (Common.ListManager.SelectedRemoteSystem == null)
-                        {
-                            context.SelectItemIfNecessary();
-                        }
-                        else
-                        {
-                            context.AddRemoteSystemToList(Common.ListManager.SelectedRemoteSystem);
-                            context.automaticRemoteSystemSelectionAllowed = false;
-
-                            var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall()}');";
-                            context.SendJavascriptToWebView(s);
-                        }
+                        var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall()}');";
+                        context.SendJavascriptToWebView(s);
                     }
                 }
 
