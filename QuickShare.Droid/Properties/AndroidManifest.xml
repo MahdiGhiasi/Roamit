@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.ghiasi.roamit" android:versionCode="12" android:versionName="2.0.0" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.ghiasi.roamitapp" android:versionCode="14" android:versionName="2.0.1" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="19" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -15,13 +15,13 @@
 			</intent-filter>
 		</receiver>
 		<activity android:name="com.ghiasi.quickshare.sendpage" android:theme="@style/MyTheme.Legacy" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
-    <activity android:name="com.ghiasi.quickshare.webviewcontainerpage" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
-    <activity android:name="com.ghiasi.quickshare.mainpage" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize"></activity>
-    <activity android:name="com.ghiasi.quickshare.intro" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
+		<activity android:name="com.ghiasi.quickshare.webviewcontainerpage" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
+		<activity android:name="com.ghiasi.quickshare.mainpage" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize"></activity>
+		<activity android:name="com.ghiasi.quickshare.intro" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />

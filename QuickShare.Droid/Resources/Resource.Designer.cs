@@ -2947,29 +2947,17 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f08003b
 			public const int default_dir = 2131230779;
 			
-			// aapt resource value: 0x7f080040
-			public const int default_web_client_id = 2131230784;
-			
 			// aapt resource value: 0x7f08003c
 			public const int error_dir_access = 2131230780;
 			
-			// aapt resource value: 0x7f080041
-			public const int firebase_database_url = 2131230785;
+			// aapt resource value: 0x7f08003f
+			public const int firebase_database_url = 2131230783;
 			
 			// aapt resource value: 0x7f08003e
 			public const int gcm_defaultSenderId = 2131230782;
 			
-			// aapt resource value: 0x7f080042
-			public const int google_api_key = 2131230786;
-			
-			// aapt resource value: 0x7f08003f
-			public const int google_app_id = 2131230783;
-			
-			// aapt resource value: 0x7f080043
-			public const int google_crash_reporting_api_key = 2131230787;
-			
-			// aapt resource value: 0x7f080044
-			public const int google_storage_bucket = 2131230788;
+			// aapt resource value: 0x7f080040
+			public const int google_storage_bucket = 2131230784;
 			
 			// aapt resource value: 0x7f08003d
 			public const int label_parent_dir = 2131230781;
