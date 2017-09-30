@@ -65,6 +65,11 @@ namespace QuickShare.DevicesListManager
 
         public void AddDevice(object o)
         {
+            var newId = attrNormalizer.Normalize(o).Id;
+            var existing = devices.FirstOrDefault(x => attrNormalizer.Normalize(x).Id == newId);
+            if (existing != null)
+                devices.Remove(existing);
+
             devices.Add(o);
             Sort();
         }

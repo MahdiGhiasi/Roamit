@@ -54,12 +54,24 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="30dp" />
-          <TextView
+            <TextView
                 android:text="Advanced"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:layout_marginBottom="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+            <Switch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_allowToStayInBackgroundSwitch"
+                android:text="Allow Roamit to stay in background" />
+            <TextView
+                android:text="If you enable this option, Roamit will be able to discover your devices faster."
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp" />
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

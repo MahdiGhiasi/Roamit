@@ -22,7 +22,7 @@ namespace QuickShare.Droid
     {
         TextView txtVersionNumber, txtTrialStatus, txtCloudClipboardModeDescription;
         Button btnUpgrade;
-        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode;
+        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -41,6 +41,7 @@ namespace QuickShare.Droid
             swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
             swUiMode = FindViewById<Switch>(Resource.Id.settings_uiModeSwitch);
+            swStayInBackground = FindViewById<Switch>(Resource.Id.settings_allowToStayInBackgroundSwitch);
 
             txtVersionNumber.Text = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
 
@@ -69,6 +70,9 @@ namespace QuickShare.Droid
             swUiMode.Checked = settings.UseLegacyUI;
             swUiMode.CheckedChange += SwUiMode_CheckedChange;
 
+            swStayInBackground.Checked = settings.AllowToStayInBackground;
+            swStayInBackground.CheckedChange += SwStayInBackground_CheckedChange;
+
             swCloudClipboardMode.Checked = (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic);
             swCloudClipboardMode.CheckedChange += SwCloudClipboardMode_CheckedChange;
 
@@ -89,6 +93,22 @@ namespace QuickShare.Droid
                     swCloudClipboardMode.Enabled = true;
 
                 swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
+            }
+        }
+
+        private void SwStayInBackground_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            Settings settings = new Settings(this);
+
+            if (e.IsChecked)
+            {
+                StartService(new Intent(this, typeof(Services.RomeReadyService)));
+                settings.AllowToStayInBackground = true;
+            }
+            else
+            {
+                settings.AllowToStayInBackground = false;
+                StopService(new Intent(this, typeof(Services.RomeReadyService)));
             }
         }
 

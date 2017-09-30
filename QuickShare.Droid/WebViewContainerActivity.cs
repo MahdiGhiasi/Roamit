@@ -101,6 +101,13 @@ namespace QuickShare.Droid
                 Common.PackageManager = new RomePackageManager(this);
                 Common.PackageManager.Initialize("com.roamit.service");
             }
+            else
+            {
+                foreach (var item in Common.PackageManager.RemoteSystems)
+                {
+                    Common.ListManager.AddDevice(item);
+                }
+            }
             //TODO: else: Load already available devices to UI
 
             if (Common.MessageCarrierPackageManager == null)
@@ -122,7 +129,9 @@ namespace QuickShare.Droid
 
             Analytics.TrackPage("WebViewContainerActivity");
 
-            StartService(new Intent(this, typeof(Services.RomeReadyService)));
+            var settings = new Classes.Settings(this);
+            if (settings.AllowToStayInBackground)
+                StartService(new Intent(this, typeof(Services.RomeReadyService)));
         }
 
         private async void UserTrialStatusUpdated()
@@ -834,23 +843,26 @@ namespace QuickShare.Droid
 
             public override void OnPageFinished(WebView view, string url)
             {
-                if ((context.Intent.Action == Intent.ActionSend) || (context.Intent.Action == Intent.ActionSendMultiple))
+                if (url == context.homeUrl)
                 {
-                    string previewText = "Unsupported content.";
-
-                    if (Common.ShareFiles != null)
+                    if ((context.Intent.Action == Intent.ActionSend) || (context.Intent.Action == Intent.ActionSendMultiple))
                     {
-                        if (Common.ShareFiles.Length == 1)
-                            previewText = Common.ShareFiles[0];
-                        else
-                            previewText = $"{Common.ShareFiles.Length} files";
-                    }
-                    else if (Common.ShareText.Length > 0)
-                    {
-                        previewText = Common.ShareText;
-                    }
+                        string previewText = "Unsupported content.";
 
-                    context.SendJavascriptToWebView($"setSharePreview('{previewText.NormalizeForJsCall()}');");
+                        if (Common.ShareFiles != null)
+                        {
+                            if (Common.ShareFiles.Length == 1)
+                                previewText = Common.ShareFiles[0];
+                            else
+                                previewText = $"{Common.ShareFiles.Length} files";
+                        }
+                        else if (Common.ShareText.Length > 0)
+                        {
+                            previewText = Common.ShareText;
+                        }
+
+                        context.SendJavascriptToWebView($"setSharePreview('{previewText.NormalizeForJsCall()}');");
+                    }
 
                     if ((Common.ListManager != null) && (Common.ListManager.RemoteSystems != null) && (Common.ListManager.RemoteSystems.Count > 0))
                     {

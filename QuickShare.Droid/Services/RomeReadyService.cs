@@ -45,7 +45,6 @@ namespace QuickShare.Droid.Services
 
         private async void InitService(Intent intent, StartCommandFlags flags, int startId)
         {
-            SendNotification("RomeReadyService", "Init");
             Log.Debug(TAG, $"OnStartCommand called at {DateTime.Now}, flags={flags}, startid={startId}"); 
             if (isStarted)
             {
@@ -71,16 +70,17 @@ namespace QuickShare.Droid.Services
             {
                 Common.PackageManager = new RomePackageManager(this);
                 Common.PackageManager.Initialize("com.roamit.service");
+
+                await Common.PackageManager.InitializeDiscovery();
             }
 
             if (Common.MessageCarrierPackageManager == null)
             {
                 Common.MessageCarrierPackageManager = new RomePackageManager(this);
                 Common.MessageCarrierPackageManager.Initialize("com.roamit.messagecarrierservice");
-            }
 
-            //await Common.PackageManager.InitializeDiscovery();
-            //await Common.MessageCarrierPackageManager.InitializeDiscovery();
+                await Common.MessageCarrierPackageManager.InitializeDiscovery();
+            }
         }
 
         public override IBinder OnBind(Intent intent)
@@ -89,32 +89,8 @@ namespace QuickShare.Droid.Services
             return null;
         }
 
-        private void SendNotification(string title, string body)
-        {
-            var intent = new Intent(this, typeof(MainActivity));
-            intent.AddFlags(ActivityFlags.ClearTop);
-            // intent.PutExtra("launchArguments", "stuff");
-
-            var pendingIntent = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.OneShot);
-
-            var defaultSoundUri = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
-
-            var notificationBuilder =
-                new NotificationCompat.Builder(this)
-                    .SetSmallIcon(Resource.Drawable.Icon)
-                    .SetContentTitle(title)
-                    .SetContentText(body)
-                    .SetAutoCancel(true)
-                    .SetSound(defaultSoundUri)
-                    .SetContentIntent(pendingIntent);
-
-            var notificationManager = NotificationManager.FromContext(this);
-            notificationManager.Notify(0, notificationBuilder.Build());
-        }
-
         public override void OnDestroy()
         {
-            SendNotification("RomeReadyService", "Goodbye");
 #if ROMEREADY_TIMER
             timer.Dispose();
             timer = null;

@@ -69,6 +69,22 @@ namespace QuickShare.Droid.Classes
                 editor.Apply();
             }
         }
+
+        internal bool AllowToStayInBackground
+        {
+            get
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                return prefs.GetBoolean("AllowToStayInBackground", true);
+            }
+            set
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutBoolean("AllowToStayInBackground", value);
+                editor.Apply();
+            }
+        }
     }
 
     internal enum CloudClipboardReceiveMode
