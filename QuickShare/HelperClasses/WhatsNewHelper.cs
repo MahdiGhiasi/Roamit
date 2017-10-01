@@ -56,6 +56,15 @@ namespace QuickShare.HelperClasses
                 ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet)))
                 output.Add("1");
 
+
+            //Important message regarding Android app's new listing
+            if ((prevVersion < new System.Version("2.1.5.0")) && 
+                (SecureKeyStorage.IsUserIdStored())) 
+            {
+                output.Clear();
+                output.Add("5");
+            }
+
             MarkThisWhatsNewAsRead();
 
             return output;

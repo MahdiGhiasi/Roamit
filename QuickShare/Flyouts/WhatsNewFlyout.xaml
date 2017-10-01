@@ -15,11 +15,11 @@
           MaxWidth="400"
           MaxHeight="400">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
+            <RowDefinition MinHeight="50" Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" x:Name="Header">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="What's new in version"
                            FontWeight="Bold"
@@ -29,11 +29,46 @@
                            FontWeight="Bold"
                            Margin="4,10,0,10"/>
             </StackPanel>
+            <TextBlock Text="An important message about Roamit for Android"
+                       Tag="5"
+                       Foreground="Yellow"
+                       FontWeight="Bold"
+                       FontSize="15"
+                       TextWrapping="Wrap" 
+                       Margin="12,12,12,12" />
         </Grid>
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
-                    <StackPanel Tag="4" Margin="0,0,0,24">
+                    <StackPanel Tag="5" Margin="0,0,0,24">
+                        <RichTextBlock Margin="0,0,0,4"
+                                       TextWrapping="Wrap"
+                                       IsTextSelectionEnabled="False">
+                            <Paragraph>
+                                <Run>
+                                    Roamit for Android won't automatically update to the newest version. You should uninstall it from your Android devices and ‌Get the new version on the Google Play Store.
+                                </Run>
+                            </Paragraph>
+                            <Paragraph Foreground="#ffbbbbbb" Margin="0,16,0,0">
+                                <Run>
+                                    You can also navigate to ‌
+                                </Run>
+                                <Hyperlink Foreground="SkyBlue" x:Name="LinkToRoamitWebsite" NavigateUri="https://roamit.ghiasi.net">
+                                    http://roamit.ghiasi.net
+                                </Hyperlink>
+                                <Run>
+                                    ‌ on your phone anytime and tap 'Get it on Google Play' button.
+                                </Run>
+                            </Paragraph>
+                            <Paragraph Margin="0,32,0,0">
+                                <Hyperlink Foreground="SkyBlue" x:Name="LinkToBlogPost" NavigateUri="https://medium.com/thirddev/dont-forget-to-backup-your-keystore-file-if-you-re-publishing-apps-to-google-play-store-ad798465cd9b">
+                                    Why this happened?
+                                </Hyperlink>
+                            </Paragraph>
+                        </RichTextBlock>
+                    </StackPanel>
+                    
+                    <StackPanel Tag="4" Margin="0,0,0,24" Visibility="Collapsed">
                         <Image Source="ms-appx:///Assets/cloud-clipboard.png"
                                Height="40"
                                Margin="0,12,0,0" />
@@ -75,7 +110,7 @@
                                    FontStyle="Oblique"
                                    TextWrapping="Wrap" />
                     </StackPanel>
-                    <StackPanel Tag="3" Margin="0,0,0,24">
+                    <StackPanel Tag="3" Margin="0,0,0,24" Visibility="Collapsed">
                         <TextBlock Text="You can now set a custom folder to store received files."
                                    Margin="0,0,0,8"
                                    TextWrapping="Wrap" />
@@ -87,7 +122,7 @@
                                    TextWrapping="Wrap"
                                    Opacity="0.7" />
                     </StackPanel>
-                    <StackPanel Tag="2" Margin="0,0,0,24">
+                    <StackPanel Tag="2" Margin="0,0,0,24" Visibility="Collapsed">
                         <Image Source="ms-appx:///Assets/cloud-clipboard.png"
                                Height="40"
                                Margin="0,12,0,0" />
@@ -112,7 +147,7 @@
                                    TextWrapping="Wrap"
                                    Opacity="0.4" />
                     </StackPanel>
-                    <StackPanel Tag="1">
+                    <StackPanel Tag="1" Visibility="Collapsed">
                         <Image Source="ms-appx:///Assets/chrome-firefox.png"
                                Height="40"
                                Margin="0,12,0,8" />
@@ -131,12 +166,21 @@
                 </StackPanel>
             </ScrollViewer>
         </Grid>
-        <Grid Grid.Row="2" Padding="12">
+        <Grid Grid.Row="2" Padding="12" x:Name="Footer">
             <Button Content="OK"
                     HorizontalAlignment="Center"
                     Width="150"
                     Background="{ThemeResource ListViewItemBackgroundSelectedPressed}"
                     Tapped="OKButton_Tapped" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Tag="5">
+                <Button Content="Get it now from Google Play"
+                        Margin="0,0,4,0"
+                        Background="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                        Tapped="GooglePlayNoticeGetIt_Tapped" />
+                <Button Content="Not now"
+                        Margin="4,0,0,0"
+                        Tapped="GooglePlayNoticeNotNow_Tapped" />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

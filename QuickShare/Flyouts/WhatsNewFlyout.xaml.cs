@@ -17,6 +17,8 @@ using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
 using Windows.System;
 using Windows.ApplicationModel;
+using Windows.UI.Xaml.Documents;
+using GoogleAnalytics;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -81,6 +83,58 @@ namespace QuickShare.Flyouts
 
             if (!changelogPresent)
                 FlyoutCloseRequest?.Invoke(this, new EventArgs());
+
+            if (ids.Count == 1)
+            {
+                bool specialHeaderPresent = (from x in Header.Children
+                                             let fe = x as FrameworkElement
+                                             where ((fe != null) && (fe.Tag != null) && (fe.Tag.ToString() == ids[0]))
+                                             select x).Count() > 0;
+                foreach (var item in Header.Children)
+                {
+                    var fe = item as FrameworkElement;
+                    if (fe == null)
+                        continue;
+
+                    if (specialHeaderPresent)
+                    {
+                        if ((fe.Tag == null) || (fe.Tag.ToString() != ids[0]))
+                            fe.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(fe.Tag as string))
+                            fe.Visibility = Visibility.Collapsed;
+                    }
+                }
+
+
+                bool specialFooterPresent = (from x in Footer.Children
+                                             let fe = x as FrameworkElement
+                                             where ((fe != null) && (fe.Tag != null) && (fe.Tag.ToString() == ids[0]))
+                                             select x).Count() > 0;
+                foreach (var item in Footer.Children)
+                {
+                    var fe = item as FrameworkElement;
+                    if (fe == null)
+                        continue;
+
+                    if (specialFooterPresent)
+                    {
+                        if ((fe.Tag == null) || (fe.Tag.ToString() != ids[0]))
+                            fe.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(fe.Tag as string))
+                            fe.Visibility = Visibility.Collapsed;
+                    }
+                }
+            }
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("What's new", "Show", DeviceInfo.ApplicationVersionString).Build());
+#endif
         }
 
         private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
@@ -96,6 +150,23 @@ namespace QuickShare.Flyouts
             await PCExtensionHelper.StartPCExtension();
 
             FlyoutCloseRequest?.Invoke(this, new EventArgs());
+        }
+
+        private async void GooglePlayNoticeGetIt_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://play.google.com/store/apps/details?id=com.ghiasi.roamitapp"));
+            OKButton_Tapped(this, e);
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("GooglePlayImportantNotice", "GetIt", "").Build());
+#endif
+        }
+
+        private void GooglePlayNoticeNotNow_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            OKButton_Tapped(this, e);
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("GooglePlayImportantNotice", "NotNow", "").Build());
+#endif
         }
     }
 }
