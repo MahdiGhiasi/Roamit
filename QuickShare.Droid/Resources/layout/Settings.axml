@@ -21,12 +21,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView
-                android:text="Universal clipboard mirrors any text you copy on your PC to the clipboard of this device automatically. To get started, get Roamit on your PC from:"
+                android:text="Universal clipboard mirrors any text you copy on your PC to the clipboard of this device automatically."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="0dp" />
+            <TextView
+                android:text="To get started, get Roamit on your PC from:"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView1"
+                android:paddingTop="8dp" />
             <TextView
                 android:text="roamit.ghiasi.net"
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -48,7 +55,7 @@
                 android:text="Reflect clipboard changes from my PC to this device automatically" />
             <TextView
                 android:id="@+id/settings_cloudClipboardModeDescription"
-                android:text="If this option is turned off, a notification will appear in the notificaion center of this device containg latest clipboard text. Tapping it will copy it to the local clipboard of this device."
+                android:text="If this option is turned off, a notification will appear in the notificaion center of this device containing latest clipboard text. Tapping it will copy it to the local clipboard of this device."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,7 +73,7 @@
                 android:id="@+id/settings_allowToStayInBackgroundSwitch"
                 android:text="Allow Roamit to stay in background" />
             <TextView
-                android:text="If you enable this option, Roamit will be able to discover your devices faster."
+                android:text="Roamit will find your devices faster if this option is enabled."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
