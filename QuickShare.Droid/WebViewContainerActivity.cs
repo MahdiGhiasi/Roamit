@@ -132,6 +132,30 @@ namespace QuickShare.Droid
             var settings = new Classes.Settings(this);
             if (settings.AllowToStayInBackground)
                 StartService(new Intent(this, typeof(Services.RomeReadyService)));
+
+            CheckForLegacyVersionInstallations();
+        }
+
+        private async void CheckForLegacyVersionInstallations()
+        {
+            bool installed = PackageManager.GetInstalledPackages(Android.Content.PM.PackageInfoFlags.MatchAll).FirstOrDefault(x => x.PackageName == "com.ghiasi.roamit") != null;
+
+            if (installed)
+            {
+                while ((Common.ListManager.RemoteSystems.Count == 0) && (Common.ListManager.SelectedRemoteSystem == null))
+                    await Task.Delay(500);
+
+                var alert = new AlertDialog.Builder(this)
+                    .SetTitle("Please uninstall the legacy version of Roamit.")
+                    .SetMessage("Having both versions side-by-side might cause problems.\n" +
+                    "Uninstall the previous version to have the best experience possible.")
+                    .SetPositiveButton("OK", (s,e) => { });
+
+                RunOnUiThread(() =>
+                {
+                    alert.Show();
+                });
+            }
         }
 
         private async void UserTrialStatusUpdated()
