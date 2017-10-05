@@ -161,11 +161,11 @@ namespace QuickShare.Desktop
 
             notifyIcon.Visible = false;
 
-#if SQUIRREL
             Properties.Settings.Default.LastExceptionMessage = e.ExceptionObject.ToString();
             Properties.Settings.Default.HasLastExceptionMessage = true;
             Properties.Settings.Default.Save();
 
+#if SQUIRREL
             ProcessStartInfo Info = new ProcessStartInfo()
             {
                 Arguments = "/C choice /C Y /N /D Y /T 5 & START \"\" \"" + Assembly.GetExecutingAssembly().Location + "\"",
