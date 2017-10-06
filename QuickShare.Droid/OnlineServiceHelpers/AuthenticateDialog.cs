@@ -58,5 +58,18 @@ namespace QuickShare.Droid.OnlineServiceHelpers
 
             return await authenticateTcs.Task;
         }
+
+        internal static void Hide()
+        {
+            try
+            {
+                if (authDialog?.IsShowing == true)
+                {
+                    authDialog.Dismiss();
+                    authenticateTcs.TrySetResult(MsaAuthResult.CancelledByApp);
+                }
+            }
+            catch { }
+        }
     }
 }

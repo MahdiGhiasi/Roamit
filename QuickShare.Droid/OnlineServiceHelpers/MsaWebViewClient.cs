@@ -75,5 +75,6 @@ namespace QuickShare.Droid.OnlineServiceHelpers
         CancelledByUser,
         FailedToRegister,
         Success,
+        CancelledByApp,
     }
 }

@@ -336,6 +336,11 @@ namespace QuickShare.Droid
 
                     SelectItemIfNecessary();
 
+                    if ((Common.ListManager.RemoteSystems.Count > 0) || (Common.ListManager.SelectedRemoteSystem != null))
+                    {
+                        AuthenticateDialog.Hide();
+                    }
+
                     try
                     {
                         lock (finishLoadingLock)
@@ -443,7 +448,7 @@ namespace QuickShare.Droid
                 System.Diagnostics.Debug.WriteLine(oauthUrl);
                 var result = await AuthenticateDialog.ShowAsync(this, MsaAuthPurpose.ProjectRomePlatform, oauthUrl);
 
-                if (result != MsaAuthResult.Success)
+                if ((result != MsaAuthResult.Success) && (result != MsaAuthResult.CancelledByApp))
                 {
                     Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
                 }
