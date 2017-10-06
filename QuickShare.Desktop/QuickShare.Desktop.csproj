@@ -59,7 +59,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -139,6 +139,7 @@
     </Page>
     <Compile Include="Config.cs" />
     <Compile Include="Helpers\ApplicationRestart.cs" />
+    <Compile Include="Helpers\ClipboardOwner.cs" />
     <Compile Include="Helpers\CurrentDevice.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Helpers\PurposeHelper.cs" />
