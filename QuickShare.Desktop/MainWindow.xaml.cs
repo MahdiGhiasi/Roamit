@@ -413,27 +413,36 @@ namespace QuickShare.Desktop
         DateTime lastCheckedTrialStatus = DateTime.MinValue;
         private void ClipboardChanged(object sender, EventArgs e)
         {
-            // Handle your clipboard update here, debug logging example:
-            if (System.Windows.Clipboard.ContainsText())
+            try
             {
-                string text = System.Windows.Clipboard.GetText();
-
-                ClipboardActivity.Visibility = Visibility.Visible;
-
-                if ((ViewModel.ClipboardActivities.Count > 0) &&
-                    (ViewModel.ClipboardActivities.First().DisplayText == text))
-                    return;
-
-                ViewModel.ClipboardActivities.Insert(0, new ClipboardItem(text));
-
-                SendClipboardItem();
-
-                if (((isExpired) && ((DateTime.UtcNow - lastCheckedTrialStatus) > TimeSpan.FromMinutes(5))) ||
-                    (!knowTrialStatus))
+                // Handle your clipboard update here, debug logging example:
+                if (System.Windows.Clipboard.ContainsText())
                 {
-                    lastCheckedTrialStatus = DateTime.UtcNow;
-                    CheckTrialStatus(true); //If not expired, no need to refresh from server.
+                    string text = System.Windows.Clipboard.GetText();
+
+                    ClipboardActivity.Visibility = Visibility.Visible;
+
+                    if ((ViewModel.ClipboardActivities.Count > 0) &&
+                        (ViewModel.ClipboardActivities.First().DisplayText == text))
+                        return;
+
+                    ViewModel.ClipboardActivities.Insert(0, new ClipboardItem(text));
+
+                    SendClipboardItem();
+
+                    if (((isExpired) && ((DateTime.UtcNow - lastCheckedTrialStatus) > TimeSpan.FromMinutes(5))) ||
+                        (!knowTrialStatus))
+                    {
+                        lastCheckedTrialStatus = DateTime.UtcNow;
+                        CheckTrialStatus(true); //If not expired, no need to refresh from server.
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+#if !DEBUG
+                AutoMeasurement.Client.TrackEvent("Exception", "ClipboardChanged", ex.Message);
+#endif
             }
         }
 
