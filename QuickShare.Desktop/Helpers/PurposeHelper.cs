@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSharpAnalytics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,7 +13,10 @@ namespace QuickShare.Desktop.Helpers
 {
     internal static class PurposeHelper
     {
-        internal static async Task<bool> ConfirmPurpose()
+        static readonly int _maxTryCount = 3;
+        static readonly TimeSpan _delayBetweenTries = TimeSpan.FromSeconds(1);
+
+        internal static async Task<bool> ConfirmPurpose(int tryNumber = 1)
         {
 #if ((!SQUIRREL) && (!DEBUG))
             try
@@ -92,6 +96,9 @@ namespace QuickShare.Desktop.Helpers
                         }
                         else
                         {
+#if !DEBUG
+                            AutoMeasurement.Client.TrackEvent("Exception", "CP_InvalidResponse2", "");
+#endif
                             MessageBox.Show($"CP Error: Invalid response received. ({answer})", "Roamit");
                             System.Windows.Application.Current.Shutdown();
                             return false;
@@ -99,6 +106,9 @@ namespace QuickShare.Desktop.Helpers
                     }
                     else
                     {
+#if !DEBUG
+                        AutoMeasurement.Client.TrackEvent("Exception", "CP_InvalidResponse", "");
+#endif
                         MessageBox.Show("CP Error: Invalid response received.", "Roamit");
                         System.Windows.Application.Current.Shutdown();
                         return false;
@@ -106,15 +116,45 @@ namespace QuickShare.Desktop.Helpers
                 }
                 else
                 {
-                    MessageBox.Show("CP Error: Can't connect to app service.", "Roamit");
-                    System.Windows.Application.Current.Shutdown();
-                    return false;
+                    if (tryNumber < _maxTryCount)
+                    {
+#if !DEBUG
+                        AutoMeasurement.Client.TrackEvent("CP_Purpose_Retry", "CannotConnect", "");
+#endif
+                        await Task.Delay(_delayBetweenTries);
+                        return await ConfirmPurpose(tryNumber + 1);
+                    }
+                    else
+                    {
+#if !DEBUG
+                        AutoMeasurement.Client.TrackEvent("Exception", "CP_CannotConnect", "");
+#endif
+                        MessageBox.Show("CP Error: Can't connect to app service.", "Roamit");
+                        System.Windows.Application.Current.Shutdown();
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("CP Error: " + ex.Message, "Roamit");
-                return false;
+                if (tryNumber < _maxTryCount)
+                {
+#if !DEBUG
+                    AutoMeasurement.Client.TrackEvent("CP_Purpose_Retry", "UnknownError", ex.Message);
+                    AutoMeasurement.Client.TrackEvent("CP_Purpose_Retry", "UnknownError_Details", ex.ToString());
+#endif
+                    await Task.Delay(_delayBetweenTries);
+                    return await ConfirmPurpose(tryNumber + 1);
+                }
+                else
+                {
+#if !DEBUG
+                    AutoMeasurement.Client.TrackEvent("Exception", "CP_Unknown", ex.Message);
+                    AutoMeasurement.Client.TrackEvent("Exception", "CP_Unknown_Details", ex.ToString());
+#endif
+                    MessageBox.Show("CP Error: " + ex.Message, "Roamit");
+                    return false;
+                }
             }
 #else
             return true;
