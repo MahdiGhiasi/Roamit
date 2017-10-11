@@ -167,13 +167,29 @@ namespace QuickShare.Desktop.Helpers
             startupTask.Disable();
         }
 
-        private static IEnumerable<Process> GetSiblings()
+        private static List<Process> GetSiblings()
         {
             var currentProcess = Process.GetCurrentProcess();
             Process[] processes = Process.GetProcessesByName(currentProcess.ProcessName);
 
-            var siblings = processes.Where(p => p.Id != currentProcess.Id && p.MainModule.FileName == currentProcess.MainModule.FileName);
-            return siblings;
+            var siblings = processes.Where(p => ProcessIsMySibling(p, currentProcess));
+            return siblings.ToList();
+        }
+
+        private static bool ProcessIsMySibling(Process p, Process currentProcess)
+        {
+            try
+            {
+                return p.Id != currentProcess.Id && p.MainModule.FileName == currentProcess.MainModule.FileName;
+            }
+            catch (Exception ex)
+            {
+#if !DEBUG
+                AutoMeasurement.Client.TrackEvent("Exception", "CP_ProcessIsMySibling", ex.Message);
+                AutoMeasurement.Client.TrackEvent("Exception", "CP_ProcessIsMySibling_Details", ex.ToString());
+#endif
+                return false;
+            }
         }
 
         private static async Task Genocide()
