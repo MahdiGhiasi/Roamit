@@ -51,6 +51,11 @@ namespace QuickShare.Droid.Services
                 }
                 else
                 {
+                    isStarted = true;
+                    startTime = DateTime.UtcNow;
+                    Log.Debug(TAG, $"Starting the service, at {startTime}.");
+                    timer = new Timer(HandleTimerCallback, startTime, 0, TimerWait);
+
                     MessageReceiveHelper.ClearEventRegistrations();
                     MessageReceiveHelper.Activity += MessageReceiveHelper_Activity;
                     MessageReceiveHelper.Finish += MessageReceiveHelper_Finish;

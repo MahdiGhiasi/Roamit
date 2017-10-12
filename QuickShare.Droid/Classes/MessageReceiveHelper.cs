@@ -159,11 +159,13 @@ namespace QuickShare.Droid.Classes
             });
 
             ShowToast(context, "Text copied to clipboard.", ToastLength.Long);
+
+            Finish?.Invoke();
         }
 
         private async static void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
         {
-            Activity.Invoke();
+            Activity?.Invoke();
 
             if (e.State == FileTransfer.FileTransferState.Error)
             {
@@ -189,6 +191,7 @@ namespace QuickShare.Droid.Classes
                 }
 
                 progressNotifier = null;
+                Finish?.Invoke();
             }
             else if (e.State == FileTransfer.FileTransferState.DataTransfer)
             {
