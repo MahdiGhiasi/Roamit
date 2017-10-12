@@ -269,6 +269,8 @@ namespace QuickShare
             InitDiscoveringOtherDevices();
             PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
 
+            InitAndroidPackageManagerMode();
+
 #if !DEBUG
             App.Tracker.Send(HitBuilder.CreateScreenView("MainPage").Build());
             if (App.LaunchTime != null)
@@ -287,6 +289,22 @@ namespace QuickShare
 
             TrialSettings.IsTrialChanged += TrialSettings_IsTrialChanged;
             TrialHelper.CheckIfFullVersion();
+        }
+
+        private void InitAndroidPackageManagerMode()
+        {
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LegacyAndroidMode"))
+            {
+                AndroidPackageManager.Mode = AndroidRomePackageManager.AndroidPackageManagerMode.PushNotification;
+                return;
+            }
+
+            var legacyAndroidMode = (ApplicationData.Current.LocalSettings.Values["LegacyAndroidMode"] as bool?) ?? false;
+
+            if (legacyAndroidMode == true)
+                AndroidPackageManager.Mode = AndroidRomePackageManager.AndroidPackageManagerMode.MessageCarrier;
+            else
+                AndroidPackageManager.Mode = AndroidRomePackageManager.AndroidPackageManagerMode.PushNotification;
         }
 
         private async void TrialSettings_IsTrialChanged()

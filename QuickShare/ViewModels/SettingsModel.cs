@@ -44,6 +44,10 @@ namespace QuickShare.ViewModels
                 ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] = false;
             typeBasedDownloadFolderToggle = (ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] as bool?) ?? false;
 
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LegacyAndroidMode"))
+                ApplicationData.Current.LocalSettings.Values["LegacyAndroidMode"] = false;
+            legacyAndroidModeToggle = (ApplicationData.Current.LocalSettings.Values["LegacyAndroidMode"] as bool?) ?? false;
+
             InitDownloadLocation();
 
             RetrieveCloudClipboardActivationStatus();
@@ -405,6 +409,30 @@ namespace QuickShare.ViewModels
                 OnPropertyChanged("TypeBasedDownloadFolderToggle");
 #if !DEBUG
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "TypeBasedDownloadFolderToggle", value ? "activated" : "deactivated").Build());
+#endif
+            }
+        }
+
+        private bool legacyAndroidModeToggle = false;
+        public bool LegacyAndroidModeToggle
+        {
+            get
+            {
+                return legacyAndroidModeToggle;
+            }
+            set
+            {
+                legacyAndroidModeToggle = value;
+
+                if (value == true)
+                    UWP.Rome.AndroidRomePackageManager.Instance.Mode = UWP.Rome.AndroidRomePackageManager.AndroidPackageManagerMode.MessageCarrier;
+                else
+                    UWP.Rome.AndroidRomePackageManager.Instance.Mode = UWP.Rome.AndroidRomePackageManager.AndroidPackageManagerMode.PushNotification;
+
+                ApplicationData.Current.LocalSettings.Values["LegacyAndroidMode"] = value;
+                OnPropertyChanged("LegacyAndroidModeToggle");
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "LegacyAndroidModeToggle", value ? "activated" : "deactivated").Build());
 #endif
             }
         }

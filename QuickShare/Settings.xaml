@@ -144,14 +144,26 @@
                                            Text="Universal clipboard is available for free users as a 14 day trial. You can upgrade later at any time." />
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                    Background="#aa333333"
-                                    Margin="0,8,0,12"
-                                    HorizontalAlignment="Left"
-                                    Padding="12">
-                            <TextBlock Text="{x:Bind Model.SignedInText, Mode=OneWay}" 
-                                           TextWrapping="Wrap" />
-                            <HyperlinkButton Content="Sign out" Foreground="SkyBlue" Tapped="SignOutFromCloudService_Tapped" />
+                        <StackPanel Margin="0,24,0,0">
+                            <TextBlock Text="Account" FontWeight="Bold" />
+                            <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                        Background="#aa333333"
+                                        Margin="0,8,0,12"
+                                        HorizontalAlignment="Left"
+                                        Padding="12">
+                                <TextBlock Text="{x:Bind Model.SignedInText, Mode=OneWay}" 
+                                               TextWrapping="Wrap" />
+                                <HyperlinkButton Content="Sign out" Foreground="SkyBlue" Tapped="SignOutFromCloudService_Tapped" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Margin="0,24,0,8">
+                            <TextBlock Text="Advanced" FontWeight="Bold" />
+                            <TextBlock Text="Use legacy method to communicate with Android devices" 
+                                       TextWrapping="Wrap"
+                                       Margin="0,24,0,4" />
+                            <TextBlock Text="Enable this if you're having trouble connecting to your Android devices from this device."
+                                       Opacity="0.7" />
+                            <ToggleSwitch IsOn="{x:Bind Model.LegacyAndroidModeToggle, Mode=TwoWay}" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
