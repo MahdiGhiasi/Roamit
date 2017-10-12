@@ -1,4 +1,5 @@
-﻿using QuickShare.Common;
+﻿using Newtonsoft.Json;
+using QuickShare.Common;
 using QuickShare.Common.Rome;
 using QuickShare.DevicesListManager;
 using QuickShare.Rome;
@@ -29,6 +30,14 @@ namespace QuickShare.UWP.Rome
             }
         }
 
+        public enum AndroidPackageManagerMode
+        {
+            MessageCarrier = 1,
+            PushNotification = 2,
+        }
+
+        public AndroidPackageManagerMode Mode { get; set; } = AndroidPackageManagerMode.PushNotification;
+
         public bool HasWaitingMessageCarrier { get; private set; }
 
         readonly int _maxRetryCount = 4;
@@ -57,7 +66,7 @@ namespace QuickShare.UWP.Rome
             while (true)
             {
                 await sendQueueSemaphore.WaitAsync();
-                
+
                 var queueItem = sendQueue.FirstOrDefault(x => x.RemoteSystemId == (string)request.Message["SenderId"]);
 
                 if (queueItem == null)
@@ -94,6 +103,34 @@ namespace QuickShare.UWP.Rome
         }
 
         public async Task<RomeAppServiceResponse> Send(Dictionary<string, object> data)
+        {
+            if (Mode == AndroidPackageManagerMode.PushNotification)
+                return await SendViaPushNotification(data);
+            else
+                return await SendViaMessageCarrier(data);
+        }
+
+        private async Task<RomeAppServiceResponse> SendViaPushNotification(Dictionary<string, object> data)
+        {
+            var dataJson = JsonConvert.SerializeObject(data);
+
+            bool result = await Common.Service.DevicesLoader.SendMessage(userId, nrs.Id, dataJson);
+
+            if (result)
+                return new RomeAppServiceResponse
+                {
+                    Message = null,
+                    Status = RomeAppServiceResponseStatus.Success,
+                };
+            else
+                return new RomeAppServiceResponse
+                {
+                    Message = null,
+                    Status = RomeAppServiceResponseStatus.Failure,
+                };
+        }
+
+        private async Task<RomeAppServiceResponse> SendViaMessageCarrier(Dictionary<string, object> data)
         {
             int tryCount = 0;
 
@@ -173,12 +210,19 @@ namespace QuickShare.UWP.Rome
 
         private async Task<RomeAppServiceConnectionStatus> Connect()
         {
-            bool result = await Common.Service.DevicesLoader.RequestMessageCarrier(userId, nrs.Id, whosNotMe); 
-
-            if (result)
+            if (Mode == AndroidPackageManagerMode.PushNotification)
+            {
                 return RomeAppServiceConnectionStatus.Success;
+            }
             else
-                return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
+            {
+                bool result = await Common.Service.DevicesLoader.RequestMessageCarrier(userId, nrs.Id, whosNotMe);
+
+                if (result)
+                    return RomeAppServiceConnectionStatus.Success;
+                else
+                    return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
+            }
         }
 
         public static async Task<RomeRemoteLaunchUriStatus> LaunchStoreForApp(NormalizedRemoteSystem remoteSystem, string _userId)

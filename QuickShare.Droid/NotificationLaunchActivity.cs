@@ -14,6 +14,7 @@ using System.IO;
 using Android.Util;
 using Android.Webkit;
 using QuickShare.Droid.Services;
+using QuickShare.Droid.Classes;
 
 namespace QuickShare.Droid
 {
@@ -54,7 +55,7 @@ namespace QuickShare.Droid
             }
             catch (Exception ex)
             {
-                MessageCarrierService.ShowToast(this, "Cannot open file.", ToastLength.Long);
+                MessageReceiveHelper.ShowToast(this, "Cannot open file.", ToastLength.Long);
                 Log.Debug(TAG, "Cannot open file: " + ex.ToString());
             }
         }

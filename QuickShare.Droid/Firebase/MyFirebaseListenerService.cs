@@ -56,6 +56,16 @@ namespace QuickShare.Droid.Firebase
 
                     StartService(intent);
                 }
+                else if (message.Data["Action"] == "Payload")
+                {
+#if DEBUG
+                    SendNotification("Payload", "Payload");
+#endif
+                    var intent = new Intent(this, typeof(WaiterService));
+                    intent.PutExtra("Data", message.Data["Data"]);
+
+                    StartService(intent);
+                }
                 else if ((message.Data["Action"] == "LaunchUrl") && (message.Data.ContainsKey("Url")))
                 {
                     try
@@ -70,7 +80,7 @@ namespace QuickShare.Droid.Firebase
                     catch (Exception ex)
                     {
                         Log.Debug(TAG, ex.Message);
-                        MessageCarrierService.ShowToast(this, "Couldn't launch URL.", Android.Widget.ToastLength.Long);
+                        MessageReceiveHelper.ShowToast(this, "Couldn't launch URL.", Android.Widget.ToastLength.Long);
                     }
                 }
                 else if ((message.Data["Action"] == "FastClipboard") && (message.Data.ContainsKey("SenderName")) && (message.Data.ContainsKey("Text")))
@@ -80,7 +90,7 @@ namespace QuickShare.Droid.Firebase
 
                     Guid guid = await TextReceiver.QuickTextReceivedAsync(senderName, text);
 
-                    MessageCarrierService.CopyTextToClipboard(this, guid);
+                    MessageReceiveHelper.CopyTextToClipboard(this, guid);
                 }
                 else if ((message.Data["Action"] == "CloudClipboard") && (message.Data.ContainsKey("Data")))
                 {

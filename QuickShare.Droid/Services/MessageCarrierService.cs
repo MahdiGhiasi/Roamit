@@ -30,8 +30,6 @@ namespace QuickShare.Droid.Services
         DateTime lastActiveTime;
         bool isStarted = false;
 
-        ProgressNotifier progressNotifier;
-
         public override void OnCreate()
         {
             base.OnCreate();
@@ -67,13 +65,9 @@ namespace QuickShare.Droid.Services
                     Log.Debug(TAG, $"Starting the service, at {startTime}.");
                     timer = new Timer(HandleTimerCallback, startTime, 0, TimerWait);
 
-                    DataStore.DataStorageProviders.Init(PCLStorage.FileSystem.Current.LocalStorage.Path);
-
-                    TextTransfer.TextReceiver.ClearEventRegistrations();
-                    TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
-
-                    FileTransfer.FileReceiver.ClearEventRegistrations();
-                    FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
+                    MessageReceiveHelper.ClearEventRegistrations();
+                    MessageReceiveHelper.Activity += MessageReceiveHelper_Activity;
+                    MessageReceiveHelper.Init(this);
                 }
 
                 lastActiveTime = DateTime.UtcNow;
@@ -95,6 +89,11 @@ namespace QuickShare.Droid.Services
                 Log.Debug(TAG, "Unhandled exception occured: " + ex.ToString());
                 StopSelf();
             }
+        }
+
+        private void MessageReceiveHelper_Activity()
+        {
+            lastActiveTime = DateTime.UtcNow;
         }
 
         private void Platform_FetchAuthCode(string s)
@@ -119,93 +118,6 @@ namespace QuickShare.Droid.Services
             await Common.MessageCarrierPackageManager.InitializeDiscovery();
         }
 
-        internal static void ShowToast(Context context, string text, ToastLength length)
-        {
-            Handler handler = new Handler(Looper.MainLooper);
-            handler.Post(() =>
-            {
-                Toast.MakeText(context, text, length).Show();
-            });
-        }
-
-        private async void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)
-        {
-            try
-            {
-                lastActiveTime = DateTime.UtcNow;
-                if (!e.Success)
-                {
-                    ShowToast(this, "Failed to receive text.", ToastLength.Long);
-                    return;
-                }
-
-                CopyTextToClipboard(this, (Guid)e.Guid);
-            }
-            finally
-            {
-                await progressNotifier?.ClearProgressNotification();
-            }
-        }
-
-        internal static async void CopyTextToClipboard(Context context, Guid guid)
-        {
-            await DataStorageProviders.HistoryManager.OpenAsync();
-            var item = DataStorageProviders.HistoryManager.GetItem(guid);
-            DataStorageProviders.HistoryManager.Close();
-
-            if (!(item.Data is ReceivedText))
-                throw new Exception("Invalid received item type.");
-
-            await DataStorageProviders.TextReceiveContentManager.OpenAsync();
-            string text = DataStorageProviders.TextReceiveContentManager.GetItemContent(guid);
-            DataStorageProviders.TextReceiveContentManager.Close();
-
-            Handler handler = new Handler(Looper.MainLooper);
-            handler.Post(() =>
-            {
-                ClipboardManager clipboard = (ClipboardManager)context.GetSystemService(Context.ClipboardService);
-                ClipData clip = ClipData.NewPlainText(text, text);
-                clipboard.PrimaryClip = clip;
-            });
-
-            ShowToast(context, "Text copied to clipboard.", ToastLength.Long);
-        }
-
-        private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
-        {
-            lastActiveTime = DateTime.UtcNow;
-
-            if (e.State == FileTransfer.FileTransferState.Error)
-            {
-                await progressNotifier?.FinishProgress("Receive failed.", "");
-            }
-            else if (e.State == FileTransfer.FileTransferState.Finished)
-            {
-                if (e.TotalFiles == 1)
-                {
-                    var intent = new Intent(this, typeof(NotificationLaunchActivity));
-                    intent.PutExtra("action", "openFile");
-                    intent.PutExtra("guid", e.Guid.ToString());
-
-                    await progressNotifier?.FinishProgress($"Received a file from {e.SenderName}", "Tap to open", intent, this);
-                }
-                else
-                {
-                    await DataStorageProviders.HistoryManager.OpenAsync();
-                    var hr = DataStorageProviders.HistoryManager.GetItem(e.Guid);
-                    DataStorageProviders.HistoryManager.Close();
-                    var rootPath = (hr.Data as ReceivedFileCollection).StoreRootPath;
-                    await progressNotifier?.FinishProgress($"Received {e.TotalFiles} files from {e.SenderName}", $"They're located at {rootPath}");
-                }
-
-                progressNotifier = null;
-            }
-            else if (e.State == FileTransfer.FileTransferState.DataTransfer)
-            {
-                progressNotifier?.SetProgressValue((int)e.Total, (int)e.CurrentPart, "Receiving...");
-            }
-        }
-
         public override IBinder OnBind(Intent intent)
         {
             // This is a started service, not a bound service, so we just return null.
@@ -218,7 +130,7 @@ namespace QuickShare.Droid.Services
 
             Android.Util.Log.Debug(TAG, "3 " + deviceId);
 
-            InitProgressNotifier();
+            MessageReceiveHelper.InitProgressNotifier();
 
             //try finding remote system for 15 seconds
             for (int i = 0; i < 30; i++)
@@ -260,7 +172,7 @@ namespace QuickShare.Droid.Services
             {
                 while (true)
                 {
-                    lastActiveTime = DateTime.Now;
+                    lastActiveTime = DateTime.UtcNow;
 
                     Android.Util.Log.Debug(TAG, "Connecting to message carrier service...");
                     var c = await Common.MessageCarrierPackageManager.Connect(rs, false);
@@ -293,7 +205,7 @@ namespace QuickShare.Droid.Services
                         continue;
                     }
 
-                    var isFinished = await ProcessReceivedMessage(response.Message);
+                    var isFinished = await MessageReceiveHelper.ProcessReceivedMessage(response.Message);
 
                     Android.Util.Log.Debug(TAG, "Finished.");
 
@@ -315,71 +227,12 @@ namespace QuickShare.Droid.Services
             //StopSelf();
         }
 
-        private async Task<bool> ProcessReceivedMessage(Dictionary<string, object> message)
-        {
-            foreach (var item in message)
-                Log.Debug(TAG, $"Key = {item.Key} , Value = {item.Value.ToString()}");
-
-            if (!message.ContainsKey("Receiver"))
-                return false;
-
-            string receiver = message["Receiver"] as string;
-
-            if (receiver == "ServerIPFinder")
-            {
-                InitProgressNotifier();
-                progressNotifier.UpdateTitle("Initializing...");
-
-                await FileTransfer.ServerIPFinder.ReceiveRequest(message);
-            }
-            else if (receiver == "FileReceiver")
-            {
-                InitProgressNotifier();
-                progressNotifier.UpdateTitle("Receiving...");
-
-                await FileTransfer.FileReceiver.ReceiveRequest(message, DownloadFolderDecider);
-            }
-            else if (receiver == "TextReceiver")
-            {
-                await TextTransfer.TextReceiver.ReceiveRequest(message);
-            }
-            else if (receiver == "System")
-            {
-                if (message.ContainsKey("FinishService"))
-                {
-                    System.Diagnostics.Debug.WriteLine("Finished.");
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static async Task<IFolder> DownloadFolderDecider(string[] fileTypes)
-        {
-            string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "Roamit");
-            System.IO.Directory.CreateDirectory(downloadPath); //Make sure download folder exists.
-            IFolder downloadFolder = new FileSystemFolder(downloadPath);
-
-            return downloadFolder;
-        }
-
-        private void InitProgressNotifier()
-        {
-            if (progressNotifier != null)
-                return;
-
-            progressNotifier = new ProgressNotifier(this, "Receive failed.");
-            progressNotifier.SendInitialNotification("Connecting...", "");
-        }
-
         public override void OnDestroy()
         {
             timer.Dispose();
             timer = null;
             isStarted = false;
-            TextTransfer.TextReceiver.TextReceiveFinished -= TextReceiver_TextReceiveFinished;
-            FileTransfer.FileReceiver.FileTransferProgress -= FileReceiver_FileTransferProgress;
+            MessageReceiveHelper.ClearEventRegistrations();
 
             TimeSpan runtime = DateTime.UtcNow.Subtract(startTime);
             Log.Debug(TAG, $"Service destroyed at {DateTime.UtcNow} after running for {runtime:c}.");

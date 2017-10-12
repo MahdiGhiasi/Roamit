@@ -195,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\CloudClipboardNotifier.cs" />
+    <Compile Include="Classes\MessageReceiveHelper.cs" />
     <Compile Include="Classes\RevMob\CallbackShowBanner.cs" />
     <Compile Include="Classes\RevMob\CallbackStartSessionListener.cs" />
     <Compile Include="Classes\RevMob\RevMobHelper.cs" />
@@ -228,6 +229,7 @@
     <Compile Include="Services\CloudClipboardService.cs" />
     <Compile Include="Services\MessageCarrierService.cs" />
     <Compile Include="Services\RomeReadyService.cs" />
+    <Compile Include="Services\WaiterService.cs" />
     <Compile Include="SettingsActivity.cs" />
     <Compile Include="WebViewContainerActivity.cs" />
   </ItemGroup>
