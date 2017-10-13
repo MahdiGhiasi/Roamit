@@ -30,7 +30,7 @@
         <Pivot x:Name="pivot">
             <PivotItem Header="Settings" Style="{StaticResource FullWidthPivotItemStyle}">
                 <ScrollViewer Padding="12,0,12,0">
-                    <StackPanel Padding="0,12,24,0" Width="{Binding ActualWidthValue, ElementName=pivotProxy, Mode=OneWay, Converter={StaticResource MathConverter}, ConverterParameter=xv700}">
+                    <StackPanel Padding="0,12,24,24" Width="{Binding ActualWidthValue, ElementName=pivotProxy, Mode=OneWay, Converter={StaticResource MathConverter}, ConverterParameter=xv700}">
                         <StackPanel Margin="0,8,0,8">
                             <TextBlock Text="General" FontWeight="Bold" />
                             <TextBlock Text="Show my Android devices" 
@@ -162,6 +162,7 @@
                                        TextWrapping="Wrap"
                                        Margin="0,24,0,4" />
                             <TextBlock Text="Enable this if you're having trouble connecting to your Android devices from this device."
+                                       TextWrapping="Wrap"
                                        Opacity="0.7" />
                             <ToggleSwitch IsOn="{x:Bind Model.LegacyAndroidModeToggle, Mode=TwoWay}" />
                         </StackPanel>
