@@ -8,6 +8,7 @@
         public bool IsAvailableBySpatialProximity { get; set; }
         public string Kind { get; set; }
         public NormalizedRemoteSystemStatus Status { get; set; }
+        public string AppVersion { get; set; }
     }
     
     public enum NormalizedRemoteSystemStatus

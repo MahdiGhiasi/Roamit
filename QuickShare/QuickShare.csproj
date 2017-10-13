@@ -110,6 +110,7 @@
       <DependentUpon>WhatsNewFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes\TemplateSelectors\HistoryItemTemplateSelector.cs" />
+    <Compile Include="HelperClasses\PackageManagerHelper.cs" />
     <Compile Include="HelperClasses\PCExtensionHelper.cs" />
     <Compile Include="HelperClasses\WhatsNewHelper.cs" />
     <Compile Include="Classes\ItemSources\HistoryItemSource.cs" />

@@ -28,6 +28,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using QuickShare.HelperClasses;
 
 namespace QuickShare
 {
@@ -92,9 +93,26 @@ namespace QuickShare
 
             IRomePackageManager packageManager;
             if (rs is NormalizedRemoteSystem)
+            {
                 packageManager = MainPage.Current.AndroidPackageManager;
+
+                var nrs = rs as NormalizedRemoteSystem;
+                
+                if ((!string.IsNullOrEmpty(nrs.AppVersion)) &&
+                    (Version.TryParse(nrs.AppVersion, out Version remoteAppVersion)) &&
+                    (remoteAppVersion < new Version("2.1.4")))
+                {
+                    MainPage.Current.AndroidPackageManager.Mode = AndroidRomePackageManager.AndroidPackageManagerMode.MessageCarrier;
+                }
+                else
+                {
+                    PackageManagerHelper.InitAndroidPackageManagerMode();
+                }
+            }
             else
+            { 
                 packageManager = MainPage.Current.PackageManager;
+            }
 
             string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
             var mode = e.Parameter.ToString();

@@ -33,6 +33,7 @@ namespace QuickShare.Common.Service
                                  Status = NormalizedRemoteSystemStatus.Available,
                                  IsAvailableByProximity = false,
                                  IsAvailableBySpatialProximity = false,
+                                 AppVersion = d.AppVersion ?? "",
                              };
 
                 return output;

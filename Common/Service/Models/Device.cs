@@ -11,6 +11,7 @@ namespace QuickShare.Common.Service.Models
         public DeviceType Type { get; set; }
         public string DeviceID { get; set; }
         public string FriendlyName { get; set; }
+        public string AppVersion { get; set; }
     }
 
     public enum DeviceType

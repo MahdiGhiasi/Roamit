@@ -64,6 +64,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 var deviceName2 = Android.OS.Build.Model;
                 var osVersion = CrossDeviceInfo.Current.Version;
                 var deviceUniqueId = GetDeviceUniqueId();
+                var appVersion = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
 
                 var formContent = new FormUrlEncodedContent(new[]
                 {
@@ -72,6 +73,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                     new KeyValuePair<string, string>("deviceId", deviceUniqueId),
                     new KeyValuePair<string, string>("type", "Android"),
                     new KeyValuePair<string, string>("token", firebaseToken),
+                    new KeyValuePair<string, string>("appVersion", appVersion),
                 });
 
                 var myHttpClient = new HttpClient();
