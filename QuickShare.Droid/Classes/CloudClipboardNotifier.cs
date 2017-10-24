@@ -31,7 +31,6 @@ namespace QuickShare.Droid.Classes
                     .SetPriority((int)NotificationPriority.Min)
                     .SetContentTitle("Universal clipboard - Tap to copy")
                     .SetContentText(receivedText)
-                    .SetOngoing(true)
                     .SetContentIntent(pendingIntent);
 
             var notificationManager = NotificationManager.FromContext(context);
