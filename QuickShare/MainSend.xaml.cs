@@ -29,12 +29,16 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
+using System.Threading;
 
 namespace QuickShare
 {
     public sealed partial class MainSend : Page
     {
         public MainSendViewModel ViewModel { get; set; }
+
+        bool sendingFile = false;
+        CancellationTokenSource sendFileCancellationTokenSource = new CancellationTokenSource();
 
         public MainSend()
         {
@@ -78,6 +82,16 @@ namespace QuickShare
             }
 
             return ipAddresses;
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if (sendingFile)
+            {
+                sendFileCancellationTokenSource.Cancel();
+                e.Cancel = true;
+            }
+            base.OnNavigatingFrom(e);
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -138,6 +152,7 @@ namespace QuickShare
             }
 
             bool succeed = true;
+            FileTransferResult fileTransferResult = FileTransferResult.Successful;
             try
             {
                 if (mode == "launchUri")
@@ -212,7 +227,8 @@ namespace QuickShare
 
                     ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
 
-                    if ((await SendFile(rs, packageManager, deviceName)) == false)
+                    fileTransferResult = await SendFile(rs, packageManager, deviceName);
+                    if (fileTransferResult != FileTransferResult.Successful)
                     {
                         HideEverything();
 
@@ -233,10 +249,11 @@ namespace QuickShare
             {
 #if !DEBUG
                 if (rs is NormalizedRemoteSystem)
-                    App.Tracker.Send(HitBuilder.CreateCustomEvent("SendToAndroid", mode, succeed ? "Success" : "Failed").Build());
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("SendToAndroid", mode, succeed ? "Success" : ((mode == "file") ? fileTransferResult.ToString() : "Failed")).Build());
                 else
-                    App.Tracker.Send(HitBuilder.CreateCustomEvent("SendToWindows", mode, succeed ? "Success" : "Failed").Build());
+                    App.Tracker.Send(HitBuilder.CreateCustomEvent("SendToWindows", mode, succeed ? "Success" : ((mode == "file") ? fileTransferResult.ToString() : "Failed")).Build());
 #endif
+                sendingFile = false;
             }
 
             if (SendDataTemporaryStorage.IsSharingTarget)
@@ -325,14 +342,15 @@ namespace QuickShare
             }
         }
 
-        private async Task<bool> SendFile(object rs, IRomePackageManager packageManager, string deviceName)
+        private async Task<FileTransferResult> SendFile(object rs, IRomePackageManager packageManager, string deviceName)
         {
             string sendingText = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Sending file..." : "Sending files...";
             ViewModel.SendStatus = "Preparing...";
 
-            bool failed = false;
             string message = "";
             FileTransferResult result = FileTransferResult.Successful;
+
+            sendingFile = true;
 
             using (FileSender fs = new FileSender(rs,
                                                   new QuickShare.UWP.WebServerGenerator(),
@@ -345,7 +363,7 @@ namespace QuickShare
                 {
                     if (ee.State == FileTransferState.Error)
                     {
-                        failed = true;
+                        result = FileTransferResult.FailedOnSend;
                         message = ee.Message;
                     }
                     else
@@ -364,56 +382,55 @@ namespace QuickShare
                 {
                     ViewModel.SendStatus = "No files.";
                     ViewModel.ProgressIsIndeterminate = false;
-                    return false;
+                    return FileTransferResult.NoFiles;
                 }
                 else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile))
                 {
                     await Task.Run(async () =>
                     {
-                        result = await fs.SendFile(new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0] as StorageFile));
-                        if (result != FileTransferResult.Successful)
-                            failed = true;
+                        result = await fs.SendFile(sendFileCancellationTokenSource.Token, new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0] as StorageFile));
                     });
                 }
                 else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFolder))
                 {
                     await Task.Run(async () =>
                     {
-                        result = await fs.SendFolder(new PCLStorage.WinRTFolder(SendDataTemporaryStorage.Files[0] as StorageFolder), "");
-                        if (result != FileTransferResult.Successful)
-                            failed = true;
+                        result = await fs.SendFolder(sendFileCancellationTokenSource.Token, new PCLStorage.WinRTFolder(SendDataTemporaryStorage.Files[0] as StorageFolder), "");
                     });
                 }
                 else
                 {
                     await Task.Run(async () =>
                     {
-                        result = await fs.SendFiles(from x in SendDataTemporaryStorage.Files
-                                                    where x is StorageFile
-                                                    select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
-                        if (result != FileTransferResult.Successful)
-                            failed = true;
+                        result = await fs.SendFiles(sendFileCancellationTokenSource.Token, 
+                            from x in SendDataTemporaryStorage.Files
+                            where x is StorageFile
+                            select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
                     });
                 }
 
                 ViewModel.ProgressValue = ViewModel.ProgressMaximum;
             }
 
-            if (failed)
+            sendingFile = false;
+
+            if (result != FileTransferResult.Successful)
             {
                 HideEverything();
 
-                string title = "Send failed.";
-                string text = message;
-                if (result == FileTransferResult.FailedOnHandshake)
+                if (result != FileTransferResult.Cancelled)
                 {
-                    title = "Couldn't reach remote device.";
-                    text = "Make sure both devices are connected to the same Wi-Fi or LAN network.";
-                }
+                    string title = "Send failed.";
+                    string text = message;
+                    if (result == FileTransferResult.FailedOnHandshake)
+                    {
+                        title = "Couldn't reach remote device.";
+                        text = "Make sure both devices are connected to the same Wi-Fi or LAN network.";
+                    }
 
-                var dlg = new MessageDialog(text, title);
-                await dlg.ShowAsync();
-                return false;
+                    var dlg = new MessageDialog(text, title);
+                    await dlg.ShowAsync();
+                }
             }
             else
             {
@@ -422,7 +439,7 @@ namespace QuickShare
                 ViewModel.SendStatus = "Finished.";
             }
 
-            return true;
+            return result;
         }
 
         private void HideEverything()

@@ -12,11 +12,14 @@ using QuickShare.Common.Rome;
 using PCLStorage;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace QuickShare.FileTransfer
 {
     public class FileSender : IDisposable
     {
+        public static readonly string TRANSFER_CANCELLED_MESSAGE = "Transfer cancelled.";
+
         readonly int maxQueueInfoMessageSize = 1536;
         readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(6);
 
@@ -58,7 +61,7 @@ namespace QuickShare.FileTransfer
             deviceName = _deviceName;
         }
 
-        public async Task<FileTransferResult> SendFiles(IEnumerable<IFile> files, string directoryName)
+        public async Task<FileTransferResult> SendFiles(CancellationToken cancellationToken, IEnumerable<IFile> files, string directoryName)
         {
             List<Tuple<string, IFile>> l = new List<Tuple<string, IFile>>();
             foreach (var file in files)
@@ -66,10 +69,10 @@ namespace QuickShare.FileTransfer
                 l.Add(new Tuple<string, IFile>(directoryName, file));
             }
 
-            return await SendQueue(l, directoryName);
+            return await SendQueue(cancellationToken, l, directoryName);
         }
 
-        public async Task<FileTransferResult> SendFile(IFile file, string directory = "", bool isQueue = false)
+        public async Task<FileTransferResult> SendFile(CancellationToken cancellationToken, IFile file, string directory = "", bool isQueue = false)
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
             {
@@ -102,6 +105,7 @@ namespace QuickShare.FileTransfer
 
             InitUrls(key, slicesCount);
 
+            queueFinishTcs = null;
             fileSendTcs = new TaskCompletionSource<string>();
 
             ClearInternalEventSubscribers();
@@ -113,10 +117,7 @@ namespace QuickShare.FileTransfer
             if (!(await BeginSending(key, slicesCount, file.Name, properties, directory, false)))
                 return FileTransferResult.FailedOnPrepare;
 
-            if (!(await WaitForFinish()))
-                return FileTransferResult.FailedOnSend;
-
-            return FileTransferResult.Successful;
+            return await WaitForFinish(cancellationToken);
         }
 
         private void ClearInternalEventSubscribers()
@@ -141,34 +142,47 @@ namespace QuickShare.FileTransfer
             return s;
         }
 
-        private async Task<bool> WaitForFinish()
+        private async Task<FileTransferResult> WaitForFinish(CancellationToken cancellationToken)
         {
-            var result = await fileSendTcs.Task;
-
-            if (result.Length != 0)
+            cancellationToken.Register(() =>
             {
-                System.Diagnostics.Debug.WriteLine(result);
-                return false;
-            }
+                var res = fileSendTcs.TrySetResult(TRANSFER_CANCELLED_MESSAGE);
+                if (res)
+                    res = res;
+            });
 
-            return true;
+            var result = await fileSendTcs.Task;
+            return ProcessTcsResult(result);
         }
 
-        private async Task<bool> WaitQueueToFinish()
+        private async Task<FileTransferResult> WaitQueueToFinish(CancellationToken cancellationToken)
         {
-            var result = await queueFinishTcs.Task;
+            cancellationToken.Register(() =>
+            {
+                queueFinishTcs.TrySetResult(TRANSFER_CANCELLED_MESSAGE);
+            });
 
+            var result = await queueFinishTcs.Task;
+            return ProcessTcsResult(result);
+        }
+
+        private static FileTransferResult ProcessTcsResult(string result)
+        {
             if (result.Length != 0)
             {
                 System.Diagnostics.Debug.WriteLine(result);
-                return false;
+
+                if (result == TRANSFER_CANCELLED_MESSAGE)
+                    return FileTransferResult.Cancelled;
+                else
+                    return FileTransferResult.FailedOnSend;
             }
 
-            return true;
+            return FileTransferResult.Successful;
         }
 
         /// <param name="files">A list of Tuple(Relative directory path, StorageFile) objects.</param>
-        private async Task<FileTransferResult> SendQueue(List<Tuple<string, IFile>> files, string parentDirectoryName)
+        private async Task<FileTransferResult> SendQueue(CancellationToken cancellationToken, List<Tuple<string, IFile>> files, string parentDirectoryName)
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
             {
@@ -245,10 +259,7 @@ namespace QuickShare.FileTransfer
 
             bool infoSendResult = await SendQueueInfo(files, sFileKeyPairs, fs);
 
-            if (!(await WaitQueueToFinish()))
-                return FileTransferResult.FailedOnSend;
-
-            return FileTransferResult.Successful;
+            return await WaitQueueToFinish(cancellationToken);
         }
 
         private async Task<bool> SendQueueInfo(List<Tuple<string, IFile>> files, Dictionary<IFile, string> sFileKeyPairs, IFileStats[] fs)
@@ -309,11 +320,11 @@ namespace QuickShare.FileTransfer
             return true;
         }
 
-        public async Task<FileTransferResult> SendFolder(IFolder folder, string parentDirectoryName)
+        public async Task<FileTransferResult> SendFolder(CancellationToken cancellationToken, IFolder folder, string parentDirectoryName)
         {
             List<Tuple<string, IFile>> files = await GetFiles(folder);
 
-            return await SendQueue(files, parentDirectoryName);
+            return await SendQueue(cancellationToken, files, parentDirectoryName);
         }
 
         private async Task<List<Tuple<string, IFile>>> GetFiles(IFolder f, string relPath = "")
@@ -575,5 +586,7 @@ namespace QuickShare.FileTransfer
         FailedOnQueueInit = 3,
         FailedOnPrepare = 4,
         FailedOnSend = 5,
+        Cancelled = 6,
+        NoFiles = 7,
     }
 }

@@ -55,6 +55,9 @@ namespace QuickShare.Droid
         LinearLayout devicesListLayout;
         RelativeLayout bannerLayout;
 
+        bool sendingFile = true;
+        CancellationTokenSource sendFileCancellationTokenSource;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -273,7 +276,11 @@ namespace QuickShare.Droid
         {
             if ((webView.Url != homeUrl) && (!IsShareDialog()))
             {
-                //TODO: Stop pending operations
+                if (sendingFile)
+                {
+                    sendFileCancellationTokenSource.Cancel();
+                }
+
                 WebViewBack();
             }
             else
@@ -694,7 +701,6 @@ namespace QuickShare.Droid
             string sendingText = (files.Length == 1) ? "Sending file..." : "Sending files...";
             SetProgressText("Preparing...");
 
-            bool failed = false;
             string message = "";
             FileTransferResult transferResult = FileTransferResult.Successful;
 
@@ -708,7 +714,7 @@ namespace QuickShare.Droid
                 {
                     if (ee.State == FileTransferState.Error)
                     {
-                        failed = true;
+                        transferResult = FileTransferResult.FailedOnSend;
                         message = ee.Message;
                     }
                     else
@@ -722,6 +728,8 @@ namespace QuickShare.Droid
                     }
                 };
 
+                sendFileCancellationTokenSource = new CancellationTokenSource();
+
                 if (files.Length == 0)
                 {
                     SetProgressText("No files.");
@@ -730,22 +738,25 @@ namespace QuickShare.Droid
                 }
                 else if (files.Length == 1)
                 {
+                    sendingFile = true;
+
                     await Task.Run(async () =>
                     {
-                        transferResult = await fs.SendFile(new PCLStorage.FileSystemFile(files[0]));
-                        if (transferResult != FileTransferResult.Successful)
-                            failed = true;
+                        transferResult = await fs.SendFile(sendFileCancellationTokenSource.Token, new PCLStorage.FileSystemFile(files[0]));
                     });
+                    
+                    sendingFile = false;
                 }
                 else
                 {
+                    sendingFile = true;
                     await Task.Run(async () =>
                     {
-                        transferResult = await fs.SendFiles(from x in files
-                                                            select new PCLStorage.FileSystemFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
-                        if (transferResult != FileTransferResult.Successful)
-                            failed = true;
+                        transferResult = await fs.SendFiles(sendFileCancellationTokenSource.Token,
+                            from x in files
+                            select new PCLStorage.FileSystemFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
                     });
+                    sendingFile = false;
                 }
             }
 
@@ -760,27 +771,30 @@ namespace QuickShare.Droid
 
             SetProgressValue(1.0, 1.0);
 
-            if (failed)
+            if (transferResult != FileTransferResult.Successful)
             {
-                Analytics.TrackEvent("SendToWindows", "file", "Failed");
+                Analytics.TrackEvent("SendToWindows", "file", transferResult.ToString());
 
-                SetProgressText("Failed.");
-                SetProgressValue(0, 1.0);
-                System.Diagnostics.Debug.WriteLine("Send failed.\r\n\r\n" + message);
-
-                if (transferResult == FileTransferResult.FailedOnHandshake)
+                if (transferResult != FileTransferResult.Cancelled)
                 {
-                    message = "Couldn't reach remote device.\r\n\r\n" +
-                        "Make sure both devices are connected to the same Wi-Fi or LAN network.";
+                    SetProgressText("Failed.");
+                    SetProgressValue(0, 1.0);
+                    System.Diagnostics.Debug.WriteLine("Send failed.\r\n\r\n" + message);
+
+                    if (transferResult == FileTransferResult.FailedOnHandshake)
+                    {
+                        message = "Couldn't reach remote device.\r\n\r\n" +
+                            "Make sure both devices are connected to the same Wi-Fi or LAN network.";
+                    }
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.SetTitle(message);
+                    alert.SetPositiveButton("OK", (senderAlert, args) => { });
+                    RunOnUiThread(() =>
+                    {
+                        alert.Show();
+                    });
                 }
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.SetTitle(message);
-                alert.SetPositiveButton("OK", (senderAlert, args) => { });
-                RunOnUiThread(() =>
-                {
-                    alert.Show();
-                });
             }
             else
             {
