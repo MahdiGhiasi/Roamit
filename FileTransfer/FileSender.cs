@@ -114,6 +114,12 @@ namespace QuickShare.FileTransfer
                 FileTransferProgress?.Invoke(s, ee);
             };
 
+            cancellationToken.Register(() =>
+            {
+                fileSendTcs?.TrySetResult(TRANSFER_CANCELLED_MESSAGE);
+                server?.Dispose();
+            });
+
             if (!(await BeginSending(key, slicesCount, file.Name, properties, directory, false)))
                 return FileTransferResult.FailedOnPrepare;
 
@@ -144,24 +150,12 @@ namespace QuickShare.FileTransfer
 
         private async Task<FileTransferResult> WaitForFinish(CancellationToken cancellationToken)
         {
-            cancellationToken.Register(() =>
-            {
-                var res = fileSendTcs.TrySetResult(TRANSFER_CANCELLED_MESSAGE);
-                if (res)
-                    res = res;
-            });
-
             var result = await fileSendTcs.Task;
             return ProcessTcsResult(result);
         }
 
         private async Task<FileTransferResult> WaitQueueToFinish(CancellationToken cancellationToken)
         {
-            cancellationToken.Register(() =>
-            {
-                queueFinishTcs.TrySetResult(TRANSFER_CANCELLED_MESSAGE);
-            });
-
             var result = await queueFinishTcs.Task;
             return ProcessTcsResult(result);
         }
@@ -253,6 +247,12 @@ namespace QuickShare.FileTransfer
                 if (ee.State == FileTransferState.Finished)
                     finishedSlices += ee.Total;
             };
+
+            cancellationToken.Register(() =>
+            {
+                queueFinishTcs?.TrySetResult(TRANSFER_CANCELLED_MESSAGE);
+                server?.Dispose();
+            });
 
             if (await SendQueueInit(totalSlices, queueFinishKey, parentDirectoryName) == false)
                 return FileTransferResult.FailedOnQueueInit;

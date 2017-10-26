@@ -278,7 +278,10 @@ namespace QuickShare.Droid
             {
                 if (sendingFile)
                 {
-                    sendFileCancellationTokenSource.Cancel();
+                    if (sendFileCancellationTokenSource == null)
+                        sendingFile = false;
+                    else
+                        sendFileCancellationTokenSource.Cancel();
                 }
 
                 WebViewBack();
@@ -758,6 +761,8 @@ namespace QuickShare.Droid
                     });
                     sendingFile = false;
                 }
+
+                sendFileCancellationTokenSource = null;
             }
 
             Dictionary<string, object> vs = new Dictionary<string, object>

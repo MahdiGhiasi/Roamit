@@ -145,7 +145,10 @@ namespace System.Net.Http
         public void Close()
         {
             if (_cts == null)
-                throw new InvalidOperationException("HttpListener is not running.");
+            {
+                //Don't throw exception in this case, just ignore it :)
+                return; //throw new InvalidOperationException("HttpListener is not running.");
+            }
 
             Request = null;
 
