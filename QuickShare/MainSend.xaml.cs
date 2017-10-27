@@ -103,6 +103,9 @@ namespace QuickShare
             App.Tracker.Send(HitBuilder.CreateScreenView("Send").Build());
 #endif
 
+            if (Frame.BackStackDepth > 0)
+                if (Frame.BackStack[Frame.BackStackDepth - 1].SourcePageType == typeof(MainSend))
+                    Frame.BackStack.RemoveAt(Frame.BackStackDepth - 1);
 
             var rs = MainPage.Current.GetSelectedSystem();
 
