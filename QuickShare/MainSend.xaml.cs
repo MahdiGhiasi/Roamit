@@ -30,6 +30,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
 using System.Threading;
+using PCLStorage;
 
 namespace QuickShare
 {
@@ -393,9 +394,11 @@ namespace QuickShare
                 }
                 else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFolder))
                 {
+                    var folder = SendDataTemporaryStorage.Files[0] as StorageFolder;
+
                     await Task.Run(async () =>
                     {
-                        result = await fs.SendFolder(sendFileCancellationTokenSource.Token, new PCLStorage.WinRTFolder(SendDataTemporaryStorage.Files[0] as StorageFolder), "");
+                        result = await fs.SendQueue(sendFileCancellationTokenSource.Token, await GetFilesOfFolder(folder), folder.DisplayName);
                     });
                 }
                 else
@@ -440,6 +443,21 @@ namespace QuickShare
             }
 
             return result;
+        }
+
+        private async Task<List<Tuple<string, IFile>>> GetFilesOfFolder(StorageFolder f, string relPath = "")
+        {
+            List<Tuple<string, IFile>> files = (from x in await f.GetFilesAsync()
+                                                select new Tuple<string, IFile>(relPath + f.Name + "\\", new WinRTFile(x))).ToList();
+
+            var folders = await f.GetFoldersAsync();
+
+            foreach (var folder in folders)
+            {
+                files.AddRange(await GetFilesOfFolder(folder, relPath + f.Name + "\\"));
+            }
+
+            return files;
         }
 
         private void HideEverything()

@@ -176,7 +176,7 @@ namespace QuickShare.FileTransfer
         }
 
         /// <param name="files">A list of Tuple(Relative directory path, StorageFile) objects.</param>
-        private async Task<FileTransferResult> SendQueue(CancellationToken cancellationToken, List<Tuple<string, IFile>> files, string parentDirectoryName)
+        public async Task<FileTransferResult> SendQueue(CancellationToken cancellationToken, List<Tuple<string, IFile>> files, string parentDirectoryName)
         {
             if ((ipFinderResult == null) || (ipFinderResult.Success == false))
             {
@@ -318,28 +318,6 @@ namespace QuickShare.FileTransfer
             }
 
             return true;
-        }
-
-        public async Task<FileTransferResult> SendFolder(CancellationToken cancellationToken, IFolder folder, string parentDirectoryName)
-        {
-            List<Tuple<string, IFile>> files = await GetFiles(folder);
-
-            return await SendQueue(cancellationToken, files, parentDirectoryName);
-        }
-
-        private async Task<List<Tuple<string, IFile>>> GetFiles(IFolder f, string relPath = "")
-        {
-            List<Tuple<string, IFile>> files = (from x in await f.GetFilesAsync()
-                                                select new Tuple<string, IFile>(relPath + f.Name + "\\", x)).ToList();
-
-            var folders = await f.GetFoldersAsync();
-
-            foreach (var folder in folders)
-            {
-                files.AddRange(await GetFiles(folder, relPath + f.Name + "\\"));
-            }
-
-            return files;
         }
 
         private async Task<bool> SendQueueInit(ulong totalSlices, string queueFinishKey, string parentDirectoryName)

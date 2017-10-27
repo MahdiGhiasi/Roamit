@@ -164,6 +164,8 @@ namespace QuickShare.FileTransfer
                                StorePath = System.IO.Path.Combine(downloadFolder.Path, (string)x["Directory"]),
                            };
 
+            string queueParentDirectory2 = await GetUniqueQueueParentDirectory(downloadFolder);
+
             await DataStorageProviders.HistoryManager.OpenAsync();
             DataStorageProviders.HistoryManager.Add(requestGuid,
                 DateTime.Now,
@@ -171,13 +173,23 @@ namespace QuickShare.FileTransfer
                 new ReceivedFileCollection
                 {
                     Files = logItems.ToList(),
-                    StoreRootPath = System.IO.Path.Combine(downloadFolder.Path, queueParentDirectory),
+                    StoreRootPath = System.IO.Path.Combine(downloadFolder.Path, queueParentDirectory2),
                 },
                 false);
             DataStorageProviders.HistoryManager.Close();
 
             foreach (var item in queueItems)
             {
+                if (((string)item["Directory"]).Substring(0, queueParentDirectory.Length) == queueParentDirectory)
+                {
+                    if (queueParentDirectory2 != queueParentDirectory)
+                        item["Directory"] = queueParentDirectory2 + ((string)item["Directory"]).Substring(queueParentDirectory.Length);
+                }
+                else if (queueParentDirectory.Length > 0)
+                {
+                    item["Directory"] = Path.Combine(queueParentDirectory2, (string)item["Directory"]);
+                }
+
                 await DownloadFile(item, downloadFolder);
             }
 
@@ -188,6 +200,23 @@ namespace QuickShare.FileTransfer
             DataStorageProviders.HistoryManager.Close();
 
             await QueueProcessFinishedNotifySender();
+        }
+
+        private static async Task<string> GetUniqueQueueParentDirectory(IFolder downloadFolder)
+        {
+            var queueParentDirectory2 = queueParentDirectory;
+
+            if (queueParentDirectory.Length > 0)
+            {
+                var storeRootIndex = 2;
+                while (await downloadFolder.CheckExistsAsync(queueParentDirectory2) == ExistenceCheckResult.FolderExists)
+                {
+                    queueParentDirectory2 = $"{queueParentDirectory} ({storeRootIndex})";
+                    storeRootIndex++;
+                }
+            }
+
+            return queueParentDirectory2;
         }
 
         private static async Task QueueProcessFinishedNotifySender()
