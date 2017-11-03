@@ -3,6 +3,8 @@
 using Newtonsoft.Json;
 using PCLStorage;
 using QuickShare.Common;
+using QuickShare.FileTransfer;
+using QuickShare.ToastNotifications;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -237,6 +239,8 @@ namespace QuickShare.ServiceTask
 
         private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
         {
+            ShowFileTransferProgressToast(e);
+
             await notificationSemaphoreSlim.WaitAsync();
             waitingNumSemaphore++;
 #if NOTIFICATIONHANDLER_DEBUGINFO
@@ -249,7 +253,6 @@ namespace QuickShare.ServiceTask
                 notificationSemaphoreSlim.Release();
                 return;
             }
-
 
             try
             {
@@ -275,39 +278,34 @@ namespace QuickShare.ServiceTask
             notificationSemaphoreSlim.Release();
         }
 
+        private void ShowFileTransferProgressToast(FileTransfer.FileTransferProgressEventArgs e)
+        {
+            if (e.State == FileTransferState.Finished)
+            {
+                Toaster.ShowFileReceiveFinishedNotification(e.TotalFiles, e.SenderName, e.Guid);
+            }
+            else
+            {
+                double percent = ((double)e.CurrentPart) / ((double)e.Total);
+                Toaster.ShowFileReceiveProgressNotification(e.SenderName, percent, e.Guid);
+            }
+        }
+
         private async void TextReceiver_TextReceiveFinished(TextTransfer.TextReceiveEventArgs e)
         {
-            await notificationSemaphoreSlim.WaitAsync();
-            waitingNumSemaphore++;
+            ShowTextReceiveToast(e);
+        }
 
-            if (!await ConnectToNotificationService())
+        private void ShowTextReceiveToast(TextTransfer.TextReceiveEventArgs e)
+        {
+            if (e.Success)
             {
-                waitingNumSemaphore--;
-                notificationSemaphoreSlim.Release();
-                return;
+                Toaster.ShowClipboardTextReceivedNotification((Guid)e.Guid, e.HostName);
             }
-
-            try
+            else
             {
-                // Call the service.
-                var message = new ValueSet();
-                message.Add("Type", "TextReceive");
-                message.Add("Data", JsonConvert.SerializeObject(e));
-
-                AppServiceResponse response = await this.notificationService.SendMessageAsync(message);
-
-                if (response.Status != AppServiceResponseStatus.Success)
-                    Debug.WriteLine("Failed to send message to notification service: " + response.Status);
+                Debug.WriteLine($"text with guid {e.Guid.ToString()} : success = false");
             }
-            catch (Exception ex)
-            {
-                waitingNumSemaphore--;
-                notificationSemaphoreSlim.Release();
-                throw ex;
-            }
-
-            waitingNumSemaphore--;
-            notificationSemaphoreSlim.Release();
         }
     }
 }

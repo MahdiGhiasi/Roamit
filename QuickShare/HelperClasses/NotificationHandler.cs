@@ -41,42 +41,11 @@ namespace QuickShare
                     await MainPage.Current.FileTransferProgress(e);
                 });
             }
-
-#if NOTIFICATIONHANDLER_DEBUGINFO
-            Debug.WriteLine("So?");
-#endif
-
-            if ((UISuccess) && (e.State != FileTransferState.Finished))
-            {
-                Toaster.ClearNotification(e.Guid);
-                return;
-            }
-
-#if NOTIFICATIONHANDLER_DEBUGINFO
-            Debug.WriteLine("Nope");
-#endif
-
-            if (e.State == FileTransferState.Finished)
-            {
-                Toaster.ShowFileReceiveFinishedNotification(e.TotalFiles, e.SenderName, e.Guid);
-            }
-            else
-            {
-                double percent = ((double)e.CurrentPart) / ((double)e.Total);
-                Toaster.ShowFileReceiveProgressNotification(e.SenderName, percent, e.Guid);
-            }
         }
 
         internal static async Task HandleAsync(TextReceiveEventArgs e)
         {
-            if (e.Success)
-            {
-                Toaster.ShowClipboardTextReceivedNotification((Guid)e.Guid, e.HostName);
-            }
-            else
-            {
-                Debug.WriteLine($"text with guid {e.Guid.ToString()} : success = false");
-            }
+            
         }
     }
 }
