@@ -8,15 +8,6 @@
     xmlns:templateselectors="using:QuickShare.Classes.TemplateSelectors"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
-    <Page.Transitions>
-        <TransitionCollection>
-            <NavigationThemeTransition>
-                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                    <DrillInNavigationTransitionInfo />
-                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
-            </NavigationThemeTransition>
-        </TransitionCollection>
-    </Page.Transitions>
 
     <Page.Resources>
         <ResourceDictionary>
@@ -29,15 +20,40 @@
                             Background="#66333333">
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" 
-                                   FontWeight="Bold"
-                                   Text="Web link" />
-                        <TextBlock Grid.Column="1" 
-                                   Margin="4,0,0,0"
-                                   Text="{Binding SenderName}" />
+                        <RichTextBlock TextWrapping="Wrap" Grid.Column="0" IsTextSelectionEnabled="False">
+                            <Paragraph>
+                                <Run FontWeight="Bold">
+                                    Web link 
+                                </Run>
+                                <Run>
+                                    from 
+                                </Run>
+                                <Run Text="{Binding SenderName}" />
+                            </Paragraph>
+                        </RichTextBlock>
+                        <Button BorderThickness="0" 
+                                Grid.Column="1"
+                                Width="40"
+                                Height="40"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="8,-8,-8,0"
+                                Background="Transparent"
+                                Tag="{Binding Guid}"
+                                Tapped="RemoveItem_Tapped">
+                            <Button.Content>
+                                <TextBlock Text="&#xE894;" 
+                                           Foreground="White" 
+                                           FontFamily="Segoe MDL2 Assets" 
+                                           AutomationProperties.Name="Remove this item from history" />
+                            </Button.Content>
+                            <ToolTipService.ToolTip>
+                                <TextBlock Text="Remove this item from history" />
+                            </ToolTipService.ToolTip>
+                        </Button>
                     </Grid>
                     <StackPanel Margin="8,8,8,0">
                         <TextBlock TextWrapping="Wrap"
@@ -66,15 +82,40 @@
                             Background="#66333333">
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" 
-                                   FontWeight="Bold"
-                                   Text="Clipboard content" />
-                        <TextBlock Grid.Column="1" 
-                                   Margin="4,0,0,0"
-                                   Text="{Binding SenderName}" />
+                        <RichTextBlock TextWrapping="Wrap" Grid.Column="0" IsTextSelectionEnabled="False">
+                            <Paragraph>
+                                <Run FontWeight="Bold">
+                                    Clipboard Content
+                                </Run>
+                                <Run>
+                                    from
+                                </Run>
+                                <Run Text="{Binding SenderName}" />
+                            </Paragraph>
+                        </RichTextBlock>
+                        <Button BorderThickness="0" 
+                                Grid.Column="1"
+                                Width="40"
+                                Height="40"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="8,-8,-8,0"
+                                Background="Transparent"
+                                Tag="{Binding Guid}"
+                                Tapped="RemoveItem_Tapped">
+                            <Button.Content>
+                                <TextBlock Text="&#xE894;" 
+                                           Foreground="White" 
+                                           FontFamily="Segoe MDL2 Assets" 
+                                           AutomationProperties.Name="Remove this item from history" />
+                            </Button.Content>
+                            <ToolTipService.ToolTip>
+                                <TextBlock Text="Remove this item from history" />
+                            </ToolTipService.ToolTip>
+                        </Button>
                     </Grid>
                     <StackPanel Margin="8,8,8,0">
                         <HyperlinkButton Content="{Binding ContentPreview}" 
@@ -104,7 +145,7 @@
                                Text="{Binding ItemDateAndTimeString}" />
                 </StackPanel>
             </DataTemplate>
-            <DataTemplate x:Name="SingleFileTemplate">
+            <DataTemplate x:Name="FileTemplate">
                 <StackPanel HorizontalAlignment="Stretch"
                             Margin="4" 
                             Padding="8"
@@ -113,77 +154,42 @@
                             Background="#66333333">
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" 
-                                   FontWeight="Bold"
-                                   Text="File" />
-                        <TextBlock Grid.Column="1" 
-                                   Margin="4,0,0,0"
-                                   Text="{Binding SenderName}" />
-                    </Grid>
-                    <StackPanel Margin="8,8,8,0">
-                        <TextBlock TextWrapping="Wrap"
-                                   TextAlignment="Center"
-                                   FontStyle="Italic"
-                                   Text="{Binding File}" />
-                        <Grid Margin="0,4,0,0">
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Right">
-                                <Button BorderThickness="0" 
-                                        Background="Transparent"
-                                        Tag="{Binding File}"
-                                        Tapped="OpenSingleFileContainingFolder_Tapped">
-                                    <Button.Content>
-                                        <TextBlock Text="&#xE8DA;" Foreground="White" FontFamily="Segoe MDL2 Assets" AutomationProperties.Name="Favorite" />
-                                    </Button.Content>
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock Text="Open folder" />
-                                    </ToolTipService.ToolTip>
-                                </Button>
-                                <Button BorderThickness="0" 
-                                        Background="Transparent"
-                                        Tag="{Binding File}"
-                                        Tapped="OpenSingleFile_Tapped">
-                                    <Button.Content>
-                                        <TextBlock Text="&#xE8E5;" Foreground="White" FontFamily="Segoe MDL2 Assets" AutomationProperties.Name="Favorite" />
-                                    </Button.Content>
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock Text="Open file" />
-                                    </ToolTipService.ToolTip>
-                                </Button>
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
-
-                    <TextBlock HorizontalAlignment="Right"
-                               Margin="0,0,0,0"
-                               FontSize="12"
-                               Opacity="0.7"
-                               Text="{Binding ItemDateAndTimeString}" />
-                </StackPanel>
-            </DataTemplate>
-            <DataTemplate x:Name="MultipleFileTemplate">
-                <StackPanel HorizontalAlignment="Stretch"
-                            Margin="4" 
-                            Padding="8"
-                            BorderBrush="#777777"
-                            BorderThickness="1"
-                            Background="#66333333">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" 
-                                   FontWeight="Bold"
-                                   Text="{Binding FilesCountString}" />
-                        <TextBlock Grid.Column="1" 
-                                   Margin="4,0,0,0"
-                                   Text="{Binding SenderName}" />
+                        <RichTextBlock TextWrapping="Wrap" Grid.Column="0" IsTextSelectionEnabled="False">
+                            <Paragraph>
+                                <Run FontWeight="Bold" Text="{Binding FilesCountString}" />
+                                <Run>
+                                    from 
+                                </Run>
+                                <Run Text="{Binding SenderName}" />
+                            </Paragraph>
+                        </RichTextBlock>
+                        <Button BorderThickness="0" 
+                                Grid.Column="1"
+                                Width="40"
+                                Height="40"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="8,-8,-8,0"
+                                Background="Transparent"
+                                Tag="{Binding Guid}"
+                                Tapped="RemoveItem_Tapped">
+                            <Button.Content>
+                                <TextBlock Text="&#xE894;" 
+                                           Foreground="White" 
+                                           FontFamily="Segoe MDL2 Assets" 
+                                           AutomationProperties.Name="Remove this item from history" />
+                            </Button.Content>
+                            <ToolTipService.ToolTip>
+                                <TextBlock Text="Remove this item from history" />
+                            </ToolTipService.ToolTip>
+                        </Button>
                     </Grid>
                     <ListView ItemsSource="{Binding Files}" 
+                              BorderBrush="#666666"
+                              BorderThickness="2,0,0,0"
                               SelectionMode="None"
                               MaxHeight="156" 
                               Margin="0,8,0,0">
@@ -198,7 +204,7 @@
                                                Grid.Column="0"
                                                VerticalAlignment="Center"
                                                TextWrapping="Wrap"
-                                               TextAlignment="Center" />
+                                               TextAlignment="Left" />
                                     <StackPanel Orientation="Horizontal"
                                                 VerticalAlignment="Center"
                                                 Grid.Column="1"
@@ -220,7 +226,7 @@
                                                 Tag="{Binding}"
                                                 Tapped="OpenSingleFile_Tapped">
                                             <Button.Content>
-                                                <TextBlock Text="&#xE8E5;" FontSize="20" Foreground="White" FontFamily="Segoe MDL2 Assets" AutomationProperties.Name="Open file" />
+                                                <TextBlock Text="&#xE78B;" FontSize="20" Foreground="White" FontFamily="Segoe MDL2 Assets" AutomationProperties.Name="Open file" />
                                             </Button.Content>
                                             <ToolTipService.ToolTip>
                                                 <TextBlock Text="Open file" />
@@ -253,8 +259,7 @@
             <templateselectors:HistoryItemTemplateSelector x:Name="TemplateSelector"
                                                        ClipboardTextTemplate="{StaticResource ClipboardTextTemplate}"
                                                        WebLinkTemplate="{StaticResource WebLinkTemplate}"
-                                                       SingleFileTemplate="{StaticResource SingleFileTemplate}"
-                                                       MultipleFileTemplate="{StaticResource MultipleFileTemplate}"/>
+                                                       FileTemplate="{StaticResource FileTemplate}"/>
         </ResourceDictionary>
     </Page.Resources>
 
@@ -266,6 +271,12 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <TextBlock Text="Receive History" FontSize="18" Margin="16,12,0,16" FontWeight="Bold" />
+                <HyperlinkButton x:Name="ClearHistoryButton"
+                                 Content="Clear History"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Right"
+                                 Margin="0,0,16,0"
+                                 Tapped="ClearHistory_Tapped" />
             </Grid>
             <Grid Grid.Row="1">
                 <ListView ItemTemplateSelector="{StaticResource TemplateSelector}"
@@ -273,7 +284,8 @@
                           ItemsSource="{x:Bind HistoryItems}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment"  Value="Stretch"></Setter>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                            <Setter Property="MaxWidth" Value="700"></Setter>
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>

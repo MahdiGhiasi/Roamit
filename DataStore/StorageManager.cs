@@ -58,5 +58,10 @@ namespace QuickShare.DataStore
             db = null;
             data = null;
         }
+
+        public void Clear()
+        {
+            db.DropCollection(collectionName);
+        }
     }
 }

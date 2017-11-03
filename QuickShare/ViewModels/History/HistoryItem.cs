@@ -13,12 +13,6 @@ namespace QuickShare.ViewModels.History
 
         public Guid Guid { get; set; }
 
-        private string senderName;
-        public string SenderName
-        {
-            get { return $"from {senderName}"; }
-            set { senderName = value; }
-        }
-
+        public string SenderName { get; set; }
     }
 }

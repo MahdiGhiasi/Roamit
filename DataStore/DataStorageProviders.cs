@@ -55,5 +55,10 @@ namespace QuickShare.DataStore
             _historyManager = new HistoryManager(System.IO.Path.Combine(_workingDirectory, "History.db"));
             _settingsManager = new SettingsManager(System.IO.Path.Combine(_workingDirectory, "Settings.db"));
         }
+
+        public static void ClearHistory()
+        {
+            
+        }
     }
 }

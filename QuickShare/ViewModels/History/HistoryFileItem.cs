@@ -7,7 +7,7 @@ using Windows.UI.Xaml;
 
 namespace QuickShare.ViewModels.History
 {
-    public class HistoryMultipleFileItem : HistoryItem
+    public class HistoryFileItem : HistoryItem
     {
         public List<FileInfo> Files { get; set; }
         public string Path { get; set; }

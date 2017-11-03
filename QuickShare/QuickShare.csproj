@@ -120,8 +120,7 @@
     <Compile Include="ViewModels\DevicesSettingsViewModel.cs" />
     <Compile Include="ViewModels\History\FileInfo.cs" />
     <Compile Include="ViewModels\History\HistoryClipboardTextItem.cs" />
-    <Compile Include="ViewModels\History\HistoryMultipleFileItem.cs" />
-    <Compile Include="ViewModels\History\HistorySingleFileItem.cs" />
+    <Compile Include="ViewModels\History\HistoryFileItem.cs" />
     <Compile Include="ViewModels\History\HistoryItem.cs" />
     <Compile Include="ViewModels\History\HistoryWebLinkItem.cs" />
     <None Include="PCExtension\RoamitPCExtension.exe.config">

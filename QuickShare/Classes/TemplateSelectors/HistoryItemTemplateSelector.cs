@@ -13,18 +13,15 @@ namespace QuickShare.Classes.TemplateSelectors
     public class HistoryItemTemplateSelector : DataTemplateSelector
     {
         public DataTemplate ClipboardTextTemplate { get; set; }
-        public DataTemplate SingleFileTemplate { get; set; }
-        public DataTemplate MultipleFileTemplate { get; set; }
+        public DataTemplate FileTemplate { get; set; }
         public DataTemplate WebLinkTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             if (item is HistoryClipboardTextItem)
                 return ClipboardTextTemplate;
-            else if (item is HistorySingleFileItem)
-                return SingleFileTemplate;
-            else if (item is HistoryMultipleFileItem)
-                return MultipleFileTemplate;
+            else if (item is HistoryFileItem)
+                return FileTemplate;
             else if (item is HistoryWebLinkItem)
                 return WebLinkTemplate;
 

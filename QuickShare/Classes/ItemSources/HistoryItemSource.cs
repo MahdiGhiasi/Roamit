@@ -52,22 +52,25 @@ namespace QuickShare.Classes.ItemSources
             else if (x.Data is ReceivedFile)
             {
                 var file = x.Data as ReceivedFile;
-                return new HistorySingleFileItem
+                return new HistoryFileItem
                 {
                     Guid = x.Id,
                     ItemDateAndTime = x.ReceiveTime,
                     SenderName = x.RemoteDeviceName,
-                    File = new FileInfo
-                    {
-                        FileName = file.Name,
-                        Path = file.StorePath,
-                    }
+                    Path = file.StorePath,
+                    Files = (new FileInfo[] {
+                        new FileInfo
+                        {
+                            FileName = file.Name,
+                            Path = file.StorePath,
+                        }
+                    }).ToList()
                 };
             }
             else if (x.Data is ReceivedFileCollection)
             {
                 var files = x.Data as ReceivedFileCollection;
-                return new HistoryMultipleFileItem
+                return new HistoryFileItem
                 {
                     Guid = x.Id,
                     ItemDateAndTime = x.ReceiveTime,
