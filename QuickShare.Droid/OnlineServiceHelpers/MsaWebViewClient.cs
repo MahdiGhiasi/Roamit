@@ -43,14 +43,14 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                     var result = await ServiceFunctions.RegisterDevice();
 
                     if (result)
-                        AuthenticateDialog.authenticateTcs.SetResult(MsaAuthResult.Success);
+                        AuthenticateDialog.authenticateTcs.TrySetResult(MsaAuthResult.Success);
                     else
-                        AuthenticateDialog.authenticateTcs.SetResult(MsaAuthResult.FailedToRegister);
+                        AuthenticateDialog.authenticateTcs.TrySetResult(MsaAuthResult.FailedToRegister);
                 }
                 else if (purpose == MsaAuthPurpose.ProjectRomePlatform)
                 {
                     Platform.SetAuthCode(authCode);
-                    AuthenticateDialog.authenticateTcs.SetResult(MsaAuthResult.Success);
+                    AuthenticateDialog.authenticateTcs.TrySetResult(MsaAuthResult.Success);
                 }                
             }
             else if (url.Contains("error=access_denied"))
@@ -59,7 +59,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 System.Diagnostics.Debug.WriteLine("Page finished failed with ACCESS_DENIED_HERE");
                 Intent resultIntent = new Intent();
                 AuthenticateDialog.authDialog.Dismiss();
-                AuthenticateDialog.authenticateTcs.SetResult(MsaAuthResult.CancelledByUser);
+                AuthenticateDialog.authenticateTcs.TrySetResult(MsaAuthResult.CancelledByUser);
             }
         }
     }
