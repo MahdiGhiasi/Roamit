@@ -83,14 +83,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/settings_uiModeSwitch"
-                android:text="Legacy UI mode" />
+                android:text="Legacy UI mode"
+                android:visibility="gone" />
             <TextView
                 android:text="You'll see the change next time you start the app."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginBottom="30dp"
+                android:visibility="gone" />
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
