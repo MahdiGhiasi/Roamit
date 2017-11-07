@@ -37,7 +37,10 @@ namespace QuickShare.Droid
             if (MSAAuthenticator.HasUserUniqueId())
             {
                 LaunchHomeScreen();
+                return;
             }
+
+            (new Classes.WhatsNew(this)).Shown(); //Don't show what's new dialog if this is the first time user opens the app.
 
             Instance = this;
 

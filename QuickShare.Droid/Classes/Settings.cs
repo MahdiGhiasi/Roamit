@@ -85,6 +85,29 @@ namespace QuickShare.Droid.Classes
                 editor.Apply();
             }
         }
+
+        internal Version LatestShownWhatsNewVersion
+        {
+            get
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                string versionText = prefs.GetString("LatestShownWhatsNewVersion", "0.0.0.0");
+
+                if (Version.TryParse(versionText, out Version v))
+                    return v;
+                else
+                    return new Version("0.0.0.0");
+            }
+            set
+            {
+                string versionText = value.ToString();
+
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutString("LatestShownWhatsNewVersion", versionText);
+                editor.Apply();
+            }
+        }
     }
 
     internal enum CloudClipboardReceiveMode

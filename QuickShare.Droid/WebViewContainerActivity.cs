@@ -69,10 +69,16 @@ namespace QuickShare.Droid
             webView.SetWebViewClient(client);
             webView.Settings.JavaScriptEnabled = true;
 
-            if (IsShareDialog())
+            if (IsShareDialog)
+            {
                 InitShareDialog();
+            }
             else
+            {
                 webView.LoadUrl(homeUrl);
+
+                ShowWhatsNewIfNecessary();
+            }
 
 
             bannerLayout = FindViewById<RelativeLayout>(Resource.Id.webViewContainer_banner);
@@ -137,6 +143,26 @@ namespace QuickShare.Droid
                 StartService(new Intent(this, typeof(Services.RomeReadyService)));
 
             CheckForLegacyVersionInstallations();
+        }
+
+        private void ShowWhatsNewIfNecessary()
+        {
+            WhatsNew whatsNew = new WhatsNew(this);
+
+            if (!whatsNew.ShouldShowWhatsNew)
+                return;
+
+            var alert = new AlertDialog.Builder(this)
+                    .SetTitle(whatsNew.GetTitle())
+                    .SetMessage(whatsNew.GetText())
+                    .SetPositiveButton("Got it", (s, e) => { });
+
+            RunOnUiThread(() =>
+            {
+                alert.Show();
+            });
+
+            whatsNew.Shown();
         }
 
         private async void CheckForLegacyVersionInstallations()
@@ -207,10 +233,7 @@ namespace QuickShare.Droid
             catch { }
         }
 
-        private bool IsShareDialog()
-        {
-            return (Intent.Action == Intent.ActionSend) || (Intent.Action == Intent.ActionSendMultiple);
-        }
+        private bool IsShareDialog { get => ((Intent.Action == Intent.ActionSend) || (Intent.Action == Intent.ActionSendMultiple)); }
 
         private void InitShareDialog()
         {
@@ -274,7 +297,7 @@ namespace QuickShare.Droid
 
         public override void OnBackPressed()
         {
-            if ((webView.Url != homeUrl) && (!IsShareDialog()))
+            if ((webView.Url != homeUrl) && (!IsShareDialog))
             {
                 if (sendingFile)
                 {
