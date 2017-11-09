@@ -148,7 +148,7 @@ namespace QuickShare.Controls
         {
             storyboard = new Storyboard();
 
-            double _value = 1.0 / 12.0;
+            double _value = 1.0 / 6.0;
             double currentAngle = indicatorArc.Angle;
             double newAngle = _value * 360.0;
 

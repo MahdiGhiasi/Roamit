@@ -54,7 +54,7 @@
                                           IsIndeterminate="{x:Bind ViewModel.ProgressIsIndeterminate, Mode=OneWay}"
                                           PercentIndicatorVisibility="{x:Bind ViewModel.ProgressPercentIndicatorVisibility, Mode=OneWay}"
                                           ValueChangeAnimationLength="0:0:0.35"
-                                          IndeterminateLoopAnimationLength="0:0:2"
+                                          IndeterminateLoopAnimationLength="0:0:1.5"
                                           HorizontalAlignment="Stretch" 
                                           VerticalAlignment="Stretch" 
                                           FontSize="30" 
