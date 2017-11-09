@@ -1,0 +1,64 @@
+﻿<Page
+    x:Class="QuickShare.MainReceive"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
+    xmlns:controls="using:QuickShare.Controls"
+    mc:Ignorable="d">
+
+    <Grid Background="Transparent" x:Name="parentGrid">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <userinterfacetriggers:WindowHeightTrigger Condition="600" ConditionModifier="{StaticResource LessThanModifier}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Progress.Width" Value="150" />
+                        <Setter Target="Progress.Height" Value="150" />
+                        <Setter Target="Progress.FontSize" Value="22" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <StackPanel Margin="0,-40,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="{x:Bind ViewModel.ReceiveStatus, Mode=OneWay}" 
+                       x:Name="StatusText" 
+                       FontSize="28" 
+                       TextAlignment="Center" 
+                       FontWeight="Light" 
+                       Margin="0,0,0,40" />
+            <controls:CircularProgressBar x:Name="Progress" 
+                                          Minimum="0"
+                                          Value="{x:Bind ViewModel.ProgressValue, Mode=OneWay}"
+                                          Maximum="{x:Bind ViewModel.ProgressMaximum, Mode=OneWay}"
+                                          IsIndeterminate="{x:Bind ViewModel.ProgressIsIndeterminate, Mode=OneWay}"
+                                          PercentIndicatorVisibility="{x:Bind ViewModel.ProgressPercentIndicatorVisibility, Mode=OneWay}"
+                                          ValueChangeAnimationLength="0:0:0.35"
+                                          IndeterminateLoopAnimationLength="0:0:2"
+                                          HorizontalAlignment="Stretch" 
+                                          VerticalAlignment="Stretch" 
+                                          FontSize="30" 
+                                          Width="250" 
+                                          Height="250" 
+                                          Thickness="6" />
+        </StackPanel>
+
+        <TextBlock Text="Don't close this window until transfer finishes."
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Bottom"
+                   TextAlignment="Center"
+                   Margin="0,0,0,60"
+                   Visibility="{x:Bind ViewModel.DontCloseWindowNoticeVisibility, Mode=OneWay}" />
+
+        <TextBlock Text="Don't switch to other apps until transfer finishes."
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Bottom"
+                   TextAlignment="Center"
+                   Margin="0,0,0,60"
+                   Visibility="{x:Bind ViewModel.DontSwitchAppsNoticeVisibility, Mode=OneWay}" />
+    </Grid>
+</Page>

@@ -237,6 +237,7 @@ namespace QuickShare
                     string launchUriData = ParseLaunchUri(pEventArgs.Uri.AbsoluteUri);
                     bool isUpgrade = ParseUpgrade(pEventArgs.Uri.AbsoluteUri);
                     bool isSettings = ParseSettings(pEventArgs.Uri.AbsoluteUri);
+                    bool isReceiveDialog = ParseReceive(pEventArgs.Uri.AbsoluteUri);
 
                     if (isUpgrade)
                     {
@@ -259,6 +260,14 @@ namespace QuickShare
                             LaunchRootFrameIfNecessary(ref rootFrame, false);
                         }
                         rootFrame.Navigate(typeof(MainPage), "settings");
+                    }
+                    else if (isReceiveDialog)
+                    {
+                        if (rootFrame == null)
+                        {
+                            LaunchRootFrameIfNecessary(ref rootFrame, false);
+                        }
+                        rootFrame.Navigate(typeof(MainPage), "receiveDialog");
                     }
                     else if (clipboardData.Length > 0)
                     {
@@ -322,6 +331,15 @@ namespace QuickShare
             s = s.ToLower();
 
             if ((s == "roamit://settings") || (s == "roamit://settings/"))
+                return true;
+            return false;
+        }
+
+        private bool ParseReceive(string s)
+        {
+            s = s.ToLower();
+
+            if ((s == "roamit://receivedialog") || (s == "roamit://receivedialog/"))
                 return true;
             return false;
         }

@@ -106,6 +106,12 @@ namespace QuickShare
 
         public async Task FileTransferProgress(FileTransferProgressEventArgs e)
         {
+            if (ContentFrame.CurrentSourcePageType == typeof(MainReceive))
+            {
+                (ContentFrame.Content as MainReceive).FileTransferProgress(e);
+                return;
+            }
+
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar")) //Phone
             {
                 var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
@@ -203,6 +209,13 @@ namespace QuickShare
                 ContentFrame.Navigate(typeof(Settings));
                 ContentFrame.BackStack.Clear();
                 ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
+
+                Current = this;
+            }
+            else if ((e.Parameter != null) && (e.Parameter.ToString() == "receiveDialog"))
+            {
+                ContentFrame.Navigate(typeof(MainReceive), Frame.BackStackDepth > 0);
+                ContentFrame.BackStack.Clear();
 
                 Current = this;
             }
@@ -419,7 +432,7 @@ namespace QuickShare
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            if ((e.Content is MainActions) || (e.Content is MainShareTarget))
+            if ((e.Content is MainActions) || (e.Content is MainShareTarget) || (e.Content is MainReceive))
             {
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 ViewModel.BackButtonPlaceholderVisibility = Visibility.Collapsed;

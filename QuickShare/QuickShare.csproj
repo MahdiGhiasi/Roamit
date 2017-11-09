@@ -114,6 +114,9 @@
     <Compile Include="HelperClasses\PCExtensionHelper.cs" />
     <Compile Include="HelperClasses\WhatsNewHelper.cs" />
     <Compile Include="Classes\ItemSources\HistoryItemSource.cs" />
+    <Compile Include="MainReceive.xaml.cs">
+      <DependentUpon>MainReceive.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ServiceControllers\MessageCarrierService.cs" />
     <Compile Include="ServiceControllers\NotificationService.cs" />
     <Compile Include="ServiceControllers\PCExtensionService.cs" />
@@ -150,6 +153,7 @@
       <DependentUpon>Intro.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\MainPageViewModel.cs" />
+    <Compile Include="ViewModels\MainReceiveViewModel.cs" />
     <Compile Include="ViewModels\MainSendViewModel.cs" />
     <Compile Include="MainShareTarget.xaml.cs">
       <DependentUpon>MainShareTarget.xaml</DependentUpon>
@@ -437,6 +441,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainReceive.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainSend.xaml">
       <SubType>Designer</SubType>

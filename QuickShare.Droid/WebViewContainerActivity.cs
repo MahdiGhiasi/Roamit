@@ -704,6 +704,14 @@ namespace QuickShare.Droid
             ShowProgress();
             SetProgressText("Connecting...");
 
+            var receiveDialogOpenResult = await Common.PackageManager.LaunchUri(new Uri("roamit://receiveDialog"), Common.GetCurrentRemoteSystem());
+            if (receiveDialogOpenResult != QuickShare.Common.Rome.RomeRemoteLaunchUriStatus.Success)
+            {
+                Analytics.TrackEvent("SendToWindows", "file", "Failed");
+                SetProgressText($"Communication failed. ({receiveDialogOpenResult.ToString()})");
+                return;
+            }
+
             var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
 
             if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
