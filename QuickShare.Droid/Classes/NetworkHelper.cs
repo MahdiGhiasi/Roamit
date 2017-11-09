@@ -16,17 +16,9 @@ namespace QuickShare.Droid.Classes
 {
     internal class NetworkHelper
     {
-        public static string GetLocalIPAddress()
+        public static List<string> GetLocalIPAddresses()
         {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    return ip.ToString();
-                }
-            }
-            return "";
+            return Dns.GetHostEntry(Dns.GetHostName()).AddressList.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Select(x => x.ToString()).ToList();
         }
     }
 }

@@ -833,7 +833,7 @@ namespace QuickShare.Droid
 
         private IEnumerable<string> FindMyIPAddresses()
         {
-            return new string[] { NetworkHelper.GetLocalIPAddress() };
+            return NetworkHelper.GetLocalIPAddresses();
         }
 
         private async Task OpenUrl(string url)
