@@ -52,6 +52,7 @@ namespace QuickShare
                 ProgressValue = 0,
                 ProgressMaximum = 0,
                 UnlockNoticeVisibility = Visibility.Visible,
+                LeaveScreenOnNoticeVisibility = Visibility.Collapsed,
             };
         }
 
@@ -109,9 +110,12 @@ namespace QuickShare
 
             var rs = MainPage.Current.GetSelectedSystem();
 
+            bool isDestinationAndroid;
+
             IRomePackageManager packageManager;
             if (rs is NormalizedRemoteSystem)
             {
+                isDestinationAndroid = true;
                 packageManager = MainPage.Current.AndroidPackageManager;
 
                 var nrs = rs as NormalizedRemoteSystem;
@@ -128,7 +132,8 @@ namespace QuickShare
                 }
             }
             else
-            { 
+            {
+                isDestinationAndroid = false;
                 packageManager = MainPage.Current.PackageManager;
             }
 
@@ -230,6 +235,8 @@ namespace QuickShare
                     }
 
                     ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+                    if (!isDestinationAndroid)
+                        ViewModel.LeaveScreenOnNoticeVisibility = Visibility.Visible;
 
                     fileTransferResult = await SendFile(rs, packageManager, deviceName);
                     if (fileTransferResult != FileTransferResult.Successful)
@@ -240,6 +247,9 @@ namespace QuickShare
                         Frame.GoBack();
                         return;
                     }
+
+                    if (!isDestinationAndroid)
+                        ViewModel.LeaveScreenOnNoticeVisibility = Visibility.Collapsed;
                 }
                 else
                 {
@@ -471,6 +481,7 @@ namespace QuickShare
             ViewModel.ProgressMaximum = 100;
             ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
             ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+            ViewModel.LeaveScreenOnNoticeVisibility = Visibility.Collapsed;
         }
 
         private async Task SendText(IRomePackageManager packageManager, string deviceName, string text)

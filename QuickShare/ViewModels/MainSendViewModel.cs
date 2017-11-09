@@ -75,6 +75,20 @@ namespace QuickShare.ViewModels
             }
         }
 
+        Visibility leaveScreenOnNoticeVisibility;
+        public Visibility LeaveScreenOnNoticeVisibility
+        {
+            get
+            {
+                return leaveScreenOnNoticeVisibility;
+            }
+            set
+            {
+                leaveScreenOnNoticeVisibility = value;
+                OnPropertyChanged("LeaveScreenOnNoticeVisibility");
+            }
+        }
+
         Visibility goBackButtonVisibility = Visibility.Collapsed;
         public Visibility GoBackButtonVisibility
         {

@@ -69,6 +69,12 @@
                    TextAlignment="Center"
                    Margin="0,0,0,60"
                    Visibility="{x:Bind ViewModel.UnlockNoticeVisibility, Mode=OneWay}" />
+        <TextBlock Text="Leave the device screen on until transfer finishes."
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Bottom"
+                   TextAlignment="Center"
+                   Margin="0,0,0,60"
+                   Visibility="{x:Bind ViewModel.LeaveScreenOnNoticeVisibility, Mode=OneWay}" />
         <Button Content="GO BACK"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
