@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using QuickShare.HelperClasses;
 using Windows.System;
 using Windows.UI.Popups;
+using Windows.UI.ViewManagement;
 
 namespace QuickShare
 {
@@ -41,6 +42,9 @@ namespace QuickShare
             }
 
             flipView.SelectedIndex = 0; // Just in case
+
+            ApplicationView.PreferredLaunchViewSize = new Size(500, 700);
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
