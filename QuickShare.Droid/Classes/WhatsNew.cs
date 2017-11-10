@@ -49,10 +49,10 @@ namespace QuickShare.Droid.Classes
         {
             var output = new List<string>();
 
-            if (lastShownVersion < new Version("2.3.0"))
+            if (lastShownVersion < new Version("2.3.1"))
             {
-                output.Add("You can now dismiss Universal Clipboard notifications");
-                output.Add("File transfer reliability improvements");
+                output.Add("You can now dismiss Universal Clipboard notifications.");
+                output.Add("Sending large files to your PC is now more reliable.");
             }
 
             return output;
