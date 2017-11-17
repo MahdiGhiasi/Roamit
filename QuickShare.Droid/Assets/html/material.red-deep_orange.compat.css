@@ -1,0 +1,11 @@
+
+/* Old chrome versions doesn't support this correctly */
+.mdl-button--fab .mdl-button__ripple-container {
+    -webkit-mask-image: initial !important;
+}
+
+
+.mdl-layout__content {
+    display: block !important;
+    height: 100% !important;
+}

@@ -325,7 +325,17 @@ namespace QuickShare.Droid
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"*** ERROR IN SendJavascriptToWebView ({jsContent}): {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"*** ERROR IN SendJavascriptToWebView ({jsContent}): {ex.Message}. Will try loadUrl instead.");
+
+                try
+                {
+                    webView.LoadUrl($"javascript:{jsContent}");
+                    await Task.Delay(20);
+                }
+                catch (Exception ex2)
+                {
+                    System.Diagnostics.Debug.WriteLine($"*** ERROR #2 IN SendJavascriptToWebView ({jsContent}): {ex2.Message}. Sending javascript command failed.");
+                }
             }
             finally
             {

@@ -8,6 +8,7 @@
     <script defer src="material.min.js"></script>
     <script src="jquery-3.2.1.min.js"></script>
     <script src="progressbar.js"></script>
+    <script src="jquery-material-icons-polyfill.js"></script>
     <link rel="stylesheet" href="style.css">
     <script>
         var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview;
@@ -91,7 +92,7 @@
                     }
                 }
 
-                $("#devicesList").html(listData);
+                $("#devicesList").html(listData).materialIcons();
 
                 updateButtonsEnabledOrDisabled();
             }
@@ -254,8 +255,8 @@
             }
 			
 			function shrinkFooter() {
-				$(".footer, .footer-extra").removeClass("footer-expanded");
-				$(".footer-expand-icon").text("keyboard_arrow_up");
+                $(".footer-expand-icon").text("keyboard_arrow_up");
+				$(".footer, .footer-extra").removeClass("footer-expanded").materialIcons();
                 $(".sharedialog").addClass("sharedialog-expanded");
 
 				footerExpanded = false;
@@ -273,8 +274,8 @@
             }
 			
 			function expandFooter()	{
-				$(".footer, .footer-extra").addClass("footer-expanded");
-				$(".footer-expand-icon").text("keyboard_arrow_down");
+                $(".footer-expand-icon").text("keyboard_arrow_down");
+                $(".footer, .footer-extra").addClass("footer-expanded").materialIcons();
                 $(".sharedialog").removeClass("sharedialog-expanded");
 
                 footerExpanded = true;
@@ -321,6 +322,24 @@
 				}
             }
 
+            function compatibility()
+            {
+                //if ((navigator.userAgent.indexOf("Chrome/12") >= 0) || (navigator.userAgent.indexOf("Android 4") >= 0))
+                if (navigator.userAgent.indexOf("Android 4") >= 0)
+                {
+                    $(".footer-spinner-container").remove();
+                    
+                    var link = document.createElement("link");
+                    link.href = "material.red-deep_orange.compat.css";
+                    link.type = "text/css";
+                    link.rel = "stylesheet";
+                    document.getElementsByTagName("head")[0].appendChild(link);
+                }
+
+                $(document).materialIcons();
+            }
+            
+            compatibility();
             onResize();
             initialAnimation();
             checkHash();

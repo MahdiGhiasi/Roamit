@@ -3,7 +3,7 @@
   <style name="MyTheme" parent="MyTheme.Base">
   </style>
 
-  <style name="MyTheme.Legacy" parent="MyTheme.Base">
+  <style name="MyTheme.Legacy" parent="MyTheme.Legacy.Base">
   </style>
 
   <!-- Base theme applied no matter what API -->
