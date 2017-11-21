@@ -11,7 +11,7 @@
     <script src="jquery-material-icons-polyfill.js"></script>
     <link rel="stylesheet" href="style.css">
     <script>
-        var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview;
+        var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview, showSearchSpinner, hideSearchSpinner;
         var allowRedirects = true; //false only when debugging on browser.
 
         $(document).ready(function () {
@@ -69,6 +69,14 @@
                 items.sort(compare);
             }
 
+            function getDeviceType(type)
+            {
+                if (type == "qs_android")
+                    return "phone_android";
+
+                return type;
+            }
+
             function updateList()
             {
                 if ((selectedItem == null) && (items.length == 0)) {
@@ -80,7 +88,7 @@
 
                 if (selectedItem != null) {
                     $("#selectedItemName").text(selectedItem.name);
-                    $("#selectedItemType").text(selectedItem.type);
+                    $("#selectedItemType").text(getDeviceType(selectedItem.type));
                 }
 
                 var listData = "";
@@ -88,7 +96,7 @@
                 {
                     if ((selectedItem == null) || (items[i].id != selectedItem.id))
                     {
-                        listData += itemTemplate.replace("{type}", items[i].type).replace("{name}", items[i].name).replace("{id}", items[i].id);
+                        listData += itemTemplate.replace("{type}", getDeviceType(items[i].type)).replace("{name}", items[i].name).replace("{id}", items[i].id);
                     }
                 }
 
@@ -134,7 +142,10 @@
                     }
                 }
 
-                items.push({name: _name, type: _type, id: _id});
+                items.push({ name: _name, type: _type, id: _id });
+
+                if (_type != "qs_android")
+                    hideSearchSpinner();
 
                 updateList();
             }
@@ -157,7 +168,15 @@
                 $(".footer-text").css("opacity", "0");
 
                 setTimeout(function () {
-                    $(".footer-spinner-container").css("display", "none");
+                    // Hide spinner if at least one Rome-based device is discovered.
+                    for (i = 0; i < items.length; i++)
+                    {
+                        if (items[i].type != "qs_android")
+                        {
+                            hideSearchSpinner();
+                            break;
+                        }
+                    }
 
                     for (i = 0; i < items.length; i++)
                     {
@@ -171,6 +190,14 @@
                     updateList();
                     $(".footer-text").css("opacity", "1");
                 }, 125);
+            }
+
+            hideSearchSpinner = function () {
+                $(".footer-spinner-container").css("display", "none");
+            }
+
+            showSearchSpinner = function () {
+                $(".footer-spinner-container").css("display", "inline-block");
             }
 
             setSharePreview = function (_text) {

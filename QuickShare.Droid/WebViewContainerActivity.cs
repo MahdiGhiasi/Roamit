@@ -29,6 +29,8 @@ using Firebase.Iid;
 using QuickShare.Droid.Classes.RevMob;
 using Com.Revmob.Ads.Banner;
 using Com.Revmob;
+using System.Collections.Specialized;
+using QuickShare.Common.Rome;
 
 namespace QuickShare.Droid
 {
@@ -99,8 +101,8 @@ namespace QuickShare.Droid
 
             if (IsInitialized)
             {
-                //TODO: Load already available devices to UI
-                Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
+                Common.PackageManager.RemoteSystems.CollectionChanged += DevicesCollectionChanged;
+                Common.AndroidPushNotifier.Devices.CollectionChanged += DevicesCollectionChanged;
                 return;
             }
             IsInitialized = true;
@@ -117,7 +119,21 @@ namespace QuickShare.Droid
                     Common.ListManager.AddDevice(item);
                 }
             }
-            //TODO: else: Load already available devices to UI
+
+            if (Common.AndroidPushNotifier == null)
+            {
+                InitAndroidPushNotifier();
+            }
+            else
+            {
+                foreach (var item in Common.AndroidPushNotifier.Devices)
+                {
+                    Common.ListManager.AddDevice(item);
+                }
+
+                Common.AndroidPushNotifier.Devices.CollectionChanged -= DevicesCollectionChanged;
+                Common.AndroidPushNotifier.Devices.CollectionChanged += DevicesCollectionChanged;
+            }
 
             if (Common.MessageCarrierPackageManager == null)
             {
@@ -125,14 +141,15 @@ namespace QuickShare.Droid
                 Common.MessageCarrierPackageManager.Initialize("com.roamit.messagecarrierservice");
             }
 
-            InitDiscovery();
+            InitRomeDiscovery();
 
+            Context context = this;
             Task.Run(async () =>
             {
 #if DEBUG
                 FirebaseInstanceId.Instance.DeleteInstanceId();
 #endif
-                await ServiceFunctions.RegisterDevice();
+                await ServiceFunctions.RegisterDevice(context);
                 RefreshUserTrialStatus();
             });
 
@@ -143,6 +160,15 @@ namespace QuickShare.Droid
                 StartService(new Intent(this, typeof(Services.RomeReadyService)));
 
             CheckForLegacyVersionInstallations();
+        }
+
+        private async void InitAndroidPushNotifier()
+        {
+            Common.AndroidPushNotifier = new AndroidPushNotifier(await MSAAuthenticator.GetUserUniqueIdAsync());
+
+            Common.AndroidPushNotifier.Devices.CollectionChanged += DevicesCollectionChanged;
+
+            await Common.AndroidPushNotifier.DiscoverAndroidDevices(ServiceFunctions.GetDeviceUniqueId());
         }
 
         private void ShowWhatsNewIfNecessary()
@@ -343,16 +369,17 @@ namespace QuickShare.Droid
             }
         }
 
-        private async void InitDiscovery()
+        private async void InitRomeDiscovery()
         {
-            Common.PackageManager.RemoteSystems.CollectionChanged += RemoteSystems_CollectionChanged;
+            Common.PackageManager.RemoteSystems.CollectionChanged += DevicesCollectionChanged;
             Platform.FetchAuthCode += Platform_FetchAuthCode;
 
             await Common.PackageManager.InitializeDiscovery();
             await Common.MessageCarrierPackageManager.InitializeDiscovery();
         }
 
-        private async void RemoteSystems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+
+        private async void DevicesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             await rsChangeSemaphore.WaitAsync();
 
@@ -360,6 +387,8 @@ namespace QuickShare.Droid
             {
                 RunOnUiThread(() =>
                 {
+                    bool isRome = false;
+
                     var normalizer = new RemoteSystemNormalizer();
                     if (e.NewItems != null)
                         foreach (var item in e.NewItems)
@@ -367,6 +396,9 @@ namespace QuickShare.Droid
                             Common.ListManager.AddDevice(item);
                             var nrs = normalizer.Normalize(item);
                             AddRemoteSystemToList(nrs);
+
+                            if (nrs.Kind != "QS_Android")
+                                isRome = true;
                         }
 
                     if (e.OldItems != null)
@@ -377,9 +409,9 @@ namespace QuickShare.Droid
                             RemoveRemoteSystemFromList(nrs);
                         }
 
-                    SelectItemIfNecessary();
+                    SelectItemIfNecessary(isRome);
 
-                    if ((Common.ListManager.RemoteSystems.Count > 0) || (Common.ListManager.SelectedRemoteSystem != null))
+                    if (((Common.ListManager.RemoteSystems.Count > 0) || (Common.ListManager.SelectedRemoteSystem != null)) && (isRome))
                     {
                         AuthenticateDialog.Hide();
                     }
@@ -433,7 +465,7 @@ namespace QuickShare.Droid
             SendJavascriptToWebView($"addItem('{nrs.DisplayName.NormalizeForJsCall()}', '{TranslateDeviceKindToWebViewFormat(nrs.Kind).NormalizeForJsCall()}', '{nrs.Id.NormalizeForJsCall()}');");
         }
 
-        private void SelectItemIfNecessary()
+        private void SelectItemIfNecessary(bool shouldBlockAutomaticSelection)
         {
             if ((Common.ListManager.RemoteSystems.Count > 0) &&
                 (((automaticRemoteSystemSelectionAllowed) /*&& (Common.ListManager.RemoteSystems.Count > remoteSystemPrevCount)*/) || (Common.ListManager.SelectedRemoteSystem == null)))
@@ -443,7 +475,9 @@ namespace QuickShare.Droid
                 var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall()}');";
                 SendJavascriptToWebView(s);
 
-                BlockAutomaticRemoteSystemSelection();
+                //Only block automatic remote system selection when it's from Rome. (Windows devices should have more priority)
+                if (shouldBlockAutomaticSelection)
+                    BlockAutomaticRemoteSystemSelection();
             }
         }
 
@@ -478,6 +512,8 @@ namespace QuickShare.Droid
                 case "mobile":
                 case "phone":
                     return "smartphone";
+                case "qs_android":
+                    return "qs_android";
                 case "unknown":
                 default:
                     return "laptop";
@@ -543,7 +579,7 @@ namespace QuickShare.Droid
                 if (item == null)
                 {
                     Common.ListManager.SelectedRemoteSystem = null;
-                    SelectItemIfNecessary();
+                    SelectItemIfNecessary(true);
 
                     return;
                 }
@@ -711,6 +747,125 @@ namespace QuickShare.Droid
                 }
             }
 
+            if (IsAndroidDeviceSelected())
+                await SendFilesToAndroidDevice(files);
+            else
+                await SendFilesToWindowsDevice(files);
+        }
+
+        private async Task SendFilesToAndroidDevice(string[] files)
+        {
+            ShowProgress();
+            SetProgressText("Connecting...");
+
+            Common.AndroidPushNotifier.SetRemoteDevice(Common.GetCurrentNormalizedRemoteSystem().Id);
+
+            string sendingText = (files.Length == 1) ? "Sending file..." : "Sending files...";
+            SetProgressText("Preparing...");
+
+            string message = "";
+            FileTransferResult transferResult = FileTransferResult.Successful;
+
+            using (FileSender fs = new FileSender(Common.GetCurrentNormalizedRemoteSystem(),
+                                                  new WebServerComponent.WebServerGenerator(),
+                                                  Common.AndroidPushNotifier,
+                                                  FindMyIPAddresses(),
+                                                  (new Classes.Settings(this)).DeviceName))
+            {
+                fs.FileTransferProgress += (ss, ee) =>
+                {
+                    if (ee.State == FileTransferState.Error)
+                    {
+                        transferResult = FileTransferResult.FailedOnSend;
+                        message = ee.Message;
+                    }
+                    else
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            SetProgressText(sendingText);
+
+                            SetProgressValue((double)ee.CurrentPart, (double)ee.Total + 1);
+                        });
+                    }
+                };
+
+                sendFileCancellationTokenSource = new CancellationTokenSource();
+
+                if (files.Length == 0)
+                {
+                    SetProgressText("No files.");
+                    return;
+                }
+                else if (files.Length == 1)
+                {
+                    sendingFile = true;
+
+                    await Task.Run(async () =>
+                    {
+                        transferResult = await fs.SendFile(sendFileCancellationTokenSource.Token, new PCLStorage.FileSystemFile(files[0]));
+                    });
+
+                    sendingFile = false;
+                }
+                else
+                {
+                    sendingFile = true;
+                    await Task.Run(async () =>
+                    {
+                        transferResult = await fs.SendFiles(sendFileCancellationTokenSource.Token,
+                            from x in files
+                            select new PCLStorage.FileSystemFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
+                    });
+                    sendingFile = false;
+                }
+
+                sendFileCancellationTokenSource = null;
+            }
+
+            Dictionary<string, object> vs = new Dictionary<string, object>
+            {
+                { "Receiver", "System" },
+                { "FinishService", "FinishService" },
+            };
+            await Common.AndroidPushNotifier.Send(vs);
+
+            SetProgressValue(1.0, 1.0);
+
+            if (transferResult != FileTransferResult.Successful)
+            {
+                Analytics.TrackEvent("SendToAndroid", "file", transferResult.ToString());
+
+                if (transferResult != FileTransferResult.Cancelled)
+                {
+                    SetProgressText("Failed.");
+                    SetProgressValue(0, 1.0);
+                    System.Diagnostics.Debug.WriteLine("Send failed.\r\n\r\n" + message);
+
+                    if (transferResult == FileTransferResult.FailedOnHandshake)
+                    {
+                        message = "Couldn't reach remote device.\r\n\r\n" +
+                            "Make sure both devices are connected to the same Wi-Fi or LAN network.";
+                    }
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.SetTitle(message);
+                    alert.SetPositiveButton("OK", (senderAlert, args) => { });
+                    RunOnUiThread(() =>
+                    {
+                        alert.Show();
+                    });
+                }
+            }
+            else
+            {
+                SetProgressText("Finished.");
+                Analytics.TrackEvent("SendToAndroid", "file", "Success");
+            }
+        }
+
+        private async Task SendFilesToWindowsDevice(string[] files)
+        {
             ShowProgress();
             SetProgressText("Connecting...");
 
@@ -752,7 +907,7 @@ namespace QuickShare.Droid
                                                   new WebServerComponent.WebServerGenerator(),
                                                   Common.PackageManager,
                                                   FindMyIPAddresses(),
-                                                  CrossDeviceInfo.Current.Model))
+                                                  (new Classes.Settings(this)).DeviceName))
             {
                 fs.FileTransferProgress += (ss, ee) =>
                 {
@@ -788,7 +943,7 @@ namespace QuickShare.Droid
                     {
                         transferResult = await fs.SendFile(sendFileCancellationTokenSource.Token, new PCLStorage.FileSystemFile(files[0]));
                     });
-                    
+
                     sendingFile = false;
                 }
                 else
@@ -859,28 +1014,77 @@ namespace QuickShare.Droid
             ShowProgress();
             SetProgressText("Connecting...");
 
-            var result = await Common.PackageManager.LaunchUri(new Uri(url), Common.GetCurrentRemoteSystem());
+
+            RomeRemoteLaunchUriStatus result;
+            if (IsAndroidDeviceSelected())
+                result = await Common.AndroidPushNotifier.LaunchUri(new Uri(url), Common.GetCurrentNormalizedRemoteSystem());
+            else
+                result = await Common.PackageManager.LaunchUri(new Uri(url), Common.GetCurrentRemoteSystem());
+
+            var eventTrackCat = IsAndroidDeviceSelected() ? "SendToAndroid" : "SendToWindows";
 
             SetProgressValue(1.0, 1.0);
-            if (result == QuickShare.Common.Rome.RomeRemoteLaunchUriStatus.Success)
+            if (result == RomeRemoteLaunchUriStatus.Success)
             {
                 SetProgressText("Finished.");
 
-                Analytics.TrackEvent("SendToWindows", "launchUri", "Success");
+                Analytics.TrackEvent(eventTrackCat, "launchUri", "Success");
             }
             else
             {
                 SetProgressText(result.ToString());
-                Analytics.TrackEvent("SendToWindows", "launchUri", result.ToString());
+                Analytics.TrackEvent(eventTrackCat, "launchUri", result.ToString());
             }
         }
 
         private async Task SendText(string text)
         {
+            if (IsAndroidDeviceSelected())
+                await SendTextToAndroidDevice(text);
+            else
+                await SendTextToWindowsDevice(text);
+        }
+
+        private static bool IsAndroidDeviceSelected()
+        {
+            return Common.GetCurrentNormalizedRemoteSystem().Kind == "QS_Android";
+        }
+
+        private async Task SendTextToAndroidDevice(string text)
+        {
+            ShowProgress();
+
+            if (text.Length > 2048)
+            {
+                SetProgressText("Failed. (Text is too large)");
+                SetProgressValue(0.0, 1.0);
+                Analytics.TrackEvent("SendToAndroid", "text", "TooLarge");
+
+                return;
+            }
+
+            SetProgressText("Connecting...");
+
+            if (!(await Common.AndroidPushNotifier.QuickClipboard(text, Common.GetCurrentNormalizedRemoteSystem(), (new Classes.Settings(this)).DeviceName)))
+            {
+                SetProgressText("Failed.");
+                SetProgressValue(0.0, 1.0);
+                Analytics.TrackEvent("SendToAndroid", "text", "Failed");
+
+                return;
+            }
+
+            SetProgressText("Finished.");
+            SetProgressValue(1.0, 1.0);
+            Analytics.TrackEvent("SendToAndroid", "text", "Success");
+        }
+
+        private async Task SendTextToWindowsDevice(string text)
+        {
             ShowProgress();
             SetProgressText("Connecting...");
 
-            if (!(await Common.PackageManager.QuickClipboard(text, Common.GetCurrentRemoteSystem(), CrossDeviceInfo.Current.Model, "roamit://clipboard")))
+            if (!(await Common.PackageManager.QuickClipboard(text, Common.GetCurrentRemoteSystem(), (new Classes.Settings(this)).DeviceName, "roamit://clipboard")))
             {
 
                 var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
@@ -903,7 +1107,7 @@ namespace QuickShare.Droid
                     return;
                 }
 
-                TextSender textSender = new TextSender(Common.PackageManager, CrossDeviceInfo.Current.Model);
+                TextSender textSender = new TextSender(Common.PackageManager, (new Classes.Settings(this)).DeviceName);
 
                 textSender.TextSendProgress += (ee) =>
                 {
@@ -972,7 +1176,7 @@ namespace QuickShare.Droid
 
                     if (Common.ListManager.SelectedRemoteSystem == null)
                     {
-                        context.SelectItemIfNecessary();
+                        context.SelectItemIfNecessary(true);
                     }
                     else
                     {

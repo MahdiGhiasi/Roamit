@@ -105,6 +105,7 @@ body {
             box-sizing: border-box;
     float: left;
     width: calc(100% - 96px);
+    height: 80px;
 }
 
 .footer-text-icon {

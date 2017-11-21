@@ -12,6 +12,7 @@ using Android.Widget;
 using QuickShare.Droid.RomeComponent;
 using Microsoft.ConnectedDevices;
 using System.Threading.Tasks;
+using QuickShare.DevicesListManager;
 
 namespace QuickShare.Droid
 {
@@ -19,6 +20,7 @@ namespace QuickShare.Droid
     {
         internal static RomePackageManager PackageManager { get; set; } = null;
         internal static RomePackageManager MessageCarrierPackageManager { get; set; } = null;
+        internal static AndroidPushNotifier AndroidPushNotifier { get; set; } = null;
         internal static DevicesListManager.DevicesListManager ListManager { get; } = new DevicesListManager.DevicesListManager("", new RemoteSystemNormalizer());
 
         internal static string ShareText { get; set; }
@@ -36,6 +38,11 @@ namespace QuickShare.Droid
             var nrs = Common.ListManager.SelectedRemoteSystem;
             var rs = Common.MessageCarrierPackageManager.RemoteSystems.FirstOrDefault(x => x.Id == nrs?.Id);
             return rs;
+        }
+
+        internal static NormalizedRemoteSystem GetCurrentNormalizedRemoteSystem()
+        {
+            return Common.ListManager.SelectedRemoteSystem;
         }
 
         private static bool pingTimerEnable = false;

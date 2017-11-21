@@ -9,6 +9,9 @@ namespace QuickShare.Droid
     {
         public NormalizedRemoteSystem Normalize(object o)
         {
+            if (o is NormalizedRemoteSystem)
+                return o as NormalizedRemoteSystem;
+
             var rs = o as RemoteSystem;
             if (rs == null)
                 throw new InvalidCastException();
