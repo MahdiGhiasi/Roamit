@@ -22,9 +22,10 @@ namespace QuickShare.Droid.Firebase
 
         void SendRegistrationToServer(string token)
         {
+            Context context = this;
             Task.Run(async () =>
             {
-                await ServiceFunctions.RegisterDevice();
+                await ServiceFunctions.RegisterDevice(context);
             });
         }
     }

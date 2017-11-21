@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Preferences;
+using Plugin.DeviceInfo;
 
 namespace QuickShare.Droid.Classes
 {
@@ -105,6 +106,27 @@ namespace QuickShare.Droid.Classes
                 ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
                 ISharedPreferencesEditor editor = prefs.Edit();
                 editor.PutString("LatestShownWhatsNewVersion", versionText);
+                editor.Apply();
+            }
+        }
+
+        internal string DeviceName
+        {
+            get
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+
+                string defaultName = CrossDeviceInfo.Current.Model;
+                if (string.IsNullOrWhiteSpace(defaultName))
+                    defaultName = "Android";
+
+                return prefs.GetString("DeviceName", defaultName);
+            }
+            set
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutString("DeviceName", value);
                 editor.Apply();
             }
         }

@@ -16,10 +16,29 @@
             android:background="#eeeeee"
             android:padding="20dp">
             <TextView
+                android:text="General"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp" />
+            <TextView
+                android:text="Device name"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView4" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_deviceNameText"
+                android:text="Android" />
+            <TextView
                 android:text="Universal clipboard"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:id="@+id/textView3"
+                android:layout_marginTop="30dp" />
             <TextView
                 android:text="Universal clipboard mirrors any text you copy on your PC to the clipboard of this device automatically."
                 android:textAppearance="?android:attr/textAppearanceSmall"

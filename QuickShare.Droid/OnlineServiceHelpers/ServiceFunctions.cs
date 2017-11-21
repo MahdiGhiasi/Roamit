@@ -46,7 +46,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
             }
         }
 
-        internal static async Task<bool> RegisterDevice()
+        internal static async Task<bool> RegisterDevice(Context _context)
         {
             try
             {
@@ -60,8 +60,9 @@ namespace QuickShare.Droid.OnlineServiceHelpers
 
                 await FindUserId();
 
-                var deviceName = CrossDeviceInfo.Current.Model;
-                var deviceName2 = Android.OS.Build.Model;
+                Classes.Settings settings = new Classes.Settings(_context);
+
+                var deviceName = settings.DeviceName;
                 var osVersion = CrossDeviceInfo.Current.Version;
                 var deviceUniqueId = GetDeviceUniqueId();
                 var appVersion = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;

@@ -40,7 +40,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 if (purpose == MsaAuthPurpose.App)
                 {
                     MSAAuthenticator.SaveAuthenticationCode(authCode);
-                    var result = await ServiceFunctions.RegisterDevice();
+                    var result = await ServiceFunctions.RegisterDevice(context);
 
                     if (result)
                         AuthenticateDialog.authenticateTcs.TrySetResult(MsaAuthResult.Success);

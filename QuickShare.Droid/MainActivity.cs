@@ -326,12 +326,13 @@ namespace QuickShare.Droid
             SetClipboardPreviewText();
             clipboardUpdateTimer = new Timer(ClipboardUpdateTimer_Tick, null, 0, 1000);
 
+            Context context = this;
             Task.Run(async () =>
             {
 #if DEBUG
                 FirebaseInstanceId.Instance.DeleteInstanceId();
 #endif
-                await ServiceFunctions.RegisterDevice();
+                await ServiceFunctions.RegisterDevice(context);
                 RefreshUserTrialStatus();
             });
 

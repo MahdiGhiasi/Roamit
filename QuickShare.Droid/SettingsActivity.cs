@@ -14,6 +14,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 using QuickShare.Droid.Classes;
 using Plugin.SecureStorage;
 using QuickShare.Droid.OnlineServiceHelpers;
+using System.Threading.Tasks;
 
 namespace QuickShare.Droid
 {
@@ -21,6 +22,7 @@ namespace QuickShare.Droid
     internal class SettingsActivity : AppCompatActivity
     {
         TextView txtVersionNumber, txtTrialStatus, txtCloudClipboardModeDescription;
+        EditText txtDeviceName;
         Button btnUpgrade;
         Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground;
 
@@ -30,6 +32,8 @@ namespace QuickShare.Droid
 
             SetContentView(Resource.Layout.Settings);
 
+            Window.SetSoftInputMode(SoftInput.StateAlwaysHidden);
+
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = "Settings";
@@ -37,6 +41,7 @@ namespace QuickShare.Droid
             txtVersionNumber = FindViewById<TextView>(Resource.Id.settings_txt_version);
             txtTrialStatus = FindViewById<TextView>(Resource.Id.settings_txt_trialStatus);
             txtCloudClipboardModeDescription = FindViewById<TextView>(Resource.Id.settings_cloudClipboardModeDescription);
+            txtDeviceName = FindViewById<EditText>(Resource.Id.settings_deviceNameText);
             btnUpgrade = FindViewById<Button>(Resource.Id.settings_btn_upgrade);
             swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
@@ -63,6 +68,15 @@ namespace QuickShare.Droid
             Analytics.TrackPage("Settings");
         }
 
+        public override void OnBackPressed()
+        {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            ServiceFunctions.RegisterDevice(this);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+            base.OnBackPressed();
+        }
+
         private async void InitValues()
         {
             Settings settings = new Settings(this);
@@ -80,6 +94,9 @@ namespace QuickShare.Droid
             swCloudClipboardMode.Visibility = swCloudClipboardActivity.Visibility;
             txtCloudClipboardModeDescription.Visibility = swCloudClipboardActivity.Visibility;
 
+            txtDeviceName.Text = settings.DeviceName;
+            txtDeviceName.AfterTextChanged += TxtDeviceName_AfterTextChanged;
+
             if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
             {
                 swCloudClipboardMode.Enabled = false;
@@ -94,6 +111,13 @@ namespace QuickShare.Droid
 
                 swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
             }
+        }
+
+        private void TxtDeviceName_AfterTextChanged(object sender, Android.Text.AfterTextChangedEventArgs e)
+        {
+            Settings settings = new Settings(this);
+
+            settings.DeviceName = txtDeviceName.Text;
         }
 
         private void SwStayInBackground_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
