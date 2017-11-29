@@ -1,0 +1,71 @@
+body {
+    background-color: #222;
+    color: #eee;
+}
+
+
+.mdl-button--fab.mdl-button--colored {
+    background: #003966;
+    border: 1px #004E8C solid;
+}
+
+.mdl-button--fab.mdl-button--colored:hover {
+    background-color: #003966;
+}
+.mdl-button--fab.mdl-button--colored:focus:not(:active) {
+    background-color: #003966;
+}
+.mdl-button--fab.mdl-button--colored:active {
+    background-color: #003966
+}
+.mdl-button--fab.mdl-button--colored .mdl-ripple {
+    background: rgb(160, 160, 200)
+}
+
+
+.mdl-button--fab.mdl-button--colored[disabled][disabled] {
+    background:  rgb(0,34,62);
+    border: 0.5px #003966 solid;
+}
+
+.mdl-button--fab.mdl-button--colored[disabled][disabled] .actionbutton-content {
+    opacity:0.5;
+}
+
+.footer-triangle {
+    border-color: transparent transparent #0078D7 transparent;
+}
+
+.footer-inside {
+    background-color: #0078D7;
+}
+
+.footer-extra {
+    background-color: #0078D7;
+}
+
+.mdl-button--colored[disabled][disabled], .mdl-button--colored.mdl-button--disabled.mdl-button--disabled {
+    color: rgba(255,255,255,.9) !important;
+}
+
+.mdl-button--icon {
+    color: #eee;
+}
+
+.line, .line2 {
+    background-color: #ccc;
+}
+
+
+.progress {
+    background-color: #222;
+    font-weight: lighter;
+}
+
+.progressbar-text {
+    color: #ddd;
+}
+
+.mdl-spinner--single-color .mdl-spinner__layer-1, .mdl-spinner--single-color .mdl-spinner__layer-2, .mdl-spinner--single-color .mdl-spinner__layer-3, .mdl-spinner--single-color .mdl-spinner__layer-4 {
+    border-color: #0078D7;
+}

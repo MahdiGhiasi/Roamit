@@ -10,44 +10,50 @@
     <script src="progressbar.js"></script>
     <script src="jquery-material-icons-polyfill.js"></script>
     <link rel="stylesheet" href="style.css">
+
     <script>
         var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview, showSearchSpinner, hideSearchSpinner;
         var allowRedirects = true; //false only when debugging on browser.
 
         $(document).ready(function () {
-            // progressbar.js@1.0.0 version is used
-            // Docs: http://progressbarjs.readthedocs.org/en/1.0.0/
-            var bar = new ProgressBar.Circle(document.getElementById("spinner2"), {
-                color: '#aaa',
-                // This has to be the same size as the maximum width to
-                // prevent clipping
-                strokeWidth: 4,
-                trailWidth: 1,
-                easing: 'easeOut',
-                duration: 500,
-                text: {
-                    autoStyleContainer: false
-                },
-                from: { color: '#F44336', width: 3 },
-                to: { color: '#F44336', width: 3 },
-                // Set default step function for all animate calls
-                step: function (state, circle) {
-                    circle.path.setAttribute('stroke', state.color);
-                    circle.path.setAttribute('stroke-width', state.width);
-
-                    var value = Math.round(circle.value() * 100);
-                    if (value === 0) {
-                        circle.setText('');
-                    } else {
-                        circle.setText(value);
-                    }
-                }
-            });
-
             var itemTemplate = '<li class="mdl-list__item mdl-button deviceItem" data-deviceId="{id}"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-icon">{type}</i>{name}</span></li>';
             var items = new Array();
             var selectedItem = null;
             var clipboardText = "";
+            var bar;
+
+            function initProgressbar(light) {
+                $("#spinner2").html("");
+                // progressbar.js@1.0.0 version is used
+                // Docs: http://progressbarjs.readthedocs.org/en/1.0.0/
+                bar = new ProgressBar.Circle(document.getElementById("spinner2"), {
+                    color: '#aaa',
+                    trailColor: light ? '#eee' : '#222',
+                    // This has to be the same size as the maximum width to
+                    // prevent clipping
+                    strokeWidth: 4,
+                    trailWidth: 1,
+                    easing: 'easeOut',
+                    duration: 500,
+                    text: {
+                        autoStyleContainer: false
+                    },
+                    from: { color: light ? '#004E8C' : '#0078D7', width: 3 },
+                    to: { color: light ? '#004E8C' : '#0078D7', width: 3 },
+                    // Set default step function for all animate calls
+                    step: function (state, circle) {
+                        circle.path.setAttribute('stroke', state.color);
+                        circle.path.setAttribute('stroke-width', state.width);
+
+                        var value = Math.round(circle.value() * 100);
+                        if (value === 0) {
+                            circle.setText('');
+                        } else {
+                            circle.setText(value);
+                        }
+                    }
+                });
+            }
 
             function redirect(url)
             {
@@ -346,7 +352,22 @@
 					
 					$("header").addClass("header-transparent");
 					$(".mdl-layout-title").text("");
-				}
+                }
+                
+                if (type == "dark") {
+                    initProgressbar(false);
+
+                    var headID = document.getElementsByTagName('head')[0];
+                    var link = document.createElement('link');
+                    link.type = 'text/css';
+                    link.rel = 'stylesheet';
+                    headID.appendChild(link);
+                    link.href = 'dark.css';
+                }
+                else if (type == "light") {
+                    initProgressbar(true);
+                    $("link[href='dark.css']").remove();
+                }
             }
 
             function compatibility()
@@ -366,6 +387,7 @@
                 $(document).materialIcons();
             }
             
+            initProgressbar(true);
             compatibility();
             onResize();
             initialAnimation();
