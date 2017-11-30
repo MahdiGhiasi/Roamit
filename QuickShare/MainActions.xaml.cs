@@ -99,6 +99,8 @@ namespace QuickShare
 
         private async void ClipboardButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            MainPage.IsUserSelectedRemoteSystemManually = true;
+
             try
             {
                 if (currentContent == ClipboardContentType.Text)
@@ -128,6 +130,8 @@ namespace QuickShare
 
         private async void SelectFile_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            MainPage.IsUserSelectedRemoteSystemManually = true;
+
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.List;
             picker.SuggestedStartLocation =
@@ -148,11 +152,15 @@ namespace QuickShare
 
         private void SendPictureButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            MainPage.IsUserSelectedRemoteSystemManually = true;
+
             Frame.Navigate(typeof(PicturePicker));
         }
 
         private void ClipboardLaunchUrlButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            MainPage.IsUserSelectedRemoteSystemManually = true;
+
             SendDataTemporaryStorage.LaunchUri = new Uri(clipboardTextContent);
 
             Frame.Navigate(typeof(MainSend), "launchUri");

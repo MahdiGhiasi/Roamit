@@ -54,7 +54,7 @@ namespace QuickShare
         public bool IsShareContent { get; private set; } = false;
         bool loadWait = false;
 
-        bool isUserSelectedRemoteSystemManually = false;
+        public static bool IsUserSelectedRemoteSystemManually { get; set; } = false;
         int remoteSystemPrevCount = 0;
 
         bool discoverOtherDevicesResult = true;
@@ -384,7 +384,7 @@ namespace QuickShare
                     if ((selItem != null) && (ViewModel.ListManager.SelectedRemoteSystem.IsAvailableByProximity != selItem.IsAvailableByProximity))
                         ViewModel.ListManager.Select(selItem);
 
-                    if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (ViewModel.ListManager.RemoteSystems.Count > remoteSystemPrevCount) && (AllowedToChangeSelectedRemoteSystem()))
+                    if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!IsUserSelectedRemoteSystemManually) && (ViewModel.ListManager.RemoteSystems.Count > remoteSystemPrevCount) && (AllowedToChangeSelectedRemoteSystem()))
                     {
                         remoteSystemPrevCount = ViewModel.ListManager.RemoteSystems.Count;
                         ViewModel.ListManager.SelectHighScoreItem();
@@ -409,7 +409,7 @@ namespace QuickShare
             if (devicesList.SelectedItem == null)
                 return;
 
-            isUserSelectedRemoteSystemManually = true;
+            IsUserSelectedRemoteSystemManually = true;
 
             var s = devicesList.SelectedItem as NormalizedRemoteSystem;
 
@@ -425,7 +425,7 @@ namespace QuickShare
         {
             if (ContentFrame.Content is CloudServiceLogin)
             {
-                if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually))
+                if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!IsUserSelectedRemoteSystemManually))
                     ViewModel.ListManager.SelectHighScoreItem();
             }
         }
@@ -490,7 +490,7 @@ namespace QuickShare
                 if (ViewModel.ListManager.RemoteSystems.FirstOrDefault(x => x.Id == item.Id) == null) //if not already exists
                     ViewModel.ListManager.AddDevice(item);
 
-            if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!isUserSelectedRemoteSystemManually) && (AllowedToChangeSelectedRemoteSystem()))
+            if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!IsUserSelectedRemoteSystemManually) && (AllowedToChangeSelectedRemoteSystem()))
                 ViewModel.ListManager.SelectHighScoreItem();
             ViewModel.RemoteSystemCollectionChanged();
 
