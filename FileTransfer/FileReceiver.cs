@@ -281,6 +281,19 @@ namespace QuickShare.FileTransfer
 
                     byte[] buffer = await DownloadDataFromUrl(url);
 
+                    int expectedLength;
+                    if (i == (slicesCount - 1))
+                        expectedLength = (int)(fileSize % ((long)Constants.FileSliceMaxLength));
+                    else
+                        expectedLength = (int)Constants.FileSliceMaxLength;
+
+                    if (buffer.Length != expectedLength)
+                    {
+                        Debug.WriteLine("Slice length violation! Will retry...");
+                        i--;
+                        continue;
+                    }
+
                     await stream.WriteAsync(buffer, 0, buffer.Length);
 
                     InvokeProgressEvent((uint)slicesCount, i, FileTransferState.DataTransfer);
