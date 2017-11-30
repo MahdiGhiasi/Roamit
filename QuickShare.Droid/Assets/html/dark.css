@@ -1,22 +1,22 @@
 body {
-    background-color: #222;
+    background-color: #1A1A1A;
     color: #eee;
 }
 
 
 .mdl-button--fab.mdl-button--colored {
-    background: #003966;
-    border: 1px #004E8C solid;
+    background: #004E8C;
+    border: 1px #0078D7 solid;
 }
 
 .mdl-button--fab.mdl-button--colored:hover {
-    background-color: #003966;
+    background-color: #004E8C;
 }
 .mdl-button--fab.mdl-button--colored:focus:not(:active) {
-    background-color: #003966;
+    background-color: #004E8C;
 }
 .mdl-button--fab.mdl-button--colored:active {
-    background-color: #003966
+    background-color: #004E8C
 }
 .mdl-button--fab.mdl-button--colored .mdl-ripple {
     background: rgb(160, 160, 200)
@@ -58,8 +58,8 @@ body {
 
 
 .progress {
-    background-color: #222;
-    font-weight: lighter;
+    background-color: #1A1A1A;
+    font-weight: 400;
 }
 
 .progressbar-text {
