@@ -2218,8 +2218,8 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0d009b
 			public const int media_actions = 2131558555;
 			
-			// aapt resource value: 0x7f0d00bb
-			public const int menu_settings = 2131558587;
+			// aapt resource value: 0x7f0d00bc
+			public const int menu_settings = 2131558588;
 			
 			// aapt resource value: 0x7f0d0024
 			public const int middle = 2131558436;
@@ -2338,32 +2338,35 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0d00af
 			public const int sendStatus = 2131558575;
 			
-			// aapt resource value: 0x7f0d00b4
-			public const int settings_allowToStayInBackgroundSwitch = 2131558580;
+			// aapt resource value: 0x7f0d00b5
+			public const int settings_allowToStayInBackgroundSwitch = 2131558581;
 			
-			// aapt resource value: 0x7f0d00b8
-			public const int settings_btn_upgrade = 2131558584;
-			
-			// aapt resource value: 0x7f0d00b1
-			public const int settings_cloudClipboardActiveSwitch = 2131558577;
-			
-			// aapt resource value: 0x7f0d00b3
-			public const int settings_cloudClipboardModeDescription = 2131558579;
+			// aapt resource value: 0x7f0d00b9
+			public const int settings_btn_upgrade = 2131558585;
 			
 			// aapt resource value: 0x7f0d00b2
-			public const int settings_cloudClipboardModeSwitch = 2131558578;
+			public const int settings_cloudClipboardActiveSwitch = 2131558578;
+			
+			// aapt resource value: 0x7f0d00b4
+			public const int settings_cloudClipboardModeDescription = 2131558580;
+			
+			// aapt resource value: 0x7f0d00b3
+			public const int settings_cloudClipboardModeSwitch = 2131558579;
+			
+			// aapt resource value: 0x7f0d00b1
+			public const int settings_darkThemeSwitch = 2131558577;
 			
 			// aapt resource value: 0x7f0d00b0
 			public const int settings_deviceNameText = 2131558576;
 			
+			// aapt resource value: 0x7f0d00b8
+			public const int settings_txt_trialStatus = 2131558584;
+			
 			// aapt resource value: 0x7f0d00b7
-			public const int settings_txt_trialStatus = 2131558583;
+			public const int settings_txt_version = 2131558583;
 			
 			// aapt resource value: 0x7f0d00b6
-			public const int settings_txt_version = 2131558582;
-			
-			// aapt resource value: 0x7f0d00b5
-			public const int settings_uiModeSwitch = 2131558581;
+			public const int settings_uiModeSwitch = 2131558582;
 			
 			// aapt resource value: 0x7f0d004c
 			public const int shortcut = 2131558476;
@@ -2461,11 +2464,11 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0d001a
 			public const int useLogo = 2131558426;
 			
-			// aapt resource value: 0x7f0d00ba
-			public const int webView = 2131558586;
+			// aapt resource value: 0x7f0d00bb
+			public const int webView = 2131558587;
 			
-			// aapt resource value: 0x7f0d00b9
-			public const int webViewContainer_banner = 2131558585;
+			// aapt resource value: 0x7f0d00ba
+			public const int webViewContainer_banner = 2131558586;
 			
 			// aapt resource value: 0x7f0d000e
 			public const int wide = 2131558414;

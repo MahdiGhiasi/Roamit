@@ -443,6 +443,9 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\html\material.red-deep_orange.compat.css" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\dark.css" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -130,11 +130,33 @@ namespace QuickShare.Droid.Classes
                 editor.Apply();
             }
         }
+
+        internal AppTheme Theme
+        {
+            get
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                return (AppTheme)prefs.GetInt("AppThemeSetting", (int)AppTheme.Light);
+            }
+            set
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutInt("AppThemeSetting", (int)value);
+                editor.Apply();
+            }
+        }
     }
 
     internal enum CloudClipboardReceiveMode
     {
         Notification = 0,
         Automatic = 1,
+    }
+
+    internal enum AppTheme
+    {
+        Light = 1,
+        Dark = 2,
     }
 }

@@ -24,7 +24,7 @@ namespace QuickShare.Droid
         TextView txtVersionNumber, txtTrialStatus, txtCloudClipboardModeDescription;
         EditText txtDeviceName;
         Button btnUpgrade;
-        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground;
+        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -47,6 +47,7 @@ namespace QuickShare.Droid
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
             swUiMode = FindViewById<Switch>(Resource.Id.settings_uiModeSwitch);
             swStayInBackground = FindViewById<Switch>(Resource.Id.settings_allowToStayInBackgroundSwitch);
+            swDarkTheme = FindViewById<Switch>(Resource.Id.settings_darkThemeSwitch);
 
             txtVersionNumber.Text = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
 
@@ -97,6 +98,9 @@ namespace QuickShare.Droid
             txtDeviceName.Text = settings.DeviceName;
             txtDeviceName.AfterTextChanged += TxtDeviceName_AfterTextChanged;
 
+            swDarkTheme.Checked = (settings.Theme == AppTheme.Dark);
+            swDarkTheme.CheckedChange += SwDarkTheme_CheckedChange;
+
             if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
             {
                 swCloudClipboardMode.Enabled = false;
@@ -111,6 +115,13 @@ namespace QuickShare.Droid
 
                 swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
             }
+        }
+
+        private void SwDarkTheme_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            Settings settings = new Settings(this);
+
+            settings.Theme = e.IsChecked ? AppTheme.Dark : AppTheme.Light;
         }
 
         private void TxtDeviceName_AfterTextChanged(object sender, Android.Text.AfterTextChangedEventArgs e)

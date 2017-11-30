@@ -71,13 +71,17 @@ namespace QuickShare.Droid
             webView.SetWebViewClient(client);
             webView.Settings.JavaScriptEnabled = true;
 
+            var settings = new Classes.Settings(this);
             if (IsShareDialog)
             {
                 InitShareDialog();
             }
             else
             {
-                webView.LoadUrl(homeUrl);
+                if (settings.Theme == AppTheme.Dark)
+                    webView.LoadUrl($"{homeUrl}#dark");
+                else
+                    webView.LoadUrl($"{homeUrl}#light");
 
                 ShowWhatsNewIfNecessary();
             }
@@ -155,7 +159,6 @@ namespace QuickShare.Droid
 
             Analytics.TrackPage("WebViewContainerActivity");
 
-            var settings = new Classes.Settings(this);
             if (settings.AllowToStayInBackground)
                 StartService(new Intent(this, typeof(Services.RomeReadyService)));
 
