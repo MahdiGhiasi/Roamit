@@ -55,6 +55,14 @@ namespace QuickShare.Droid.Classes
                 output.Add("Sending large files to your PC is now more reliable.");
             }
 
+            if (lastShownVersion < new Version("2.4.0"))
+            {
+                output.Add("Android to Android communication is now possible too!");
+                output.Add("Dark theme");
+                output.Add("Ability to change your device name");
+                output.Add("Device discovery improvements");
+            }
+
             return output;
         }
 
