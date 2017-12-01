@@ -41,6 +41,8 @@ namespace QuickShare
         bool sendingFile = false;
         CancellationTokenSource sendFileCancellationTokenSource = new CancellationTokenSource();
 
+        private Windows.System.Display.DisplayRequest _displayRequest;
+
         public MainSend()
         {
             this.InitializeComponent();
@@ -54,6 +56,26 @@ namespace QuickShare
                 UnlockNoticeVisibility = Visibility.Visible,
                 LeaveScreenOnNoticeVisibility = Visibility.Collapsed,
             };
+        }
+
+        public void ActivatePersistentDisplay()
+        {
+            //create the request instance if needed
+            if (_displayRequest == null)
+                _displayRequest = new Windows.System.Display.DisplayRequest();
+
+            //make request to put in active state
+            _displayRequest.RequestActive();
+        }
+
+        public void ReleasePersistentDisplay()
+        {
+            //must be same instance, so quit if it doesn't exist
+            if (_displayRequest == null)
+                return;
+
+            //undo the request
+            _displayRequest.RequestRelease();
         }
 
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -103,6 +125,7 @@ namespace QuickShare
 #if !DEBUG
             App.Tracker.Send(HitBuilder.CreateScreenView("Send").Build());
 #endif
+            ActivatePersistentDisplay();
 
             if (Frame.BackStackDepth > 0)
                 if (Frame.BackStack[Frame.BackStackDepth - 1].SourcePageType == typeof(MainSend))
@@ -151,6 +174,7 @@ namespace QuickShare
 #if !DEBUG
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "AskedToUpgrade", "Rejected").Build());
 #endif
+                    ReleasePersistentDisplay();
                     Frame.GoBack();
                     return;
                 }
@@ -261,6 +285,7 @@ namespace QuickShare
             }
             finally
             {
+                ReleasePersistentDisplay();
 #if !DEBUG
                 if (rs is NormalizedRemoteSystem)
                     App.Tracker.Send(HitBuilder.CreateCustomEvent("SendToAndroid", mode, succeed ? "Success" : ((mode == "file") ? fileTransferResult.ToString() : "Failed")).Build());
