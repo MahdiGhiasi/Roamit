@@ -23,6 +23,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Core;
 using QuickShare.DataStore;
+using Windows.Storage;
+using System.Threading.Tasks;
 
 namespace QuickShare
 {
@@ -128,44 +130,57 @@ namespace QuickShare
 
         private async void OpenSingleFile_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            var info = (ViewModels.History.FileInfo)(((Button)sender).Tag);
+
             try
             {
-                var info = (ViewModels.History.FileInfo)(((Button)sender).Tag);
-
                 await LaunchOperations.LaunchFileFromPathAsync(info.Path, info.FileName);
             }
             catch (System.IO.FileNotFoundException)
             {
                 await (new MessageDialog("File not found.")).ShowAsync();
             }
+            catch (UnauthorizedAccessException)
+            {
+                await (new MessageDialog($"We're sorry, but we can't access this file.\r\nTry finding it manually on File Explorer in '{info.Path}'")).ShowAsync();
+            }
         }
 
         private async void OpenSingleFileContainingFolder_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            try
-            {
-                var info = (ViewModels.History.FileInfo)(((Button)sender).Tag);
+            var info = (ViewModels.History.FileInfo)(((Button)sender).Tag);
 
+            try
+            {               
                 await LaunchOperations.LaunchFolderFromPathAndSelectSingleItemAsync(info.Path, info.FileName);
             }
             catch (System.IO.FileNotFoundException)
             {
                 await (new MessageDialog("File or folder does not exist.")).ShowAsync();
             }
+            catch (UnauthorizedAccessException)
+            {
+                await (new MessageDialog($"We're sorry, but we can't access this folder.\r\nTry finding it manually on File Explorer in '{info.Path}'")).ShowAsync();
+            }
         }
 
         private async void OpenFolder_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            var folder = ((HyperlinkButton)sender).Tag.ToString();
             try
             {
-                await LaunchOperations.LaunchFolderFromPathAsync(((HyperlinkButton)sender).Tag.ToString());
+                await LaunchOperations.LaunchFolderFromPathAsync(folder);
             }
             catch (System.IO.FileNotFoundException)
             {
                 await (new MessageDialog("File or folder does not exist.")).ShowAsync();
             }
+            catch (UnauthorizedAccessException)
+            {
+                await (new MessageDialog($"We're sorry, but we can't access this folder.\r\nTry finding it manually on File Explorer in '{folder}'")).ShowAsync();
+            }
         }
-
+        
         private async void OpenLink_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var path = ((HyperlinkButton)sender).Tag.ToString();

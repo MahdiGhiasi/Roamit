@@ -117,7 +117,7 @@ namespace QuickShare.FileTransfer
                         },
                         StoreRootPath = System.IO.Path.Combine(downloadFolder.Path, (string)request["Directory"]),
                     },
-                    false);
+                    false, false);
                 DataStorageProviders.HistoryManager.Close();
 
                 await DownloadFile(request, downloadFolder);
@@ -269,7 +269,14 @@ namespace QuickShare.FileTransfer
             if (file.Name != fileName) //File already existed, so new name generated for it. We should update database now.
             {
                 await DataStorageProviders.HistoryManager.OpenAsync();
-                DataStorageProviders.HistoryManager.UpdateFileName(requestGuid, fileName, file.Name, System.IO.Path.Combine(downloadFolder.Path, directory));
+                DataStorageProviders.HistoryManager.UpdateFileName(requestGuid, fileName, file.Name, downloadFolder.Path);
+                DataStorageProviders.HistoryManager.Close();
+
+                await DataStorageProviders.HistoryManager.OpenAsync();
+                var x = DataStorageProviders.HistoryManager.GetItem(requestGuid);
+                var y = x.Data as ReceivedFileCollection;
+                var z = y.Files[0].Name;
+                var t = x.Id;
                 DataStorageProviders.HistoryManager.Close();
             }
 

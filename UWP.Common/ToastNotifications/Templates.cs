@@ -43,6 +43,7 @@ namespace QuickShare.ToastNotifications
   <actions>
     <action content='Open folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
     <action content='Open file' activationType='foreground' arguments='action=openSingleFile&amp;guid={guid}'/>
+    <action content='Save as' activationType='foreground' arguments='action=saveAsSingleFile&amp;guid={guid}'/>
   </actions>
 </toast>";
 
@@ -56,6 +57,7 @@ namespace QuickShare.ToastNotifications
   </visual>
   <actions>
     <action content='Open folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
+    <action content='Save as' activationType='foreground' arguments='action=saveAsSingleFile&amp;guid={guid}'/>
   </actions>
 </toast>";
 
@@ -69,8 +71,51 @@ namespace QuickShare.ToastNotifications
   </visual>
   <actions>
     <action content='Open folder' activationType='foreground' arguments='action=openFolder&amp;guid={guid}'/>
+    <action content='Save as' activationType='foreground' arguments='action=saveAs&amp;guid={guid}'/>
   </actions>
 </toast>";
 
+
+
+        public static string SaveAsSuccessfulSingleFileNoOpenFile { get; } = @"
+<toast launch='action=fileFinished'>
+  <visual>
+    <binding template='ToastGeneric'>
+      <text>{title}</text>
+      <text>{subtitle}</text>
+    </binding>
+  </visual>
+  <actions>
+    <action content='Open folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
+    <action content='Open file' activationType='foreground' arguments='action=openSingleFile&amp;guid={guid}'/>
+  </actions>
+</toast>";
+
+        public static string SaveAsSuccessfulSingleFile { get; } = @"
+<toast launch='action=fileFinished'>
+  <visual>
+    <binding template='ToastGeneric'>
+      <text>{title}</text>
+      <text>{subtitle}</text>
+    </binding>
+  </visual>
+  <actions>
+    <action content='Open folder' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
+    <action content='Open file' activationType='foreground' arguments='action=openSingleFile&amp;guid={guid}'/>
+  </actions>
+</toast>";
+
+        public static string SaveAsSuccessful { get; } = @"
+<toast launch='action=fileFinished'>
+  <visual>
+    <binding template='ToastGeneric'>
+      <text>{title}</text>
+      <text>{subtitle}</text>
+    </binding>
+  </visual>
+  <actions>
+    <action content='Open folder' activationType='foreground' arguments='action=openFolder&amp;guid={guid}'/>
+  </actions>
+</toast>";
     }
 }

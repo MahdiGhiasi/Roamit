@@ -176,6 +176,12 @@ namespace QuickShare
                 // Parse the query string
                 QueryString args = QueryString.Parse(toastActivationArgs.Argument);
 
+                if (!args.Contains("action"))
+                {
+                    LaunchRootFrameIfNecessary(ref rootFrame, true);
+                    return;
+                }
+
                 HistoryRow hr;
                 switch (args["action"])
                 {
@@ -188,16 +194,16 @@ namespace QuickShare
                         rootFrame.Navigate(typeof(ClipboardReceive), args["guid"]);
                         break;
                     case "fileProgress":
-                        LaunchRootFrameIfNecessary(ref rootFrame, true);
+                        LaunchRootFrameIfNecessary(ref rootFrame, false);
                         if (rootFrame.Content is MainPage)
                             break;
                         rootFrame.Navigate(typeof(MainPage));
                         break;
                     case "fileFinished":
-                        LaunchRootFrameIfNecessary(ref rootFrame, true);
-
-                        //TODO: Open history page
-
+                        LaunchRootFrameIfNecessary(ref rootFrame, false);
+                        if (rootFrame.Content is MainPage)
+                            break;
+                        rootFrame.Navigate(typeof(MainPage), "history");
                         break;
                     case "openFolder":
                         hr = await GetHistoryItemGuid(Guid.Parse(args["guid"]));
@@ -217,7 +223,19 @@ namespace QuickShare
                         if (isJustLaunched)
                             Application.Current.Exit();
                         break;
+                    case "saveAsSingleFile":
+                    case "saveAs":
+                        LaunchRootFrameIfNecessary(ref rootFrame, false);
+                        rootFrame.Navigate(typeof(ProgressPage));
+                        var guid = Guid.Parse(args["guid"]);
+                        await ReceivedSaveAsHelper.SaveAs(guid);
+                        if ((isJustLaunched) || (DeviceInfo.FormFactorType != DeviceInfo.DeviceFormFactorType.Desktop))
+                            Application.Current.Exit();
+                        else
+                            rootFrame.GoBack();
+                        break;
                     default:
+                        LaunchRootFrameIfNecessary(ref rootFrame, true);
                         break;
                 }
 

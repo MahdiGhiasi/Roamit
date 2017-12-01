@@ -10,7 +10,7 @@ namespace QuickShare.Common
 {
     public static class DownloadFolderHelper
     {
-        static readonly string _downloadMainFolder = "downloadMainFolder";
+        internal static readonly string _downloadMainFolder = "downloadMainFolder";
 
         /**
         public static IAsyncAction InitDefaultDownloadFolderAsync()
@@ -58,6 +58,8 @@ namespace QuickShare.Common
                     try
                     {
                         var myfolder = await DownloadsFolder.CreateFolderAsync((i == 1) ? "Received" : $"Received ({i})");
+
+                        FutureAccessListHelper.MakeSureFutureAccessListIsNotFull();
                         futureAccessList.AddOrReplace(_downloadMainFolder, myfolder);
                         created = true;
                     }
@@ -101,6 +103,7 @@ namespace QuickShare.Common
         private static async Task<IStorageFolder> TrySetDownloadFolder(IStorageFolder folder)
         {
             var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
+            FutureAccessListHelper.MakeSureFutureAccessListIsNotFull();
             futureAccessList.AddOrReplace(_downloadMainFolder, folder);
 
             return await GetDefaultDownloadFolder(); //Make sure everything's fine

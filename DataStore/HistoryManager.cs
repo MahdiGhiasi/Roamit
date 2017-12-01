@@ -16,10 +16,16 @@ namespace QuickShare.DataStore
             return data.Exists(x => x.Id == guid);
         }
 
-        public void Add(Guid guid, DateTime receiveTime, string senderName, IReceivedData receivedData, bool completed)
+        public void Add(Guid guid, DateTime receiveTime, string senderName, IReceivedData receivedData, bool completed, bool replaceIfExisting = true)
         {
+            System.Diagnostics.Debug.WriteLine($"Added {guid} from {senderName} to db");
             if (ContainsKey(guid))
-                Remove(guid);
+            {
+                if (replaceIfExisting)
+                    Remove(guid);
+                else
+                    return;
+            }
 
             HistoryRow r = new HistoryRow()
             {
@@ -51,23 +57,27 @@ namespace QuickShare.DataStore
         {
             var item = GetItem(guid);
             item.Completed = isCompleted;
+
             data.Update(guid, item);
         }
 
         public void UpdateFileName(Guid guid, string oldName, string newName, string directory)
         {
+            System.Diagnostics.Debug.WriteLine($"Updated {guid} from {oldName} to {newName}");
+
             var item = GetItem(guid);
             var d = item.Data as ReceivedFileCollection;
 
             if (d == null)
                 return;
 
-            var file = d.Files.FirstOrDefault(x => (x.Name == oldName && x.StorePath == directory));
+            var file = d.Files.LastOrDefault(x => (x.Name == oldName && (x.StorePath == directory || x.StorePath == (directory + "\\"))));
 
             if (file == null)
                 return;
 
             file.Name = newName;
+
             data.Update(guid, item);
         }
     }

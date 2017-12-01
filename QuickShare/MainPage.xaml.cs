@@ -212,6 +212,14 @@ namespace QuickShare
 
                 Current = this;
             }
+            else if ((e.Parameter != null) && (e.Parameter.ToString() == "history"))
+            {
+                ContentFrame.Navigate(typeof(HistoryPage));
+                ContentFrame.BackStack.Clear();
+                ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
+
+                Current = this;
+            }
             else if ((e.Parameter != null) && (e.Parameter.ToString() == "receiveDialog"))
             {
                 ContentFrame.Navigate(typeof(MainReceive), Frame.BackStackDepth > 0);
