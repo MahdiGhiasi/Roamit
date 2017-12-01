@@ -117,7 +117,7 @@ namespace QuickShare.ToastNotifications
             }
             
             NotificationData data = new NotificationData();
-            data.Values.Add("progressValue", percent.ToString());
+            data.Values.Add("progressValue", percent < 0 ? "indeterminate" : percent.ToString());
             data.Values.Add("title", $"Receiving from {hostName}...");
 
             ToastNotificationManager.CreateToastNotifier().Update(data, guid.ToString());
@@ -145,7 +145,7 @@ namespace QuickShare.ToastNotifications
             }
 
             int percentR = ((int)(Math.Round(100.0 * percent)));
-            string percentString = (percentR < 0) ? "Initializing" : (percentR.ToString() + "%");
+            string percentString = (percentR < 0) ? "Preparing..." : (percentR.ToString() + "%");
 
             NotificationData data = new NotificationData();
             data.Values.Add("subtitle", percentString);
