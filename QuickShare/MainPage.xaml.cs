@@ -117,12 +117,16 @@ namespace QuickShare
                 var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
                 if (e.State == FileTransferState.Finished)
                 {
+                    PersistentDisplay.ReleasePersistentDisplay();
+
                     statusBar.ProgressIndicator.Text = "";
                     statusBar.ProgressIndicator.ProgressValue = 0;
                     await statusBar.ProgressIndicator.HideAsync();
                 }
                 else
                 {
+                    PersistentDisplay.ActivatePersistentDisplay();
+
                     statusBar.ProgressIndicator.Text = "Receiving...";
                     statusBar.ProgressIndicator.ProgressValue = ((double)e.CurrentPart) / (double)(e.Total + 1);
                     await statusBar.ProgressIndicator.ShowAsync();

@@ -414,6 +414,9 @@ namespace QuickShare
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
+
+            PersistentDisplay.ReleasePersistentDisplay();
+
             deferral.Complete();
         }
 
