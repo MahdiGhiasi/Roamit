@@ -40,6 +40,22 @@
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
+                    <StackPanel Tag="7" Margin="0,0,0,24" Visibility="Visible">
+                        <TextBlock Text="&#8226; You can now save received files to another place right from the receive notification."
+                                   Margin="0,0,0,4"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="To try it, tap on the save as button when you receive a transfer complete notification."
+                                   Opacity="0.6"
+                                   Margin="8,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; The app will now keep the screen on while sending files to your other devices."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Minor fixes and improvements."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                    
                     <StackPanel Tag="6" Margin="0,0,0,24" Visibility="Visible">
                         <TextBlock Text="&#8226; You can now send whole folders to your other devices by simply dragging it to the app window."
                                    Margin="0,0,0,8"
