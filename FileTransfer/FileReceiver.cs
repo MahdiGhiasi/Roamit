@@ -156,6 +156,21 @@ namespace QuickShare.FileTransfer
         {
             var downloadFolder = await downloadFolderDecider(queueItems.Select(x => Path.GetExtension((string)x["FileName"])).ToArray());
 
+            string queueParentDirectory2 = await GetUniqueQueueParentDirectory(downloadFolder);
+
+            foreach (var item in queueItems)
+            {
+                if ((((string)item["Directory"]).Length >= queueParentDirectory.Length) && (((string)item["Directory"]).Substring(0, queueParentDirectory.Length) == queueParentDirectory))
+                {
+                    if (queueParentDirectory2 != queueParentDirectory)
+                        item["Directory"] = queueParentDirectory2 + ((string)item["Directory"]).Substring(queueParentDirectory.Length);
+                }
+                else if (queueParentDirectory.Length > 0)
+                {
+                    item["Directory"] = Path.Combine(queueParentDirectory2, (string)item["Directory"]);
+                }
+            }
+
             var logItems = from x in queueItems
                            select new ReceivedFile
                            {
@@ -163,8 +178,6 @@ namespace QuickShare.FileTransfer
                                Size = (long)x["FileSize"],
                                StorePath = System.IO.Path.Combine(downloadFolder.Path, (string)x["Directory"]),
                            };
-
-            string queueParentDirectory2 = await GetUniqueQueueParentDirectory(downloadFolder);
 
             await DataStorageProviders.HistoryManager.OpenAsync();
             DataStorageProviders.HistoryManager.Add(requestGuid,
@@ -180,16 +193,6 @@ namespace QuickShare.FileTransfer
 
             foreach (var item in queueItems)
             {
-                if (((string)item["Directory"]).Substring(0, queueParentDirectory.Length) == queueParentDirectory)
-                {
-                    if (queueParentDirectory2 != queueParentDirectory)
-                        item["Directory"] = queueParentDirectory2 + ((string)item["Directory"]).Substring(queueParentDirectory.Length);
-                }
-                else if (queueParentDirectory.Length > 0)
-                {
-                    item["Directory"] = Path.Combine(queueParentDirectory2, (string)item["Directory"]);
-                }
-
                 await DownloadFile(item, downloadFolder);
             }
 
