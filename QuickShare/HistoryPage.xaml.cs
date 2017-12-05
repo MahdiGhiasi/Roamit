@@ -41,7 +41,7 @@ namespace QuickShare
 
         private void InitHistoryItems()
         {
-            HistoryItems = new IncrementalLoadingCollection<HistoryItemSource, HistoryItem>(20, 1);
+            HistoryItems = new IncrementalLoadingCollection<HistoryItemSource, HistoryItem>(10, 1);
             HistoryItems.LoadFinished -= HistoryItems_LoadFinished;
             HistoryItems.LoadFinished += HistoryItems_LoadFinished;
         }
