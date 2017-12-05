@@ -67,21 +67,29 @@ namespace QuickShare.HelperClasses
             int total = files.Files.Count;
             foreach (var item in files.Files)
             {
-                string relativePath = item.StorePath.Substring(rootPath.Length);
-
                 StorageFolder dest = selectedFolder;
-                if (relativePath.Length > 0)
+                string relativePath = "";
+
+                if (item.StorePath.Length >= rootPath.Length)
                 {
-                    string[] pathParts = relativePath.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                    relativePath = item.StorePath.Substring(rootPath.Length);
 
-                    foreach (var fName in pathParts)
+                    if ((relativePath.Length > 0) && (relativePath[0] == '\\'))
+                        relativePath = relativePath.Substring(1);
+
+                    if (relativePath.Length > 0)
                     {
-                        var x = await dest.TryGetItemAsync(fName);
+                        string[] pathParts = relativePath.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
 
-                        if ((x == null) || (!(x is StorageFolder)))
-                            dest = await dest.CreateFolderAsync(fName);
-                        else
-                            dest = x as StorageFolder;
+                        foreach (var fName in pathParts)
+                        {
+                            var x = await dest.TryGetItemAsync(fName);
+
+                            if ((x == null) || (!(x is StorageFolder)))
+                                dest = await dest.CreateFolderAsync(fName);
+                            else
+                                dest = x as StorageFolder;
+                        }
                     }
                 }
 
@@ -98,7 +106,6 @@ namespace QuickShare.HelperClasses
                 await fileMap[item].MoveAsync(dest, finalName);
                 item.StorePath = System.IO.Path.Combine(selectedFolder.Path, relativePath);
                 item.Name = finalName;
-
                 cur++;
                 SaveAsProgress?.Invoke(((double)cur) / total);
             }
@@ -106,7 +113,7 @@ namespace QuickShare.HelperClasses
             var rootFolder = await StorageFolder.GetFolderFromPathAsync(files.StoreRootPath);
             if (rootFolder.Path != (await DownloadFolderHelper.GetDefaultDownloadFolderAsync()).Path)
             {
-                if ((await rootFolder.GetItemsAsync()).Count == 0)
+                if ((await rootFolder.GetBasicPropertiesAsync()).Size == 0)
                 {
                     await rootFolder.DeleteAsync(StorageDeleteOption.PermanentDelete);
                 }
