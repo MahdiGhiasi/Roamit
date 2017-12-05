@@ -43,7 +43,7 @@ namespace QuickShare.HelperClasses
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("LatestWhatsNewVersion"))
                 System.Version.TryParse(ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"].ToString(), out prevVersion);
 
-            if (prevVersion < new System.Version("2.4.0.0"))
+            if (prevVersion < new System.Version("2.4.1.0"))
                 output.Add("7");
 
             if (prevVersion < new System.Version("2.3.0.0"))
