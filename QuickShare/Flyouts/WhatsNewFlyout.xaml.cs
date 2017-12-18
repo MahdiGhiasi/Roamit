@@ -100,6 +100,8 @@ namespace QuickShare.Flyouts
                     {
                         if ((fe.Tag == null) || (fe.Tag.ToString() != ids[0]))
                             fe.Visibility = Visibility.Collapsed;
+                        else
+                            fe.Visibility = Visibility.Visible;
                     }
                     else
                     {
@@ -123,6 +125,8 @@ namespace QuickShare.Flyouts
                     {
                         if ((fe.Tag == null) || (fe.Tag.ToString() != ids[0]))
                             fe.Visibility = Visibility.Collapsed;
+                        else
+                            fe.Visibility = Visibility.Visible;
                     }
                     else
                     {
