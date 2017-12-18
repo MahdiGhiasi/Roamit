@@ -34,7 +34,8 @@
                        Foreground="Yellow"
                        FontWeight="Bold"
                        FontSize="15"
-                       TextWrapping="Wrap" 
+                       TextWrapping="Wrap"
+                       Visibility="Collapsed"
                        Margin="12,12,12,12" />
         </Grid>
         <Grid Grid.Row="1" Padding="14,8,14,14">
@@ -200,7 +201,7 @@
                     Width="150"
                     Background="{ThemeResource ListViewItemBackgroundSelectedPressed}"
                     Tapped="OKButton_Tapped" />
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Tag="5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Tag="5" Visibility="Collapsed">
                 <Button Content="Get it now from Google Play"
                         Margin="0,0,4,0"
                         Background="{ThemeResource ListViewItemBackgroundSelectedPressed}"
