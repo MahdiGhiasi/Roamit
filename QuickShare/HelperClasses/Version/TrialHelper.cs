@@ -94,6 +94,29 @@ namespace QuickShare.HelperClasses.Version
                 }
             }
         }
+
+        internal static async Task<StorePrice> GetUpgradePrice()
+        {
+            if (context == null)
+                context = StoreContext.GetDefault();
+
+            StoreProductQueryResult queryResult = await context.GetAssociatedStoreProductsAsync(new string[] { "Durable" });
+
+            if (queryResult.ExtendedError != null)
+            {
+                return null;
+            }
+
+            foreach (KeyValuePair<string, StoreProduct> item in queryResult.Products)
+            {
+                if (item.Value.InAppOfferToken == RemoveAdsAndSizeLimit_Token)
+                {
+                    return item.Value.Price;
+                }
+            }
+
+            return null;
+        }
     }
 
     public enum UpgradeFlyoutState

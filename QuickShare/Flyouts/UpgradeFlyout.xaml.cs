@@ -70,5 +70,46 @@ namespace QuickShare.Flyouts
         {
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.PCExtensionUrl));
         }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdatePrice();
+        }
+
+        private async void UpdatePrice()
+        {
+            var price = await TrialHelper.GetUpgradePrice();
+
+            if (price == null)
+                return;
+
+            try
+            {
+                if (price.IsOnSale)
+                {
+                    oldPriceText.Text = " " + StrikethroughText(price.FormattedBasePrice + " ");
+                    oldPriceText.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    oldPriceText.Text = "";
+                    oldPriceText.Visibility = Visibility.Collapsed;
+                }
+
+                finalPriceText.Text = price.FormattedPrice;
+            }
+            catch { }
+        }
+
+        private static string StrikethroughText(string text)
+        {
+            string result = "";
+            for (int i = 0; i < text.Length; i++)
+            {
+                result += "\x0336" + text[i];
+            }
+
+            return result;
+        }
     }
 }

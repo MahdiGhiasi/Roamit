@@ -7,7 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Loaded="UserControl_Loaded">
 
     <Grid Background="{Binding Source={ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.7}"
           BorderBrush="#aaa"
@@ -51,6 +52,11 @@
                     <TextBlock Text=" &#x2022;  No ads"
                                TextWrapping="Wrap"
                                Margin="0,0,0,4" />
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <TextBlock Text="Price:" FontWeight="Black" Margin="0,0,4,0" />
+                        <TextBlock Text="" FontWeight="Bold" Opacity="0.5" Foreground="Red" x:Name="oldPriceText" Margin="0,0,4,0" />
+                        <TextBlock Text="" FontWeight="Black" Foreground="Yellow" x:Name="finalPriceText" Margin="0,0,4,0" />
+                    </StackPanel>
                 </StackPanel>
             </ScrollViewer>
             <Grid Margin="12,0,12,12" Grid.Row="1">
