@@ -318,7 +318,23 @@
 
                 //redirect("stopAutomaticSelection.html");
 			}
-			
+
+            function darkMode() {
+                initProgressbar(false);
+
+                var headID = document.getElementsByTagName('head')[0];
+                var link = document.createElement('link');
+                link.type = 'text/css';
+                link.rel = 'stylesheet';
+                headID.appendChild(link);
+                link.href = 'dark.css';
+            }
+
+            function lightMode() {
+                initProgressbar(true);
+                $("link[href='dark.css']").remove();
+            }
+
 			function checkHash() {
                 var type = window.location.hash.substr(1);
                 if (type == "progress") {
@@ -330,7 +346,7 @@
                     $(".progress").removeClass("progress-show");
                 }
 				
-				if (type.substr(0, 5) == "share") {
+                if ((type.substr(0, 5) == "share") || (type.substr(0, 5) == "shar2")) {
 					$(".actionbuttons").addClass("actionbuttons-hide");
 					$(".sharedialog").removeClass("sharedialog-hide");
 					
@@ -343,6 +359,13 @@
                     var subtype = type.substr(5);
                     $(".sharedialog-buttons").css("display", "none");
                     $("#sharedialog-buttons-" + subtype).css("display", "block");
+
+                    if (type.substr(0, 5) == "shar2") {
+                        darkMode();
+                    }
+                    else {
+                        lightMode();
+                    }
 				}
 				else {
 					$(".actionbuttons").removeClass("actionbuttons-hide");
@@ -355,18 +378,10 @@
                 }
                 
                 if (type == "dark") {
-                    initProgressbar(false);
-
-                    var headID = document.getElementsByTagName('head')[0];
-                    var link = document.createElement('link');
-                    link.type = 'text/css';
-                    link.rel = 'stylesheet';
-                    headID.appendChild(link);
-                    link.href = 'dark.css';
+                    darkMode();
                 }
                 else if (type == "light") {
-                    initProgressbar(true);
-                    $("link[href='dark.css']").remove();
+                    lightMode();
                 }
             }
 
