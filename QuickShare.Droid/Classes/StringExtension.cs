@@ -16,6 +16,8 @@ namespace QuickShare.Droid.Classes
     {
         public static string NormalizeForJsCall(this string s)
         {
+            if (s == null)
+                return null;
             return s.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\n", "\\n").Replace("\r", "\\r");
         }
     }
