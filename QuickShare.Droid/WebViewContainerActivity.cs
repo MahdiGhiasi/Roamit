@@ -327,7 +327,7 @@ namespace QuickShare.Droid
 
         public override void OnBackPressed()
         {
-            if ((webView.Url != homeUrl) && (!IsShareDialog))
+            if ((!IsHomeUrl(webView.Url)) && (!IsShareDialog))
             {
                 if (sendingFile)
                 {
@@ -343,6 +343,11 @@ namespace QuickShare.Droid
             {
                 base.OnBackPressed();
             }
+        }
+
+        private bool IsHomeUrl(string url)
+        {
+            return ((url == homeUrl) || (url == $"{homeUrl}#dark") || (url == $"{homeUrl}#light"));
         }
 
         private async void SendJavascriptToWebView(string jsContent)
