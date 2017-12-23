@@ -1192,7 +1192,7 @@ namespace QuickShare.Droid
                         context.AddRemoteSystemToList(Common.ListManager.SelectedRemoteSystem);
                         context.automaticRemoteSystemSelectionAllowed = false;
 
-                        var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall()}');";
+                        var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall() ?? ""}');";
                         context.SendJavascriptToWebView(s);
                     }
                 }
