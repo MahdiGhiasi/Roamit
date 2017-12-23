@@ -3479,14 +3479,20 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0b015f
 			public const int MyTheme = 2131427679;
 			
-			// aapt resource value: 0x7f0b0161
-			public const int MyTheme_Base = 2131427681;
+			// aapt resource value: 0x7f0b0162
+			public const int MyTheme_Base = 2131427682;
 			
 			// aapt resource value: 0x7f0b0160
-			public const int MyTheme_Legacy = 2131427680;
+			public const int MyTheme_Dark = 2131427680;
 			
-			// aapt resource value: 0x7f0b0162
-			public const int MyTheme_Legacy_Base = 2131427682;
+			// aapt resource value: 0x7f0b0163
+			public const int MyTheme_Dark_Base = 2131427683;
+			
+			// aapt resource value: 0x7f0b0161
+			public const int MyTheme_Legacy = 2131427681;
+			
+			// aapt resource value: 0x7f0b0164
+			public const int MyTheme_Legacy_Base = 2131427684;
 			
 			// aapt resource value: 0x7f0b001e
 			public const int Platform_AppCompat = 2131427358;
