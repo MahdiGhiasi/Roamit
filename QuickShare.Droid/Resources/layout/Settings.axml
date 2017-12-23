@@ -13,7 +13,6 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#eeeeee"
             android:padding="20dp">
             <TextView
                 android:text="General"
@@ -21,15 +20,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="8dp"
-                android:textColor="#F44336"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="?colorPrimary" />
             <TextView
                 android:text="Device name"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView4"
-                android:textColor="#000000"
                 android:layout_marginTop="4dp" />
             <EditText
                 android:layout_width="match_parent"
@@ -55,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textView3"
                 android:layout_marginTop="30dp"
-                android:textColor="#F44336"
+                android:textColor="?colorPrimary"
                 android:textStyle="bold" />
             <TextView
                 android:text="Universal clipboard mirrors any text you copy on your PC to the clipboard of this device automatically."
@@ -104,7 +102,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#F44336"
+                android:textColor="?colorPrimary"
                 android:textStyle="bold" />
             <Switch
                 android:layout_width="match_parent"

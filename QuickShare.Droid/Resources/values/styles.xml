@@ -3,6 +3,9 @@
   <style name="MyTheme" parent="MyTheme.Base">
   </style>
 
+  <style name="MyTheme.Dark" parent="MyTheme.Dark.Base">
+  </style>
+
   <style name="MyTheme.Legacy" parent="MyTheme.Legacy.Base">
   </style>
 
@@ -19,6 +22,25 @@
     <!-- colorAccent is used as the default value for colorControlActivated
          which is used to tint widgets -->
     <item name="colorAccent">#448AFF</item>
+
+    <item name="colorControlHighlight">#448AFF</item>
+    <!-- You can also set colorControlNormal, colorControlActivated
+         colorControlHighlight and colorSwitchThumbNormal. -->
+  </style>
+
+  <!-- Base theme applied no matter what API -->
+  <style name="MyTheme.Dark.Base" parent="Theme.AppCompat">
+    <item name="windowNoTitle">true</item>
+    <!--We will be using the toolbar so no need to show ActionBar-->
+    <item name="windowActionBar">false</item>
+    <!-- Set theme colors from http://www.google.com/design/spec/style/color.html#color-color-palette-->
+    <!-- colorPrimary is used for the default action bar background -->
+    <item name="colorPrimary">#0078D7</item>
+    <!-- colorPrimaryDark is used for the status bar -->
+    <item name="colorPrimaryDark">#004E8C</item>
+    <!-- colorAccent is used as the default value for colorControlActivated
+         which is used to tint widgets -->
+    <item name="colorAccent">#0078D7</item>
 
     <item name="colorControlHighlight">#448AFF</item>
     <!-- You can also set colorControlNormal, colorControlActivated
