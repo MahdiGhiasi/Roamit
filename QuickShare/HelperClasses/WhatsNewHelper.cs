@@ -62,6 +62,7 @@ namespace QuickShare.HelperClasses
                 ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet)))
                 output.Add("1");
 
+            MarkThisWhatsNewAsRead();
 
             //Important message regarding Android app's new listing
             if ((prevVersion < new System.Version("2.1.5.0")) && 
@@ -69,9 +70,9 @@ namespace QuickShare.HelperClasses
             {
                 output.Clear();
                 output.Add("5");
-            }
 
-            MarkThisWhatsNewAsRead();
+                ApplicationData.Current.LocalSettings.Values["LatestWhatsNewVersion"] = "2.1.5.0";
+            }
 
             return output;
         }

@@ -74,7 +74,7 @@ namespace QuickShare.Droid
             var settings = new Classes.Settings(this);
             if (IsShareDialog)
             {
-                InitShareDialog();
+                InitShareDialog(settings.Theme);
             }
             else
             {
@@ -264,15 +264,16 @@ namespace QuickShare.Droid
 
         private bool IsShareDialog { get => ((Intent.Action == Intent.ActionSend) || (Intent.Action == Intent.ActionSendMultiple)); }
 
-        private void InitShareDialog()
+        private void InitShareDialog(AppTheme theme)
         {
+            string sharePage = (theme == AppTheme.Light) ? "share" : "shar2";
             if ((Intent.Action == Intent.ActionSend) && (Intent.Extras.ContainsKey(Intent.ExtraStream)))
             {
                 var fileUrl = FilePathHelper.GetPath(this, (Android.Net.Uri)Intent.Extras.GetParcelable(Intent.ExtraStream));
 
                 Common.ShareFiles = new string[] { fileUrl };
 
-                webView.LoadUrl($"{homeUrl}#sharefile");
+                webView.LoadUrl($"{homeUrl}#{sharePage}file");
             }
             else if (Intent.Action == Intent.ActionSendMultiple && Intent.Extras.ContainsKey(Intent.ExtraStream))
             {
@@ -283,7 +284,7 @@ namespace QuickShare.Droid
 
                 Common.ShareFiles = urls;
 
-                webView.LoadUrl($"{homeUrl}#sharefile");
+                webView.LoadUrl($"{homeUrl}#{sharePage}file");
             }
             else if ((Intent.Action == Intent.ActionSend) && (Intent.Type == "text/plain"))
             {
@@ -294,13 +295,13 @@ namespace QuickShare.Droid
 
                 bool isValidUri = System.Uri.TryCreate(sharedText, UriKind.Absolute, out _);
                 if (isValidUri)
-                    webView.LoadUrl($"{homeUrl}#sharelink");
+                    webView.LoadUrl($"{homeUrl}#{sharePage}link");
                 else
-                    webView.LoadUrl($"{homeUrl}#shareclipboard");
+                    webView.LoadUrl($"{homeUrl}#{sharePage}clipboard");
             }
             else
             {
-                webView.LoadUrl($"{homeUrl}#share");
+                webView.LoadUrl($"{homeUrl}#{sharePage}");
             }
         }
 
@@ -326,7 +327,7 @@ namespace QuickShare.Droid
 
         public override void OnBackPressed()
         {
-            if ((webView.Url != homeUrl) && (!IsShareDialog))
+            if ((!IsHomeUrl(webView.Url)) && (!IsShareDialog))
             {
                 if (sendingFile)
                 {
@@ -342,6 +343,11 @@ namespace QuickShare.Droid
             {
                 base.OnBackPressed();
             }
+        }
+
+        private bool IsHomeUrl(string url)
+        {
+            return ((url == homeUrl) || (url == $"{homeUrl}#dark") || (url == $"{homeUrl}#light"));
         }
 
         private async void SendJavascriptToWebView(string jsContent)
@@ -1186,7 +1192,7 @@ namespace QuickShare.Droid
                         context.AddRemoteSystemToList(Common.ListManager.SelectedRemoteSystem);
                         context.automaticRemoteSystemSelectionAllowed = false;
 
-                        var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall()}');";
+                        var s = $"selectItem('{Common.ListManager.SelectedRemoteSystem?.Id?.NormalizeForJsCall() ?? ""}');";
                         context.SendJavascriptToWebView(s);
                     }
                 }

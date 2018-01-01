@@ -63,6 +63,12 @@ namespace QuickShare.Droid.Classes
                 output.Add("Device discovery improvements");
             }
 
+            if (lastShownVersion < new Version("2.5.0"))
+            {
+                output.Add("Dark theme is now available in share dialog and settings page too.");
+                output.Add("Fixed an issue where back button was not working.");
+            }
+
             return output;
         }
 

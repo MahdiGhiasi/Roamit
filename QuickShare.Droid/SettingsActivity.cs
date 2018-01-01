@@ -28,6 +28,11 @@ namespace QuickShare.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            if (new Settings(this).Theme == AppTheme.Dark)
+                SetTheme(Resource.Style.MyTheme_Dark);
+            else
+                SetTheme(Resource.Style.MyTheme);
+
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.Settings);
