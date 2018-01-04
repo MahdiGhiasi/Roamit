@@ -114,6 +114,7 @@
     <Compile Include="HelperClasses\PCExtensionHelper.cs" />
     <Compile Include="HelperClasses\PersistentDisplay.cs" />
     <Compile Include="HelperClasses\ReceivedSaveAsHelper.cs" />
+    <Compile Include="HelperClasses\StorageFileExtension.cs" />
     <Compile Include="HelperClasses\StoreHelper.cs" />
     <Compile Include="HelperClasses\WhatsNewHelper.cs" />
     <Compile Include="Classes\ItemSources\HistoryItemSource.cs" />

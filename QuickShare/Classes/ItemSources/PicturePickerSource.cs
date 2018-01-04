@@ -79,7 +79,16 @@ namespace QuickShare.Classes.ItemSources
 
             foreach (var file in files)
             {
-                var thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.SingleItem, PicturePickerSource.ThumbnailSize);
+                Windows.Storage.FileProperties.StorageItemThumbnail thumbnailStream = null;
+
+                try
+                {
+                    thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.PicturesView);
+                }
+                catch (Exception)
+                {
+                    thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.SingleItem);
+                }
 
                 if (thumbnailStream != null)
                 {
@@ -90,8 +99,9 @@ namespace QuickShare.Classes.ItemSources
                 }
                 else
                 {
-                    result.Add(null);
+                    result.Add(new PicturePickerItem { File = file, Thumbnail = null });
                 }
+
             }
 
             allItems.AddRange(result);
