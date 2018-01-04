@@ -108,6 +108,20 @@ namespace QuickShare.ViewModels
             }
         }
 
+        string progressSpeed;
+        public string ProgressSpeed
+        {
+            get
+            {
+                return progressSpeed;
+            }
+            set
+            {
+                progressSpeed = value;
+                OnPropertyChanged("ProgressSpeed");
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         // Create the OnPropertyChanged method to raise the event

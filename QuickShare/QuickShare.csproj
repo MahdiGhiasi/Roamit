@@ -116,6 +116,7 @@
     <Compile Include="HelperClasses\ReceivedSaveAsHelper.cs" />
     <Compile Include="HelperClasses\StorageFileExtension.cs" />
     <Compile Include="HelperClasses\StoreHelper.cs" />
+    <Compile Include="HelperClasses\StringFunctions.cs" />
     <Compile Include="HelperClasses\WhatsNewHelper.cs" />
     <Compile Include="Classes\ItemSources\HistoryItemSource.cs" />
     <Compile Include="MainReceive.xaml.cs">
