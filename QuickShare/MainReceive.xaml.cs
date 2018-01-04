@@ -69,6 +69,9 @@ namespace QuickShare
                 return;
             }
 
+            if (e.Total == 0)
+                return;
+
             ViewModel.ProgressIsIndeterminate = false;
             ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
             ViewModel.ReceiveStatus = "Receiving...";
