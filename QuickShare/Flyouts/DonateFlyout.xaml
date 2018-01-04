@@ -28,17 +28,12 @@
                     <RichTextBlock>
                         <Paragraph>
                             <Run>
-                                Roamit is free to use with no limitations, and is open source.
+                                Roamit is free to use with no limitations and is open source.
                             </Run>
                         </Paragraph>
                         <Paragraph Margin="0,4,0,0">
                             <Run>
-                                However, you can support my work by donating if you are interested; and I appreciate it.
-                            </Run>
-                        </Paragraph>
-                        <Paragraph Margin="0,4,0,0">
-                            <Run>
-                                You can make a donation by selecting your desired amount from the list below, and tapping Donate button.
+                                However, you can support my work by making a donation. To do so, select your desired amount from the list below and then tap Donate.
                             </Run>
                         </Paragraph>
                         <Paragraph Margin="0,8,0,0">
@@ -56,7 +51,7 @@
                         </Paragraph>
                         <Paragraph Margin="0,8,0,0">
                             <Run>
-                                Thanks for your support!
+                                Thank you for your interest in Roamit!
                             </Run>
                         </Paragraph>
                     </RichTextBlock>
