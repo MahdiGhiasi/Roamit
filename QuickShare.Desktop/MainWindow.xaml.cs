@@ -361,8 +361,6 @@ namespace QuickShare.Desktop
 
             this.Visibility = Visibility.Visible;
             this.Activate();
-
-            CheckTrialStatus(true);
         }
 
         private void SetWindowPosition()
@@ -429,13 +427,6 @@ namespace QuickShare.Desktop
                     ViewModel.ClipboardActivities.Insert(0, new ClipboardItem(text));
 
                     SendClipboardItem();
-
-                    if (((isExpired) && ((DateTime.UtcNow - lastCheckedTrialStatus) > TimeSpan.FromMinutes(5))) ||
-                        (!knowTrialStatus))
-                    {
-                        lastCheckedTrialStatus = DateTime.UtcNow;
-                        CheckTrialStatus(true); //If not expired, no need to refresh from server.
-                    }
                 }
             }
             catch (Exception ex)
@@ -450,12 +441,6 @@ namespace QuickShare.Desktop
         bool willSendAfterLimit = false;
         private async void SendClipboardItem()
         {
-            if (isExpired)
-            {
-                Debug.WriteLine("Premium expired, won't send clipboard.");
-                return;
-            }
-
             if (willSendAfterLimit)
                 return;
 
@@ -630,40 +615,6 @@ namespace QuickShare.Desktop
             System.Windows.Clipboard.SetText(item.Text);
         }
 
-        bool knowTrialStatus = false;
-        private async void CheckTrialStatus(bool refreshStatus)
-        {
-            if ((knowTrialStatus) && (ViewModel.IsTrial))
-            {
-                UpdateExpireTimeText();
-
-                if (!refreshStatus)
-                    return;
-            }
-
-            var status = await CloudClipboardService.GetPremiumStatus(Settings.Data.AccountId);
-
-            if (status == null)
-                return;
-
-            if (status.State == AccountPremiumState.PremiumTrial)
-            {
-                ViewModel.IsTrial = true;
-                ViewModel.TrialExpireTime = status.TrialExpireTime;
-
-                TrialExpireNoticeContainer.Visibility = Visibility.Visible;
-
-                UpdateExpireTimeText();
-            }
-            else
-            {
-                TrialExpireNoticeContainer.Visibility = Visibility.Collapsed;
-                isExpired = false;
-            }
-
-            knowTrialStatus = true;
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (notifyIcon != null)
@@ -692,48 +643,6 @@ namespace QuickShare.Desktop
                 }
             }
 #endif
-        }
-
-        private void UpdateExpireTimeText()
-        {
-            if (ViewModel.TrialExpireTime < DateTime.UtcNow)
-            {
-                isExpired = true;
-
-                TrialExpireTimeText.Visibility = Visibility.Collapsed;
-                TrialExpireTime.Text = "EXPIRED";
-                return;
-            }
-
-            isExpired = false;
-            TrialExpireTimeText.Visibility = Visibility.Visible;
-            var remainingTime = ViewModel.TrialExpireTime - DateTime.UtcNow;
-
-            if (remainingTime.TotalDays >= 2)
-            {
-                if (remainingTime.Hours > 1)
-                    TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalDays)} days, {remainingTime.Hours} hours";
-                else if (remainingTime.Hours == 1)
-                    TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalDays)} days, 1 hour";
-                else
-                    TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalDays)} days";
-            }
-            else if (remainingTime.TotalDays >= 1)
-            {
-                TrialExpireTime.Text = "1 day";
-            }
-            else if (remainingTime.TotalHours >= 1)
-            {
-                TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalHours)} hours";
-            }
-            else if (remainingTime.TotalMinutes >= 1)
-            {
-                TrialExpireTime.Text = $"{(int)Math.Floor(remainingTime.TotalMinutes)} minutes";
-            }
-            else
-            {
-                TrialExpireTime.Text = "a few seconds";
-            }
         }
     }
 }

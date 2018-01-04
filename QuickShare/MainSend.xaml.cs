@@ -141,27 +141,6 @@ namespace QuickShare
             string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
             var mode = e.Parameter.ToString();
 
-            if ((mode == "file") && (!(await IsAllowedToSendAsync())))
-            {
-                ViewModel.SendStatus = "";
-
-                await TrialHelper.AskForUpgradeWhileSending();
-
-                if (!(await IsAllowedToSendAsync()))
-                {
-#if !DEBUG
-                    App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "AskedToUpgrade", "Rejected").Build());
-#endif
-                    PersistentDisplay.ReleasePersistentDisplay();
-                    Frame.GoBack();
-                    return;
-                }
-#if !DEBUG
-                App.Tracker.Send(HitBuilder.CreateCustomEvent("Send", "AskedToUpgrade", "Accepted").Build());
-#endif
-                ViewModel.SendStatus = "Connecting...";
-            }
-
             bool succeed = true;
             FileTransferResult fileTransferResult = FileTransferResult.Successful;
             try
@@ -553,28 +532,6 @@ namespace QuickShare
                         { "FinishService", "FinishService" }
                     };
             await packageManager.Send(vs);
-        }
-
-        private async Task<bool> IsAllowedToSendAsync()
-        {
-            if (!TrialSettings.IsTrial)
-                return true;
-
-            double totalSize = 0;
-            foreach (var item in SendDataTemporaryStorage.Files)
-            {
-                var file = item as StorageFile;
-                if (file == null)
-                    continue;
-
-                var properties = await file.GetBasicPropertiesAsync();
-                totalSize += properties.Size / (1024.0 * 1024.0);
-
-                if (totalSize > Constants.MaxSizeForTrialVersion)
-                    return false;
-            }
-
-            return true;
         }
 
         private async Task<RomeAppServiceConnectionStatus> Connect(object rs)
