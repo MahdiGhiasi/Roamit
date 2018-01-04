@@ -19,7 +19,9 @@
                     <VisualState.Setters>
                         <Setter Target="Progress.Width" Value="150" />
                         <Setter Target="Progress.Height" Value="150" />
-                        <Setter Target="Progress.FontSize" Value="22" />
+                        <Setter Target="Progress.FontSize" Value="25" />
+                        <Setter Target="ProgressSpeedText.FontSize" Value="16" />
+                        <Setter Target="ProgressSpeedText.Margin" Value="0,65,0,0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -31,20 +33,30 @@
                        TextAlignment="Center" 
                        FontWeight="Light" 
                        Margin="0,0,0,40" />
-            <controls:CircularProgressBar x:Name="Progress" 
-                                          Minimum="0"
-                                          Value="{x:Bind ViewModel.ProgressValue, Mode=OneWay}"
-                                          Maximum="{x:Bind ViewModel.ProgressMaximum, Mode=OneWay}"
-                                          IsIndeterminate="{x:Bind ViewModel.ProgressIsIndeterminate, Mode=OneWay}"
-                                          PercentIndicatorVisibility="{x:Bind ViewModel.ProgressPercentIndicatorVisibility, Mode=OneWay}"
-                                          ValueChangeAnimationLength="0:0:0.35"
-                                          IndeterminateLoopAnimationLength="0:0:1.5"
-                                          HorizontalAlignment="Stretch" 
-                                          VerticalAlignment="Stretch" 
-                                          FontSize="30" 
-                                          Width="250" 
-                                          Height="250" 
-                                          Thickness="6" />
+            <Grid x:Name="ProgressGrid">
+                <controls:CircularProgressBar x:Name="Progress" 
+                                              Minimum="0"
+                                              Value="{x:Bind ViewModel.ProgressValue, Mode=OneWay}"
+                                              Maximum="{x:Bind ViewModel.ProgressMaximum, Mode=OneWay}"
+                                              IsIndeterminate="{x:Bind ViewModel.ProgressIsIndeterminate, Mode=OneWay}"
+                                              PercentIndicatorVisibility="{x:Bind ViewModel.ProgressPercentIndicatorVisibility, Mode=OneWay}"
+                                              ValueChangeAnimationLength="0:0:0.35"
+                                              IndeterminateLoopAnimationLength="0:0:1.5"
+                                              HorizontalAlignment="Stretch" 
+                                              VerticalAlignment="Stretch" 
+                                              FontSize="30" 
+                                              Width="250" 
+                                              Height="250" 
+                                              Thickness="6" />
+                <TextBlock x:Name="ProgressSpeedText" 
+                           Text="{x:Bind ViewModel.ProgressSpeed, Mode=OneWay}" 
+                           Opacity="0.5" 
+                           FontSize="20"
+                           FontWeight="ExtraLight"
+                           Margin="0,110,0,0"
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center" />
+            </Grid>
         </StackPanel>
 
         <TextBlock Text="Don't close this window until transfer finishes."
