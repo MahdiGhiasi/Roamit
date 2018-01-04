@@ -53,6 +53,9 @@
                                                                  FromVerticalOffset="0" />
                                     </TransitionCollection>
                                 </Grid.Transitions>
+                                <ToolTipService.ToolTip>
+                                    <TextBlock Text="{Binding ToolTipText}"/>
+                                </ToolTipService.ToolTip>
                                 <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                             </Grid>
                         </DataTemplate>

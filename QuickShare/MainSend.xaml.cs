@@ -348,6 +348,8 @@ namespace QuickShare
 
             sendingFile = true;
 
+            await DownloadNecessaryFiles();
+
             using (FileSender fs = new FileSender(rs,
                                                   new QuickShare.UWP.WebServerGenerator(),
                                                   packageManager,
@@ -438,6 +440,25 @@ namespace QuickShare
             }
 
             return result;
+        }
+
+        private async Task DownloadNecessaryFiles()
+        {
+            foreach (var item in SendDataTemporaryStorage.Files)
+            {
+                if ((item is StorageFile file) && (!file.IsLocallyAvailable()))
+                {
+                    //Download it
+                    ViewModel.SendStatus = "Retrieving files...";
+
+                    var readStream = await file.OpenStreamForReadAsync();
+                    byte[] buffer = new byte[1024 * 1024];
+                    while (readStream.Position < readStream.Length)
+                    {
+                        await readStream.ReadAsync(buffer, 0, buffer.Length);
+                    }
+                }
+            }
         }
 
         private async Task<List<Tuple<string, IFile>>> GetFilesOfFolder(StorageFolder f, string relPath = "")
