@@ -11,6 +11,7 @@ namespace QuickShare.FileTransfer
         public Guid Guid { get; set; }
         public string SenderName { get; set; }
         public int TotalFiles { get; set; }
+        public ulong TotalBytesTransferred { get; set; }
     }
 
     public enum FileTransferState

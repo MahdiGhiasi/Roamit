@@ -44,6 +44,8 @@ namespace QuickShare.FileTransfer
 
         string deviceName;
 
+        ulong bytesSent;
+
         public delegate void FileTransferProgressEventHandler(object sender, FileTransferProgressEventArgs e);
         public event FileTransferProgressEventHandler FileTransferProgress;
         private event FileTransferProgressEventHandler FileTransferProgressInternal;
@@ -88,6 +90,7 @@ namespace QuickShare.FileTransfer
             if (ipFinderResult.Success == false)
                 return FileTransferResult.FailedOnHandshake;
 
+            bytesSent = 0;
             InitServer();
 
             var key = GenerateUniqueRandomKey();
@@ -192,7 +195,7 @@ namespace QuickShare.FileTransfer
             if (ipFinderResult.Success == false)
                 return FileTransferResult.FailedOnHandshake;
 
-
+            bytesSent = 0;
             InitServer();
 
             Dictionary<IFile, string> sFileKeyPairs = new Dictionary<IFile, string>();
@@ -472,15 +475,15 @@ namespace QuickShare.FileTransfer
                 var key = parts[0];
                 ulong id = ulong.Parse(parts[1]);
 
+                IFile file = keyTable[key].storageFile;
+                int pieceSize = ((keyTable[key].lastSliceId != id) || (keyTable[key].lastSliceSize == 0)) ? (int)Constants.FileSliceMaxLength : (int)keyTable[key].lastSliceSize;
+
                 if (id >= keyTable[key].lastPieceAccessed)
                 {
-                    FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = id + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.DataTransfer });
+                    bytesSent += (ulong)pieceSize;
+                    FileTransferProgressInternal?.Invoke(this, new FileTransferProgressEventArgs { CurrentPart = id + 1, Total = keyTable[key].lastSliceId + 1, State = FileTransferState.DataTransfer, TotalBytesTransferred = bytesSent });
                     keyTable[key].lastPieceAccessed = (uint)id;
                 }
-
-                IFile file = keyTable[key].storageFile;
-
-                int pieceSize = ((keyTable[key].lastSliceId != id) || (keyTable[key].lastSliceSize == 0)) ? (int)Constants.FileSliceMaxLength : (int)keyTable[key].lastSliceSize;
 
                 byte[] buffer = new byte[pieceSize];
 
