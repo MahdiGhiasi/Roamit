@@ -117,14 +117,14 @@ namespace QuickShare.ViewModels
             }
         }
 
-        private Visibility upgradeFlyoutVisibility = Visibility.Collapsed;
-        public Visibility UpgradeFlyoutVisibility
+        private Visibility donateFlyoutVisibility = Visibility.Collapsed;
+        public Visibility DonateFlyoutVisibility
         {
-            get { return upgradeFlyoutVisibility; }
+            get { return donateFlyoutVisibility; }
             set
             {
-                upgradeFlyoutVisibility = value;
-                OnPropertyChanged("UpgradeFlyoutVisibility");
+                donateFlyoutVisibility = value;
+                OnPropertyChanged("DonateFlyoutVisibility");
                 OnPropertyChanged("OverlayVisibility");
             }
         }
@@ -135,7 +135,7 @@ namespace QuickShare.ViewModels
             {
                 if ((signInNoticeVisibility == Visibility.Visible) ||
                     (whatsNewVisibility == Visibility.Visible) || 
-                    (upgradeFlyoutVisibility == Visibility.Visible))
+                    (donateFlyoutVisibility == Visibility.Visible))
                     return Visibility.Visible;
 
                 return Visibility.Collapsed;

@@ -39,16 +39,6 @@ namespace QuickShare
             this.InitializeComponent();
         }
 
-        private async void UpgradeButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-#if !DEBUG
-            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "TryUpgrade", "Windows").Build());
-#endif
-            await TrialHelper.AskForUpgrade();
-
-            Model.CheckTrialStatus();
-        }
-
         private async void PrivacyPolicyButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
 #if !DEBUG
@@ -165,6 +155,15 @@ namespace QuickShare
             ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = false.ToString();
             Model.SendCloudClipboard = false;
             Model.RefreshCloudClipboardBindings();
+        }
+
+        private async void GitHubButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri(Common.Constants.GitHubUrl));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "GitHub").Build());
+#endif
         }
     }
 }

@@ -23,7 +23,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Background="#ccc">
                 <Grid.ColumnDefinitions>
@@ -86,18 +85,6 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
-            </Grid>
-            <Grid Grid.Row="2">
-                <StackPanel x:Name="TrialExpireNoticeContainer" Margin="4" Visibility="Collapsed">
-                    <TextBlock Text="Your universal clipboard trial expires in " Foreground="DarkRed" x:Name="TrialExpireTimeText" />
-                    <Grid>
-                        <TextBlock Text="7 days" x:Name="TrialExpireTime" Foreground="DarkRed" FontWeight="Bold" />
-                        <Button Content="Upgrade" 
-                                HorizontalAlignment="Right"
-                                Style="{StaticResource Link}"
-                                Click="Upgrade_Click" />
-                    </Grid>
-                </StackPanel>
             </Grid>
         </Grid>
     </Grid>

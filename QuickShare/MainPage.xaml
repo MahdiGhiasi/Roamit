@@ -12,8 +12,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:logicaltriggers="using:AdaptiveTriggerLibrary.Triggers.LogicalTriggers"
     xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
-    xmlns:ads="using:Microsoft.Advertising.WinRT.UI"
-    xmlns:adduplex="using:AdDuplex"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     SizeChanged="Page_SizeChanged"
@@ -111,7 +109,6 @@
         <Grid x:Name="Content" Background="#99000000">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" x:Name="TitleBarStackPanel" Height="32" VerticalAlignment="Top" Padding="12,8,0,0" Orientation="Horizontal" Visibility="{x:Bind ViewModel.CustomTopBarVisibility, Mode=OneWay}">
@@ -119,26 +116,8 @@
                 <TextBlock Text="{x:Bind ViewModel.Caption, Mode=OneWay}"  FontSize="12" Foreground="LightGray" />
                 <TextBlock Text="Roamit" FontSize="12" Foreground="LightGray" />
             </StackPanel>
-            <Grid Grid.Row="1" x:Name="AdFrame">
-                <Grid x:Name="AdBannerContainer" 
-                      Height="50"
-                      Width="320">
-                    <ads:AdControl x:Name="AdBanner"
-                                   HorizontalAlignment="Center"
-                                   ErrorOccurred="AdBanner_ErrorOccurred"
-                                   Height="50"
-                                   VerticalAlignment="Top"
-                                   Width="320"/>
-                </Grid>
-                <Grid x:Name="AdDuplexContainer"
-                      Width="300"
-                      Height="50"
-                      Visibility="Collapsed">
-                    
-                </Grid>
-            </Grid>
-            <Grid Grid.Row="2" RenderTransformOrigin="0.5,0.5">
-                <Frame Grid.Row="2" x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Navigating="ContentFrame_Navigating" Padding="0,10,0,0" />
+            <Grid Grid.Row="1" RenderTransformOrigin="0.5,0.5">
+                <Frame x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Navigating="ContentFrame_Navigating" Padding="0,10,0,0" />
             </Grid>
         </Grid>
 
@@ -273,8 +252,8 @@
             <CommandBar.RenderTransform>
                 <TranslateTransform />
             </CommandBar.RenderTransform>
+            <AppBarButton Icon="Shop" Label="Donate" Tapped="DonateButton_Tapped" />
             <AppBarButton Icon="Setting" Label="Settings" Tapped="SettingsButton_Tapped" />
-            <AppBarButton Icon="Shop" Label="Upgrade to full version" Visibility="{x:Bind ViewModel.UpgradeButtonVisibility, Mode=OneWay}" Tapped="UpgradeButton_Tapped" />
             <AppBarButton Label="History" Tapped="HistoryButton_Tapped">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE81C;" />
@@ -301,9 +280,9 @@
                 <flyouts:WhatsNewFlyout x:Name="WhatsNewFlyoutInstance"
                                         Visibility="{x:Bind ViewModel.WhatsNewVisibility, Mode=OneWay}"
                                         FlyoutCloseRequest="WhatsNewFlyout_FlyoutCloseRequest" />
-                <flyouts:UpgradeFlyout x:Name="UpgradeFlyoutInstance"
-                                       Visibility="{x:Bind ViewModel.UpgradeFlyoutVisibility, Mode=OneWay}"
-                                       FlyoutCloseRequest="UpgradeFlyoutInstance_FlyoutCloseRequest" />
+                <flyouts:DonateFlyout x:Name="DonateFlyoutInstance"
+                                      Visibility="{x:Bind ViewModel.DonateFlyoutVisibility, Mode=OneWay}"
+                                      FlyoutCloseRequest="DonateFlyoutInstance_FlyoutCloseRequest" />
             </Grid>
         </Grid>
     </Grid>

@@ -9,7 +9,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:logicaltriggers="using:AdaptiveTriggerLibrary.Triggers.LogicalTriggers"
     xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
-    xmlns:version="using:QuickShare.Classes.Version"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
@@ -178,7 +177,6 @@
                         <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
                             <logicaltriggers:MultiTrigger.Triggers>
                                 <userinterfacetriggers:WindowHeightTrigger Condition="550" ConditionModifier="{StaticResource LessThanModifier}" />
-                                <version:AdDisplayTrigger Condition="False" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
                     </VisualState.StateTriggers>
@@ -196,7 +194,6 @@
                             <logicaltriggers:MultiTrigger.Triggers>
                                 <userinterfacetriggers:WindowHeightTrigger Condition="550" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
                                 <userinterfacetriggers:WindowHeightTrigger Condition="620" ConditionModifier="{StaticResource LessThanModifier}" />
-                                <version:AdDisplayTrigger Condition="False" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
                     </VisualState.StateTriggers>
@@ -212,7 +209,6 @@
                         <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
                             <logicaltriggers:MultiTrigger.Triggers>
                                 <userinterfacetriggers:WindowHeightTrigger Condition="620" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
-                                <version:AdDisplayTrigger Condition="False" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
                     </VisualState.StateTriggers>
@@ -229,7 +225,6 @@
                         <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
                             <logicaltriggers:MultiTrigger.Triggers>
                                 <userinterfacetriggers:WindowHeightTrigger Condition="585" ConditionModifier="{StaticResource LessThanModifier}" />
-                                <version:AdDisplayTrigger Condition="True" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
                     </VisualState.StateTriggers>
@@ -247,7 +242,6 @@
                             <logicaltriggers:MultiTrigger.Triggers>
                                 <userinterfacetriggers:WindowHeightTrigger Condition="585" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
                                 <userinterfacetriggers:WindowHeightTrigger Condition="632" ConditionModifier="{StaticResource LessThanModifier}" />
-                                <version:AdDisplayTrigger Condition="True" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
                     </VisualState.StateTriggers>
@@ -265,7 +259,6 @@
                             <logicaltriggers:MultiTrigger.Triggers>
                                 <userinterfacetriggers:WindowHeightTrigger Condition="632" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
                                 <userinterfacetriggers:WindowHeightTrigger Condition="720" ConditionModifier="{StaticResource LessThanModifier}" />
-                                <version:AdDisplayTrigger Condition="True" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
                     </VisualState.StateTriggers>
@@ -283,7 +276,6 @@
                         <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
                             <logicaltriggers:MultiTrigger.Triggers>
                                 <userinterfacetriggers:WindowHeightTrigger Condition="720" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
-                                <version:AdDisplayTrigger Condition="True" />
                             </logicaltriggers:MultiTrigger.Triggers>
                         </logicaltriggers:MultiTrigger>
                     </VisualState.StateTriggers>

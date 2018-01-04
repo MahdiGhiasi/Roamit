@@ -44,6 +44,12 @@
                                               RelativePanel.RightOf="ConnectToOtherDevicesToggle" 
                                               RelativePanel.AlignVerticalCenterWithPanel="True" />
                             </RelativePanel>
+                            <RichTextBlock>
+                                <Paragraph>
+                                    <Run Foreground="#CCCCCC">Get Roamit on your Android devices from</Run>
+                                    <Hyperlink Foreground="SkyBlue" NavigateUri="http://roamit.ghiasi.net">http://roamit.ghiasi.net</Hyperlink>
+                                </Paragraph>
+                            </RichTextBlock>
                             <TextBlock Text="Default file receive location:" 
                                        TextWrapping="Wrap"
                                        Margin="0,18,0,4" />
@@ -65,7 +71,7 @@
                                        TextWrapping="Wrap"
                                        Margin="0,24,0,4" />
                             <TextBlock Text="This applies to Music, Video and Pictures."
-                                       Opacity="0.7" />
+                                       Foreground="#CCCCCC" />
                             <ToggleSwitch IsOn="{x:Bind Model.TypeBasedDownloadFolderToggle, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
@@ -98,13 +104,12 @@
                             <TextBlock Text="Universal clipboard mirrors any text you copy on your PCs to the clipboard of your other devices."
                                        Margin="0,8,0,12"
                                        TextWrapping="Wrap"
-                                       Opacity="0.7"/>
+                                       Foreground="#CCCCCC" />
 
                             <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Reverse}">
-                                <TextBlock Text="To use this feature, you need to sign in to Roamit Cloud Service first."
+                                <TextBlock Text="To use this feature, you need to sign in to Roamit Cloud Service first from the Account section below."
                                            TextWrapping="Wrap"
                                            Foreground="Red" />
-                                <Button Content="Sign in" Margin="0,8,0,8" Width="130" Tapped="SignInToCloudService_Tapped" />
                             </StackPanel>
 
                             <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -136,12 +141,6 @@
                                                      Foreground="SkyBlue"
                                                      Tapped="ManageDevices_Tapped" />
                                 </StackPanel>
-
-                                <TextBlock Margin="0,12,0,0"
-                                           TextWrapping="Wrap"
-                                           Foreground="DarkCyan"
-                                           Visibility="{x:Bind Model.FreeVersionBoxVisibility, Mode=OneWay}"
-                                           Text="Universal clipboard is available for free users as a 14 day trial. You can upgrade later at any time." />
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Margin="0,24,0,0">
@@ -155,6 +154,15 @@
                                                TextWrapping="Wrap" />
                                 <HyperlinkButton Content="Sign out" Foreground="SkyBlue" Tapped="SignOutFromCloudService_Tapped" />
                             </StackPanel>
+                            <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Reverse}"
+                                        Background="#aa333333"
+                                        Margin="0,8,0,12"
+                                        HorizontalAlignment="Left"
+                                        Padding="12">
+                                <TextBlock Text="Not signed in." 
+                                               TextWrapping="Wrap" />
+                                <HyperlinkButton Content="Sign in" Foreground="SkyBlue" Tapped="SignInToCloudService_Tapped" />
+                            </StackPanel>
                         </StackPanel>
                         <StackPanel Margin="0,24,0,8">
                             <TextBlock Text="Advanced" FontWeight="Bold" />
@@ -163,7 +171,7 @@
                                        Margin="0,24,0,4" />
                             <TextBlock Text="Enable this if you're having trouble connecting to your Android devices from this device."
                                        TextWrapping="Wrap"
-                                       Opacity="0.7" />
+                                       Foreground="#CCCCCC" />
                             <ToggleSwitch IsOn="{x:Bind Model.LegacyAndroidModeToggle, Mode=TwoWay}" />
                         </StackPanel>
                     </StackPanel>
@@ -185,17 +193,10 @@
                             <TextBlock Text="Version " Opacity="0.7" />
                             <TextBlock Text="{x:Bind Model.PackageVersion, Mode=OneTime}" Margin="4,0,0,0" Opacity="0.7" />
                         </StackPanel>
-                        <StackPanel Margin="0,8,0,0" Visibility="{x:Bind Model.FullVersionBoxVisibility, Mode=OneWay}">
-                            <TextBlock Text="Premium version" FontStyle="Italic" Foreground="Green" />
-                        </StackPanel>
-                        <StackPanel Margin="0,8,0,0" Visibility="{x:Bind Model.FreeVersionBoxVisibility, Mode=OneWay}">
-                            <TextBlock Text="Free version" FontStyle="Italic" Foreground="Red" />
-                            <TextBlock Text="You can upgrade to remove ads and file size limits." Margin="0,12,0,0" TextWrapping="Wrap" Opacity="0.7" />
-                            <Button Content="Upgrade to full version" Margin="0,8,0,0" Tapped="UpgradeButton_Tapped" />
-                        </StackPanel>
                         <StackPanel Margin="0,16,0,0">
                             <TextBlock Text="Developed by Mahdi Ghiasi" Opacity="0.5" Margin="0,0,0,12" />
                             <HyperlinkButton Foreground="SkyBlue" Content="Follow @RoamitApp on Twitter" Tapped="TwitterButton_Tapped" />
+                            <HyperlinkButton Foreground="SkyBlue" Content="Browse source code on GitHub" Tapped="GitHubButton_Tapped" />
                             <HyperlinkButton Foreground="SkyBlue" Content="Rate and review" Tapped="RateAndReviewButton_Tapped" />
                             <HyperlinkButton Foreground="SkyBlue" Content="Privacy policy" Tapped="PrivacyPolicyButton_Tapped" />
                         </StackPanel>

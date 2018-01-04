@@ -21,8 +21,6 @@ namespace QuickShare.ViewModels
         
         public SettingsViewModel()
         {
-            CheckTrialStatus();
-
             if ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet))
             {
                 extensionsSectionVisibility = Visibility.Visible;
@@ -68,11 +66,6 @@ namespace QuickShare.ViewModels
         private async void InitDownloadLocation()
         {
             DefaultDownloadLocation = (await DownloadFolderHelper.GetDefaultDownloadFolderAsync()).Path;
-        }
-
-        public void CheckTrialStatus()
-        {
-            IsFullVersion = !TrialSettings.IsTrial;
         }
 
         public string PackageName
@@ -179,35 +172,6 @@ namespace QuickShare.ViewModels
         {
             get { return freeVersionBoxVisibility; }
         }
-
-        private bool isFullVersion;
-        public bool IsFullVersion
-        {
-            get
-            {
-                return isFullVersion;
-            }
-            set
-            {
-                isFullVersion = value;
-
-                if (isFullVersion)
-                {
-                    fullVersionBoxVisibility = Visibility.Visible;
-                    freeVersionBoxVisibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    fullVersionBoxVisibility = Visibility.Collapsed;
-                    freeVersionBoxVisibility = Visibility.Visible;
-                }
-
-                OnPropertyChanged("FullVersionBoxVisibility");
-                OnPropertyChanged("FreeVersionBoxVisibility");
-                OnPropertyChanged("IsFullVersion");
-            }
-        }
-
 
         private Visibility extensionsSectionVisibility;
         public Visibility ExtensionsSectionVisibility
@@ -457,6 +421,9 @@ namespace QuickShare.ViewModels
         {
             get
             {
+                if (string.IsNullOrWhiteSpace(UserName))
+                    return "Just a moment...";
+
                 return $"Signed in to Roamit Cloud Service as '{UserName}'";
             }
         }
