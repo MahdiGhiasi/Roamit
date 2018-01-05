@@ -244,7 +244,9 @@ namespace QuickShare.FileTransfer
                 {
                     State = ee.State,
                     CurrentPart = finishedSlices + ee.CurrentPart,
-                    Total = totalSlices
+                    Total = totalSlices,
+                    TotalBytesTransferred = ee.TotalBytesTransferred,
+                    TotalFiles = ee.TotalFiles,
                 });
 
                 if (ee.State == FileTransferState.Finished)
