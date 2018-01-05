@@ -40,7 +40,6 @@ namespace QuickShare
 
         bool sendingFile = false;
         CancellationTokenSource sendFileCancellationTokenSource = new CancellationTokenSource();
-        DispatcherTimer speedTimer;
 
         public MainSend()
         {
@@ -359,13 +358,6 @@ namespace QuickShare
             {
                 ViewModel.ProgressMaximum = 1;
 
-                speedTimer = new DispatcherTimer
-                {
-                    Interval = TimeSpan.FromSeconds(1 + (new Random()).NextDouble()) // So we can give more realistic speed numbers! (Otherwise, for a large file all speeds would be powers of 2 xD)
-                };
-                speedTimer.Tick += SpeedTimer_Tick;
-                speedTimer.Start();
-
                 fs.FileTransferProgress += async (ss, ee) =>
                 {
                     if (ee.State == FileTransferState.Error)
@@ -382,7 +374,8 @@ namespace QuickShare
                             ViewModel.ProgressValue = (int)ee.CurrentPart;
                             ViewModel.ProgressIsIndeterminate = false;
 
-                            bytesSent = ee.TotalBytesTransferred;
+                            if (ee.TotalBytesTransferred > 0)
+                                ViewModel.ProgressCaption = StringFunctions.GetSizeString(ee.TotalBytesTransferred);
                         }, false);
                     }
                 };
@@ -424,8 +417,6 @@ namespace QuickShare
             }
 
             sendingFile = false;
-            speedTimer.Stop();
-            ViewModel.ProgressSpeed = "";
 
             if (result != FileTransferResult.Successful)
             {
@@ -453,25 +444,6 @@ namespace QuickShare
             }
 
             return result;
-        }
-
-        ulong lastBytesSent = 0, bytesSent = 0;
-        private void SpeedTimer_Tick(object sender, object e)
-        {
-            if (bytesSent == 0)
-                return;
-
-            long deltaByte = (long)(bytesSent - lastBytesSent);
-            lastBytesSent = bytesSent;
-            TimeSpan deltaTime = speedTimer.Interval;
-
-            if (deltaByte == 0)
-                ViewModel.ProgressSpeed = "Waiting...";
-            else
-                ViewModel.ProgressSpeed = StringFunctions.GetSpeedString(deltaByte / deltaTime.TotalSeconds);
-
-            // So we can give more realistic speed numbers! (Otherwise, for a large file all speeds would be powers of 2 xD)
-            speedTimer.Interval = TimeSpan.FromSeconds(1 + (new Random()).NextDouble());
         }
 
         private async Task DownloadNecessaryFiles()

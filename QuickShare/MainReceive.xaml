@@ -20,8 +20,8 @@
                         <Setter Target="Progress.Width" Value="150" />
                         <Setter Target="Progress.Height" Value="150" />
                         <Setter Target="Progress.FontSize" Value="25" />
-                        <Setter Target="ProgressSpeedText.FontSize" Value="16" />
-                        <Setter Target="ProgressSpeedText.Margin" Value="0,65,0,0" />
+                        <Setter Target="ProgressCaption.FontSize" Value="16" />
+                        <Setter Target="ProgressCaption.Margin" Value="0,65,0,0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -48,8 +48,8 @@
                                               Width="250" 
                                               Height="250" 
                                               Thickness="6" />
-                <TextBlock x:Name="ProgressSpeedText" 
-                           Text="{x:Bind ViewModel.ProgressSpeed, Mode=OneWay}" 
+                <TextBlock x:Name="ProgressCaption" 
+                           Text="{x:Bind ViewModel.ProgressCaption, Mode=OneWay}" 
                            Opacity="0.5" 
                            FontSize="20"
                            FontWeight="ExtraLight"
