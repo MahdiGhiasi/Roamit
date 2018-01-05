@@ -41,6 +41,20 @@
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
+                    <StackPanel Tag="8" Margin="0,0,0,24" Visibility="Visible">
+                        <TextBlock Text="&#8226; Roamit is now free and open source!"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; File send/receive UI improvements."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Picture picker improvements."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Fixed an issue when sending OneDrive file-on-demand files failed."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
                     <StackPanel Tag="7" Margin="0,0,0,24" Visibility="Visible">
                         <TextBlock Text="&#8226; You can now save received files to another place right from the receive notification."
                                    Margin="0,0,0,4"
