@@ -1,4 +1,5 @@
 ﻿using GoogleAnalytics;
+using QuickShare.Classes;
 using QuickShare.Common;
 using QuickShare.ViewModels;
 using System;
@@ -72,7 +73,14 @@ namespace QuickShare.HelperClasses.Version
                 }
             }
 
-            return items;
+            return items.OrderBy(x => GetPurchaseItemOrder(x)).ToList();
+        }
+
+        private static int GetPurchaseItemOrder(PurchaseItem x)
+        {
+            if (int.TryParse(x.Token.Substring(Donate_TokenBegin.Length), out int i))
+                return i;
+            return int.MaxValue;
         }
 
         internal static async Task<StorePurchaseStatus> TryPurchaseConsumable(PurchaseItem item)
