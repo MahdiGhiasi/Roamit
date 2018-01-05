@@ -118,7 +118,7 @@ namespace QuickShare.ViewModels
         }
 
         string progressSpeed;
-        public string ProgressSpeed
+        public string ProgressCaption
         {
             get
             {
@@ -127,7 +127,7 @@ namespace QuickShare.ViewModels
             set
             {
                 progressSpeed = value;
-                OnPropertyChanged("ProgressSpeed");
+                OnPropertyChanged("ProgressCaption");
             }
         }
 

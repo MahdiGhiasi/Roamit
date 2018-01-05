@@ -24,7 +24,6 @@ namespace QuickShare
         public MainReceiveViewModel ViewModel { get; set; }
 
         bool shouldStayOpen = false;
-        DispatcherTimer speedTimer;
 
         public MainReceive()
         {
@@ -37,13 +36,6 @@ namespace QuickShare
                 ProgressIsIndeterminate = true,
                 ReceiveStatus = "Preparing to receive...",
             };
-
-            speedTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1 + (new Random()).NextDouble()) // So we can give more realistic speed numbers! (Otherwise, for a large file all speeds would be powers of 2 xD)
-            };
-            speedTimer.Tick += SpeedTimer_Tick;
-            speedTimer.Start();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -87,26 +79,8 @@ namespace QuickShare
 
             ViewModel.ProgressValue = (int)e.CurrentPart;
             ViewModel.ProgressMaximum = (int)e.Total;
-            bytesReceived = e.TotalBytesTransferred;
-        }
 
-        ulong lastBytesReceived = 0, bytesReceived = 0;
-        private void SpeedTimer_Tick(object sender, object e)
-        {
-            if (bytesReceived == 0)
-                return;
-
-            long deltaByte = (long)(bytesReceived - lastBytesReceived);
-            lastBytesReceived = bytesReceived;
-            TimeSpan deltaTime = speedTimer.Interval;
-
-            if (deltaByte == 0)
-                ViewModel.ProgressSpeed = "Waiting...";
-            else
-                ViewModel.ProgressSpeed = StringFunctions.GetSpeedString(deltaByte / deltaTime.TotalSeconds);
-
-            // So we can give more realistic speed numbers! (Otherwise, for a large file all speeds would be powers of 2 xD)
-            speedTimer.Interval = TimeSpan.FromSeconds(1 + (new Random()).NextDouble());
+            ViewModel.ProgressCaption = StringFunctions.GetSizeString(e.TotalBytesTransferred);
         }
     }
 }
