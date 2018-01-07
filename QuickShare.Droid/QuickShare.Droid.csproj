@@ -74,8 +74,8 @@
     <Reference Include="Microsoft.AspNetCore.WebUtilities, Version=1.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNetCore.WebUtilities.1.1.2-rtm-201704210746\lib\netstandard1.3\Microsoft.AspNetCore.WebUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ConnectedDevices.Xamarin.Droid, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ConnectedDevices.Xamarin.Droid.0.4.0\lib\MonoAndroid44\Microsoft.ConnectedDevices.Xamarin.Droid.dll</HintPath>
+    <Reference Include="Microsoft.ConnectedDevices.Xamarin.Droid, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ConnectedDevices.Xamarin.Droid.0.8.0\lib\monoandroid71\Microsoft.ConnectedDevices.Xamarin.Droid.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Extensions.Primitives, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
