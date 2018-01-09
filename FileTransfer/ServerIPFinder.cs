@@ -188,7 +188,10 @@ namespace QuickShare.FileTransfer
 
         private static async Task<bool> CheckIP(string ip, string expectedMessage)
         {
-            var httpClient = new HttpClient();
+            var httpClient = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(3),
+            };
 
             try
             {
