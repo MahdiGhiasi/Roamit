@@ -287,7 +287,7 @@ namespace QuickShare.ServiceTask
             else
             {
                 double percent = ((double)e.CurrentPart) / ((double)e.Total);
-                Toaster.ShowFileReceiveProgressNotification(e.SenderName, e.Total == 0 ? -1.0 : percent, e.Guid);
+                Toaster.ShowFileReceiveProgressNotification(e.SenderName, e.Total == 0 ? -1.0 : percent, e.TotalBytesTransferred, e.Guid);
             }
         }
 

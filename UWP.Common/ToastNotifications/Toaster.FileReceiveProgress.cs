@@ -15,7 +15,7 @@ namespace QuickShare.ToastNotifications
     {
         private static Dictionary<Guid, string> fileReceiveProgresses = new Dictionary<Guid, string>();
 
-        public static void ShowFileReceiveProgressNotification(string hostName, double percent, Guid guid)
+        public static void ShowFileReceiveProgressNotification(string hostName, double percent, double receivedSize, Guid guid)
         {
 #if NOTIFICATIONHANDLER_DEBUGINFO
             System.Diagnostics.Debug.WriteLine("Notif" + percent);
@@ -28,7 +28,7 @@ namespace QuickShare.ToastNotifications
                 if (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone)
                     ShowFileReceiveProgressNotificationCreatorsForPhone(hostName, percent, guid);
                 else
-                    ShowFileReceiveProgressNotificationCreators(hostName, percent, guid);
+                    ShowFileReceiveProgressNotificationCreators(hostName, percent, receivedSize == 0 ? "" : HelperClasses.StringFunctions.GetSizeString(receivedSize), guid);
             }
             else
             {
@@ -94,14 +94,13 @@ namespace QuickShare.ToastNotifications
         /**/
 
 
-        private static void ShowFileReceiveProgressNotificationCreators(string hostName, double percent, Guid guid)
+        private static void ShowFileReceiveProgressNotificationCreators(string hostName, double percent, string status, Guid guid)
         {
             if (ToastNotificationManager.History.GetHistory().FirstOrDefault(x => x.Tag == guid.ToString()) == null)
             {
                 string toastXml = Templates.ProgressBar.Replace("{argsLaunch}", "action=fileProgress")
                                                        .Replace("{progressTitle}", "")
-                                                       .Replace("{progressValueStringOverride}", "")
-                                                       .Replace("{progressStatus}", "");
+                                                       .Replace("{progressValueStringOverride}", "");
 
                 var doc = new XmlDocument();
                 doc.LoadXml(toastXml);
@@ -118,6 +117,7 @@ namespace QuickShare.ToastNotifications
             
             NotificationData data = new NotificationData();
             data.Values.Add("progressValue", percent < 0 ? "indeterminate" : percent.ToString());
+            data.Values.Add("progressStatus", status);
             data.Values.Add("title", $"Receiving from {hostName}...");
 
             ToastNotificationManager.CreateToastNotifier().Update(data, guid.ToString());
