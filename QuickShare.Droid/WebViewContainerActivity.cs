@@ -876,29 +876,12 @@ namespace QuickShare.Droid
         private async Task SendFilesToWindowsDevice(string[] files)
         {
             ShowProgress();
+
+            //SetProgressText("Initializing...");
+            //await Common.PackageManager.LaunchUri(new Uri("roamit://receiveDialog"), Common.GetCurrentRemoteSystem());
+
             SetProgressText("Connecting...");
-
-            var receiveDialogOpenResult = await Common.PackageManager.LaunchUri(new Uri("roamit://receiveDialog"), Common.GetCurrentRemoteSystem());
-            if (receiveDialogOpenResult != QuickShare.Common.Rome.RomeRemoteLaunchUriStatus.Success)
-            {
-                Analytics.TrackEvent("SendToWindows", "file", "Failed");
-                SetProgressText($"Communication failed. ({receiveDialogOpenResult.ToString()})");
-                return;
-            }
-
             var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
-
-            if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
-            {
-                Analytics.TrackEvent("SendToWindows", "file", "Failed");
-                SetProgressText($"Connect failed. ({result.ToString()})");
-                return;
-            }
-
-            //Fix Rome Android bug (receiver app service closes after 5 seconds in first connection)
-            Common.PackageManager.CloseAppService();
-            result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
-
             if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
             {
                 Analytics.TrackEvent("SendToWindows", "file", "Failed");
