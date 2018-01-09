@@ -92,28 +92,31 @@ namespace QuickShare.Droid.Firebase
 
                     MessageReceiveHelper.CopyTextToClipboard(this, guid);
                 }
-                else if ((message.Data["Action"] == "CloudClipboard") && (message.Data.ContainsKey("Data")))
+                else if (message.Data["Action"] == "CloudClipboard")
                 {
-                    string text = message.Data["Data"];
-
-                    var settings = new Settings(this);
-
-                    if (message.Data.ContainsKey("AccountId"))
+                    if (message.Data.ContainsKey("Data"))
                     {
-                        if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
-                            CrossSecureStorage.Current.DeleteKey("RoamitAccountId");
+                        string text = message.Data["Data"];
 
-                        CrossSecureStorage.Current.SetValue("RoamitAccountId", message.Data["AccountId"]);
-                    }
+                        var settings = new Settings(this);
 
-                    if (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic)
-                    {
-                        CloudClipboardNotifier.SetCloudClipboardValue(this, text);
-                    }
-                    else
-                    {
-                        settings.CloudClipboardText = text;
-                        CloudClipboardNotifier.SendCloudClipboardNotification(this, text);
+                        if (message.Data.ContainsKey("AccountId"))
+                        {
+                            if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
+                                CrossSecureStorage.Current.DeleteKey("RoamitAccountId");
+
+                            CrossSecureStorage.Current.SetValue("RoamitAccountId", message.Data["AccountId"]);
+                        }
+
+                        if (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic)
+                        {
+                            CloudClipboardNotifier.SetCloudClipboardValue(this, text);
+                        }
+                        else
+                        {
+                            settings.CloudClipboardText = text;
+                            CloudClipboardNotifier.SendCloudClipboardNotification(this, text);
+                        }
                     }
                 }
                 else
