@@ -92,8 +92,9 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                     return false;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"RegisterDevice Failed due to unhandled exception: {ex.Message}");
                 return false;
             }
         }
