@@ -39,15 +39,13 @@ namespace QuickShare.Droid.Classes
 
             if (receiver == "ServerIPFinder")
             {
-                InitProgressNotifier();
-                progressNotifier.UpdateTitle("Initializing...");
+                InitProgressNotifier("Initializing...");
 
                 await FileTransfer.ServerIPFinder.ReceiveRequest(message);
             }
             else if (receiver == "FileReceiver")
             {
-                InitProgressNotifier();
-                progressNotifier.UpdateTitle("Receiving...");
+                InitProgressNotifier("Receiving...");
 
                 await FileTransfer.FileReceiver.ReceiveRequest(message, DownloadFolderDecider);
             }
@@ -98,13 +96,13 @@ namespace QuickShare.Droid.Classes
             return downloadFolder;
         }
 
-        public static void InitProgressNotifier()
+        public static void InitProgressNotifier(string title = "Connecting...")
         {
             if (progressNotifier != null)
                 return;
 
             progressNotifier = new ProgressNotifier(context, "Receive failed.");
-            progressNotifier.SendInitialNotification("Connecting...", "");
+            progressNotifier.SendInitialNotification(title, "");
         }
 
 
