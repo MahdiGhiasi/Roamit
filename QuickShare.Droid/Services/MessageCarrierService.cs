@@ -176,9 +176,6 @@ namespace QuickShare.Droid.Services
 
                     Android.Util.Log.Debug(TAG, "Connecting to message carrier service...");
                     var c = await Common.MessageCarrierPackageManager.Connect(rs, false);
-                    //Fix Rome Android bug (receiver app service closes after 5 seconds in first connection)
-                    //Common.MessageCarrierPackageManager.CloseAppService();
-                    //c = await Common.MessageCarrierPackageManager.Connect(rs, false);
 
                     if (c != RomeAppServiceConnectionStatus.Success)
                     {
