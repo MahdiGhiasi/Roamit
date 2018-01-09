@@ -26,14 +26,9 @@ namespace QuickShare.HelperClasses
                     SendDataTemporaryStorage.Text = url;
                     type = StandardDataFormats.WebLink;
                 }
-                else if ((files.Count == 0) && (items.Count == 1) && (items[0] is StorageFolder))
-                {
-                    SendDataTemporaryStorage.Files = new List<IStorageItem>(items);
-                    type = StandardDataFormats.StorageItems;
-                }
                 else
                 {
-                    SendDataTemporaryStorage.Files = new List<IStorageItem>(files);
+                    SendDataTemporaryStorage.Files = new List<IStorageItem>(items);
                     type = StandardDataFormats.StorageItems;
                 }
             }

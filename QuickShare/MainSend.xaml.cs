@@ -406,10 +406,9 @@ namespace QuickShare
                 {
                     await Task.Run(async () =>
                     {
-                        result = await fs.SendFiles(sendFileCancellationTokenSource.Token, 
-                            from x in SendDataTemporaryStorage.Files
-                            where x is StorageFile
-                            select new PCLStorage.WinRTFile(x as StorageFile), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
+                        result = await fs.SendQueue(sendFileCancellationTokenSource.Token, 
+                            await GetFiles(SendDataTemporaryStorage.Files),
+                            DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
                     });
                 }
 
@@ -463,6 +462,25 @@ namespace QuickShare
                     }
                 }
             }
+        }
+
+        private async Task<List<Tuple<string, IFile>>> GetFiles(List<IStorageItem> items, string relPath = "")
+        {
+            var output = new List<Tuple<string, IFile>>();
+
+            var files = items.Where(x => x is StorageFile)
+                .Select(x => new Tuple<string, IFile>(relPath, new WinRTFile(x as StorageFile)));
+            var folders = items.Where(x => x is StorageFolder)
+                .Select(x => x as StorageFolder);
+
+            output.AddRange(files);
+
+            foreach (var folder in folders)
+            {
+                output.AddRange(await GetFilesOfFolder(folder, relPath));
+            }
+
+            return output;
         }
 
         private async Task<List<Tuple<string, IFile>>> GetFilesOfFolder(StorageFolder f, string relPath = "")
