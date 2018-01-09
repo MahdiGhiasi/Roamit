@@ -21,7 +21,7 @@ namespace QuickShare.FileTransfer
         public static readonly string TRANSFER_CANCELLED_MESSAGE = "Transfer cancelled.";
 
         readonly int maxQueueInfoMessageSize = 1536;
-        readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(6);
+        readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(600);
 
         object remoteSystem;
 
@@ -138,13 +138,13 @@ namespace QuickShare.FileTransfer
                 FileTransferProgressInternal -= (d as FileTransferProgressEventHandler);
         }
 
-        private string GenerateUniqueRandomKey()
+        private string GenerateUniqueRandomKey(int length = 24)
         {
             string s = "";
 
             do
             {
-                s = RandomFunctions.RandomString(24);
+                s = RandomFunctions.RandomString(length);
             }
             while (keyTable.ContainsKey(s));
 
@@ -259,15 +259,55 @@ namespace QuickShare.FileTransfer
                 server?.Dispose();
             });
 
-            if (await SendQueueInit(totalSlices, queueFinishKey, parentDirectoryName) == false)
+            var queueInfoKey = GenerateUniqueRandomKey(9);
+            PrepareQueueInfo(queueInfoKey, files, sFileKeyPairs, fs);
+            
+            if (await SendQueueInit(totalSlices, queueFinishKey, parentDirectoryName, queueInfoKey) == false)
                 return FileTransferResult.FailedOnQueueInit;
 
-            bool infoSendResult = await SendQueueInfo(files, sFileKeyPairs, fs);
+            bool infoSendResult = await SendQueueInfoIfNecessary(files, sFileKeyPairs, fs);
 
             return await WaitQueueToFinish(cancellationToken);
         }
 
-        private async Task<bool> SendQueueInfo(List<Tuple<string, IFile>> files, Dictionary<IFile, string> sFileKeyPairs, IFileStats[] fs)
+        string queueInfoComplete = "";
+        bool sentQueueInfoComplete;
+        private void PrepareQueueInfo(string key, List<Tuple<string, IFile>> files, Dictionary<IFile, string> sFileKeyPairs, IFileStats[] fs)
+        {
+            List<string> items = GetQueueInfoItems(files, sFileKeyPairs, fs).ToList();
+            queueInfoComplete = JsonConvert.SerializeObject(items);
+            sentQueueInfoComplete = false;
+
+            server.AddResponseUrl($"/{key}/", (Func<IWebServer, RequestDetails, string>)GetQueueInfoComplete);
+        }
+
+        private string GetQueueInfoComplete(IWebServer arg1, RequestDetails arg2)
+        {
+            sentQueueInfoComplete = true;
+            return queueInfoComplete;
+        }
+
+        private async Task<bool> SendQueueInfoIfNecessary(List<Tuple<string, IFile>> files, Dictionary<IFile, string> sFileKeyPairs, IFileStats[] fs)
+        {
+            int c = 0;
+            while (c < 20)
+            {
+                if (sentQueueInfoComplete)
+                    return true;
+
+                await Task.Delay(TimeSpan.FromSeconds(0.1));
+                c++;
+            }
+
+            if (sentQueueInfoComplete)
+                return true;
+
+            Queue<string> items = GetQueueInfoItems(files, sFileKeyPairs, fs);
+
+            return await SendQueueInfoParts(items);
+        }
+
+        private Queue<string> GetQueueInfoItems(List<Tuple<string, IFile>> files, Dictionary<IFile, string> sFileKeyPairs, IFileStats[] fs)
         {
             Queue<string> items = new Queue<string>();
             for (int i = 0; i < files.Count; i++)
@@ -281,6 +321,11 @@ namespace QuickShare.FileTransfer
                     true));
             }
 
+            return items;
+        }
+
+        private async Task<bool> SendQueueInfoParts(Queue<string> items)
+        {
             int partNum = 0;
             while (items.Count > 0)
             {
@@ -325,7 +370,7 @@ namespace QuickShare.FileTransfer
             return true;
         }
 
-        private async Task<bool> SendQueueInit(ulong totalSlices, string queueFinishKey, string parentDirectoryName)
+        private async Task<bool> SendQueueInit(ulong totalSlices, string queueFinishKey, string parentDirectoryName, string queueInfoKey)
         {
             Dictionary<string, object> qInit = new Dictionary<string, object>
             {
@@ -336,7 +381,8 @@ namespace QuickShare.FileTransfer
                 { "ServerIP", ipFinderResult.MyIP },
                 { "Guid", Guid.NewGuid().ToString() },
                 { "SenderName", deviceName },
-                { "parentDirectoryName", parentDirectoryName }
+                { "parentDirectoryName", parentDirectoryName },
+                { "QueueInfoKey", queueInfoKey },
             };
             var result = await packageManager.Send(qInit);
 

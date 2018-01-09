@@ -67,26 +67,40 @@ namespace QuickShare.FileTransfer
                 //await request.SendResponseAsync(vs);
 
                 InvokeProgressEvent(0, 0, FileTransferState.QueueList);
-            }
-            else if ((request.ContainsKey("IsQueueItemGroup")) && (request["IsQueueItemGroup"] as string == "true"))
-            {
-                int partNum = int.Parse(request["PartNum"].ToString());
-                Debug.WriteLine($"Received QueueItemGroup #{partNum}.");
-                if (partNum > latestReceivedQueueItemGroupId)
+
+                if (request.ContainsKey("QueueInfoKey"))
                 {
-                    latestReceivedQueueItemGroupId = partNum;
+                    List<string> queueItems = await RetrieveQueueItems(request["ServerIP"] as string, request["QueueInfoKey"] as string);
 
-                    var items = JsonConvert.DeserializeObject<List<string>>(request["Data"].ToString());
-
-                    Debug.WriteLine($"It contains {items.Count} entries. Processing...");
-
-                    foreach (var item in items)
+                    foreach (var item in queueItems)
                     {
                         var info = JsonConvert.DeserializeObject<Dictionary<string, object>>(item);
                         await ProcessQueueItem(info, downloadFolderDecider);
                     }
+                }
+            }
+            else if ((request.ContainsKey("IsQueueItemGroup")) && (request["IsQueueItemGroup"] as string == "true"))
+            {
+                if (queuedSlicesYet < queueTotalSlices) //Ignore if queue already started processing
+                {
+                    int partNum = int.Parse(request["PartNum"].ToString());
+                    Debug.WriteLine($"Received QueueItemGroup #{partNum}.");
+                    if (partNum > latestReceivedQueueItemGroupId)
+                    {
+                        latestReceivedQueueItemGroupId = partNum;
 
-                    Debug.WriteLine("Processed QueueItemGroup successfully.");
+                        var items = JsonConvert.DeserializeObject<List<string>>(request["Data"].ToString());
+
+                        Debug.WriteLine($"It contains {items.Count} entries. Processing...");
+
+                        foreach (var item in items)
+                        {
+                            var info = JsonConvert.DeserializeObject<Dictionary<string, object>>(item);
+                            await ProcessQueueItem(info, downloadFolderDecider);
+                        }
+
+                        Debug.WriteLine("Processed QueueItemGroup successfully.");
+                    }
                 }
             }
             else if ((request.ContainsKey("IsQueueItem")) && (request["IsQueueItem"] as string == "true"))
@@ -132,6 +146,28 @@ namespace QuickShare.FileTransfer
             }
 
             return returnVal;
+        }
+
+        private static async Task<List<string>> RetrieveQueueItems(string ip, string key)
+        {
+            var httpClient = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(3),
+            };
+
+            try
+            {
+                var response = await httpClient.GetAsync($"http://{ip}:{Constants.CommunicationPort.ToString()}/{key}/");
+                if (!response.IsSuccessStatusCode)
+                    throw new InvalidDataException();
+                
+                var body = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<string>>(body);
+            }
+            catch (Exception ex)
+            {
+                return new List<string>();
+            }
         }
 
         private static async Task ProcessQueueItem(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
