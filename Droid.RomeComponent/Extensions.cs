@@ -71,23 +71,23 @@ namespace QuickShare.Droid.RomeComponent
                 return NormalizedRemoteSystemStatus.Unknown;
         }
 
-        public static RomeAppServiceConnectionStatus ConvertToRomeAppServiceConnectionStatus(this AppServiceClientConnectionStatus status)
+        public static RomeAppServiceConnectionStatus ConvertToRomeAppServiceConnectionStatus(this AppServiceConnectionStatus status)
         {
-            if (status.Value == AppServiceClientConnectionStatus.AppNotInstalled.Value)
+            if (status.Value == AppServiceConnectionStatus .AppNotInstalled.Value)
                 return RomeAppServiceConnectionStatus.AppNotInstalled;
-            else if (status.Value == AppServiceClientConnectionStatus.AppserviceUnavailable.Value)
+            else if (status.Value == AppServiceConnectionStatus .AppserviceUnavailable.Value)
                 return RomeAppServiceConnectionStatus.AppServiceUnavailable;
-            else if (status.Value == AppServiceClientConnectionStatus.AppUnavailable.Value)
+            else if (status.Value == AppServiceConnectionStatus .AppUnavailable.Value)
                 return RomeAppServiceConnectionStatus.AppUnavailable;
-            else if (status.Value == AppServiceClientConnectionStatus.NotAuthorized.Value)
+            else if (status.Value == AppServiceConnectionStatus .NotAuthorized.Value)
                 return RomeAppServiceConnectionStatus.NotAuthorized;
-            else if (status.Value == AppServiceClientConnectionStatus.RemoteSystemNotSupportedbyapp.Value)
+            else if (status.Value == AppServiceConnectionStatus .RemoteSystemNotSupportedbyapp.Value)
                 return RomeAppServiceConnectionStatus.RemoteSystemNotSupportedByApp;
-            else if (status.Value == AppServiceClientConnectionStatus.RemoteSystemUnavailable.Value)
+            else if (status.Value == AppServiceConnectionStatus .RemoteSystemUnavailable.Value)
                 return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
-            else if (status.Value == AppServiceClientConnectionStatus.Success.Value)
+            else if (status.Value == AppServiceConnectionStatus .Success.Value)
                 return RomeAppServiceConnectionStatus.Success;
-            else if (status.Value == AppServiceClientConnectionStatus.Unknown.Value)
+            else if (status.Value == AppServiceConnectionStatus .Unknown.Value)
                 return RomeAppServiceConnectionStatus.Unknown;
             else
                 return RomeAppServiceConnectionStatus.Unknown;
@@ -111,7 +111,7 @@ namespace QuickShare.Droid.RomeComponent
             return bundle;
         }
 
-        public static RomeAppServiceResponse ConvertToRomeAppServiceResponse(this AppServiceClientResponse response)
+        public static RomeAppServiceResponse ConvertToRomeAppServiceResponse(this AppServiceResponse response)
         {
             var output = new RomeAppServiceResponse();
 
