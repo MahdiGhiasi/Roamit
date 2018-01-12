@@ -69,6 +69,13 @@ namespace QuickShare.Droid.Classes
                 output.Add("Fixed an issue where back button was not working.");
             }
 
+            if (lastShownVersion < new Version("2.6.0"))
+            {
+                output.Add("Improved connection speed.");
+                output.Add("Improved the speed of 'Preparing' phase when sending multiple files.");
+                output.Add("Fixed an issue where send link button was not working.");
+            }
+
             return output;
         }
 
