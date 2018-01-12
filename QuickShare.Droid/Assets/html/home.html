@@ -114,7 +114,7 @@
 
             function updateButtonsEnabledOrDisabled() {
                 $("#sendFileButton, #sendPhotoButton, #sendClipboardButton, .sharedialog-button").removeAttr("disabled");
-                $("#sendUrlButton").removeClass("inlinebutton-disabled");
+                $("#sendUrlButton").removeClass("inlinebutton-disabled").removeAttr("disabled");
                 $(".actionbutton-clipboardpreview-container").css("visibility", "visible");
                 $("#sendUrlButton").css("visibility", "collapse");
 

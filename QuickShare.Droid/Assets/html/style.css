@@ -324,6 +324,7 @@ body {
     color: dodgerblue;
     text-decoration: underline;
     cursor: pointer;
+    pointer-events: all;
 }
 
 .inlinebutton-disabled {
