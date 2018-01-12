@@ -61,20 +61,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
-                android:paddingBottom="0dp" />
-            <TextView
-                android:text="To get started, get Roamit on your PC from:"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView1"
-                android:paddingTop="8dp" />
-            <TextView
-                android:text="roamit.ghiasi.net"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="0dp"
                 android:paddingBottom="16dp" />
             <Switch
                 android:layout_width="match_parent"
@@ -87,7 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/settings_cloudClipboardModeSwitch"
-                android:text="Reflect clipboard changes from my PC to this device automatically" />
+                android:text="Reflect clipboard changes automatically to this device" />
             <TextView
                 android:id="@+id/settings_cloudClipboardModeDescription"
                 android:text="If this option is turned off, a notification will appear in the notificaion center of this device containing latest clipboard text. Tapping it will copy it to the local clipboard of this device."
