@@ -211,7 +211,6 @@
     <Compile Include="Classes\FilePathHelper.cs" />
     <Compile Include="Classes\Notification.cs" />
     <Compile Include="Classes\ProgressNotifier.cs" />
-    <Compile Include="Classes\TrialHelper.cs" />
     <Compile Include="IntroActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />

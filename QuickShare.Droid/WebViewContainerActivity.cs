@@ -51,12 +51,6 @@ namespace QuickShare.Droid
         System.Timers.Timer finishLoadingTimer = null, checkClipboardTextTimer = null;
         Object finishLoadingLock = new Object();
 
-        internal static CallbackStartSessionListener startSessionListener;
-        internal static CallbackShowBanner showBannerAdListener;
-        RevMobBanner revmobBanner;
-        LinearLayout devicesListLayout;
-        RelativeLayout bannerLayout;
-
         bool sendingFile = true;
         CancellationTokenSource sendFileCancellationTokenSource;
 
@@ -85,16 +79,6 @@ namespace QuickShare.Droid
 
                 ShowWhatsNewIfNecessary();
             }
-
-
-            bannerLayout = FindViewById<RelativeLayout>(Resource.Id.webViewContainer_banner);
-            startSessionListener = new CallbackStartSessionListener(this);
-            showBannerAdListener = new CallbackShowBanner(this);
-            RevMob.StartWithListener(this, startSessionListener, Droid.Config.Secrets.RevMobId);
-            UserTrialStatusUpdated();
-            TrialHelper.UserTrialStatusChanged += UserTrialStatusUpdated;
-            RefreshUserTrialStatus();
-
 
             checkClipboardTextTimer = new System.Timers.Timer()
             {
@@ -154,7 +138,6 @@ namespace QuickShare.Droid
                 FirebaseInstanceId.Instance.DeleteInstanceId();
 #endif
                 await ServiceFunctions.RegisterDevice(context);
-                RefreshUserTrialStatus();
             });
 
             Analytics.TrackPage("WebViewContainerActivity");
@@ -216,52 +199,6 @@ namespace QuickShare.Droid
             }
         }
 
-        private async void UserTrialStatusUpdated()
-        {
-            if (TrialHelper.UserTrialStatus == QuickShare.Common.Service.UpgradeDetails.VersionStatus.TrialVersion)
-                await ShowBanner();
-            else
-                HideBanner();
-        }
-
-        private void HideBanner()
-        {
-            bannerLayout.Visibility = ViewStates.Gone;
-
-            if (revmobBanner != null)
-                revmobBanner.Hide();
-        }
-
-        private async Task ShowBanner()
-        {
-            try
-            {
-                bannerLayout.Visibility = ViewStates.Visible;
-
-                if (revmobBanner != null)
-                {
-                    revmobBanner.Show();
-                    return;
-                }
-
-                var revMob = await RevMobHelper.TryGetAdMobSessionAsync(startSessionListener);
-                if (revMob == null)
-                {
-                    HideBanner();
-                    return;
-                }
-
-                revmobBanner = revMob.CreateBanner(this, "", showBannerAdListener);
-                revmobBanner.SetAutoShow(true);
-
-                ViewGroup view = FindViewById<ViewGroup>(Resource.Id.webViewContainer_banner);
-
-                view.RemoveAllViews();
-                view.AddView(revmobBanner);
-            }
-            catch { }
-        }
-
         private bool IsShareDialog { get => ((Intent.Action == Intent.ActionSend) || (Intent.Action == Intent.ActionSendMultiple)); }
 
         private void InitShareDialog(AppTheme theme)
@@ -304,16 +241,6 @@ namespace QuickShare.Droid
                 webView.LoadUrl($"{homeUrl}#{sharePage}");
             }
         }
-
-        private async void RefreshUserTrialStatus()
-        {
-            if (MSAAuthenticator.HasUserUniqueId())
-            {
-                var userId = await MSAAuthenticator.GetUserUniqueIdAsync();
-                await TrialHelper.RefreshUserTrialStatusAsync(userId);
-            }
-        }
-
 
         private void CheckClipboardTextTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
@@ -737,25 +664,6 @@ namespace QuickShare.Droid
 
         private async Task SendFiles(string[] files)
         {
-            if (TrialHelper.UserTrialStatus == QuickShare.Common.Service.UpgradeDetails.VersionStatus.TrialVersion)
-            {
-                double totalSize = 0;
-                foreach (var item in files)
-                {
-                    var info = new System.IO.FileInfo(item);
-                    totalSize += info.Length;
-                }
-                totalSize /= 1024.0 * 1024.0;
-
-                if (totalSize > Constants.MaxSizeForTrialVersion)
-                {
-                    var intent = new Intent(this, typeof(MessageShowActivity));
-                    intent.PutExtra("message", "trialNotice");
-                    StartActivity(intent);
-                    return;
-                }
-            }
-
             if (IsAndroidDeviceSelected())
                 await SendFilesToAndroidDevice(files);
             else

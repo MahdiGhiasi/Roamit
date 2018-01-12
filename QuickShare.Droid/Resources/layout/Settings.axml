@@ -134,6 +134,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:id="@+id/linearLayout1">
                 <TextView
                     android:text="Roamit"
@@ -149,18 +150,26 @@
                     android:id="@+id/settings_txt_version" />
             </LinearLayout>
             <TextView
-                android:text="Free version"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/settings_twitterLink"
+                android:text="@string/TwitterLink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/settings_txt_trialStatus"
-                android:paddingTop="15dp"
-                android:paddingBottom="10dp" />
-            <Button
-                android:text="Upgrade to full version"
+                android:layout_marginBottom="12dp"
+                android:textColor="?colorPrimary" />
+            <TextView
+                android:id="@+id/settings_gitHubLink"
+                android:text="@string/GitHubLink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/settings_btn_upgrade" />
+                android:layout_marginBottom="12dp"
+                android:textColor="?colorPrimary" />
+            <TextView
+                android:id="@+id/settings_privacyPolicyLink"
+                android:text="@string/PrivacyPolicyLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:textColor="?colorPrimary" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

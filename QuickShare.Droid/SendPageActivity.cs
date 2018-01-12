@@ -249,26 +249,6 @@ namespace QuickShare.Droid
 
         private async Task SendFiles(string[] files)
         {
-            if (TrialHelper.UserTrialStatus == QuickShare.Common.Service.UpgradeDetails.VersionStatus.TrialVersion)
-            {
-                double totalSize = 0;
-                foreach (var item in files)
-                {
-                    var info = new System.IO.FileInfo(item);
-                    totalSize += info.Length;
-                }
-                totalSize /= 1024.0 * 1024.0;
-
-                if (totalSize > Constants.MaxSizeForTrialVersion)
-                {
-                    var intent = new Intent(this, typeof(MessageShowActivity));
-                    intent.PutExtra("message", "trialNotice");
-                    StartActivity(intent);
-                    Finish();
-                    return;
-                }
-            }
-
             sendStatus.Text = "Connecting...";
 
             var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);

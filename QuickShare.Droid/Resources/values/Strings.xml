@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="Hello">Hello World, Click Me!</string>
-    <string name="ApplicationName">Roamit</string>
+  <string name="ApplicationName">Roamit</string>
+  <string name="TwitterLink"><u>Follow @RoamitApp on Twitter</u></string>
+  <string name="GitHubLink"><u>Browse source code on GitHub</u></string>
+  <string name="PrivacyPolicyLink"><u>Privacy Policy</u></string>
 </resources>

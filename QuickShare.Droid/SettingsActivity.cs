@@ -21,9 +21,9 @@ namespace QuickShare.Droid
     [Activity]
     internal class SettingsActivity : AppCompatActivity
     {
-        TextView txtVersionNumber, txtTrialStatus, txtCloudClipboardModeDescription;
+        TextView txtVersionNumber, txtCloudClipboardModeDescription;
+        TextView linkTwitter, linkGitHub, linkPrivacyPolicy;
         EditText txtDeviceName;
-        Button btnUpgrade;
         Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -44,10 +44,8 @@ namespace QuickShare.Droid
             SupportActionBar.Title = "Settings";
 
             txtVersionNumber = FindViewById<TextView>(Resource.Id.settings_txt_version);
-            txtTrialStatus = FindViewById<TextView>(Resource.Id.settings_txt_trialStatus);
             txtCloudClipboardModeDescription = FindViewById<TextView>(Resource.Id.settings_cloudClipboardModeDescription);
             txtDeviceName = FindViewById<EditText>(Resource.Id.settings_deviceNameText);
-            btnUpgrade = FindViewById<Button>(Resource.Id.settings_btn_upgrade);
             swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
             swUiMode = FindViewById<Switch>(Resource.Id.settings_uiModeSwitch);
@@ -56,22 +54,37 @@ namespace QuickShare.Droid
 
             txtVersionNumber.Text = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
 
-            if (TrialHelper.UserTrialStatus == QuickShare.Common.Service.UpgradeDetails.VersionStatus.TrialVersion)
-            {
-                txtTrialStatus.Text = "Free version";
-                btnUpgrade.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                txtTrialStatus.Text = "Full version";
-                btnUpgrade.Visibility = ViewStates.Gone;
-            }
-
-            btnUpgrade.Click += BtnUpgrade_Click;
+            linkTwitter = FindViewById<TextView>(Resource.Id.settings_twitterLink);
+            linkTwitter.Click += LinkTwitter_Click;
+            linkGitHub = FindViewById<TextView>(Resource.Id.settings_gitHubLink);
+            linkGitHub.Click += LinkGitHub_Click;
+            linkPrivacyPolicy = FindViewById<TextView>(Resource.Id.settings_privacyPolicyLink);
+            linkPrivacyPolicy.Click += LinkPrivacyPolicy_Click;
 
             InitValues();
 
             Analytics.TrackPage("Settings");
+        }
+
+        private void LinkPrivacyPolicy_Click(object sender, EventArgs e)
+        {
+            var uri = Android.Net.Uri.Parse("https://roamit.ghiasi.net/privacy/");
+            Intent intent = new Intent(Intent.ActionView, uri);
+            StartActivity(intent);
+        }
+
+        private void LinkGitHub_Click(object sender, EventArgs e)
+        {
+            var uri = Android.Net.Uri.Parse("https://www.github.com/mghiasi75/Roamit");
+            Intent intent = new Intent(Intent.ActionView, uri);
+            StartActivity(intent);
+        }
+
+        private void LinkTwitter_Click(object sender, EventArgs e)
+        {
+            var uri = Android.Net.Uri.Parse("https://twitter.com/roamitapp");
+            Intent intent = new Intent(Intent.ActionView, uri);
+            StartActivity(intent);
         }
 
         public override void OnBackPressed()
@@ -174,13 +187,6 @@ namespace QuickShare.Droid
             swCloudClipboardMode.Enabled = e.IsChecked;
 
             await ServiceFunctions.SetCloudClipboardActivationStatus(e.IsChecked);
-        }
-
-        private void BtnUpgrade_Click(object sender, EventArgs e)
-        {
-            var intent = new Intent(this, typeof(MessageShowActivity));
-            intent.PutExtra("message", "upgrade");
-            StartActivity(intent);
         }
     }
 }

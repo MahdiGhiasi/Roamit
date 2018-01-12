@@ -2341,9 +2341,6 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0d00b5
 			public const int settings_allowToStayInBackgroundSwitch = 2131558581;
 			
-			// aapt resource value: 0x7f0d00b9
-			public const int settings_btn_upgrade = 2131558585;
-			
 			// aapt resource value: 0x7f0d00b2
 			public const int settings_cloudClipboardActiveSwitch = 2131558578;
 			
@@ -2359,8 +2356,14 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f0d00b0
 			public const int settings_deviceNameText = 2131558576;
 			
+			// aapt resource value: 0x7f0d00b9
+			public const int settings_gitHubLink = 2131558585;
+			
+			// aapt resource value: 0x7f0d00ba
+			public const int settings_privacyPolicyLink = 2131558586;
+			
 			// aapt resource value: 0x7f0d00b8
-			public const int settings_txt_trialStatus = 2131558584;
+			public const int settings_twitterLink = 2131558584;
 			
 			// aapt resource value: 0x7f0d00b7
 			public const int settings_txt_version = 2131558583;
@@ -2466,9 +2469,6 @@ namespace QuickShare.Droid
 			
 			// aapt resource value: 0x7f0d00bb
 			public const int webView = 2131558587;
-			
-			// aapt resource value: 0x7f0d00ba
-			public const int webViewContainer_banner = 2131558586;
 			
 			// aapt resource value: 0x7f0d000e
 			public const int wide = 2131558414;
@@ -2791,8 +2791,17 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f080036
 			public const int ApplicationName = 2131230774;
 			
+			// aapt resource value: 0x7f080046
+			public const int GitHubLink = 2131230790;
+			
 			// aapt resource value: 0x7f080035
 			public const int Hello = 2131230773;
+			
+			// aapt resource value: 0x7f080047
+			public const int PrivacyPolicyLink = 2131230791;
+			
+			// aapt resource value: 0x7f080045
+			public const int TwitterLink = 2131230789;
 			
 			// aapt resource value: 0x7f080014
 			public const int abc_action_bar_home_description = 2131230740;
