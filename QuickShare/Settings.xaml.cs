@@ -165,5 +165,14 @@ namespace QuickShare
             App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "GitHub").Build());
 #endif
         }
+
+        private async void GitHubIssueButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri(Common.Constants.GitHubIssuesUrl));
+
+#if !DEBUG
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "GitHubIssues").Build());
+#endif
+        }
     }
 }

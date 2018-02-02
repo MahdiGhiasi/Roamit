@@ -181,12 +181,12 @@
                 <ScrollViewer Padding="12,0,12,0">
                     <StackPanel Padding="0,12,24,8" Width="{Binding ActualWidthValue, ElementName=pivotProxy, Mode=OneWay, Converter={StaticResource MathConverter}, ConverterParameter=xv700}">
                         <StackPanel Margin="0,16,0,0">
-                            <TextBlock Text="Want to suggest a feature or an improvement?" TextWrapping="Wrap" />
-                            <HyperlinkButton Foreground="SkyBlue" Content="Send feedback in Feedback Hub" Tapped="SendFeedbackButton_Tapped" />
+                            <TextBlock Text="Need help? Want to suggest an improvement?" TextWrapping="Wrap" />
+                            <HyperlinkButton Foreground="SkyBlue" Content="Open an issue on GitHub" Tapped="GitHubIssueButton_Tapped" />
                         </StackPanel>
                         <StackPanel Margin="0,16,0,24">
-                            <TextBlock Text="Having issues with the app?" TextWrapping="Wrap" />
-                            <HyperlinkButton Foreground="SkyBlue" Content="Contact me" Tapped="ContactButton_Tapped" />
+                            <TextBlock Text="You can also contact me directly by sending an email:" TextWrapping="Wrap" />
+                            <HyperlinkButton Foreground="SkyBlue" Content="Send an email" Tapped="ContactButton_Tapped" />
                         </StackPanel>
                         <TextBlock Text="{x:Bind Model.PackageName, Mode=OneTime}" FontWeight="Bold" />
                         <StackPanel Orientation="Horizontal" Margin="0,4,0,0" >
