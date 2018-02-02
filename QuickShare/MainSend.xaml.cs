@@ -40,7 +40,9 @@ namespace QuickShare
         public MainSendViewModel ViewModel { get; set; }
 
         bool sendingFile = false;
-        CancellationTokenSource sendFileCancellationTokenSource = new CancellationTokenSource();
+        CancellationTokenSource sendFileCancellationTokenSource = new CancellationTokenSource(), rertieveCancellationTokenSource = new CancellationTokenSource();
+        bool retrievingfiles = false;
+
 
         public MainSend()
         {
@@ -92,8 +94,13 @@ namespace QuickShare
             if (sendingFile)
             {
                 sendFileCancellationTokenSource.Cancel();
-                e.Cancel = true;
             }
+
+            if (retrievingfiles)
+            {
+                rertieveCancellationTokenSource.Cancel();
+            }
+
             base.OnNavigatingFrom(e);
         }
 
@@ -352,9 +359,12 @@ namespace QuickShare
             string message = "";
             FileTransferResult result = FileTransferResult.Successful;
 
-            sendingFile = true;
+            if (await DownloadNecessaryFiles() == false)
+            {
+                return FileTransferResult.Cancelled;
+            }
 
-            await DownloadNecessaryFiles();
+            sendingFile = true;
 
             ViewModel.SendStatus = "Preparing...";
 
@@ -456,23 +466,37 @@ namespace QuickShare
             return result;
         }
 
-        private async Task DownloadNecessaryFiles()
+        private async Task<bool> DownloadNecessaryFiles()
         {
-            foreach (var item in SendDataTemporaryStorage.Files)
+            try
             {
-                if ((item is StorageFile file) && (!file.IsLocallyAvailable()))
+                retrievingfiles = true;
+                foreach (var item in SendDataTemporaryStorage.Files)
                 {
-                    //Download it
-                    ViewModel.SendStatus = "Retrieving files...";
-
-                    var readStream = await file.OpenStreamForReadAsync();
-                    byte[] buffer = new byte[1024 * 1024];
-                    while (readStream.Position < readStream.Length)
+                    if ((item is StorageFile file) && (!file.IsLocallyAvailable()))
                     {
-                        await readStream.ReadAsync(buffer, 0, buffer.Length);
+                        //Download it
+                        ViewModel.SendStatus = "Retrieving files...";
+
+                        var readStream = await file.OpenStreamForReadAsync();
+                        byte[] buffer = new byte[1024 * 1024];
+                        while (readStream.Position < readStream.Length)
+                        {
+                            await readStream.ReadAsync(buffer, 0, buffer.Length, rertieveCancellationTokenSource.Token);
+                        }
                     }
                 }
+
+                return true;
             }
+            catch (TaskCanceledException)
+            {
+                return false;
+            }
+            finally
+            {
+                retrievingfiles = false;
+            }            
         }
 
         private async Task<List<Tuple<string, IFile>>> GetFiles(List<IStorageItem> items, string relPath = "")
