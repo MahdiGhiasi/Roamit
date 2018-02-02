@@ -21,7 +21,7 @@ namespace QuickShare.FileTransfer
         public static readonly string TRANSFER_CANCELLED_MESSAGE = "Transfer cancelled.";
 
         readonly int maxQueueInfoMessageSize = 1536;
-        readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(600);
+        readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(6);
 
         object remoteSystem;
 
