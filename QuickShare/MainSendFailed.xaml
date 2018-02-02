@@ -1,0 +1,56 @@
+﻿<Page
+    x:Class="QuickShare.MainSendFailed"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
+    mc:Ignorable="d">
+
+    <Grid Background="Transparent">
+        <Grid.Transitions>
+            <TransitionCollection>
+                <EntranceThemeTransition />
+            </TransitionCollection>
+        </Grid.Transitions>
+        
+        
+        <StackPanel MaxWidth="500" 
+                    Margin="16,0,16,0"
+                    VerticalAlignment="Center">
+            <TextBlock x:Name="ErrorTitle"
+                       Text="{x:Bind ViewModel.ErrorTitle, Mode=OneWay}"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       FontSize="22" />
+            <TextBlock x:Name="ErrorDescription"
+                       Text="{x:Bind ViewModel.ErrorDescription, Mode=OneWay}"
+                       TextWrapping="Wrap"
+                       Margin="0,16,0,0"
+                       TextAlignment="Center"
+                       FontSize="16" />
+            <Grid Margin="48,60,48,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Content="Retry" 
+                        FontSize="16"
+                        Tapped="Retry_Tapped" 
+                        Margin="2" 
+                        Grid.Column="0" 
+                        HorizontalAlignment="Stretch" 
+                        VerticalAlignment="Stretch" 
+                        Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
+                <Button Content="Cancel" 
+                        FontSize="16"
+                        Tapped="Cancel_Tapped" 
+                        Margin="2" 
+                        Grid.Column="1" 
+                        HorizontalAlignment="Stretch" 
+                        VerticalAlignment="Stretch" />
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

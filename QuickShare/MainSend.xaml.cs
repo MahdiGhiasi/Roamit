@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
 using System.Threading;
 using PCLStorage;
+using Newtonsoft.Json;
 
 namespace QuickShare
 {
@@ -179,8 +180,11 @@ namespace QuickShare
                                 errorMessage = result.ToString();
                             }
 
-                            await (new MessageDialog(errorMessage, "Can't connect")).ShowAsync();
-                            Frame.GoBack();
+                            Frame.Navigate(typeof(MainSendFailed), JsonConvert.SerializeObject(new SendFailedViewModel
+                            {
+                                ErrorTitle = "Can't connect",
+                                ErrorDescription = errorMessage,
+                            }));
                             return;
                         }
 
@@ -210,8 +214,11 @@ namespace QuickShare
                             errorMessage = result.ToString();
                         }
 
-                        await (new MessageDialog(errorMessage, "Can't connect")).ShowAsync();
-                        Frame.GoBack();
+                        Frame.Navigate(typeof(MainSendFailed), JsonConvert.SerializeObject(new SendFailedViewModel
+                        {
+                            ErrorTitle = "Can't connect",
+                            ErrorDescription = errorMessage,
+                        }));
                         return;
                     }
 
@@ -222,10 +229,7 @@ namespace QuickShare
                     fileTransferResult = await SendFile(rs, packageManager, deviceName);
                     if (fileTransferResult != FileTransferResult.Successful)
                     {
-                        HideEverything();
-
                         succeed = false;
-                        Frame.GoBack();
                         return;
                     }
 
@@ -235,8 +239,11 @@ namespace QuickShare
                 else
                 {
                     succeed = false;
-                    await (new MessageDialog("MainSend::Invalid parameter.")).ShowAsync();
-                    Frame.GoBack();
+                    Frame.Navigate(typeof(MainSendFailed), JsonConvert.SerializeObject(new SendFailedViewModel
+                    {
+                        ErrorTitle = "Invalid parameter",
+                        ErrorDescription = "[MainSend]",
+                    }));
                     return;
                 }
             }
@@ -431,8 +438,11 @@ namespace QuickShare
                         text = "Make sure both devices are connected to the same Wi-Fi or LAN network.";
                     }
 
-                    var dlg = new MessageDialog(text, title);
-                    await dlg.ShowAsync();
+                    Frame.Navigate(typeof(MainSendFailed), JsonConvert.SerializeObject(new SendFailedViewModel
+                    {
+                        ErrorTitle = title,
+                        ErrorDescription = text,
+                    }));
                 }
             }
             else

@@ -121,6 +121,9 @@
     <Compile Include="MainReceive.xaml.cs">
       <DependentUpon>MainReceive.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainSendFailed.xaml.cs">
+      <DependentUpon>MainSendFailed.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProgressPage.xaml.cs">
       <DependentUpon>ProgressPage.xaml</DependentUpon>
     </Compile>
@@ -169,6 +172,7 @@
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\PurchaseItem.cs" />
+    <Compile Include="ViewModels\SendFailedViewModel.cs" />
     <Compile Include="ViewModels\SettingsModel.cs" />
     <Compile Include="ViewModels\ShareTarget\ShareTargetDetails.cs" />
     <Compile Include="ShareWaiting.xaml.cs">
@@ -452,6 +456,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainSend.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainSendFailed.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
