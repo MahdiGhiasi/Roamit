@@ -284,7 +284,7 @@ namespace QuickShare.UWP.Rome
             return await LaunchUri(uri, null);
         }
 
-        public async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri uri, object remoteSystemOverride)
+        public async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri uri, object remoteSystemOverride, bool launchStoreIfProtocolUnavailable = true)
         {
             RemoteSystem rs = remoteSystem as RemoteSystem;
             if (remoteSystemOverride != null)
@@ -329,7 +329,7 @@ namespace QuickShare.UWP.Rome
                 }
             }
 
-            if (launchStatus == RemoteLaunchUriStatus.ProtocolUnavailable)
+            if (launchStoreIfProtocolUnavailable && launchStatus == RemoteLaunchUriStatus.ProtocolUnavailable)
                 await LaunchStoreForApp(rs);
 
             return (RomeRemoteLaunchUriStatus)launchStatus;

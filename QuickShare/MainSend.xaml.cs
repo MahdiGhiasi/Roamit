@@ -583,7 +583,7 @@ namespace QuickShare
             if (rs is NormalizedRemoteSystem)
                 launchResult = await UWP.Rome.AndroidRomePackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs as NormalizedRemoteSystem, SecureKeyStorage.GetUserId());
             else
-                launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs);
+                launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs, false);
 
             string status;
             if (launchResult == RomeRemoteLaunchUriStatus.Success)
