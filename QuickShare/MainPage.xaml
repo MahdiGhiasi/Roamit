@@ -174,11 +174,13 @@
                         HorizontalAlignment="Right"
                         Background="Transparent"
                         BorderThickness="0"
-                        Visibility="{x:Bind ViewModel.LookingForDevicesVisibility, Mode=OneWay}"
                         Tapped="LookingForDevicesHelp_Tapped">
                     <Button.Content>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE11B;" />
                     </Button.Content>
+                    <ToolTipService.ToolTip>
+                        Not seeing your devices?
+                    </ToolTipService.ToolTip>
                 </Button>
             </Grid>
             <ListView x:Name="devicesList" 

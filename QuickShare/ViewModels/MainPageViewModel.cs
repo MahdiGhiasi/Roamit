@@ -87,7 +87,7 @@ namespace QuickShare.ViewModels
         {
             get
             {
-                if ((ListManager.RemoteSystems == null) || (ListManager.RemoteSystems.Count == 0))
+                if ((ListManager.RemoteSystems == null) || ((ListManager.RemoteSystems.Count == 0) && (ListManager.SelectedRemoteSystem == null)))
                     return Visibility.Visible;
                 return Visibility.Collapsed;
             }
