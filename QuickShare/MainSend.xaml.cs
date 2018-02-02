@@ -348,7 +348,6 @@ namespace QuickShare
         private async Task<FileTransferResult> SendFile(object rs, IRomePackageManager packageManager, string deviceName)
         {
             string sendingText = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Sending file..." : "Sending files...";
-            ViewModel.SendStatus = "Preparing...";
 
             string message = "";
             FileTransferResult result = FileTransferResult.Successful;
@@ -356,6 +355,8 @@ namespace QuickShare
             sendingFile = true;
 
             await DownloadNecessaryFiles();
+
+            ViewModel.SendStatus = "Preparing...";
 
             using (FileSender fs = new FileSender(rs,
                                                   new QuickShare.UWP.WebServerGenerator(),
