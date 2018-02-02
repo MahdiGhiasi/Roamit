@@ -19,6 +19,7 @@ namespace QuickShare.FileTransfer
     public class FileSender : IDisposable
     {
         public static readonly string TRANSFER_CANCELLED_MESSAGE = "Transfer cancelled.";
+        public static readonly string FIRST_MESSAGE_TIMEOUT = "Can't reach remote device.";
 
         readonly int maxQueueInfoMessageSize = 1536;
         readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(6);
@@ -153,14 +154,28 @@ namespace QuickShare.FileTransfer
 
         private async Task<FileTransferResult> WaitForFinish(CancellationToken cancellationToken)
         {
+            TimeoutForTransferStart(fileSendTcs);
+
             var result = await fileSendTcs.Task;
             return ProcessTcsResult(result);
         }
 
         private async Task<FileTransferResult> WaitQueueToFinish(CancellationToken cancellationToken)
         {
+            TimeoutForTransferStart(queueFinishTcs);
+
             var result = await queueFinishTcs.Task;
             return ProcessTcsResult(result);
+        }
+
+        private async void TimeoutForTransferStart(TaskCompletionSource<string> tcs)
+        {
+            await Task.Delay(handshakeTimeout);
+
+            if (bytesSent == 0)
+            {
+                tcs?.TrySetResult(FileSender.FIRST_MESSAGE_TIMEOUT);
+            }
         }
 
         private static FileTransferResult ProcessTcsResult(string result)
@@ -171,6 +186,8 @@ namespace QuickShare.FileTransfer
 
                 if (result == TRANSFER_CANCELLED_MESSAGE)
                     return FileTransferResult.Cancelled;
+                else if (result == FIRST_MESSAGE_TIMEOUT)
+                    return FileTransferResult.FailedOnHandshake;
                 else
                     return FileTransferResult.FailedOnSend;
             }
