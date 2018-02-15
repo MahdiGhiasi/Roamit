@@ -46,8 +46,7 @@
                                    Margin="0,0,0,8"
                                    TextWrapping="Wrap" />
                         <TextBlock Text="&#8226; File transfer and error message improvements."
-                                   Opacity="0.6"
-                                   Margin="8,0,0,8"
+                                   Margin="0,0,0,8"
                                    TextWrapping="Wrap" />
                     </StackPanel>
                     <StackPanel Tag="9" Margin="0,0,0,24" Visibility="Visible">
