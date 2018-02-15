@@ -1,7 +1,7 @@
 ﻿{
   "dependencies": {
     "AdaptiveTriggerLibrary": "1.2.1",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.5",
     "Microsoft.Services.Store.SDK": "10.1705.16001",
     "Microsoft.Toolkit.Uwp.UI": "1.4.1",
     "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
@@ -12,7 +12,7 @@
     "Win2D.uwp": "1.20.0"
   },
   "frameworks": {
-    "uap10.0": {}
+    "uap10.0.14393": {}
   },
   "runtimes": {
     "win10-arm": {},
