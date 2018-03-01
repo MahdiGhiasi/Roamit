@@ -403,6 +403,9 @@ namespace QuickShare
         private AppServiceConnection pcAppServiceConnection;
         private BackgroundTaskDeferral pcAppServiceDeferral;
 
+        private AppServiceConnection communicationServiceConnection;
+        private BackgroundTaskDeferral communicationServiceDeferral;
+
         protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
             base.OnBackgroundActivated(args);
@@ -442,6 +445,19 @@ namespace QuickShare
                 pcAppServiceConnection.RequestReceived += OnPCAppServiceRequestReceived;
                 pcAppServiceConnection.ServiceClosed -= PCAppServiceConnection_ServiceClosed;
                 pcAppServiceConnection.ServiceClosed += PCAppServiceConnection_ServiceClosed;
+            }
+            else if (appService?.Name == "com.roamit.serviceinapp")
+            {
+                InitCommunicationService();
+
+                communicationServiceDeferral = taskInstance.GetDeferral();
+                taskInstance.Canceled -= OnCommunicationServicesCanceled;
+                taskInstance.Canceled += OnCommunicationServicesCanceled;
+                communicationServiceConnection = appService.AppServiceConnection;
+                communicationServiceConnection.RequestReceived -= OnCommunicationServiceRequestReceived;
+                communicationServiceConnection.RequestReceived += OnCommunicationServiceRequestReceived;
+                communicationServiceConnection.ServiceClosed -= CommunicationServiceConnection_ServiceClosed;
+                communicationServiceConnection.ServiceClosed += CommunicationServiceConnection_ServiceClosed;
             }
         }
 

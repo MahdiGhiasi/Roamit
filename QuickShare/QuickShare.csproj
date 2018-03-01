@@ -129,6 +129,7 @@
     </Compile>
     <Compile Include="ServiceControllers\MessageCarrierService.cs" />
     <Compile Include="ServiceControllers\NotificationService.cs" />
+    <Compile Include="ServiceControllers\CommunicationService.cs" />
     <Compile Include="ServiceControllers\PCExtensionService.cs" />
     <Compile Include="ViewModels\DevicesSettingsViewModel.cs" />
     <Compile Include="ViewModels\History\FileInfo.cs" />

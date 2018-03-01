@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="HelperClasses\CloudClipboardHandler.cs" />
     <Compile Include="HelperClasses\DeviceInfo.cs" />
+    <Compile Include="HelperClasses\DownloadFolderDecider.cs" />
     <Compile Include="HelperClasses\DownloadFolderHelper.cs" />
     <Compile Include="HelperClasses\FutureAccessListHelper.cs" />
     <Compile Include="HelperClasses\SecureKeyStorage.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="ToastNotifications\Toaster.ClipboardTextReceived.cs" />
     <Compile Include="ToastNotifications\Toaster.CloudClipboardTextReceived.cs" />
     <Compile Include="ToastNotifications\Toaster.cs" />
+    <Compile Include="ToastNotifications\Toaster.FileReceiveFailed.cs" />
     <Compile Include="ToastNotifications\Toaster.FileReceiveFinished.cs" />
     <Compile Include="ToastNotifications\Toaster.FileReceiveProgress.cs" />
   </ItemGroup>
@@ -131,6 +133,14 @@
       <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
       <Name>DataStore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PCLStorage">
+      <HintPath>..\PCLStorageEx2\WinRT\PCLStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage.Abstractions">
+      <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

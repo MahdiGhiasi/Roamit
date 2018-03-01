@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using PCLStorage;
 using QuickShare.Common;
 using QuickShare.FileTransfer;
+using QuickShare.HelperClasses;
 using QuickShare.ToastNotifications;
 using System;
 using System.Collections.Generic;
@@ -105,7 +106,7 @@ namespace QuickShare.ServiceTask
                     }
                     else if (receiver == "FileReceiver")
                     {
-                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, DownloadFolderDecider);
+                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, DecideDownloadFolder);
                     }
                     else if (receiver == "TextReceiver")
                     {
@@ -136,35 +137,8 @@ namespace QuickShare.ServiceTask
                                 _deferral = null;
                             }
                         }
-                        //else if ((args.Request.Message.ContainsKey("Task")) && (args.Request.Message["Task"] as string == "MessageCarrier"))
-                        //{
-
-                        //}
                     }
                 }
-                //else if (args.Request.Message.ContainsKey("Test"))
-                //{
-                //    string s = args.Request.Message["Test"] as string;
-
-                //    if (s == null)
-                //        s = "null";
-
-                //    ValueSet vs = new ValueSet();
-                //    vs.Add("RecvSuccessful", "RecvSuccessful");
-                //    await args.Request.SendResponseAsync(vs);
-
-                //    await System.Threading.Tasks.Task.Delay(1500);
-
-                //    SendToast(s);
-                //}
-                //else if (args.Request.Message.ContainsKey("TestLongRunning"))
-                //{
-                //    for (int i = 0; i < 10000; i++)
-                //    {
-                //        SendToast((i).ToString() + " seconds");
-                //        await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1));
-                //    }
-                //}
             }
             finally
             {
@@ -172,16 +146,9 @@ namespace QuickShare.ServiceTask
             }
         }
 
-        private static async Task<IFolder> DownloadFolderDecider(string[] fileTypes)
+        private async Task<IFolder> DecideDownloadFolder(string[] fileTypes)
         {
-            IStorageFolder folder;
-            bool typeBasedDownloadFolder = (ApplicationData.Current.LocalSettings.Values.ContainsKey("TypeBasedDownloadFolder")) ? ((ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] as bool?) ?? false) : false;
-            if (typeBasedDownloadFolder)
-                folder = await DownloadFolderHelper.GetAppropriateDownloadFolderAsync(fileTypes);
-            else
-                folder = await DownloadFolderHelper.GetDefaultDownloadFolderAsync();
-
-            return new WinRTFolder(folder);
+            return await DownloadFolderDecider.DecideAsync(fileTypes);
         }
 
         public static void SendToast(string text)
@@ -283,6 +250,10 @@ namespace QuickShare.ServiceTask
             if (e.State == FileTransferState.Finished)
             {
                 Toaster.ShowFileReceiveFinishedNotification(e.TotalFiles, e.SenderName, e.Guid);
+            }
+            else if (e.State == FileTransferState.Error)
+            {
+                Toaster.ShowFileReceiveFailedNotification(e.Guid);
             }
             else
             {

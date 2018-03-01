@@ -103,6 +103,14 @@ namespace QuickShare
                     statusBar.ProgressIndicator.ProgressValue = 0;
                     await statusBar.ProgressIndicator.HideAsync();
                 }
+                else if (e.State == FileTransferState.Error)
+                {
+                    PersistentDisplay.ReleasePersistentDisplay();
+
+                    statusBar.ProgressIndicator.Text = "";
+                    statusBar.ProgressIndicator.ProgressValue = 0;
+                    await statusBar.ProgressIndicator.HideAsync();
+                }
                 else
                 {
                     PersistentDisplay.ActivatePersistentDisplay();

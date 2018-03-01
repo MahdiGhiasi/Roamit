@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
     xmlns:controls="using:QuickShare.Controls"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Grid Background="Transparent" x:Name="parentGrid">
@@ -19,9 +20,10 @@
                     <VisualState.Setters>
                         <Setter Target="Progress.Width" Value="150" />
                         <Setter Target="Progress.Height" Value="150" />
-                        <Setter Target="Progress.FontSize" Value="25" />
+                        <Setter Target="Progress.FontSize" Value="20" />
                         <Setter Target="ProgressCaption.FontSize" Value="16" />
                         <Setter Target="ProgressCaption.Margin" Value="0,65,0,0" />
+                        <Setter Target="BottomNotices.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -59,18 +61,20 @@
             </Grid>
         </StackPanel>
 
-        <TextBlock Text="Don't close this window until transfer finishes."
-                   HorizontalAlignment="Stretch" 
-                   VerticalAlignment="Bottom"
-                   TextAlignment="Center"
-                   Margin="0,0,0,60"
-                   Visibility="{x:Bind ViewModel.DontCloseWindowNoticeVisibility, Mode=OneWay}" />
+        <Grid x:Name="BottomNotices" VerticalAlignment="Bottom">
+            <TextBlock Text="Don't close this window until transfer finishes."
+                       HorizontalAlignment="Stretch" 
+                       VerticalAlignment="Bottom"
+                       TextAlignment="Center"
+                       Margin="0,0,0,60"
+                       Visibility="{x:Bind ViewModel.DontCloseWindowNoticeVisibility, Mode=OneWay}" />
 
-        <TextBlock Text="Don't switch to other apps until transfer finishes."
-                   HorizontalAlignment="Stretch" 
-                   VerticalAlignment="Bottom"
-                   TextAlignment="Center"
-                   Margin="0,0,0,60"
-                   Visibility="{x:Bind ViewModel.DontSwitchAppsNoticeVisibility, Mode=OneWay}" />
+            <TextBlock Text="Don't switch to other apps until transfer finishes."
+                       HorizontalAlignment="Stretch" 
+                       VerticalAlignment="Bottom"
+                       TextAlignment="Center"
+                       Margin="0,0,0,60"
+                       Visibility="{x:Bind ViewModel.DontSwitchAppsNoticeVisibility, Mode=OneWay}" />
+        </Grid>
     </Grid>
 </Page>

@@ -31,6 +31,9 @@
           <uap3:AppService Name="com.roamit.service" SupportsRemoteSystems="true"/>
         </uap:Extension>
         <uap:Extension Category="windows.appService">
+          <uap3:AppService Name="com.roamit.serviceinapp" SupportsRemoteSystems="true"/>
+        </uap:Extension>
+        <uap:Extension Category="windows.appService">
           <uap3:AppService Name="com.roamit.messagecarrierservice" SupportsRemoteSystems="true"/>
         </uap:Extension>
         <uap:Extension Category="windows.appService">

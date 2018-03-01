@@ -16,6 +16,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using QuickShare.FileTransfer;
 using QuickShare.HelperClasses;
+using Windows.UI.ViewManagement;
+using System.Threading.Tasks;
 
 namespace QuickShare
 {
@@ -45,7 +47,7 @@ namespace QuickShare
             base.OnNavigatedTo(e);
         }
 
-        private void Finish()
+        private async void Finish()
         {
             if (shouldStayOpen)
             {
@@ -55,6 +57,8 @@ namespace QuickShare
                     p = p.Parent as FrameworkElement;
 
                 (p as Frame).GoBack();
+
+                await SwitchWindowToDefaultMode();
             }
             else
             {
@@ -64,7 +68,7 @@ namespace QuickShare
 
         internal void FileTransferProgress(FileTransferProgressEventArgs e)
         {
-            if (e.State == FileTransferState.Finished)
+            if (e.State == FileTransferState.Finished || e.State == FileTransferState.Error)
             {
                 Finish();
                 return;
@@ -81,6 +85,35 @@ namespace QuickShare
             ViewModel.ProgressMaximum = (int)e.Total;
 
             ViewModel.ProgressCaption = StringFunctions.GetSizeString(e.TotalBytesTransferred);
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            await SwitchWindowToCompactOverlayMode();
+        }
+
+        private async Task SwitchWindowToCompactOverlayMode()
+        {
+            if (DeviceInfo.SystemVersion < DeviceInfo.CreatorsUpdate)
+                return;
+
+            if (!ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+                return;
+
+            ViewModePreferences compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+            compactOptions.CustomSize = new Size(325, 325);
+            await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
+        }
+
+        private async Task SwitchWindowToDefaultMode()
+        {
+            if (DeviceInfo.SystemVersion < DeviceInfo.CreatorsUpdate)
+                return;
+
+            if (!ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+                return;
+
+            await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
         }
     }
 }

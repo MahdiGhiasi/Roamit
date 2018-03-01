@@ -23,6 +23,7 @@ namespace QuickShare.FileTransfer
 
         readonly int maxQueueInfoMessageSize = 1536;
         readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(6);
+        readonly TimeSpan prepareTimeout = TimeSpan.FromSeconds(60);
 
         object remoteSystem;
 
@@ -170,7 +171,7 @@ namespace QuickShare.FileTransfer
 
         private async void TimeoutForTransferStart(TaskCompletionSource<string> tcs)
         {
-            await Task.Delay(handshakeTimeout);
+            await Task.Delay(prepareTimeout);
 
             if (bytesSent == 0)
             {

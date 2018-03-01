@@ -39,116 +39,137 @@ namespace QuickShare.FileTransfer
 
         public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
         {
-            Dictionary<string, object> returnVal = null;
+            Dictionary<string, object> returnVal = new Dictionary<string, object>();
 
-            if ((request.ContainsKey("Type")) && (request["Type"] as string == "QueueInit"))
+            try
             {
-                //Queue initialization
-
-                isQueue = true;
-                queueTotalSlices = (long)request["TotalSlices"];
-                queueSlicesFinished = 0;
-                queuedSlicesYet = 0;
-                queueItems = new List<Dictionary<string, object>>();
-                queueFinishUrl = "http://" + (request["ServerIP"] as string) + ":" + Constants.CommunicationPort + "/" + request["QueueFinishKey"] + "/finishQueue/";
-                filesCount = 0;
-                queueParentDirectory = (string)request["parentDirectoryName"];
-                latestReceivedQueueItemGroupId = -1;
-                totalBytesReceived = 0;
-
-                returnVal = new Dictionary<string, object>
+                if ((request.ContainsKey("Type")) && (request["Type"] as string == "QueueInit"))
                 {
-                    { "QueueInitialized", "1" }
-                };
-                requestGuid = Guid.Parse(request["Guid"] as string);
-                senderName = (string)request["SenderName"];
-
-                /* TODO: Do this from outside of this function */
-                //await request.SendResponseAsync(vs);
-
-                InvokeProgressEvent(0, 0, FileTransferState.QueueList);
-
-                if (request.ContainsKey("QueueInfoKey"))
+                    await InitQueue(request, downloadFolderDecider, returnVal);
+                }
+                else if ((request.ContainsKey("IsQueueItemGroup")) && (request["IsQueueItemGroup"] as string == "true"))
                 {
-                    List<string> queueItems = await RetrieveQueueItems(request["ServerIP"] as string, request["QueueInfoKey"] as string);
-
-                    foreach (var item in queueItems)
-                    {
-                        var info = JsonConvert.DeserializeObject<Dictionary<string, object>>(item);
-                        await ProcessQueueItem(info, downloadFolderDecider);
-                    }
+                    await ProcessQueueItemGroup(request, downloadFolderDecider);
+                }
+                else if ((request.ContainsKey("IsQueueItem")) && (request["IsQueueItem"] as string == "true"))
+                {
+                    await ProcessQueueItem(request, downloadFolderDecider);
+                }
+                else
+                {
+                    await ProcessSingularFile(request, downloadFolderDecider);
                 }
             }
-            else if ((request.ContainsKey("IsQueueItemGroup")) && (request["IsQueueItemGroup"] as string == "true"))
+            catch (FailedToDownloadException)
             {
-                if (queuedSlicesYet < queueTotalSlices) //Ignore if queue already started processing
+                FileTransferProgress?.Invoke(new FileTransferProgressEventArgs
                 {
-                    int partNum = int.Parse(request["PartNum"].ToString());
-                    Debug.WriteLine($"Received QueueItemGroup #{partNum}.");
-                    if (partNum > latestReceivedQueueItemGroupId)
-                    {
-                        latestReceivedQueueItemGroupId = partNum;
-
-                        var items = JsonConvert.DeserializeObject<List<string>>(request["Data"].ToString());
-
-                        Debug.WriteLine($"It contains {items.Count} entries. Processing...");
-
-                        foreach (var item in items)
-                        {
-                            var info = JsonConvert.DeserializeObject<Dictionary<string, object>>(item);
-                            await ProcessQueueItem(info, downloadFolderDecider);
-                        }
-
-                        Debug.WriteLine("Processed QueueItemGroup successfully.");
-                    }
-                }
+                    Guid = requestGuid,
+                    State = FileTransferState.Error,
+                });
             }
-            else if ((request.ContainsKey("IsQueueItem")) && (request["IsQueueItem"] as string == "true"))
-            {
-                await ProcessQueueItem(request, downloadFolderDecider);
-            }
-            else
-            {
-                //Singular file
-                filesCount = 1;
-                requestGuid = Guid.Parse(request["Guid"] as string);
-                senderName = (string)request["SenderName"];
-                isQueue = false;
-                totalBytesReceived = 0;
 
-                var downloadFolder = await downloadFolderDecider(new string[] { Path.GetExtension((string)request["FileName"]) });
-                
-                await DataStorageProviders.HistoryManager.OpenAsync();
-                DataStorageProviders.HistoryManager.Add(requestGuid,
-                    DateTime.Now,
-                    senderName,
-                    new ReceivedFileCollection
+            return returnVal;
+        }
+
+        private static async Task ProcessSingularFile(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
+        {
+            //Singular file
+            filesCount = 1;
+            requestGuid = Guid.Parse(request["Guid"] as string);
+            senderName = (string)request["SenderName"];
+            isQueue = false;
+            totalBytesReceived = 0;
+
+            var downloadFolder = await downloadFolderDecider(new string[] { Path.GetExtension((string)request["FileName"]) });
+
+            await DataStorageProviders.HistoryManager.OpenAsync();
+            DataStorageProviders.HistoryManager.Add(requestGuid,
+                DateTime.Now,
+                senderName,
+                new ReceivedFileCollection
+                {
+                    Files = new List<ReceivedFile>()
                     {
-                        Files = new List<ReceivedFile>()
-                        {
                             new ReceivedFile
                             {
                                 Name = (string)request["FileName"],
                                 Size = (long)request["FileSize"],
                                 StorePath = System.IO.Path.Combine(downloadFolder.Path, (string)request["Directory"]),
                             }
-                        },
-                        StoreRootPath = System.IO.Path.Combine(downloadFolder.Path, (string)request["Directory"]),
                     },
-                    false, false);
-                DataStorageProviders.HistoryManager.Close();
+                    StoreRootPath = System.IO.Path.Combine(downloadFolder.Path, (string)request["Directory"]),
+                },
+                false, false);
+            DataStorageProviders.HistoryManager.Close();
 
-                await DownloadFile(request, downloadFolder);
+            await DownloadFile(request, downloadFolder);
 
-                await DataStorageProviders.HistoryManager.OpenAsync();
-                DataStorageProviders.HistoryManager.ChangeCompletedStatus(requestGuid, true);
-                DataStorageProviders.HistoryManager.Close();
-            }
-
-            return returnVal;
+            await DataStorageProviders.HistoryManager.OpenAsync();
+            DataStorageProviders.HistoryManager.ChangeCompletedStatus(requestGuid, true);
+            DataStorageProviders.HistoryManager.Close();
         }
 
-        private static async Task<List<string>> RetrieveQueueItems(string ip, string key)
+        private static async Task ProcessQueueItemGroup(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
+        {
+            if (queuedSlicesYet < queueTotalSlices) //Ignore if queue already started processing
+            {
+                int partNum = int.Parse(request["PartNum"].ToString());
+                Debug.WriteLine($"Received QueueItemGroup #{partNum}.");
+                if (partNum > latestReceivedQueueItemGroupId)
+                {
+                    latestReceivedQueueItemGroupId = partNum;
+
+                    var items = JsonConvert.DeserializeObject<List<string>>(request["Data"].ToString());
+
+                    Debug.WriteLine($"It contains {items.Count} entries. Processing...");
+
+                    foreach (var item in items)
+                    {
+                        var info = JsonConvert.DeserializeObject<Dictionary<string, object>>(item);
+                        await ProcessQueueItem(info, downloadFolderDecider);
+                    }
+
+                    Debug.WriteLine("Processed QueueItemGroup successfully.");
+                }
+            }
+        }
+
+        private static async Task InitQueue(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider, Dictionary<string, object> returnVal)
+        {
+            isQueue = true;
+            queueTotalSlices = (long)request["TotalSlices"];
+            queueSlicesFinished = 0;
+            queuedSlicesYet = 0;
+            queueItems = new List<Dictionary<string, object>>();
+            queueFinishUrl = "http://" + (request["ServerIP"] as string) + ":" + Constants.CommunicationPort + "/" + request["QueueFinishKey"] + "/finishQueue/";
+            filesCount = 0;
+            queueParentDirectory = (string)request["parentDirectoryName"];
+            latestReceivedQueueItemGroupId = -1;
+            totalBytesReceived = 0;
+
+            returnVal.Add("QueueInitialized", "1");
+            requestGuid = Guid.Parse(request["Guid"] as string);
+            senderName = (string)request["SenderName"];
+
+            /* TODO: Do this from outside of this function */
+            //await request.SendResponseAsync(vs);
+
+            InvokeProgressEvent(0, 0, FileTransferState.QueueList);
+
+            if (request.ContainsKey("QueueInfoKey"))
+            {
+                List<string> queueItems = await RetrieveQueueItems(request["ServerIP"] as string, request["QueueInfoKey"] as string);
+
+                foreach (var item in queueItems)
+                {
+                    var info = JsonConvert.DeserializeObject<Dictionary<string, object>>(item);
+                    await ProcessQueueItem(info, downloadFolderDecider);
+                }
+            }
+        }
+
+        private static async Task<List<string>> RetrieveQueueItems(string ip, string key, int tryCount = 0)
         {
             var httpClient = new HttpClient
             {
@@ -164,9 +185,12 @@ namespace QuickShare.FileTransfer
                 var body = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<List<string>>(body);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new List<string>();
+                if (tryCount >= 2)
+                    throw new FailedToDownloadException();
+                else
+                    return await RetrieveQueueItems(ip, key, tryCount + 1);
             }
         }
 
@@ -402,7 +426,7 @@ namespace QuickShare.FileTransfer
         private static async Task<byte[]> DownloadDataFromUrl(string url)
         {
             int tryCount = 0;
-            TimeSpan timeout = TimeSpan.FromSeconds(3);
+            TimeSpan timeout = TimeSpan.FromSeconds(4);
             while (true)
             {
                 try
@@ -421,8 +445,8 @@ namespace QuickShare.FileTransfer
                 {
                     Debug.WriteLine("Failed.");
 
-                    if (tryCount > 5)
-                        throw;
+                    if (tryCount > 3)
+                        throw new FailedToDownloadException();
                 }
                 
                 timeout = timeout.Add(TimeSpan.FromSeconds(2));
