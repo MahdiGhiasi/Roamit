@@ -260,13 +260,13 @@ namespace QuickShare.FileTransfer
                 await DownloadFile(item, downloadFolder);
             }
 
-            FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = (ulong)queueTotalSlices, Total = (ulong)queueTotalSlices, State = FileTransferState.Finished, Guid = requestGuid, SenderName = senderName, TotalFiles = filesCount });
-
             await DataStorageProviders.HistoryManager.OpenAsync();
             DataStorageProviders.HistoryManager.ChangeCompletedStatus(requestGuid, true);
             DataStorageProviders.HistoryManager.Close();
 
             await QueueProcessFinishedNotifySender();
+
+            FileTransferProgress?.Invoke(new FileTransferProgressEventArgs { CurrentPart = (ulong)queueTotalSlices, Total = (ulong)queueTotalSlices, State = FileTransferState.Finished, Guid = requestGuid, SenderName = senderName, TotalFiles = filesCount });
         }
 
         private static async Task<string> GetUniqueQueueParentDirectory(IFolder downloadFolder)
@@ -385,9 +385,8 @@ namespace QuickShare.FileTransfer
             //System.IO.File.SetCreationTime(file.Path, dateCreated);
 
             downloading.Remove(key);
-
-            InvokeFinishedEvent((uint)slicesCount);
             await ReceiveSuccessful(serverIP, key);
+            InvokeFinishedEvent((uint)slicesCount);
         }
 
         private static void InvokeFinishedEvent(uint currentFileSlicesCount)

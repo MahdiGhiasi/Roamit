@@ -23,7 +23,7 @@ namespace QuickShare.FileTransfer
 
         readonly int maxQueueInfoMessageSize = 1536;
         readonly TimeSpan handshakeTimeout = TimeSpan.FromSeconds(6);
-        readonly TimeSpan prepareTimeout = TimeSpan.FromSeconds(60);
+        readonly TimeSpan prepareTimeout = TimeSpan.FromSeconds(6);
 
         object remoteSystem;
 
@@ -124,6 +124,10 @@ namespace QuickShare.FileTransfer
                 fileSendTcs?.TrySetResult(TRANSFER_CANCELLED_MESSAGE);
                 server?.Dispose();
             });
+
+            //TODO: When fileSendTcs finishes but BeginSending is still not returned.
+            
+            //TODO: Also check SendQueue for similar thing
 
             if (!(await BeginSending(key, slicesCount, file.Name, properties, directory, false)))
                 return FileTransferResult.FailedOnPrepare;
@@ -283,7 +287,10 @@ namespace QuickShare.FileTransfer
             if (await SendQueueInit(totalSlices, queueFinishKey, parentDirectoryName, queueInfoKey) == false)
                 return FileTransferResult.FailedOnQueueInit;
 
-            bool infoSendResult = await SendQueueInfoIfNecessary(files, sFileKeyPairs, fs);
+            bool infoSendResult = await WaitForQueueInfoToSend(files, sFileKeyPairs, fs);
+
+            if (infoSendResult == false)
+                return FileTransferResult.FailedOnSend;
 
             return await WaitQueueToFinish(cancellationToken);
         }
@@ -305,24 +312,19 @@ namespace QuickShare.FileTransfer
             return queueInfoComplete;
         }
 
-        private async Task<bool> SendQueueInfoIfNecessary(List<Tuple<string, IFile>> files, Dictionary<IFile, string> sFileKeyPairs, IFileStats[] fs)
+        private async Task<bool> WaitForQueueInfoToSend(List<Tuple<string, IFile>> files, Dictionary<IFile, string> sFileKeyPairs, IFileStats[] fs)
         {
             int c = 0;
-            while (c < 20)
+            while (c < 18)
             {
                 if (sentQueueInfoComplete)
                     return true;
 
-                await Task.Delay(TimeSpan.FromSeconds(0.1));
+                await Task.Delay(TimeSpan.FromSeconds(0.5));
                 c++;
             }
 
-            if (sentQueueInfoComplete)
-                return true;
-
-            Queue<string> items = GetQueueInfoItems(files, sFileKeyPairs, fs);
-
-            return await SendQueueInfoParts(items);
+            return sentQueueInfoComplete;
         }
 
         private Queue<string> GetQueueInfoItems(List<Tuple<string, IFile>> files, Dictionary<IFile, string> sFileKeyPairs, IFileStats[] fs)
