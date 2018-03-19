@@ -87,6 +87,22 @@ namespace QuickShare.Droid.Classes
             }
         }
 
+        internal bool UseInAppServiceOnWindowsDevices
+        {
+            get
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                return prefs.GetBoolean("UseInAppServiceOnWindowsDevices", true);
+            }
+            set
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutBoolean("UseInAppServiceOnWindowsDevices", value);
+                editor.Apply();
+            }
+        }
+
         internal Version LatestShownWhatsNewVersion
         {
             get

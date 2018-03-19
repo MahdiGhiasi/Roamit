@@ -15,6 +15,8 @@ namespace QuickShare.Droid
 #endif
     public class MainApplication : Application, Application.IActivityLifecycleCallbacks
     {
+        static MainApplication instance;
+
         public MainApplication(IntPtr handle, JniHandleOwnership transer)
           :base(handle, transer)
         {
@@ -23,6 +25,9 @@ namespace QuickShare.Droid
         public override void OnCreate()
         {
             base.OnCreate();
+
+            instance = this;
+
             RegisterActivityLifecycleCallbacks(this);
             //A great place to initialize Xamarin.Insights and Dependency Services!
 
@@ -30,6 +35,11 @@ namespace QuickShare.Droid
             Analytics.Initialize();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        public static MainApplication GetInstance()
+        {
+            return instance;
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

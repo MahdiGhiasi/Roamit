@@ -99,6 +99,44 @@ namespace QuickShare.Droid.OnlineServiceHelpers
             }
         }
 
+        internal static async Task<bool> RemoveDevice(Context _context)
+        {
+            try
+            {
+                await FindUserId();
+
+                Classes.Settings settings = new Classes.Settings(_context);
+
+                var deviceUniqueId = GetDeviceUniqueId();
+
+                var formContent = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("deviceId", deviceUniqueId),
+                });
+
+                var myHttpClient = new HttpClient();
+                var response = await myHttpClient.PostAsync($"{QuickShare.Common.Constants.ServerAddress}/api/User/{userId}/RemoveDevice", formContent);
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                if (responseText == "1, removed")
+                {
+                    System.Diagnostics.Debug.WriteLine($"RemoveDevice Succeeded. Response was '{responseText}'");
+                    return true;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"RemoveDevice Failed. Response was '{responseText}'");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"RemoveDevice Failed due to unhandled exception: {ex.Message}");
+                return false;
+            }
+        }
+
+
         internal static async Task<bool> SetCloudClipboardActivationStatus(bool activated)
         {
             var accountId = CrossSecureStorage.Current.GetValue("RoamitAccountId");

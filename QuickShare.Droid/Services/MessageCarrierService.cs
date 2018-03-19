@@ -112,7 +112,7 @@ namespace QuickShare.Droid.Services
             Log.Debug(TAG, $"Initializing MessageCarrierPackageManager... (1)");
             Common.MessageCarrierPackageManager = new RomePackageManager(this);
             Log.Debug(TAG, $"Initializing MessageCarrierPackageManager... (2)");
-            Common.MessageCarrierPackageManager.Initialize("com.roamit.messagecarrierservice");
+            Common.MessageCarrierPackageManager.AppServiceName = "com.roamit.messagecarrierservice";
 
             Log.Debug(TAG, $"Initializing MessageCarrierPackageManager... (3)");
             await Common.MessageCarrierPackageManager.InitializeDiscovery();

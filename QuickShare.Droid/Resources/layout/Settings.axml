@@ -102,6 +102,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="30dp" />
+          <Switch
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/settings_showReceiveUIOnWindowsSwitch"
+    android:text="Show file receive progress on my Windows devices" />
+          <TextView
+              android:text="Disabling this might cause some issues with transferring large files for some users."
+              android:textAppearance="?android:attr/textAppearanceSmall"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="10dp"
+              android:layout_marginBottom="30dp" />
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -154,6 +166,14 @@
                 android:text="@string/PrivacyPolicyLink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:textColor="?colorPrimary" />
+            <TextView
+                android:id="@+id/settings_logOutLink"
+                android:text="@string/LogOutLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
                 android:textColor="?colorPrimary" />
         </LinearLayout>

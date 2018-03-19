@@ -45,7 +45,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 var refreshToken = CrossSecureStorage.Current.GetValue("refreshToken");
 
                 if (refreshToken == null)
-                    throw new Exception("No refresh token.");
+                    throw new Exception($"No refresh token stored. (1)");
 
                 var formContent2 = new FormUrlEncodedContent(new[]
                 {
@@ -61,6 +61,12 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 var json2 = await response2.Content.ReadAsStringAsync();
                 results = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json2);
             }
+
+            if (!results.ContainsKey("refresh_token"))
+                throw new Exception($"No refresh token for code '{code}'. (2)");
+            if (!results.ContainsKey("access_token"))
+                throw new Exception($"No access token for code '{code}'.");
+
 
             CrossSecureStorage.Current.SetValue("refreshToken", results["refresh_token"]);
             return results["access_token"];

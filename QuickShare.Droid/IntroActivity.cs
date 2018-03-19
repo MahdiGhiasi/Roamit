@@ -11,6 +11,8 @@ using Android.Views;
 using Android.Widget;
 using Android.Support.V4.View;
 using QuickShare.Droid.OnlineServiceHelpers;
+using Android.Webkit;
+using QuickShare.Droid.Classes;
 
 namespace QuickShare.Droid
 {
@@ -72,6 +74,8 @@ namespace QuickShare.Droid
             viewPager.Adapter = introViewPagerAdapter;
             viewPagerPageChangeListener = new ViewPagerPageChangeListener();
             viewPager.AddOnPageChangeListener(viewPagerPageChangeListener);
+
+            OSHelper.ClearWebViewCache(ApplicationContext);
 
             btnNext.Click += BtnNext_Click;
             btnSkip.Click += BtnSkip_Click;

@@ -80,6 +80,8 @@ namespace QuickShare.Droid
                 ShowWhatsNewIfNecessary();
             }
 
+            SetNavBarColor(settings.Theme);
+
             checkClipboardTextTimer = new System.Timers.Timer()
             {
                 Interval = 1000,
@@ -98,7 +100,11 @@ namespace QuickShare.Droid
             if (Common.PackageManager == null)
             {
                 Common.PackageManager = new RomePackageManager(this);
-                Common.PackageManager.Initialize("com.roamit.service");
+
+                if (settings.UseInAppServiceOnWindowsDevices)
+                    Common.PackageManager.AppServiceName = "com.roamit.serviceinapp";
+                else
+                    Common.PackageManager.AppServiceName = "com.roamit.service";
             }
             else
             {
@@ -126,7 +132,7 @@ namespace QuickShare.Droid
             if (Common.MessageCarrierPackageManager == null)
             {
                 Common.MessageCarrierPackageManager = new RomePackageManager(this);
-                Common.MessageCarrierPackageManager.Initialize("com.roamit.messagecarrierservice");
+                Common.MessageCarrierPackageManager.AppServiceName = "com.roamit.messagecarrierservice";
             }
 
             InitRomeDiscovery();
@@ -146,6 +152,21 @@ namespace QuickShare.Droid
                 StartService(new Intent(this, typeof(Services.RomeReadyService)));
 
             CheckForLegacyVersionInstallations();
+        }
+
+        private void SetNavBarColor(AppTheme theme)
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                return;
+
+            if (theme == AppTheme.Dark)
+            {
+                Window.SetNavigationBarColor(Android.Graphics.Color.Black);
+            }
+            else
+            {
+                Window.SetNavigationBarColor(Android.Graphics.Color.White);
+            }
         }
 
         private async void InitAndroidPushNotifier()
@@ -785,8 +806,13 @@ namespace QuickShare.Droid
         {
             ShowProgress();
 
-            //SetProgressText("Initializing...");
-            //await Common.PackageManager.LaunchUri(new Uri("roamit://receiveDialog"), Common.GetCurrentRemoteSystem());
+            Classes.Settings settings = new Classes.Settings(this);
+
+            if (settings.UseInAppServiceOnWindowsDevices)
+            {
+                SetProgressText("Initializing...");
+                await Common.PackageManager.LaunchUri(new Uri("roamit://receiveDialog"), Common.GetCurrentRemoteSystem());
+            }
 
             SetProgressText("Connecting...");
             var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
@@ -861,13 +887,16 @@ namespace QuickShare.Droid
                 sendFileCancellationTokenSource = null;
             }
 
-            Dictionary<string, object> vs = new Dictionary<string, object>
-            {
-                { "Receiver", "System" },
-                { "FinishService", "FinishService" },
-            };
-            await Common.PackageManager.Send(vs);
 
+            if (!settings.UseInAppServiceOnWindowsDevices)
+            {
+                Dictionary<string, object> vs = new Dictionary<string, object>
+                {
+                    { "Receiver", "System" },
+                    { "FinishService", "FinishService" },
+                };
+                await Common.PackageManager.Send(vs);
+            }
             Common.PackageManager.CloseAppService();
 
             SetProgressValue(1.0, 1.0);

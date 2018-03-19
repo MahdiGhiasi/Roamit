@@ -22,9 +22,9 @@ namespace QuickShare.Droid
     internal class SettingsActivity : AppCompatActivity
     {
         TextView txtVersionNumber, txtCloudClipboardModeDescription;
-        TextView linkTwitter, linkGitHub, linkPrivacyPolicy;
+        TextView linkTwitter, linkGitHub, linkPrivacyPolicy, linkLogOut;
         EditText txtDeviceName;
-        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme;
+        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme, swUseInAppRomeProcessOnWindows;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -51,6 +51,7 @@ namespace QuickShare.Droid
             swUiMode = FindViewById<Switch>(Resource.Id.settings_uiModeSwitch);
             swStayInBackground = FindViewById<Switch>(Resource.Id.settings_allowToStayInBackgroundSwitch);
             swDarkTheme = FindViewById<Switch>(Resource.Id.settings_darkThemeSwitch);
+            swUseInAppRomeProcessOnWindows = FindViewById<Switch>(Resource.Id.settings_showReceiveUIOnWindowsSwitch);
 
             txtVersionNumber.Text = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
 
@@ -60,10 +61,42 @@ namespace QuickShare.Droid
             linkGitHub.Click += LinkGitHub_Click;
             linkPrivacyPolicy = FindViewById<TextView>(Resource.Id.settings_privacyPolicyLink);
             linkPrivacyPolicy.Click += LinkPrivacyPolicy_Click;
+            linkLogOut = FindViewById<TextView>(Resource.Id.settings_logOutLink);
+            linkLogOut.Click += LinkLogOut_Click;
 
             InitValues();
 
             Analytics.TrackPage("Settings");
+        }
+
+        private void LinkLogOut_Click(object sender, EventArgs e)
+        {
+            Android.App.AlertDialog.Builder builder = new Android.App.AlertDialog.Builder(this);
+            builder.SetMessage("Are you sure you want to log out?")
+                .SetPositiveButton("Yes", LogOutDialogClickListener)
+                .SetNegativeButton("No", (IDialogInterfaceOnClickListener)null)
+                .Show();
+        }
+
+        private async void LogOutDialogClickListener(object sender, DialogClickEventArgs e)
+        {
+            if (await ServiceFunctions.RemoveDevice(this) == false)
+            {
+                Android.App.AlertDialog.Builder alert = new Android.App.AlertDialog.Builder(this);
+                alert.SetTitle("Failed to log out.\nPlease make sure you have a working internet connection. If the problem persists, contact us.");
+                alert.SetPositiveButton("OK", (IDialogInterfaceOnClickListener)null);
+                RunOnUiThread(() =>
+                {
+                    alert.Show();
+                });
+
+                return;
+            }
+
+            MSAAuthenticator.DeleteUserUniqueId();
+
+            OSHelper.ClearAppDataAndExit();
+            FinishAffinity();
         }
 
         private void LinkPrivacyPolicy_Click(object sender, EventArgs e)
@@ -119,6 +152,9 @@ namespace QuickShare.Droid
             swDarkTheme.Checked = (settings.Theme == AppTheme.Dark);
             swDarkTheme.CheckedChange += SwDarkTheme_CheckedChange;
 
+            swUseInAppRomeProcessOnWindows.Checked = settings.UseInAppServiceOnWindowsDevices;
+            swUseInAppRomeProcessOnWindows.CheckedChange += SwUseInAppRomeProcessOnWindows_CheckedChange;
+
             if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
             {
                 swCloudClipboardMode.Enabled = false;
@@ -133,6 +169,13 @@ namespace QuickShare.Droid
 
                 swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
             }
+        }
+
+        private void SwUseInAppRomeProcessOnWindows_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            Settings settings = new Settings(this);
+
+            settings.UseInAppServiceOnWindowsDevices = e.IsChecked;
         }
 
         private void SwDarkTheme_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)

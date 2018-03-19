@@ -16,7 +16,7 @@ namespace QuickShare.Droid.RomeComponent
     public class RomePackageManager : IRomePackageManager
     {
         readonly string appIdentifier = "36835MahdiGhiasi.Roamit_yddpmccgg2mz2";
-        string appServiceName = "";
+        public string AppServiceName { get; set; } = "";
 
         AppServiceConnection appService;
         RemoteSystem remoteSystem;
@@ -99,7 +99,7 @@ namespace QuickShare.Droid.RomeComponent
             { }
 
             connectionRequest = new RemoteSystemConnectionRequest(rs);
-            appService = new AppServiceConnection(appServiceName, appIdentifier, connectionRequest);
+            appService = new AppServiceConnection(AppServiceName, appIdentifier, connectionRequest);
             var result = await appService.OpenRemoteAsync();
 
             var finalResult = result.ConvertToRomeAppServiceConnectionStatus();
@@ -113,12 +113,6 @@ namespace QuickShare.Droid.RomeComponent
         public void CloseAppService()
         {
             //Doesn't need to to anything
-        }
-
-        public void Initialize(string _appServiceName)
-        {
-            appServiceName = _appServiceName;
-
         }
 
         public async Task InitializeDiscovery()
