@@ -14,6 +14,14 @@ namespace QuickShare.FileTransfer
         public ulong TotalBytesTransferred { get; set; }
     }
 
+    public class FileTransfer2ProgressEventArgs
+    {
+        public FileTransferState State { get; internal set; }
+        public double TotalBytes { get; internal set; }
+        public double TotalTransferredBytes { get; internal set; }
+        public double Progress { get => TotalTransferredBytes / TotalBytes; }
+    }
+
     public enum FileTransferState
     {
         NotSet = 0,

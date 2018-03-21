@@ -27,7 +27,7 @@ namespace QuickShare.FileTransfer
             packageManager = _packageManager;
         }
 
-        public async Task<bool> StartFindingMyLocalIP(List<string> myIPs)
+        public async Task<bool> StartFindingMyLocalIP(IEnumerable<string> myIPs)
         {
             var key = RandomFunctions.RandomString(10);
 
@@ -35,11 +35,13 @@ namespace QuickShare.FileTransfer
 
             System.Diagnostics.Debug.WriteLine("Waiting...");
 
-            Dictionary<string, object> vs = new Dictionary<string, object>();
-            vs.Add("Receiver", "ServerIPFinder");
-            vs.Add("IPs", JsonConvert.SerializeObject(myIPs));
-            vs.Add("DefaultMessage", webServerGenerator.GenerateInstance().DefaultRootPage());
-            vs.Add("InterruptKey", key);
+            Dictionary<string, object> vs = new Dictionary<string, object>
+            {
+                { "Receiver", "ServerIPFinder" },
+                { "IPs", JsonConvert.SerializeObject(myIPs) },
+                { "DefaultMessage", webServerGenerator.GenerateInstance().DefaultRootPage() },
+                { "InterruptKey", key }
+            };
 
             var response = await packageManager.Send(vs);
             if (response.Status == RomeAppServiceResponseStatus.Success)
@@ -102,7 +104,7 @@ namespace QuickShare.FileTransfer
             return "success";
         }
 
-        private List<KeyValuePair<string, IWebServer>> StartListeners(List<string> IPs, string communicationKey)
+        private List<KeyValuePair<string, IWebServer>> StartListeners(IEnumerable<string> IPs, string communicationKey)
         {
             var servers = new List<KeyValuePair<string, IWebServer>>();
 

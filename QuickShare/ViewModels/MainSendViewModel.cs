@@ -19,8 +19,8 @@ namespace QuickShare.ViewModels
             }
         }
 
-        int progressMaximum;
-        public int ProgressMaximum
+        double progressMaximum;
+        public double ProgressMaximum
         {
             get
             {
@@ -33,8 +33,8 @@ namespace QuickShare.ViewModels
             }
         }
 
-        int progressValue;
-        public int ProgressValue
+        double progressValue;
+        public double ProgressValue
         {
             get
             {
