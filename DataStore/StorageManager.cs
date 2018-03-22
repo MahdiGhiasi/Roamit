@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace QuickShare.DataStore
@@ -10,6 +11,7 @@ namespace QuickShare.DataStore
         protected LiteCollection<T> data;
         protected string dbPath;
         protected string collectionName;
+        protected SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
         protected StorageManager(string _dbPath, string _collectionName)
         {
@@ -29,34 +31,18 @@ namespace QuickShare.DataStore
         {
             System.Diagnostics.Debug.WriteLine($"{this.GetType().ToString()}.Open()");
 
-            while (IsOpened)
-                await Task.Delay(100);
+            await semaphore.WaitAsync();
 
-            OpenIfPossible();
+            db = new LiteDatabase($"Filename={dbPath};");
+            data = db.GetCollection<T>(collectionName);
         }
-
-        public bool OpenIfPossible()
-        {
-            try
-            {
-                db = new LiteDatabase($"Filename={dbPath};");
-                data = db.GetCollection<T>(collectionName);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Failed to open {dbPath}");
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                System.Diagnostics.Debug.WriteLine("*****");
-                return false;
-            }
-        }
-
+        
         public void Close()
         {
             db?.Dispose();
             db = null;
             data = null;
+            semaphore.Release();
         }
 
         public void Clear()

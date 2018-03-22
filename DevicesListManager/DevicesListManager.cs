@@ -45,7 +45,7 @@ namespace QuickShare.DevicesListManager
             selectCounts = new Dictionary<string, uint>();
             try
             {
-                DataStorageProviders.SettingsManager.OpenIfPossible();
+                DataStorageProviders.SettingsManager.OpenAsync().GetAwaiter().GetResult();
                 if (DataStorageProviders.SettingsManager.ContainsKey("selectCounts"))
                 {
                     selectCounts = new Dictionary<string, uint>(JsonConvert.DeserializeObject<Dictionary<string, uint>>(DataStorageProviders.SettingsManager.GetItemContent("selectCounts")));
