@@ -80,5 +80,25 @@ namespace QuickShare.DataStore
 
             data.Update(guid, item);
         }
+
+        public void MarkFileAsCompleted(Guid guid, string fileName, string path)
+        {
+            System.Diagnostics.Debug.WriteLine($"Marked {fileName} ({guid}) as completed.");
+
+            var item = GetItem(guid);
+            var d = item.Data as ReceivedFileCollection;
+
+            if (d == null)
+                return;
+
+            var file = d.Files.LastOrDefault(x => (x.Name == fileName && (x.StorePath == path || x.StorePath == (path + "\\"))));
+
+            if (file == null)
+                return;
+
+            file.Completed = true;
+
+            data.Update(guid, item);
+        }
     }
 }

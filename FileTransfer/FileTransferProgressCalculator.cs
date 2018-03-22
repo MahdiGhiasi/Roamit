@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FileTransfer
 {
-    internal class FileTransferProgressCalculator
+    internal abstract class FileTransferProgressCalculator
     {
-        private ulong sliceMaxSize;
+        protected ulong sliceMaxSize;
 
         public delegate void FileTransferProgressEventHandler(object sender, FileTransfer2ProgressEventArgs e);
         public event FileTransferProgressEventHandler FileTransferProgress;
@@ -22,30 +23,7 @@ namespace FileTransfer
             this.sliceMaxSize = sliceMaxSize;
         }
 
-        public void AddFileSliceSender(FileSliceSender fileSliceSender)
-        {
-            TransferStatus.Add(fileSliceSender.UniqueKey, new FileTransferStatus
-            {
-                NextSlice = 0,
-                SlicesCount = fileSliceSender.SlicesCount,
-                LastSliceSize = fileSliceSender.LastSliceSize,
-                SliceMaxSize = sliceMaxSize,
-            });
-        }
-
-        internal void SliceRequestReceived(FileSliceSender sender, SliceRequestedEventArgs e)
-        {
-            if (!TransferStatus.ContainsKey(sender.UniqueKey))
-                throw new KeyNotFoundException($"FileSliceSender '{sender.UniqueKey}' was not registered in FileTransferProgressCalculator.");
-
-            var nextSlice = e.RequestedSlice + 1;
-            if (TransferStatus[sender.UniqueKey].NextSlice < nextSlice)
-                TransferStatus[sender.UniqueKey].NextSlice = nextSlice;
-
-            InvokeProgressEvent();
-        }
-
-        private void InvokeProgressEvent()
+        protected void InvokeProgressEvent()
         {
             if (FileTransferProgress == null)
                 return;
@@ -59,11 +37,6 @@ namespace FileTransfer
                 TotalBytes = totalSize,
                 TotalTransferredBytes = transferredSize,
             });
-        }
-
-        internal void InitTimeout(TaskCompletionSource<FileTransferResult> transferTcs)
-        {
-            // TODO
         }
     }
 }

@@ -23,6 +23,8 @@ namespace FileTransfer
 
         public uint SlicesCount { get; private set; }
         public ulong LastSliceSize { get; private set; }
+        public ulong SliceMaxLength { get; private set; }
+        public ulong FileSize { get; private set; }
 
         public FileSendInfo(IFile file, string parentPath)
         {
@@ -54,6 +56,7 @@ namespace FileTransfer
         public async Task InitSlicingAsync()
         {
             var properties = await File.GetFileStats();
+            FileSize = (ulong)properties.Length;
             SlicesCount = (uint)Math.Ceiling(((double)properties.Length) / ((double)Constants.FileSliceMaxLength));
 
             LastSliceSize = ((ulong)properties.Length % Constants.FileSliceMaxLength);

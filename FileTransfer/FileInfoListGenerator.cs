@@ -19,25 +19,31 @@ namespace FileTransfer
             this.ip = ip;
         }
 
-        internal async Task<string> GenerateAsync()
+        public async Task<FileInfoList> GenerateAsync()
         {
-            List<string> items = await GetQueueInfoItems();
-            return JsonConvert.SerializeObject(items);
-        }
-
-        private async Task<List<string>> GetQueueInfoItems()
-        {
-            List<string> items = new List<string>();
+            List<string> itemsLegacy = new List<string>();
+            List<FileSendInfo> items = new List<FileSendInfo>();
             foreach (var item in files)
             {
                 var key = item.UniqueKey;
-                items.Add(GetQueueFileInfo(key, item.SlicesCount, item.FileName, await item.File.GetFileStats(), item.RelativePath));
+                var stats = await item.File.GetFileStats();
+                itemsLegacy.Add(GetQueueFileInfoLegacy(key, item.SlicesCount, item.FileName, stats, item.RelativePath));
+                items.Add(item);
             }
 
-            return items;
+            var infoList = new QueueInfo
+            {
+                Files = items,
+            };
+
+            return new FileInfoList
+            {
+                FileInfoListJsonLegacy = JsonConvert.SerializeObject(itemsLegacy),
+                FileInfoListJson = JsonConvert.SerializeObject(infoList),
+            };
         }
 
-        private string GetQueueFileInfo(string key, uint slicesCount, string fileName, IFileStats properties, string directory)
+        private string GetQueueFileInfoLegacy(string key, uint slicesCount, string fileName, IFileStats properties, string directory)
         {
             Dictionary<string, object> vs = new Dictionary<string, object>
             {
@@ -51,9 +57,16 @@ namespace FileTransfer
                 { "Directory", directory },
                 { "ServerIP", ip },
             };
+
             var serialized = JsonConvert.SerializeObject(vs, Formatting.None);
             return serialized;
         }
 
+    }
+
+    internal class FileInfoList
+    {
+        public string FileInfoListJson { get; set; }
+        public string FileInfoListJsonLegacy { get; set; }
     }
 }

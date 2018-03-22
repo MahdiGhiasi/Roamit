@@ -59,7 +59,7 @@ namespace FileTransfer
         {
             IWebServer server = null;
 
-            var transferProgress = new FileTransferProgressCalculator(Constants.FileSliceMaxLength);
+            var transferProgress = new FileSendProgressCalculator(Constants.FileSliceMaxLength);
             transferProgress.FileTransferProgress += TransferProgress_FileTransferProgress;
 
             try
@@ -139,7 +139,8 @@ namespace FileTransfer
         {
             FileInfoListGenerator generator = new FileInfoListGenerator(files, ip);
             var queueData = await generator.GenerateAsync();
-            server.AddResponseUrl($"/{sessionKey}/", queueData);
+            server.AddResponseUrl($"/{sessionKey}/", queueData.FileInfoListJsonLegacy);
+            server.AddResponseUrl($"/{sessionKey}/queueInfo/", queueData.FileInfoListJson);
         }
 
         private void TransferProgress_FileTransferProgress(object sender, FileTransfer2ProgressEventArgs e)
@@ -147,7 +148,7 @@ namespace FileTransfer
             FileTransferProgress?.Invoke(this, e);
         }
 
-        private async Task InitFileReceiveEndpoints(IWebServer server, IEnumerable<FileSendInfo> files, FileTransferProgressCalculator transferProgress, CancellationToken cancellationToken = default(CancellationToken))
+        private async Task InitFileReceiveEndpoints(IWebServer server, IEnumerable<FileSendInfo> files, FileSendProgressCalculator transferProgress, CancellationToken cancellationToken = default(CancellationToken))
         {
             foreach (var item in files)
             {
@@ -158,7 +159,7 @@ namespace FileTransfer
             }
         }
 
-        private async Task InitFileReceiveEndpoints(IWebServer server, FileSendInfo fileInfo, FileTransferProgressCalculator transferProgress)
+        private async Task InitFileReceiveEndpoints(IWebServer server, FileSendInfo fileInfo, FileSendProgressCalculator transferProgress)
         {
             await fileInfo.InitSlicingAsync();
 
@@ -172,7 +173,7 @@ namespace FileTransfer
             }
         }
 
-        private async Task<FileTransferResult> SendFiles(string sessionKey, string ip, FileTransferProgressCalculator transferProgress)
+        private async Task<FileTransferResult> SendFiles(string sessionKey, string ip, FileSendProgressCalculator transferProgress)
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             SendInitReceiverMessage(transferProgress.TotalSlices, sessionKey, ip);
