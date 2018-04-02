@@ -106,7 +106,7 @@ namespace QuickShare.ServiceTask
                     }
                     else if (receiver == "FileReceiver")
                     {
-                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, DecideDownloadFolder);
+                        await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, DecideDownloadFolder);
                     }
                     else if (receiver == "TextReceiver")
                     {

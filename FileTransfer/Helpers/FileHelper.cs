@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileTransfer.Helpers
+namespace QuickShare.FileTransfer.Helpers
 {
     internal static class FileHelper
     {

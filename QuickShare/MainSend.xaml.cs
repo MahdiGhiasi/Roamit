@@ -32,7 +32,6 @@ using QuickShare.HelperClasses;
 using System.Threading;
 using PCLStorage;
 using Newtonsoft.Json;
-using FileTransfer;
 
 namespace QuickShare
 {
@@ -405,14 +404,12 @@ namespace QuickShare
                     ViewModel.ProgressIsIndeterminate = false;
                     return FileTransferResult.NoFiles;
                 }
-                else
+                
+                await Task.Run(async () =>
                 {
-                    await Task.Run(async () =>
-                    {
-                        result = await fs.Send(await GetFiles(SendDataTemporaryStorage.Files), sendFileCancellationTokenSource.Token);
-                    });
-                }
-
+                    result = await fs.Send(await GetFiles(SendDataTemporaryStorage.Files), sendFileCancellationTokenSource.Token);
+                });
+                
                 ViewModel.ProgressValue = ViewModel.ProgressMaximum;
             }
 

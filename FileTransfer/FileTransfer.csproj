@@ -7,7 +7,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D78FDFFF-E82C-4E9C-B78F-54E1D924D49F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>FileTransfer</RootNamespace>
+    <RootNamespace>QuickShare.FileTransfer</RootNamespace>
     <AssemblyName>FileTransfer</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>

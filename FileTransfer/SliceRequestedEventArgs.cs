@@ -1,4 +1,4 @@
-﻿namespace FileTransfer
+﻿namespace QuickShare.FileTransfer
 {
     public class SliceRequestedEventArgs
     {

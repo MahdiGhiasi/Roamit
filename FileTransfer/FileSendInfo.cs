@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using QuickShare.Common;
 using System.Threading.Tasks;
 
-namespace FileTransfer
+namespace QuickShare.FileTransfer
 {
     public class FileSendInfo
     {
@@ -17,18 +17,27 @@ namespace FileTransfer
         [JsonIgnore]
         public IFile File { get; }
 
-        public string FileName { get => File.Name; }
-        public string RelativePath { get; }
-        public string UniqueKey { get; }
-
+        [JsonProperty]
+        public string RelativePath { get; private set; }
+        [JsonProperty]
+        public string UniqueKey { get; private set; }
+        [JsonProperty]
+        public string FileName { get; private set; }
+        [JsonProperty]
         public uint SlicesCount { get; private set; }
+        [JsonProperty]
         public ulong LastSliceSize { get; private set; }
+        [JsonProperty]
         public ulong SliceMaxLength { get; private set; }
+        [JsonProperty]
         public ulong FileSize { get; private set; }
+
+        public FileSendInfo() { }
 
         public FileSendInfo(IFile file, string parentPath)
         {
             File = file;
+            FileName = file.Name;
 
             if ((parentPath.LastOrDefault() != '\\') && (parentPath.LastOrDefault() != '/'))
                 parentPath += "/";
@@ -58,6 +67,7 @@ namespace FileTransfer
             var properties = await File.GetFileStats();
             FileSize = (ulong)properties.Length;
             SlicesCount = (uint)Math.Ceiling(((double)properties.Length) / ((double)Constants.FileSliceMaxLength));
+            SliceMaxLength = Constants.FileSliceMaxLength;
 
             LastSliceSize = ((ulong)properties.Length % Constants.FileSliceMaxLength);
             if (LastSliceSize == 0)

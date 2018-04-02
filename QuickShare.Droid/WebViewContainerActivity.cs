@@ -695,84 +695,22 @@ namespace QuickShare.Droid
         {
             ShowProgress();
             SetProgressText("Connecting...");
-
             Common.AndroidPushNotifier.SetRemoteDevice(Common.GetCurrentNormalizedRemoteSystem().Id);
 
-            string sendingText = (files.Length == 1) ? "Sending file..." : "Sending files...";
             SetProgressText("Preparing...");
+            var transferResult = await BeginSend(files, Common.AndroidPushNotifier, sendFinishService: true);
 
-            string message = "";
-            FileTransferResult transferResult = FileTransferResult.Successful;
+            FinishSend(transferResult, isWindows: false);
+        }
 
-            using (FileSender fs = new FileSender(Common.GetCurrentNormalizedRemoteSystem(),
-                                                  new WebServerComponent.WebServerGenerator(),
-                                                  Common.AndroidPushNotifier,
-                                                  FindMyIPAddresses(),
-                                                  (new Classes.Settings(this)).DeviceName))
-            {
-                fs.FileTransferProgress += (ss, ee) =>
-                {
-                    if (ee.State == FileTransferState.Error)
-                    {
-                        transferResult = FileTransferResult.FailedOnSend;
-                        message = ee.Message;
-                    }
-                    else
-                    {
-                        RunOnUiThread(() =>
-                        {
-                            SetProgressText(sendingText);
-
-                            SetProgressValue((double)ee.CurrentPart, (double)ee.Total + 1);
-                        });
-                    }
-                };
-
-                sendFileCancellationTokenSource = new CancellationTokenSource();
-
-                if (files.Length == 0)
-                {
-                    SetProgressText("No files.");
-                    return;
-                }
-                else if (files.Length == 1)
-                {
-                    sendingFile = true;
-
-                    await Task.Run(async () =>
-                    {
-                        transferResult = await fs.SendFile(sendFileCancellationTokenSource.Token, new PCLStorage.FileSystemFile(files[0]));
-                    });
-
-                    sendingFile = false;
-                }
-                else
-                {
-                    sendingFile = true;
-                    await Task.Run(async () =>
-                    {
-                        transferResult = await fs.SendFiles(sendFileCancellationTokenSource.Token,
-                            from x in files
-                            select new PCLStorage.FileSystemFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
-                    });
-                    sendingFile = false;
-                }
-
-                sendFileCancellationTokenSource = null;
-            }
-
-            Dictionary<string, object> vs = new Dictionary<string, object>
-            {
-                { "Receiver", "System" },
-                { "FinishService", "FinishService" },
-            };
-            await Common.AndroidPushNotifier.Send(vs);
-
-            SetProgressValue(1.0, 1.0);
+        private void FinishSend(FileTransferResult transferResult, bool isWindows)
+        {
+            string message = transferResult.ToString(); //TODO
+            string sendEventText = isWindows ? "SendToWindows" : "SendToAndroid";
 
             if (transferResult != FileTransferResult.Successful)
             {
-                Analytics.TrackEvent("SendToAndroid", "file", transferResult.ToString());
+                Analytics.TrackEvent(sendEventText, "file", transferResult.ToString());
 
                 if (transferResult != FileTransferResult.Cancelled)
                 {
@@ -798,8 +736,13 @@ namespace QuickShare.Droid
             else
             {
                 SetProgressText("Finished.");
-                Analytics.TrackEvent("SendToAndroid", "file", "Success");
+                Analytics.TrackEvent(sendEventText, "file", "Success");
             }
+        }
+
+        private IEnumerable<FileSendInfo> GetFiles(string[] files)
+        {
+            return files.Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x), ""));
         }
 
         private async Task SendFilesToWindowsDevice(string[] files)
@@ -816,31 +759,37 @@ namespace QuickShare.Droid
 
             SetProgressText("Connecting...");
             var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
-            if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
+            if (result != RomeAppServiceConnectionStatus.Success)
             {
                 Analytics.TrackEvent("SendToWindows", "file", "Failed");
                 SetProgressText($"Connect failed. ({result.ToString()})");
                 return;
             }
 
-            string sendingText = (files.Length == 1) ? "Sending file..." : "Sending files...";
             SetProgressText("Preparing...");
 
-            string message = "";
+            var transferResult = await BeginSend(files, Common.PackageManager, sendFinishService: !settings.UseInAppServiceOnWindowsDevices);
+
+            FinishSend(transferResult, isWindows: true);
+        }
+
+        private async Task<FileTransferResult> BeginSend(string[] files, IRomePackageManager packageManager, bool sendFinishService)
+        {
+            string sendingText = (files.Length == 1) ? "Sending file..." : "Sending files...";
+
             FileTransferResult transferResult = FileTransferResult.Successful;
 
-            using (FileSender fs = new FileSender(Common.GetCurrentRemoteSystem(),
-                                                  new WebServerComponent.WebServerGenerator(),
-                                                  Common.PackageManager,
-                                                  FindMyIPAddresses(),
-                                                  (new Classes.Settings(this)).DeviceName))
+            using (FileSender2 fs = new FileSender2(Common.GetCurrentNormalizedRemoteSystem(),
+                                                    new WebServerComponent.WebServerGenerator(),
+                                                    packageManager,
+                                                    FindMyIPAddresses(),
+                                                    (new Classes.Settings(this)).DeviceName))
             {
                 fs.FileTransferProgress += (ss, ee) =>
                 {
                     if (ee.State == FileTransferState.Error)
                     {
                         transferResult = FileTransferResult.FailedOnSend;
-                        message = ee.Message;
                     }
                     else
                     {
@@ -848,89 +797,36 @@ namespace QuickShare.Droid
                         {
                             SetProgressText(sendingText);
 
-                            SetProgressValue((double)ee.CurrentPart, (double)ee.Total + 1);
+                            SetProgressValue(ee.Progress, 1.0);
                         });
                     }
                 };
 
                 sendFileCancellationTokenSource = new CancellationTokenSource();
-
                 if (files.Length == 0)
                 {
                     SetProgressText("No files.");
-                    //ViewModel.ProgressIsIndeterminate = false;
-                    return;
+                    return FileTransferResult.NoFiles;
                 }
-                else if (files.Length == 1)
+                await Task.Run(async () =>
                 {
-                    sendingFile = true;
-
-                    await Task.Run(async () =>
-                    {
-                        transferResult = await fs.SendFile(sendFileCancellationTokenSource.Token, new PCLStorage.FileSystemFile(files[0]));
-                    });
-
-                    sendingFile = false;
-                }
-                else
-                {
-                    sendingFile = true;
-                    await Task.Run(async () =>
-                    {
-                        transferResult = await fs.SendFiles(sendFileCancellationTokenSource.Token,
-                            from x in files
-                            select new PCLStorage.FileSystemFile(x), DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
-                    });
-                    sendingFile = false;
-                }
-
+                    transferResult = await fs.Send(GetFiles(files).ToList(), sendFileCancellationTokenSource.Token);
+                });
                 sendFileCancellationTokenSource = null;
             }
 
-
-            if (!settings.UseInAppServiceOnWindowsDevices)
+            if (sendFinishService)
             {
                 Dictionary<string, object> vs = new Dictionary<string, object>
                 {
                     { "Receiver", "System" },
                     { "FinishService", "FinishService" },
                 };
-                await Common.PackageManager.Send(vs);
+                await packageManager.Send(vs);
             }
-            Common.PackageManager.CloseAppService();
-
             SetProgressValue(1.0, 1.0);
 
-            if (transferResult != FileTransferResult.Successful)
-            {
-                Analytics.TrackEvent("SendToWindows", "file", transferResult.ToString());
-
-                if (transferResult != FileTransferResult.Cancelled)
-                {
-                    SetProgressText("Failed.");
-                    SetProgressValue(0, 1.0);
-                    System.Diagnostics.Debug.WriteLine("Send failed.\r\n\r\n" + message);
-
-                    if (transferResult == FileTransferResult.FailedOnHandshake)
-                    {
-                        message = "Couldn't reach remote device.\r\n\r\n" +
-                            "Make sure both devices are connected to the same Wi-Fi or LAN network.";
-                    }
-
-                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                    alert.SetTitle(message);
-                    alert.SetPositiveButton("OK", (senderAlert, args) => { });
-                    RunOnUiThread(() =>
-                    {
-                        alert.Show();
-                    });
-                }
-            }
-            else
-            {
-                SetProgressText("Finished.");
-                Analytics.TrackEvent("SendToWindows", "file", "Success");
-            }
+            return transferResult;
         }
 
         private IEnumerable<string> FindMyIPAddresses()
@@ -942,7 +838,6 @@ namespace QuickShare.Droid
         {
             ShowProgress();
             SetProgressText("Connecting...");
-
 
             RomeRemoteLaunchUriStatus result;
             if (IsAndroidDeviceSelected())

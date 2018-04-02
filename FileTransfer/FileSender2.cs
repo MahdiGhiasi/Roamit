@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
-using PCLStorage;
+﻿using QuickShare.FileTransfer.Helpers;
+using Microsoft.AspNetCore.WebUtilities;
 using QuickShare.Common;
 using QuickShare.Common.Rome;
 using QuickShare.FileTransfer;
@@ -11,14 +11,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FileTransfer
+namespace QuickShare.FileTransfer
 {
     public class FileSender2 : IDisposable
     {
         readonly int fileSenderVersion = 2;
-
-        readonly int transferSessionKeyLength = 19;
-        readonly TimeSpan maximumNotActiveTime = TimeSpan.FromSeconds(6);
+        readonly int maxRetrySignal = 1;
 
         private int fileReceiverVersion = 1;
         private object remoteSystem;
@@ -55,7 +53,8 @@ namespace FileTransfer
             return server;
         }
 
-        public async Task<FileTransferResult> Send(IEnumerable<FileSendInfo> files, CancellationToken cancellationToken = default(CancellationToken))
+        // files must be a list to make the function predictable. (As we modify the FileSendInfo objects by calling their InitSlicingAsync() funciton) 
+        public async Task<FileTransferResult> Send(List<FileSendInfo> files, CancellationToken cancellationToken = default(CancellationToken))
         {
             IWebServer server = null;
 
@@ -66,7 +65,7 @@ namespace FileTransfer
             {
                 transferTcs = new TaskCompletionSource<FileTransferResult>();
                 timeoutTcs = new TaskCompletionSource<FileTransferResult>();
-                var sessionKey = RandomFunctions.RandomString(transferSessionKeyLength);
+                var sessionKey = Guid.NewGuid().ToString();
 
                 var myIp = await handshaker.Handshake(cancellationToken);
 
@@ -157,6 +156,8 @@ namespace FileTransfer
                 if (cancellationToken.IsCancellationRequested)
                     return;
             }
+
+            var list = files.ToList();
         }
 
         private async Task InitFileReceiveEndpoints(IWebServer server, FileSendInfo fileInfo, FileSendProgressCalculator transferProgress)
@@ -186,12 +187,19 @@ namespace FileTransfer
                 var result = (await Task.WhenAny(transferTcs.Task, timeoutTcs.Task)).Result;
                 if (result == FileTransferResult.Timeout && fileReceiverVersion >= 2)
                 {
-                    timeoutTcs = new TaskCompletionSource<FileTransferResult>();
-                    transferProgress.InitTimeout(timeoutTcs);
+                    if (transferProgress.TransferStarted)
+                    {
+                        timeoutTcs = new TaskCompletionSource<FileTransferResult>();
+                        transferProgress.InitTimeout(timeoutTcs);
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    SendResumeReceiverMessage(sessionKey);
+                        SendResumeReceiverMessage(sessionKey);
 #pragma warning restore CS4014
+                    }
+                    else
+                    {
+                        return FileTransferResult.FailedOnPrepare;
+                    }
                 }
                 else
                 {
@@ -212,7 +220,7 @@ namespace FileTransfer
 
             if (result.Status == RomeAppServiceResponseStatus.Success)
             {
-                if (result.Message["Accepted"].ToString() == "true")
+                if (result.Message.ContainsKey("Accepted") && result.Message["Accepted"].ToString() == "true")
                 {
                     return true;
                 }
@@ -239,7 +247,7 @@ namespace FileTransfer
                 { "TotalSlices", (long)totalSlices },
                 { "QueueFinishKey", key },
                 { "ServerIP", ip },
-                { "Guid", Guid.NewGuid().ToString() },
+                { "Guid", key },
                 { "SenderName", deviceName },
                 { "parentDirectoryName", "" },
                 { "QueueInfoKey", key },

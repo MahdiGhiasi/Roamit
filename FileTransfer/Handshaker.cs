@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FileTransfer
+namespace QuickShare.FileTransfer
 {
     internal class Handshaker : IDisposable
     {

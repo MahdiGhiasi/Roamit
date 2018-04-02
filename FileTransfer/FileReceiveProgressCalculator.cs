@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileTransfer
+namespace QuickShare.FileTransfer
 {
     internal class FileReceiveProgressCalculator : FileTransferProgressCalculator
     {

@@ -47,7 +47,7 @@ namespace QuickShare.Droid.Classes
             {
                 InitProgressNotifier("Receiving...");
 
-                await FileTransfer.FileReceiver.ReceiveRequest(message, DownloadFolderDecider);
+                await FileTransfer.FileReceiver2.ReceiveRequest(message, DownloadFolderDecider);
             }
             else if (receiver == "TextReceiver")
             {

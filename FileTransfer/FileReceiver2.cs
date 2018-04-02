@@ -1,4 +1,4 @@
-﻿using FileTransfer.Helpers;
+﻿using QuickShare.FileTransfer.Helpers;
 using Newtonsoft.Json;
 using PCLStorage;
 using QuickShare.Common;
@@ -13,13 +13,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileTransfer
+namespace QuickShare.FileTransfer
 {
     public static class FileReceiver2
     {
         static readonly int fileReceiverVersion = 2;
-        static readonly TimeSpan downloadTimeout = TimeSpan.FromSeconds(5);
-        static readonly int downloadMaxTryCount = 3;
 
         public delegate void ReceiveFileProgressEventHandler(FileTransfer2ProgressEventArgs e);
         public static event ReceiveFileProgressEventHandler FileTransferProgress;
@@ -37,8 +35,24 @@ namespace FileTransfer
                 return new Dictionary<string, object>();
             }
 
-            await ProcessRequest(request, fileSenderVersion, downloadFolderDecider);
-            return new Dictionary<string, object>();
+            if (!request.ContainsKey("Type"))
+                throw new InvalidOperationException("Field 'Type' is missing from request.");
+
+            switch (request["Type"] as string)
+            {
+                case "QueueInit":
+                    await ProcessRequest(request, fileSenderVersion, downloadFolderDecider);
+                    return new Dictionary<string, object>();
+                case "ResumeReceive":
+                    //TODO
+                    Debug.WriteLine("Received ResumeReceive request. TODO.");
+                    return new Dictionary<string, object>
+                    {
+                        { "Accepted", "true" },
+                    };
+                default:
+                    throw new InvalidOperationException($"Type '{request["Type"]}' is invalid.");
+            }
         }
 
         private static Task ProcessRequestLegacy(Dictionary<string, object> request, int fileSenderVersion, Func<string[], Task<IFolder>> downloadFolderDecider)
@@ -48,30 +62,29 @@ namespace FileTransfer
 
         private static async Task ProcessRequest(Dictionary<string, object> request, int fileSenderVersion, Func<string[], Task<IFolder>> downloadFolderDecider)
         {
-            var sessionGuid = Guid.Parse(request["Guid"] as string);
-            var sessionKey = request["QueueInfoKey"].ToString();
+            var sessionKey = Guid.Parse(request["Guid"] as string);
             var ip = request["ServerIP"].ToString();
             var isCompatible = CompatibilityHelper.IsCompatible(fileSenderVersion, fileReceiverVersion);
             var senderName = request["SenderName"].ToString();
+
+            if (fileSenderVersion >= 2)
+                await SendVersionCheckGetRequestAsync(ip, sessionKey, isCompatible);
 
             if (!isCompatible)
             {
                 // TODO
                 return;
             }
-
-            await SendVersionCheckGetRequestAsync(ip, sessionKey, isCompatible);
+            
             var queueInfo = await GetQueueInfoAsync(ip, sessionKey);
-
             var downloadFolder = await downloadFolderDecider(queueInfo.Files.Select(x => Path.GetExtension(x.FileName)).ToArray());
-
-            await StartDownload(queueInfo, senderName, ip, sessionKey, sessionGuid, downloadFolder);
+            await StartDownload(queueInfo, senderName, ip, sessionKey, downloadFolder);
         }
 
-        private static async Task AddToHistory(QueueInfo queueInfo, Guid sessionGuid, string senderName, IFolder downloadRootFolder)
+        private static async Task AddToHistory(QueueInfo queueInfo, Guid sessionKey, string senderName, IFolder downloadRootFolder)
         {
             await DataStorageProviders.HistoryManager.OpenAsync();
-            DataStorageProviders.HistoryManager.Add(sessionGuid,
+            DataStorageProviders.HistoryManager.Add(sessionKey,
                 DateTime.Now,
                 senderName,
                 new ReceivedFileCollection
@@ -89,21 +102,23 @@ namespace FileTransfer
             DataStorageProviders.HistoryManager.Close();
         }
 
-        private static async Task StartDownload(QueueInfo queueInfo, string senderName, string ip, string sessionKey, Guid sessionGuid, IFolder downloadRootFolder)
+        private static async Task StartDownload(QueueInfo queueInfo, string senderName, string ip, Guid sessionKey, IFolder downloadRootFolder)
         {
-            await AddToHistory(queueInfo, sessionGuid, senderName, downloadRootFolder);
+            await AddToHistory(queueInfo, sessionKey, senderName, downloadRootFolder);
             progressCalculator = new FileReceiveProgressCalculator(queueInfo, queueInfo.Files.First().SliceMaxLength);
             progressCalculator.FileTransferProgress += ProgressCalculator_FileTransferProgress;
 
             // TODO: Parallelize this
             foreach (var item in queueInfo.Files)
             {
-                await DownloadFile(item, downloadRootFolder, ip, sessionKey, sessionGuid);
+                await DownloadFile(item, downloadRootFolder, ip, sessionKey);
             }
 
             await DataStorageProviders.HistoryManager.OpenAsync();
-            DataStorageProviders.HistoryManager.ChangeCompletedStatus(sessionGuid, true);
+            DataStorageProviders.HistoryManager.ChangeCompletedStatus(sessionKey, true);
             DataStorageProviders.HistoryManager.Close();
+
+            await SendFinishGetRequestAsync(ip, sessionKey);
 
             FileTransferProgress?.Invoke(new FileTransfer2ProgressEventArgs
             {
@@ -116,7 +131,7 @@ namespace FileTransfer
             FileTransferProgress?.Invoke(e);
         }
 
-        private static async Task DownloadFile(FileSendInfo fileInfo, IFolder downloadRootFolder, string serverIp, string sessionKey, Guid sessionGuid)
+        private static async Task DownloadFile(FileSendInfo fileInfo, IFolder downloadRootFolder, string serverIp, Guid sessionKey)
         {
             //TODO: Add a semaphore or sth to make sure two threads don't start writing on one file.
 
@@ -127,7 +142,7 @@ namespace FileTransfer
             if (file.Name != fileInfo.FileName) //File already existed, so new name generated for it. We should update database now.
             {
                 await DataStorageProviders.HistoryManager.OpenAsync();
-                DataStorageProviders.HistoryManager.UpdateFileName(sessionGuid, fileInfo.FileName, file.Name, downloadFolder.Path);
+                DataStorageProviders.HistoryManager.UpdateFileName(sessionKey, fileInfo.FileName, file.Name, downloadFolder.Path);
                 DataStorageProviders.HistoryManager.Close();
             }
 
@@ -136,9 +151,9 @@ namespace FileTransfer
             {
                 for (uint i = 0; i < fileInfo.SlicesCount; i++)
                 {
-                    string url = $"http://{serverIp}:{Constants.CommunicationPort}/{sessionKey}/{i}/";
+                    string url = $"http://{serverIp}:{Constants.CommunicationPort}/{fileInfo.UniqueKey}/{i}/";
 
-                    byte[] buffer = await HttpHelper.DownloadDataFromUrl(url, downloadTimeout, downloadMaxTryCount);
+                    byte[] buffer = await HttpHelper.DownloadDataFromUrl(url);
 
                     int expectedLength;
                     if (i == (fileInfo.SlicesCount - 1))
@@ -162,24 +177,32 @@ namespace FileTransfer
             }
 
             await DataStorageProviders.HistoryManager.OpenAsync();
-            DataStorageProviders.HistoryManager.MarkFileAsCompleted(sessionGuid, file.Name, downloadFolder.Path);
+            DataStorageProviders.HistoryManager.MarkFileAsCompleted(sessionKey, file.Name, downloadFolder.Path);
             DataStorageProviders.HistoryManager.Close();
         }
 
-        private static async Task<QueueInfo> GetQueueInfoAsync(string ip, string sessionKey)
+        private static async Task<QueueInfo> GetQueueInfoAsync(string ip, Guid sessionKey)
         {
-            return JsonConvert.DeserializeObject<QueueInfo>(await HttpHelper.SendGetRequestAsync($"http://{ip}:{Constants.CommunicationPort}/{sessionKey}/queueInfo/"));
+            string data = await HttpHelper.SendGetRequestAsync($"http://{ip}:{Constants.CommunicationPort}/{sessionKey.ToString()}/queueInfo/");
+            return JsonConvert.DeserializeObject<QueueInfo>(data);
         }
 
-        private static async Task SendVersionCheckGetRequestAsync(string ip, string sessionKey, bool isCompatible)
+        private static async Task SendVersionCheckGetRequestAsync(string ip, Guid sessionKey, bool isCompatible)
         {
             try
             {
-                await HttpHelper.SendGetRequestAsync($"http://{ip}:{Constants.CommunicationPort}/{sessionKey}/versionCheck/?receiverVersion={fileReceiverVersion}&receiverCompatible={(isCompatible ? "true" : "false")}");
+                await HttpHelper.SendGetRequestAsync($"http://{ip}:{Constants.CommunicationPort}/{sessionKey.ToString()}/versionCheck/?receiverVersion={fileReceiverVersion}&receiverCompatible={(isCompatible ? "true" : "false")}");
             }
             catch { }
         }
 
-        
+        private static async Task SendFinishGetRequestAsync(string ip, Guid sessionKey)
+        {
+            try
+            {
+                await HttpHelper.SendGetRequestAsync($"http://{ip}:{Constants.CommunicationPort}/{sessionKey.ToString()}/finishQueue/");
+            }
+            catch { }
+        }
     }
 }

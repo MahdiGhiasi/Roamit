@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FileTransfer
+namespace QuickShare.FileTransfer
 {
     internal class QueueInfo
     {

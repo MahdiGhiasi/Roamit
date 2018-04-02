@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using PCLStorage;
 using QuickShare.Common;
 
-namespace FileTransfer
+namespace QuickShare.FileTransfer
 {
     internal class FileSliceSender
     {
