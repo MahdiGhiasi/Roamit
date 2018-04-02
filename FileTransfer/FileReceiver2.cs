@@ -33,8 +33,7 @@ namespace QuickShare.FileTransfer
             if (!request.ContainsKey("FileSenderVersion") || (int.Parse(request["FileSenderVersion"].ToString()) < 2))
             {
                 fileSenderVersion = 1;
-                await ProcessRequestLegacy(request, fileSenderVersion, downloadFolderDecider);
-                return new Dictionary<string, object>();
+                return await ProcessRequestLegacy(request, fileSenderVersion, downloadFolderDecider);
             }
 
             if (!request.ContainsKey("Type"))
@@ -57,9 +56,9 @@ namespace QuickShare.FileTransfer
             }
         }
 
-        private static Task ProcessRequestLegacy(Dictionary<string, object> request, int fileSenderVersion, Func<string[], Task<IFolder>> downloadFolderDecider)
+        private static async Task<Dictionary<string, object>> ProcessRequestLegacy(Dictionary<string, object> request, int fileSenderVersion, Func<string[], Task<IFolder>> downloadFolderDecider)
         {
-            throw new NotImplementedException();
+            return await FileReceiver.ReceiveRequest(request, downloadFolderDecider);
         }
 
         private static async Task ProcessRequest(Dictionary<string, object> request, int fileSenderVersion, Func<string[], Task<IFolder>> downloadFolderDecider)
