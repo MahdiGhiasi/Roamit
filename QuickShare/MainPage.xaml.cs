@@ -84,7 +84,7 @@ namespace QuickShare
             Window.Current.Closed += Window_Closed;
         }
 
-        public async Task FileTransferProgress(FileTransferProgressEventArgs e)
+        public async Task FileTransferProgress(FileTransfer2ProgressEventArgs e)
         {
             if (ContentFrame.CurrentSourcePageType == typeof(MainReceive))
             {
@@ -116,7 +116,7 @@ namespace QuickShare
                     PersistentDisplay.ActivatePersistentDisplay();
 
                     statusBar.ProgressIndicator.Text = "Receiving...";
-                    statusBar.ProgressIndicator.ProgressValue = ((double)e.CurrentPart) / (double)(e.Total + 1);
+                    statusBar.ProgressIndicator.ProgressValue = e.Progress;
                     await statusBar.ProgressIndicator.ShowAsync();
                 }
             }
@@ -139,7 +139,7 @@ namespace QuickShare
             }
             else
             {
-                ViewModel.Caption = "Receiving " + ((int)Math.Round((100.0 * e.CurrentPart) / (e.Total + 1))).ToString() + "%";
+                ViewModel.Caption = $"Receiving {(int)Math.Round(100.0 * e.Progress)}%";
             }
         }
 

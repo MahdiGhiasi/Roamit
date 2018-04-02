@@ -20,6 +20,10 @@ namespace QuickShare.FileTransfer
         public double TotalBytes { get; internal set; }
         public double TotalTransferredBytes { get; internal set; }
         public double Progress { get => TotalTransferredBytes / TotalBytes; }
+        public Exception Exception { get; internal set; }
+        public string SenderName { get; set; }
+        public int TotalFiles { get; set; }
+        public Guid Guid { get; set; }
     }
 
     public enum FileTransferState

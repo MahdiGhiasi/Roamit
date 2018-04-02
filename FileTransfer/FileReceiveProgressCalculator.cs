@@ -8,8 +8,8 @@ namespace QuickShare.FileTransfer
 {
     internal class FileReceiveProgressCalculator : FileTransferProgressCalculator
     {
-        public FileReceiveProgressCalculator(QueueInfo queueInfo, ulong sliceMaxSize) :
-            base(sliceMaxSize)
+        public FileReceiveProgressCalculator(QueueInfo queueInfo, ulong sliceMaxSize, string senderName, Guid guid) :
+            base(sliceMaxSize, senderName, guid)
         {
             foreach (var item in queueInfo.Files)
             {

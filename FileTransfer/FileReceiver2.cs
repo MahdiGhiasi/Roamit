@@ -28,31 +28,42 @@ namespace QuickShare.FileTransfer
 
         public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
         {
-            int fileSenderVersion = 2;
-            // FileSender v1
-            if (!request.ContainsKey("FileSenderVersion") || (int.Parse(request["FileSenderVersion"].ToString()) < 2))
+            try
             {
-                fileSenderVersion = 1;
-                return await ProcessRequestLegacy(request, fileSenderVersion, downloadFolderDecider);
-            }
+                int fileSenderVersion = 2;
+                // FileSender v1
+                if (!request.ContainsKey("FileSenderVersion") || (int.Parse(request["FileSenderVersion"].ToString()) < 2))
+                {
+                    fileSenderVersion = 1;
+                    return await ProcessRequestLegacy(request, fileSenderVersion, downloadFolderDecider);
+                }
 
-            if (!request.ContainsKey("Type"))
-                throw new InvalidOperationException("Field 'Type' is missing from request.");
+                if (!request.ContainsKey("Type"))
+                    throw new InvalidOperationException("Field 'Type' is missing from request.");
 
-            switch (request["Type"] as string)
-            {
-                case "QueueInit":
-                    await ProcessRequest(request, fileSenderVersion, downloadFolderDecider);
-                    return new Dictionary<string, object>();
-                case "ResumeReceive":
-                    //TODO
-                    Debug.WriteLine("Received ResumeReceive request. TODO.");
-                    return new Dictionary<string, object>
+                switch (request["Type"] as string)
+                {
+                    case "QueueInit":
+                        await ProcessRequest(request, fileSenderVersion, downloadFolderDecider);
+                        return new Dictionary<string, object>();
+                    case "ResumeReceive":
+                        //TODO
+                        Debug.WriteLine("Received ResumeReceive request. TODO.");
+                        return new Dictionary<string, object>
                     {
                         { "Accepted", "true" },
                     };
-                default:
-                    throw new InvalidOperationException($"Type '{request["Type"]}' is invalid.");
+                    default:
+                        throw new InvalidOperationException($"Type '{request["Type"]}' is invalid.");
+                }
+            }
+            catch (Exception ex)
+            {
+                FileTransferProgress?.Invoke(new FileTransfer2ProgressEventArgs {
+                    State = FileTransferState.Error,
+                    Exception = ex,
+                });
+                throw ex;
             }
         }
 
@@ -106,7 +117,7 @@ namespace QuickShare.FileTransfer
         private static async Task StartDownload(QueueInfo queueInfo, string senderName, string ip, Guid sessionKey, IFolder downloadRootFolder)
         {
             await AddToHistory(queueInfo, sessionKey, senderName, downloadRootFolder);
-            progressCalculator = new FileReceiveProgressCalculator(queueInfo, queueInfo.Files.First().SliceMaxLength);
+            progressCalculator = new FileReceiveProgressCalculator(queueInfo, queueInfo.Files.First().SliceMaxLength, senderName, sessionKey);
             progressCalculator.FileTransferProgress += ProgressCalculator_FileTransferProgress;
 
             await queueInfo.Files.ParallelForEachAsync(numberOfParallelDownloads, async item =>
@@ -123,6 +134,9 @@ namespace QuickShare.FileTransfer
             FileTransferProgress?.Invoke(new FileTransfer2ProgressEventArgs
             {
                 State = FileTransferState.Finished,
+                Guid = sessionKey,
+                TotalFiles = queueInfo.Files.Count,
+                SenderName = senderName,
             });
         }
 
@@ -203,6 +217,11 @@ namespace QuickShare.FileTransfer
                 await HttpHelper.SendGetRequestAsync($"http://{ip}:{Constants.CommunicationPort}/{sessionKey.ToString()}/finishQueue/");
             }
             catch { }
+        }
+
+        public static void ClearEventRegistrations()
+        {
+            FileTransferProgress = null;
         }
     }
 }

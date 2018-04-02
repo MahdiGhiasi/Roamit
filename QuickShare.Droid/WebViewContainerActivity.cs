@@ -31,6 +31,7 @@ using Com.Revmob.Ads.Banner;
 using Com.Revmob;
 using System.Collections.Specialized;
 using QuickShare.Common.Rome;
+using System.IO;
 
 namespace QuickShare.Droid
 {
@@ -742,9 +743,14 @@ namespace QuickShare.Droid
 
         private IEnumerable<FileSendInfo> GetFiles(string[] files)
         {
-            return files.Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x), ""));
-        }
+            var paths = files
+                .Select(x => Path.GetDirectoryName(x))
+                .Distinct();
+            var rootFolderPath = new string(paths.Select(str => str.TakeWhile((c, index) => paths.All(s => s[index] == c))).FirstOrDefault().ToArray());
 
+            return files.Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x), rootFolderPath));
+        }
+        
         private async Task SendFilesToWindowsDevice(string[] files)
         {
             ShowProgress();
