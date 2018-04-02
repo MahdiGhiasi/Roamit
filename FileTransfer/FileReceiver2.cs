@@ -12,12 +12,14 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using QuickShare.Common.Extensions;
 
 namespace QuickShare.FileTransfer
 {
     public static class FileReceiver2
     {
         static readonly int fileReceiverVersion = 2;
+        static readonly int numberOfParallelDownloads = 4;
 
         public delegate void ReceiveFileProgressEventHandler(FileTransfer2ProgressEventArgs e);
         public static event ReceiveFileProgressEventHandler FileTransferProgress;
@@ -108,11 +110,10 @@ namespace QuickShare.FileTransfer
             progressCalculator = new FileReceiveProgressCalculator(queueInfo, queueInfo.Files.First().SliceMaxLength);
             progressCalculator.FileTransferProgress += ProgressCalculator_FileTransferProgress;
 
-            // TODO: Parallelize this
-            foreach (var item in queueInfo.Files)
+            await queueInfo.Files.ParallelForEachAsync(numberOfParallelDownloads, async item =>
             {
                 await DownloadFile(item, downloadRootFolder, ip, sessionKey);
-            }
+            });
 
             await DataStorageProviders.HistoryManager.OpenAsync();
             DataStorageProviders.HistoryManager.ChangeCompletedStatus(sessionKey, true);

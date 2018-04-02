@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace QuickShare.Common.Extensions
 {
-    public static class ParallelForEachAsync
+    // from http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
+    public static class ParallelForEach
     {
-        public static async Task ForEachAsyncSemaphore<T>(this IEnumerable<T> source, int degreeOfParallelism, Func<T, Task> body)
+        public static async Task ParallelForEachAsync<T>(this IEnumerable<T> source, int degreeOfParallelism, Func<T, Task> body)
         {
             var tasks = new List<Task>();
             using (var throttler = new SemaphoreSlim(degreeOfParallelism))

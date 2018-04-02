@@ -54,6 +54,7 @@
     <Compile Include="AwaitTimeout.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DateTimeExtension.cs" />
+    <Compile Include="Extensions\ParallelForEach.cs" />
     <Compile Include="IWebServer.cs" />
     <Compile Include="IWebServerGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
