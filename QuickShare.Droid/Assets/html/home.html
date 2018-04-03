@@ -363,9 +363,16 @@
                 if (type == "progress") {
                     $(".progress").addClass("progress-show");
                     resetProgress();
+
+                    setTimeout(function () {
+                        $(".progress").addClass("progress-show-finishedanim");
+                    });
                 }
                 else {
-                    $(".progress").removeClass("progress-show");
+                    $(".progress").removeClass("progress-show-finishedanim");
+                    setTimeout(function () {
+                        $(".progress").removeClass("progress-show");
+                    }, 200);
                 }
 				
                 if ((type.substr(0, 5) == "share") || (type.substr(0, 5) == "shar2")) {
@@ -608,7 +615,7 @@
                 </ul>
             </div>
         </main>
-        <div class="progress opacity-animation">
+        <div class="progress">
             <div class="progress-content">
                 <div class="progress-status">...</div>
                 <div class="progress-status progress-status-subtitle"></div>

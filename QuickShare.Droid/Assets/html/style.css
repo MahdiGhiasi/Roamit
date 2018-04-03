@@ -350,12 +350,18 @@ body {
     right: 0;
     z-index: 10;
     background: #eee;
-
     display: none;
+    -webkit-transition: opacity 0.2s ease-out;
+    transition: opacity 0.2s ease-out;
 }
 
 .progress-show {
     display: block;
+    opacity: 0;
+}
+
+.progress-show-finishedanim {
+    opacity: 1;
 }
 
 .progress-content {
