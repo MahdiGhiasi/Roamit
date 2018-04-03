@@ -70,7 +70,23 @@ namespace QuickShare.FileTransfer
 
         private static async Task<Dictionary<string, object>> ProcessRequestLegacy(Dictionary<string, object> request, int fileSenderVersion, Func<string[], Task<IFolder>> downloadFolderDecider)
         {
+            FileReceiver.ClearEventRegistrations();
+            FileReceiver.FileTransferProgress += LegacyFileReceiver_FileTransferProgress;
+
             return await FileReceiver.ReceiveRequest(request, downloadFolderDecider);
+        }
+
+        private static void LegacyFileReceiver_FileTransferProgress(FileTransferProgressEventArgs e)
+        {
+            FileTransferProgress?.Invoke(new FileTransfer2ProgressEventArgs
+            {
+                Guid = e.Guid,
+                SenderName = e.SenderName,
+                State = e.State,
+                TotalBytes = e.Total * Constants.FileSliceMaxLength,
+                TotalTransferredBytes = e.CurrentPart * Constants.FileSliceMaxLength,
+                TotalFiles = e.TotalFiles,
+            });
         }
 
         private static async Task ProcessRequest(Dictionary<string, object> request, int fileSenderVersion, Func<string[], Task<IFolder>> downloadFolderDecider)
