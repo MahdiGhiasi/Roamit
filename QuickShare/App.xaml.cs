@@ -254,8 +254,10 @@ namespace QuickShare
                     string clipboardData = ParseFastClipboardUri(pEventArgs.Uri.AbsoluteUri);
                     string remoteLaunchUriData = ParseRemoteLaunchUri(pEventArgs.Uri.AbsoluteUri);
                     string localLaunchUriData = ParseLocalLaunchUri(pEventArgs.Uri.AbsoluteUri);
+                    string commServiceData = ParseCommunicationServiceData(pEventArgs.Uri.AbsoluteUri);
                     bool isSettings = ParseSettings(pEventArgs.Uri.AbsoluteUri);
                     string receiveDialogData = ParseReceive(pEventArgs.Uri.AbsoluteUri);
+                    
 
                     if (isSettings)
                     {
@@ -275,10 +277,14 @@ namespace QuickShare
 
                         if (receiveDialogData.Length > 1)
                         {
-                            var data = receiveDialogData.Substring(1).DecodeBase64();
-
-                            //TODO
+                            var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(receiveDialogData.Substring(1).DecodeBase64());
+                            await ParseMessage(data);
                         }
+                    }
+                    else if (commServiceData.Length > 0)
+                    {
+                        var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(commServiceData.DecodeBase64());
+                        await ParseMessage(data);
                     }
                     else if (clipboardData.Length > 0)
                     {
@@ -370,37 +376,34 @@ namespace QuickShare
             return "";
         }
 
-        private string ParseFastClipboardUri(string s)
+        private static string GetUrlDataPart(string url, string firstPart)
         {
-            string fastClipboardUri = "roamit://clipboard/";
-            if (s.Length < fastClipboardUri.Length)
+            if (url.Length < firstPart.Length)
                 return "";
 
-            var command = s.Substring(0, fastClipboardUri.Length).ToLower();
+            var command = url.Substring(0, firstPart.Length).ToLower();
 
-            return (command == fastClipboardUri) ? s.Substring(fastClipboardUri.Length) : "";
+            return (command == firstPart) ? url.Substring(firstPart.Length) : "";
+        }
+
+        private string ParseFastClipboardUri(string s)
+        {
+            return GetUrlDataPart(s, "roamit://clipboard/");
         }
 
         private string ParseRemoteLaunchUri(string s)
         {
-            string launchUri = "roamit://remotelaunch/";
-            if (s.Length < launchUri.Length)
-                return "";
-
-            var command = s.Substring(0, launchUri.Length).ToLower();
-
-            return (command == launchUri) ? s.Substring(launchUri.Length) : "";
+            return GetUrlDataPart(s, "roamit://remotelaunch/");
         }
 
         private string ParseLocalLaunchUri(string s)
         {
-            string launchUri = "roamit://url/";
-            if (s.Length < launchUri.Length)
-                return "";
+            return GetUrlDataPart(s, "roamit://url/");
+        }
 
-            var command = s.Substring(0, launchUri.Length).ToLower();
-
-            return (command == launchUri) ? s.Substring(launchUri.Length) : "";
+        private string ParseCommunicationServiceData(string s)
+        {
+            return GetUrlDataPart(s, "roamit://comm/");
         }
 
         private async Task<HistoryRow> GetHistoryItemGuid(Guid guid)
