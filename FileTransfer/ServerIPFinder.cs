@@ -16,6 +16,9 @@ namespace QuickShare.FileTransfer
         public delegate void IPDetectionCompletedEventHandler(object sender, IPDetectionCompletedEventArgs e);
         public event IPDetectionCompletedEventHandler IPDetectionCompleted;
 
+        public delegate void ReceiveFileProgressEventHandler();
+        public static event ReceiveFileProgressEventHandler IPDetectionFailed;
+
         List<KeyValuePair<string, IWebServer>> servers;
 
         IWebServerGenerator webServerGenerator;
@@ -128,6 +131,7 @@ namespace QuickShare.FileTransfer
         public static async Task ReceiveRequest(Dictionary<string, object> request)
         {
             string interruptKey = "";
+            FileReceiver2.InitHandshakerEvents();
 
             try
             {
@@ -163,6 +167,7 @@ namespace QuickShare.FileTransfer
                 {
                     await NotifySender(senderIP, interruptKey, "success=false&message=" + System.Net.WebUtility.UrlEncode(ex.Message));
                 }
+                IPDetectionFailed?.Invoke();
             }
         }
 
@@ -225,6 +230,11 @@ namespace QuickShare.FileTransfer
                     item.Value.StopListener();
                     item.Value.Dispose();
                 }
+        }
+
+        public static void ClearEventRegistrations()
+        {
+            IPDetectionFailed = null;
         }
     }
 }

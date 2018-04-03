@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace QuickShare.FileTransfer
+namespace QuickShare.FileTransfer.Exceptions
 {
     public class FailedToDownloadException : Exception
     {

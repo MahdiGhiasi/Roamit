@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using QuickShare.Common.Extensions;
+using QuickShare.FileTransfer.Exceptions;
 
 namespace QuickShare.FileTransfer
 {
@@ -222,6 +223,22 @@ namespace QuickShare.FileTransfer
         public static void ClearEventRegistrations()
         {
             FileTransferProgress = null;
+        }
+
+        internal static void InitHandshakerEvents()
+        {
+            ServerIPFinder.ClearEventRegistrations();
+            ServerIPFinder.IPDetectionFailed += ServerIPFinder_IPDetectionFailed;
+        }
+
+        private static void ServerIPFinder_IPDetectionFailed()
+        {
+            FileTransferProgress?.Invoke(new FileTransfer2ProgressEventArgs
+            {
+                State = FileTransferState.Error,
+                Exception = new HandshakeFailedException(),
+                Guid = Guid.NewGuid(),
+            });
         }
     }
 }

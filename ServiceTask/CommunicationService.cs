@@ -253,7 +253,7 @@ namespace QuickShare.ServiceTask
             }
             else if (e.State == FileTransferState.Error)
             {
-                Toaster.ShowFileReceiveFailedNotification(e.Guid);
+                Toaster.ShowFileReceiveFailedNotification(e.Guid, e.Exception);
             }
             else
             {

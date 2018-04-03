@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickShare.FileTransfer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,10 +11,11 @@ namespace QuickShare.ToastNotifications
 {
     public static partial class Toaster
     {
-        public static void ShowFileReceiveFailedNotification(Guid guid)
+        public static void ShowFileReceiveFailedNotification(Guid guid, Exception exception)
         {
-            ClearNotification(guid); //Clear progress notification
+            //TODO: Better fail reason message based on received FileTransferFailReason.
 
+            ClearNotification(guid); //Clear progress notification
 
             string toastXml = Templates.BasicText.Replace("{title}", "Receive failed.")
                                                  .Replace("{subtitle}", "Make sure devices are on the same network and the app is remained open on the sender device.")

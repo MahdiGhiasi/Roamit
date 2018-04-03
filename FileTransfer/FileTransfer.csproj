@@ -56,11 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
+    <Compile Include="Exceptions\HandshakeFailedException.cs" />
     <Compile Include="FileReceiveProgressCalculator.cs" />
     <Compile Include="FileSendProgressCalculator.cs" />
     <Compile Include="FileTransferProgressCalculator.cs" />
     <Compile Include="Helpers\CompatibilityHelper.cs" />
-    <Compile Include="FailedToDownloadException.cs" />
+    <Compile Include="Exceptions\FailedToDownloadException.cs" />
     <Compile Include="FileDetails.cs" />
     <Compile Include="FileInfoListGenerator.cs" />
     <Compile Include="FileReceiver.cs" />

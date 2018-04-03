@@ -22,8 +22,8 @@ namespace QuickShare
     {
         private void InitCommunicationService()
         {
-            FileTransfer.FileReceiver2.ClearEventRegistrations();
-            FileTransfer.FileReceiver2.FileTransferProgress += FileReceiver_FileTransferProgress;
+            FileReceiver2.ClearEventRegistrations();
+            FileReceiver2.FileTransferProgress += FileReceiver_FileTransferProgress;
         }
 
         private async void FileReceiver_FileTransferProgress(FileTransfer2ProgressEventArgs e)
@@ -34,7 +34,7 @@ namespace QuickShare
             }
             else if (e.State == FileTransferState.Error)
             {
-                Toaster.ShowFileReceiveFailedNotification(e.Guid);
+                Toaster.ShowFileReceiveFailedNotification(e.Guid, e.Exception);
             }
 
             await NotificationHandler.HandleAsync(e);

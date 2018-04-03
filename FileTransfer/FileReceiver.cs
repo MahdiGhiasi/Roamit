@@ -2,6 +2,7 @@
 using PCLStorage;
 using QuickShare.Common;
 using QuickShare.DataStore;
+using QuickShare.FileTransfer.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

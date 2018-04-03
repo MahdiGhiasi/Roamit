@@ -133,6 +133,10 @@
       <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
       <Name>DataStore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FileTransfer\FileTransfer.csproj">
+      <Project>{D78FDFFF-E82C-4E9C-B78F-54E1D924D49F}</Project>
+      <Name>FileTransfer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PCLStorage">
