@@ -71,7 +71,7 @@ namespace QuickShare.Droid.Classes
             Finish = null;
 
             TextTransfer.TextReceiver.TextReceiveFinished -= TextReceiver_TextReceiveFinished;
-            FileTransfer.FileReceiver.FileTransferProgress -= FileReceiver_FileTransferProgress;
+            FileTransfer.FileReceiver2.FileTransferProgress -= FileReceiver_FileTransferProgress;
         }
 
         internal static void Init(Context _context)
@@ -82,7 +82,7 @@ namespace QuickShare.Droid.Classes
             TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
 
             FileTransfer.FileReceiver.ClearEventRegistrations();
-            FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
+            FileTransfer.FileReceiver2.FileTransferProgress += FileReceiver_FileTransferProgress;
 
             context = _context;
         }
@@ -161,7 +161,7 @@ namespace QuickShare.Droid.Classes
             Finish?.Invoke();
         }
 
-        private async static void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
+        private async static void FileReceiver_FileTransferProgress(FileTransfer.FileTransfer2ProgressEventArgs e)
         {
             Activity?.Invoke();
 
@@ -193,7 +193,7 @@ namespace QuickShare.Droid.Classes
             }
             else if (e.State == FileTransfer.FileTransferState.DataTransfer)
             {
-                progressNotifier?.SetProgressValue((int)e.Total, (int)e.CurrentPart, "Receiving...");
+                progressNotifier?.SetProgressValue(1000, (int)(1000.0 * e.Progress), "Receiving...");
             }
         }
 #endregion
