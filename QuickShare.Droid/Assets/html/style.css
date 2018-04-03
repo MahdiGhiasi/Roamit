@@ -365,12 +365,34 @@ body {
     -webkit-transform: translate( -50%, -50%);
             transform: translate( -50%, -50%);
     text-align: center;
+    width: 80%;
 }
 
 .progress-status {
     font-size: 26px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
+    line-height: 26px;
 }
+
+.progress-status-subtitle {
+    font-size: 18px;
+    opacity: 0.8;
+    margin-bottom: 20px;
+}
+
+.progress-status-buttons {
+    display: none;
+}
+
+    .progress-status-buttons.visible {
+        margin-top: 100px;
+        display: block;
+    }
+
+    .progress-status-buttons button {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
 
 .progress-spinner {
     width: 120px;
@@ -407,6 +429,11 @@ body {
 .spinner-container {
     margin-left: auto;
     margin-right: auto;
+    margin-top: 40px;
+}
+
+.spinner-container.hidden {
+    display: none;
 }
 
 .header-transparent {

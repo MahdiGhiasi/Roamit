@@ -55,6 +55,8 @@ namespace QuickShare.Droid
         bool sendingFile = true;
         CancellationTokenSource sendFileCancellationTokenSource;
 
+        string[] lastSelectedFiles;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -560,6 +562,16 @@ namespace QuickShare.Droid
             SendJavascriptToWebView($"setProgressText('{text.NormalizeForJsCall()}');");
         }
 
+        private void SetProgressSubtext(string text)
+        {
+            SendJavascriptToWebView($"setProgressSubtext('{text.NormalizeForJsCall()}');");
+        }
+
+        private void ShowProgressButtons()
+        {
+            SendJavascriptToWebView($"showProgressButtons();");
+        }
+
         private void SetProgressValue(double val, double max)
         {
             var d = val / max;
@@ -684,8 +696,15 @@ namespace QuickShare.Droid
             await SendFiles(files);
         }
 
+        private async Task RetrySendFiles()
+        {
+            await SendFiles(lastSelectedFiles);
+        }
+
         private async Task SendFiles(string[] files)
         {
+            lastSelectedFiles = files;
+
             if (IsAndroidDeviceSelected())
                 await SendFilesToAndroidDevice(files);
             else
@@ -715,23 +734,18 @@ namespace QuickShare.Droid
 
                 if (transferResult != FileTransferResult.Cancelled)
                 {
-                    SetProgressText("Failed.");
+                    SetProgressText("Transfer failed.");
                     SetProgressValue(0, 1.0);
                     System.Diagnostics.Debug.WriteLine("Send failed.\r\n\r\n" + message);
 
                     if (transferResult == FileTransferResult.FailedOnHandshake)
                     {
-                        message = "Couldn't reach remote device.\r\n\r\n" +
+                        message = "Couldn't reach remote device.<br />" +
                             "Make sure both devices are connected to the same Wi-Fi or LAN network.";
                     }
 
-                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                    alert.SetTitle(message);
-                    alert.SetPositiveButton("OK", (senderAlert, args) => { });
-                    RunOnUiThread(() =>
-                    {
-                        alert.Show();
-                    });
+                    SetProgressSubtext(message);
+                    ShowProgressButtons();
                 }
             }
             else
@@ -1097,6 +1111,14 @@ namespace QuickShare.Droid
                         context.StartActivity(email);
                     }
                 }
+                else if (url == "file:///android_asset/html/sendFileActionRetry.html")
+                {
+                    ProcessRequest("SendFile_Retry");
+                }
+                else if (url == "file:///android_asset/html/sendFileActionCancel.html")
+                {
+                    ProcessRequest("SendFile_Cancel");
+                }
                 else
                 {
                     return false;
@@ -1134,6 +1156,12 @@ namespace QuickShare.Droid
                     case "Share_Text":
                         isFromShareTarget = true;
                         await context.SendText(Common.ShareText);
+                        break;
+                    case "SendFile_Retry":
+                        await context.RetrySendFiles();
+                        break;
+                    case "SendFile_Cancel":
+                        context.OnBackPressed();
                         break;
                     case "Unknown":
                     default:
