@@ -47,20 +47,11 @@ namespace QuickShare
             {
                 if (args.Request.Message.ContainsKey("Receiver"))
                 {
-                    string receiver = args.Request.Message["Receiver"] as string;
-
                     Dictionary<string, object> reqMessage = new Dictionary<string, object>();
                     foreach (var item in args.Request.Message)
                         reqMessage.Add(item.Key, item.Value);
 
-                    if (receiver == "ServerIPFinder")
-                        await FileTransfer.ServerIPFinder.ReceiveRequest(reqMessage);
-                    else if (receiver == "FileReceiver")
-                        await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, DecideDownloadFolder);
-                    else if (receiver == "TextReceiver")
-                        await TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
-                    else if (receiver == "CloudClipboardHandler")
-                        CloudClipboardHandler.ReceiveRequest(reqMessage);
+                    await ParseMessage(reqMessage);
                 }
             }
             catch (Exception ex)
@@ -71,6 +62,20 @@ namespace QuickShare
             {
                 messageDeferral.Complete();
             }
+        }
+
+        private async Task ParseMessage(Dictionary<string, object> reqMessage)
+        {
+            string receiver = reqMessage["Receiver"] as string;
+
+            if (receiver == "ServerIPFinder")
+                await FileTransfer.ServerIPFinder.ReceiveRequest(reqMessage);
+            else if (receiver == "FileReceiver")
+                await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, DecideDownloadFolder);
+            else if (receiver == "TextReceiver")
+                await TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
+            else if (receiver == "CloudClipboardHandler")
+                CloudClipboardHandler.ReceiveRequest(reqMessage);
         }
 
         private async Task<IFolder> DecideDownloadFolder(string[] fileTypes)

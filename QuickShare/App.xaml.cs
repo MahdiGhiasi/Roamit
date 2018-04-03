@@ -252,11 +252,12 @@ namespace QuickShare
                 else
                 {
                     string clipboardData = ParseFastClipboardUri(pEventArgs.Uri.AbsoluteUri);
-                    string launchUriData = ParseLaunchUri(pEventArgs.Uri.AbsoluteUri);
+                    string remoteLaunchUriData = ParseRemoteLaunchUri(pEventArgs.Uri.AbsoluteUri);
+                    string localLaunchUriData = ParseLocalLaunchUri(pEventArgs.Uri.AbsoluteUri);
                     bool isSettings = ParseSettings(pEventArgs.Uri.AbsoluteUri);
-                    bool isReceiveDialog = ParseReceive(pEventArgs.Uri.AbsoluteUri);
+                    string receiveDialogData = ParseReceive(pEventArgs.Uri.AbsoluteUri);
 
-                   if (isSettings)
+                    if (isSettings)
                     {
                         if (rootFrame == null)
                         {
@@ -264,13 +265,20 @@ namespace QuickShare
                         }
                         rootFrame.Navigate(typeof(MainPage), "settings");
                     }
-                    else if (isReceiveDialog)
+                    else if (receiveDialogData.Length > 0)
                     {
                         if (rootFrame == null)
                         {
                             LaunchRootFrameIfNecessary(ref rootFrame, false);
                         }
                         rootFrame.Navigate(typeof(MainPage), "receiveDialog");
+
+                        if (receiveDialogData.Length > 1)
+                        {
+                            var data = receiveDialogData.Substring(1).DecodeBase64();
+
+                            //TODO
+                        }
                     }
                     else if (clipboardData.Length > 0)
                     {
@@ -280,14 +288,14 @@ namespace QuickShare
                         LaunchRootFrameIfNecessary(ref rootFrame, false);
                         rootFrame.Navigate(typeof(ClipboardReceive), guid.ToString());
                     }
-                    else if (launchUriData.Length > 0)
+                    else if (remoteLaunchUriData.Length > 0)
                     {
 #if !DEBUG
                         App.Tracker.Send(HitBuilder.CreateCustomEvent("ExtensionCalled", "").Build());
 #endif
 
-                        string type = ExternalContentHelper.SetUriData(new Uri(launchUriData.DecodeBase64()));
-                        
+                        string type = ExternalContentHelper.SetUriData(new Uri(remoteLaunchUriData.DecodeBase64()));
+
                         SendDataTemporaryStorage.IsSharingTarget = true;
 
                         if (rootFrame == null)
@@ -305,6 +313,20 @@ namespace QuickShare
                                 Type = type,
                             });
                         }
+                    }
+                    else if (localLaunchUriData.Length > 0)
+                    {
+                        try
+                        {
+                            //TODO: Log it in history
+                            await LaunchOperations.LaunchUrl(localLaunchUriData.DecodeBase64());
+                        }
+                        catch
+                        {
+                        }
+
+                        if (rootFrame == null)
+                            Application.Current.Exit();
                     }
                     else
                     {
@@ -329,13 +351,23 @@ namespace QuickShare
             return false;
         }
 
-        private bool ParseReceive(string s)
+        private string ParseReceive(string s)
         {
             s = s.ToLower();
 
-            if ((s == "roamit://receivedialog") || (s == "roamit://receivedialog/"))
-                return true;
-            return false;
+            if (s.Length < 22)
+                return "";
+
+            var part = s.Substring(0, 22);
+
+            if (part == "roamit://receivedialog")
+            {
+                if (s.Length > 23)
+                    return "/" + s.Substring(23);
+                else
+                    return "/";
+            }
+            return "";
         }
 
         private string ParseFastClipboardUri(string s)
@@ -349,9 +381,20 @@ namespace QuickShare
             return (command == fastClipboardUri) ? s.Substring(fastClipboardUri.Length) : "";
         }
 
-        private string ParseLaunchUri(string s)
+        private string ParseRemoteLaunchUri(string s)
         {
             string launchUri = "roamit://remotelaunch/";
+            if (s.Length < launchUri.Length)
+                return "";
+
+            var command = s.Substring(0, launchUri.Length).ToLower();
+
+            return (command == launchUri) ? s.Substring(launchUri.Length) : "";
+        }
+
+        private string ParseLocalLaunchUri(string s)
+        {
+            string launchUri = "roamit://url/";
             if (s.Length < launchUri.Length)
                 return "";
 

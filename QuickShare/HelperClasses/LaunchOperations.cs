@@ -46,5 +46,10 @@ namespace QuickShare.HelperClasses
 
             return await Launcher.LaunchFileAsync(file);
         }
+
+        internal static async Task LaunchUrl(string url)
+        {
+            await Launcher.LaunchUriAsync(new Uri(url));
+        }
     }
 }
