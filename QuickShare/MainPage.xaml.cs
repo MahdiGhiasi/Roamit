@@ -156,6 +156,10 @@ namespace QuickShare
             if ((ContentFrame.Content is MainActions) || (ContentFrame.Content is MainShareTarget))
                 return;
 
+            if (ContentFrame.Content is MainSendFailed)
+                while (ContentFrame.BackStackDepth > 0 && ContentFrame.BackStack[ContentFrame.BackStackDepth - 1].SourcePageType == typeof(MainSend))
+                    ContentFrame.BackStack.RemoveAt(ContentFrame.BackStackDepth - 1);
+
             e.Handled = true;
             if (ContentFrame.CanGoBack)
                 ContentFrame.GoBack();
