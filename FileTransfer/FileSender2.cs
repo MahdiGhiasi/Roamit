@@ -81,7 +81,7 @@ namespace QuickShare.FileTransfer
                 if (cancellationToken.IsCancellationRequested)
                     return FileTransferResult.Cancelled;
 
-                return await SendFiles(sessionKey, myIp, transferProgress);
+                return await SendFiles(sessionKey, myIp, transferProgress, cancellationToken);
             }
             finally
             {
@@ -174,7 +174,7 @@ namespace QuickShare.FileTransfer
             }
         }
 
-        private async Task<FileTransferResult> SendFiles(string sessionKey, string ip, FileSendProgressCalculator transferProgress)
+        private async Task<FileTransferResult> SendFiles(string sessionKey, string ip, FileSendProgressCalculator transferProgress, CancellationToken cancellationToken = default(CancellationToken))
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             SendInitReceiverMessage(transferProgress.TotalSlices, sessionKey, ip);
@@ -182,29 +182,39 @@ namespace QuickShare.FileTransfer
 
             transferProgress.InitTimeout(timeoutTcs);
 
-            while (true)
+            var cancellationTcs = new TaskCompletionSource<FileTransferResult>();
+            var cancellationRegistration = cancellationToken.Register(s => ((TaskCompletionSource<FileTransferResult>)s).SetResult(FileTransferResult.Cancelled), cancellationTcs);
+
+            try
             {
-                var result = (await Task.WhenAny(transferTcs.Task, timeoutTcs.Task)).Result;
-                if (result == FileTransferResult.Timeout && fileReceiverVersion >= 2)
+                while (true)
                 {
-                    if (transferProgress.TransferStarted)
+                    var result = (await Task.WhenAny(transferTcs.Task, timeoutTcs.Task, cancellationTcs.Task)).Result;
+                    if (result == FileTransferResult.Timeout && fileReceiverVersion >= 2)
                     {
-                        timeoutTcs = new TaskCompletionSource<FileTransferResult>();
-                        transferProgress.InitTimeout(timeoutTcs);
+                        if (transferProgress.TransferStarted)
+                        {
+                            timeoutTcs = new TaskCompletionSource<FileTransferResult>();
+                            transferProgress.InitTimeout(timeoutTcs);
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                        SendResumeReceiverMessage(sessionKey);
+                            SendResumeReceiverMessage(sessionKey);
 #pragma warning restore CS4014
+                        }
+                        else
+                        {
+                            return FileTransferResult.FailedOnPrepare;
+                        }
                     }
                     else
                     {
-                        return FileTransferResult.FailedOnPrepare;
+                        return result;
                     }
                 }
-                else
-                {
-                    return result;
-                }
+            }
+            finally
+            {
+                cancellationRegistration.Dispose();
             }
         }
 
