@@ -71,16 +71,11 @@ namespace QuickShare
             if (receiver == "ServerIPFinder")
                 await FileTransfer.ServerIPFinder.ReceiveRequest(reqMessage);
             else if (receiver == "FileReceiver")
-                await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, DecideDownloadFolder);
+                await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, new DownloadFolderDecider());
             else if (receiver == "TextReceiver")
                 await TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
             else if (receiver == "CloudClipboardHandler")
                 CloudClipboardHandler.ReceiveRequest(reqMessage);
-        }
-
-        private async Task<IFolder> DecideDownloadFolder(string[] fileTypes)
-        {
-            return await DownloadFolderDecider.DecideAsync(fileTypes);
         }
 
         private void CommunicationServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)

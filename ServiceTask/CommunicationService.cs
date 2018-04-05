@@ -106,7 +106,7 @@ namespace QuickShare.ServiceTask
                     }
                     else if (receiver == "FileReceiver")
                     {
-                        await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, DecideDownloadFolder);
+                        await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, new DownloadFolderDecider());
                     }
                     else if (receiver == "TextReceiver")
                     {
@@ -144,11 +144,6 @@ namespace QuickShare.ServiceTask
             {
                 requestDeferral?.Complete();
             }
-        }
-
-        private async Task<IFolder> DecideDownloadFolder(string[] fileTypes)
-        {
-            return await DownloadFolderDecider.DecideAsync(fileTypes);
         }
 
         public static void SendToast(string text)

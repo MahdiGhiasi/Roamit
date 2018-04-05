@@ -12,6 +12,8 @@ using QuickShare.HelperClasses.Version;
 using QuickShare.HelperClasses;
 using Windows.Storage;
 using Windows.UI.Core;
+using System.Collections.Generic;
+using QuickShare.Common.Classes;
 
 namespace QuickShare.ViewModels
 {
@@ -433,6 +435,26 @@ namespace QuickShare.ViewModels
             OnPropertyChanged("SendCloudClipboardEnabled");
             OnPropertyChanged("ReceiveCloudClipboardEnabled");
             OnPropertyChanged("IsAccountIdStored");
+        }
+
+        public DownloadGroupByItem GroupReceivedBySelectedItem
+        {
+            get
+            {
+                return DownloadGroupByHelper.GetState();
+            }
+            set
+            {
+                DownloadGroupByHelper.SetState(value);
+            }
+        }
+
+        public IEnumerable<DownloadGroupByItem> GroupReceivedByItems
+        {
+            get
+            {
+                return DownloadGroupByItem.GroupItems;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

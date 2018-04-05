@@ -54,7 +54,9 @@
     <Compile Include="AwaitTimeout.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DateTimeExtension.cs" />
+    <Compile Include="Classes\DownloadGroupByItem.cs" />
     <Compile Include="Extensions\ParallelForEach.cs" />
+    <Compile Include="Interfaces\IDownloadFolderDecider.cs" />
     <Compile Include="IWebServer.cs" />
     <Compile Include="IWebServerGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,6 +76,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PCLStorage.Abstractions">
+      <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

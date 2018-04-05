@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using QuickShare.Common.Extensions;
 using QuickShare.FileTransfer.Exceptions;
+using QuickShare.Common.Interfaces;
 
 namespace QuickShare.FileTransfer
 {
@@ -27,7 +28,7 @@ namespace QuickShare.FileTransfer
 
         static FileReceiveProgressCalculator progressCalculator;
 
-        public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
+        public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, IDownloadFolderDecider downloadFolderDecider)
         {
             try
             {
@@ -68,7 +69,7 @@ namespace QuickShare.FileTransfer
             }
         }
 
-        private static async Task<Dictionary<string, object>> ProcessRequestLegacy(Dictionary<string, object> request, int fileSenderVersion, Func<string[], Task<IFolder>> downloadFolderDecider)
+        private static async Task<Dictionary<string, object>> ProcessRequestLegacy(Dictionary<string, object> request, int fileSenderVersion, IDownloadFolderDecider downloadFolderDecider)
         {
             FileReceiver.ClearEventRegistrations();
             FileReceiver.FileTransferProgress += LegacyFileReceiver_FileTransferProgress;
@@ -89,7 +90,7 @@ namespace QuickShare.FileTransfer
             });
         }
 
-        private static async Task ProcessRequest(Dictionary<string, object> request, int fileSenderVersion, Func<string[], Task<IFolder>> downloadFolderDecider)
+        private static async Task ProcessRequest(Dictionary<string, object> request, int fileSenderVersion, IDownloadFolderDecider downloadFolderDecider)
         {
             var sessionKey = Guid.Parse(request["Guid"] as string);
             var ip = request["ServerIP"].ToString();
@@ -106,7 +107,7 @@ namespace QuickShare.FileTransfer
             }
             
             var queueInfo = await GetQueueInfoAsync(ip, sessionKey);
-            var downloadFolder = await downloadFolderDecider(queueInfo.Files.Select(x => Path.GetExtension(x.FileName)).ToArray());
+            var downloadFolder = await downloadFolderDecider.DecideAsync(queueInfo.Files.Select(x => Path.GetExtension(x.FileName)).ToArray());
             await StartDownload(queueInfo, senderName, ip, sessionKey, downloadFolder);
         }
 

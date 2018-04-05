@@ -33,27 +33,10 @@
                     <StackPanel Padding="0,12,24,24" Width="{Binding ActualWidthValue, ElementName=pivotProxy, Mode=OneWay, Converter={StaticResource MathConverter}, ConverterParameter=xv700}">
                         <StackPanel Margin="0,8,0,8">
                             <TextBlock Text="General" FontWeight="Bold" />
-                            <TextBlock Text="Show my Android devices" 
-                                       TextWrapping="Wrap"
-                                       Margin="0,8,0,0" />
-                            <RelativePanel>
-                                <ToggleSwitch x:Name="ConnectToOtherDevicesToggle" 
-                                              IsOn="{x:Bind Model.FindOtherDevices, Mode=TwoWay}" 
-                                              IsEnabled="{x:Bind Model.FindOtherDevicesEnabled, Mode=OneWay}" />
-                                <ProgressRing IsActive="{x:Bind Model.FindOtherDevicesProgressRingActive, Mode=OneWay}"
-                                              RelativePanel.RightOf="ConnectToOtherDevicesToggle" 
-                                              RelativePanel.AlignVerticalCenterWithPanel="True" />
-                            </RelativePanel>
-                            <RichTextBlock>
-                                <Paragraph>
-                                    <Run Foreground="#CCCCCC">Get Roamit on your Android devices from</Run>
-                                    <Hyperlink Foreground="SkyBlue" NavigateUri="http://roamit.ghiasi.net">http://roamit.ghiasi.net</Hyperlink>
-                                </Paragraph>
-                            </RichTextBlock>
                             <TextBlock Text="Default file receive location:" 
                                        TextWrapping="Wrap"
-                                       Margin="0,18,0,4" />
-                            <Grid>
+                                       Margin="0,12,0,4" />
+                            <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
@@ -67,6 +50,20 @@
                                         Margin="4,0,0,0"
                                         Tapped="ChooseDownloadFolder_Tapped" />
                             </Grid>
+                            <TextBlock Text="Group received files by:" 
+                                       TextWrapping="Wrap"
+                                       Margin="0,12,0,4" />
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MaxWidth="310" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ComboBox Grid.Column="0"
+                                          HorizontalAlignment="Stretch"
+                                          ItemsSource="{x:Bind Model.GroupReceivedByItems, Mode=OneWay}" 
+                                          SelectedItem="{x:Bind Model.GroupReceivedBySelectedItem, Mode=TwoWay}" />
+                            </Grid>
+
                             <TextBlock Text="Put known file types into appropriate user folders (libraries) instead of default receive location" 
                                        TextWrapping="Wrap"
                                        Margin="0,24,0,4" />
@@ -100,8 +97,8 @@
                             </HyperlinkButton>
                         </StackPanel>
                         <StackPanel Margin="0,24,0,8">
-                            <TextBlock Text="Universal clipboard (Beta)" FontWeight="Bold" />
-                            <TextBlock Text="Universal clipboard mirrors any text you copy on your PCs to the clipboard of your other devices."
+                            <TextBlock Text="Universal clipboard" FontWeight="Bold" />
+                            <TextBlock Text="Universal clipboard mirrors any text you copy on your PC to the clipboard of your other devices."
                                        Margin="0,8,0,12"
                                        TextWrapping="Wrap"
                                        Foreground="#CCCCCC" />
@@ -143,7 +140,7 @@
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Margin="0,24,0,0">
+                        <StackPanel Margin="0,24,0,0" Visibility="Collapsed">
                             <TextBlock Text="Account" FontWeight="Bold" />
                             <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                         Background="#aa333333"
@@ -165,7 +162,22 @@
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Margin="0,24,0,8">
-                            <TextBlock Text="Advanced" FontWeight="Bold" />
+                            <TextBlock Text="Advanced" FontWeight="Bold" Margin="0,0,0,24" />
+                            <TextBlock Text="Show my Android devices" 
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,0" />
+                            <RelativePanel>
+                                <ToggleSwitch x:Name="ConnectToOtherDevicesToggle" 
+                                              IsOn="{x:Bind Model.FindOtherDevices, Mode=TwoWay}" 
+                                              IsEnabled="{x:Bind Model.FindOtherDevicesEnabled, Mode=OneWay}" />
+                                <ProgressRing IsActive="{x:Bind Model.FindOtherDevicesProgressRingActive, Mode=OneWay}"
+                                              RelativePanel.RightOf="ConnectToOtherDevicesToggle" 
+                                              RelativePanel.AlignVerticalCenterWithPanel="True" />
+                            </RelativePanel>
+                            <HyperlinkButton Content="Remove unused Android devices from my device list"
+                                                     IsEnabled="{x:Bind Model.IsAccountIdStored, Mode=OneWay}"
+                                                     Foreground="SkyBlue"
+                                                     Tapped="ManageDevices_Tapped" />
                             <TextBlock Text="Use legacy method to communicate with Android devices" 
                                        TextWrapping="Wrap"
                                        Margin="0,24,0,4" />
