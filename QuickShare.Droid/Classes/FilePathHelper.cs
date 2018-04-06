@@ -13,6 +13,7 @@ using Android.Provider;
 using Android.Util;
 using Uri = Android.Net.Uri;
 using Android.Database;
+using Android.Net;
 
 namespace QuickShare.Droid.Classes
 {
@@ -226,6 +227,12 @@ namespace QuickShare.Droid.Classes
             return null;
         }
 
-
+        internal static string GetPathForDocTree(Context context, Uri uri)
+        {
+            var docUri = DocumentsContract.BuildDocumentUriUsingTree(uri,
+                        DocumentsContract.GetTreeDocumentId(uri));
+            string path = GetPath(context, docUri);
+            return path;
+        }
     }
 }
