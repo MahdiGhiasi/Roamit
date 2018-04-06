@@ -117,6 +117,8 @@ namespace QuickShare
                 if (Frame.BackStack[Frame.BackStackDepth - 1].SourcePageType == typeof(MainSend))
                     Frame.BackStack.RemoveAt(Frame.BackStackDepth - 1);
 
+            bool preserveFolderStructure = (Frame.BackStackDepth <= 0 || Frame.BackStack[Frame.BackStackDepth - 1].SourcePageType != typeof(PicturePicker));
+
             var rs = MainPage.Current.GetSelectedSystem();
 
             bool isDestinationAndroid;
@@ -233,7 +235,7 @@ namespace QuickShare
                     if (!isDestinationAndroid)
                         ViewModel.LeaveScreenOnNoticeVisibility = Visibility.Visible;
 
-                    fileTransferResult = await SendFile(rs, packageManager, deviceName);
+                    fileTransferResult = await SendFile(rs, packageManager, deviceName, preserveFolderStructure);
                     if (fileTransferResult != FileTransferResult.Successful)
                     {
                         succeed = false;
@@ -352,7 +354,7 @@ namespace QuickShare
             }
         }
 
-        private async Task<FileTransferResult> SendFile(object rs, IRomePackageManager packageManager, string deviceName)
+        private async Task<FileTransferResult> SendFile(object rs, IRomePackageManager packageManager, string deviceName, bool preserveFolderStructure)
         {
             string sendingText = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Sending file..." : "Sending files...";
 
@@ -407,7 +409,8 @@ namespace QuickShare
                 
                 await Task.Run(async () =>
                 {
-                    result = await fs.Send(await GetFiles(SendDataTemporaryStorage.Files), sendFileCancellationTokenSource.Token);
+                    result = await fs.Send(preserveFolderStructure ? await GetFiles(SendDataTemporaryStorage.Files) : await GetFilesWithoutFolderStructure(SendDataTemporaryStorage.Files), 
+                        sendFileCancellationTokenSource.Token);
                 });
                 
                 ViewModel.ProgressValue = ViewModel.ProgressMaximum;
@@ -477,6 +480,25 @@ namespace QuickShare
             {
                 retrievingfiles = false;
             }            
+        }
+
+        private async Task<List<FileSendInfo>> GetFilesWithoutFolderStructure(IEnumerable<IStorageItem> items)
+        {
+            var output = new List<FileSendInfo>();
+
+            var files = items.Where(x => x is StorageFile)
+                .Select(x => new FileSendInfo(new WinRTFile(x as StorageFile)));
+            var folders = items.Where(x => x is StorageFolder)
+                .Select(x => x as StorageFolder);
+
+            output.AddRange(files);
+
+            foreach (var folder in folders)
+            {
+                output.AddRange(await GetFilesWithoutFolderStructure(await folder.GetItemsAsync()));
+            }
+
+            return output;
         }
 
         private async Task<List<FileSendInfo>> GetFiles(List<IStorageItem> items)

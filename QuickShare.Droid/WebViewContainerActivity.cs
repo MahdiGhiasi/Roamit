@@ -56,6 +56,7 @@ namespace QuickShare.Droid
         CancellationTokenSource sendFileCancellationTokenSource;
 
         string[] lastSelectedFiles;
+        bool lastPreserveFolderStructure;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -631,7 +632,7 @@ namespace QuickShare.Droid
                         return;
                     }
 
-                    await SendFiles(files.ToArray());
+                    await SendFiles(files.ToArray(), false);
                 }
                 else
                 {
@@ -693,32 +694,34 @@ namespace QuickShare.Droid
                 return;
             }
 
-            await SendFiles(files);
+            await SendFiles(files, true);
         }
 
         private async Task RetrySendFiles()
         {
-            await SendFiles(lastSelectedFiles);
+            await SendFiles(lastSelectedFiles, lastPreserveFolderStructure);
         }
 
-        private async Task SendFiles(string[] files)
-        {
-            lastSelectedFiles = files;
-
-            if (IsAndroidDeviceSelected())
-                await SendFilesToAndroidDevice(files);
-            else
-                await SendFilesToWindowsDevice(files);
-        }
-
-        private async Task SendFilesToAndroidDevice(string[] files)
+        private async Task SendFiles(string[] files, bool preserveFolderStructure)
         {
             ShowProgress();
+
+            lastSelectedFiles = files;
+            lastPreserveFolderStructure = preserveFolderStructure;
+
+            if (IsAndroidDeviceSelected())
+                await SendFilesToAndroidDevice(files, preserveFolderStructure);
+            else
+                await SendFilesToWindowsDevice(files, preserveFolderStructure);
+        }
+
+        private async Task SendFilesToAndroidDevice(string[] files, bool preserveFolderStructure)
+        {
             SetProgressText("Connecting...");
             Common.AndroidPushNotifier.SetRemoteDevice(Common.GetCurrentNormalizedRemoteSystem().Id);
 
             SetProgressText("Preparing...");
-            var transferResult = await BeginSend(files, Common.AndroidPushNotifier, sendFinishService: true);
+            var transferResult = await BeginSend(files, Common.AndroidPushNotifier, preserveFolderStructure, sendFinishService: true);
 
             FinishSend(transferResult, isWindows: false);
         }
@@ -755,20 +758,25 @@ namespace QuickShare.Droid
             }
         }
 
-        private IEnumerable<FileSendInfo> GetFiles(string[] files)
+        private IEnumerable<FileSendInfo> GetFiles(string[] files, bool preserveFolderStructure)
         {
-            var paths = files
-                .Select(x => Path.GetDirectoryName(x))
-                .Distinct();
-            var rootFolderPath = new string(paths.Select(str => str.TakeWhile((c, index) => paths.All(s => s[index] == c))).FirstOrDefault().ToArray());
+            if (preserveFolderStructure)
+            {
+                var paths = files
+                    .Select(x => Path.GetDirectoryName(x))
+                    .Distinct();
+                var rootFolderPath = new string(paths.Select(str => str.TakeWhile((c, index) => paths.All(s => s[index] == c))).FirstOrDefault().ToArray());
 
-            return files.Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x), rootFolderPath));
+                return files.Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x), rootFolderPath));
+            }
+            else
+            {
+                return files.Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x)));
+            }
         }
         
-        private async Task SendFilesToWindowsDevice(string[] files)
+        private async Task SendFilesToWindowsDevice(string[] files, bool preserveFolderStructure)
         {
-            ShowProgress();
-
             Classes.Settings settings = new Classes.Settings(this);
 
             if (settings.UseInAppServiceOnWindowsDevices)
@@ -788,12 +796,12 @@ namespace QuickShare.Droid
 
             SetProgressText("Preparing...");
 
-            var transferResult = await BeginSend(files, Common.PackageManager, sendFinishService: !settings.UseInAppServiceOnWindowsDevices);
+            var transferResult = await BeginSend(files, Common.PackageManager, preserveFolderStructure, sendFinishService: !settings.UseInAppServiceOnWindowsDevices);
 
             FinishSend(transferResult, isWindows: true);
         }
 
-        private async Task<FileTransferResult> BeginSend(string[] files, IRomePackageManager packageManager, bool sendFinishService)
+        private async Task<FileTransferResult> BeginSend(string[] files, IRomePackageManager packageManager, bool preserveFolderStructure, bool sendFinishService)
         {
             string sendingText = (files.Length == 1) ? "Sending file..." : "Sending files...";
 
@@ -830,7 +838,7 @@ namespace QuickShare.Droid
                 }
                 await Task.Run(async () =>
                 {
-                    transferResult = await fs.Send(GetFiles(files).ToList(), sendFileCancellationTokenSource.Token);
+                    transferResult = await fs.Send(GetFiles(files, preserveFolderStructure).ToList(), sendFileCancellationTokenSource.Token);
                 });
                 sendFileCancellationTokenSource = null;
             }
@@ -1147,7 +1155,7 @@ namespace QuickShare.Droid
                         break;
                     case "Share_File":
                         isFromShareTarget = true;
-                        await context.SendFiles(Common.ShareFiles);
+                        await context.SendFiles(Common.ShareFiles, true);
                         break;
                     case "Share_Url":
                         isFromShareTarget = true;

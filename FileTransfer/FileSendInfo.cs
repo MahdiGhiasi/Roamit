@@ -34,11 +34,26 @@ namespace QuickShare.FileTransfer
 
         public FileSendInfo() { }
 
-        public FileSendInfo(IFile file, string parentPath)
+        /// <summary>
+        /// Initiate a FileSendInfo but ignore the folder structure.
+        /// </summary>
+        /// <param name="file"></param>
+        public FileSendInfo(IFile file)
         {
             File = file;
             FileName = file.Name;
+            RelativePath = "";
+            UniqueKey = GenerateKey();
+        }
 
+        /// <summary>
+        /// Initiate a FileSendInfo while preserving the folder structure relative to 'parentPath'.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="parentPath"></param>
+        public FileSendInfo(IFile file, string parentPath) :
+            this(file)
+        {
             if ((parentPath.LastOrDefault() != '\\') && (parentPath.LastOrDefault() != '/'))
                 parentPath += "/";
 
@@ -46,8 +61,6 @@ namespace QuickShare.FileTransfer
                 RelativePath = System.IO.Path.GetDirectoryName(file.Path).Substring(parentPath.Length - 1).Replace("\\", "/");
             else
                 throw new ArgumentException("'parentPath' is not a part of 'file.Path'.");
-
-            UniqueKey = GenerateKey();
         }
 
         private string GenerateKey()
