@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Preferences;
 using Plugin.DeviceInfo;
+using QuickShare.Common.Classes;
 
 namespace QuickShare.Droid.Classes
 {
@@ -159,6 +160,39 @@ namespace QuickShare.Droid.Classes
                 ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
                 ISharedPreferencesEditor editor = prefs.Edit();
                 editor.PutInt("AppThemeSetting", (int)value);
+                editor.Apply();
+            }
+        }
+
+        internal DownloadGroupByState DownloadGroupByState
+        {
+            get
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                return (DownloadGroupByState)prefs.GetInt("DownloadGroupByState", (int)DownloadGroupByState.Month1);
+            }
+            set
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutInt("DownloadGroupByState", (int)value);
+                editor.Apply();
+            }
+        }
+
+        internal string DefaultDownloadFolder
+        {
+            get
+            {
+                var defaultPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "Roamit");
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                return prefs.GetString("DefaultDownloadFolder", defaultPath);
+            }
+            set
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutString("DefaultDownloadFolder", value);
                 editor.Apply();
             }
         }

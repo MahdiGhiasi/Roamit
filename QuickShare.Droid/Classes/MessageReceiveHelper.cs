@@ -47,7 +47,7 @@ namespace QuickShare.Droid.Classes
             {
                 InitProgressNotifier("Receiving...");
 
-                await FileTransfer.FileReceiver2.ReceiveRequest(message, DownloadFolderDecider);
+                await FileTransfer.FileReceiver2.ReceiveRequest(message, new DownloadFolderDecider(context));
             }
             else if (receiver == "TextReceiver")
             {
@@ -85,15 +85,6 @@ namespace QuickShare.Droid.Classes
             FileTransfer.FileReceiver2.FileTransferProgress += FileReceiver_FileTransferProgress;
 
             context = _context;
-        }
-
-        private static async Task<IFolder> DownloadFolderDecider(string[] fileTypes)
-        {
-            string downloadPath = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath, "Roamit");
-            System.IO.Directory.CreateDirectory(downloadPath); //Make sure download folder exists.
-            IFolder downloadFolder = new FileSystemFolder(downloadPath);
-
-            return downloadFolder;
         }
 
         public static void InitProgressNotifier(string title = "Connecting...")

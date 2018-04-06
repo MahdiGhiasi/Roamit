@@ -195,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\CloudClipboardNotifier.cs" />
+    <Compile Include="Classes\DownloadFolderDecider.cs" />
     <Compile Include="Classes\MessageReceiveHelper.cs" />
     <Compile Include="Classes\OSHelper.cs" />
     <Compile Include="Classes\RevMob\CallbackShowBanner.cs" />
