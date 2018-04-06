@@ -123,13 +123,21 @@ namespace QuickShare.FileTransfer
                     {
                         Name = x.FileName,
                         Size = (long)x.FileSize,
-                        StorePath = Path.Combine(downloadRootFolder.Path, x.RelativePath),
+                        StorePath = Path.Combine(downloadRootFolder.Path, NormalizePathForCombine(x.RelativePath)),
                         Completed = false,
                     }).ToList(),
                     StoreRootPath = downloadRootFolder.Path,
                 },
                 false);
             DataStorageProviders.HistoryManager.Close();
+        }
+
+        private static string NormalizePathForCombine(string path)
+        {
+            if (path.Length == 0)
+                return path;
+
+            return (path[0] == '\\' || path[0] == '/') ? path.Substring(1) : path;
         }
 
         private static async Task StartDownload(QueueInfo queueInfo, string senderName, string ip, Guid sessionKey, IFolder downloadRootFolder)
