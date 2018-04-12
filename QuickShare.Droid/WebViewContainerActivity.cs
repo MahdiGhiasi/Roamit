@@ -639,6 +639,21 @@ namespace QuickShare.Droid
 
                 }
             }
+            else
+            {
+                var path = FilePathHelper.GetPathForDocTree(this, data.Data);
+
+                var alert = new AlertDialog.Builder(this)
+                    .SetTitle("Hey")
+                    .SetMessage(path)
+                    .SetPositiveButton("Got it", (s, e) => { });
+
+                RunOnUiThread(() =>
+                {
+                    alert.Show();
+                });
+
+            }
         }
 
         private void PickAndSendPicture()
@@ -1109,15 +1124,22 @@ namespace QuickShare.Droid
                 }
                 else if (url == "file:///android_asset/html/contact.html")
                 {
-                    var mailto = "mailto:roamitapp@gmail.com?subject=Roamit%20for%20Android%20v" + Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
+                    Intent i = new Intent(Intent.ActionOpenDocumentTree);
+                    i.AddCategory(Intent.CategoryDefault);
+                    i.PutExtra("android.content.extra.SHOW_ADVANCED", true);
+                    i.PutExtra("android.content.extra.FANCY", true);
+                    i.PutExtra("android.content.extra.SHOW_FILESIZE", true);
+                    context.StartActivityForResult(Intent.CreateChooser(i, "Choose directory"), 9999);
 
-                    var email = new Intent(Intent.ActionSendto);
-                    email.SetData(Android.Net.Uri.Parse(mailto));
+                    //var mailto = "mailto:roamitapp@gmail.com?subject=Roamit%20for%20Android%20v" + Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
 
-                    if (context.PackageManager.QueryIntentActivities(email, 0).Count > 0)
-                    {
-                        context.StartActivity(email);
-                    }
+                    //var email = new Intent(Intent.ActionSendto);
+                    //email.SetData(Android.Net.Uri.Parse(mailto));
+
+                    //if (context.PackageManager.QueryIntentActivities(email, 0).Count > 0)
+                    //{
+                    //    context.StartActivity(email);
+                    //}
                 }
                 else if (url == "file:///android_asset/html/sendFileActionRetry.html")
                 {
