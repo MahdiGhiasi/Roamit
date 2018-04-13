@@ -646,12 +646,12 @@ namespace QuickShare.Droid
         private void PickAndSendPicture()
         {
             Intent getIntent = new Intent(Intent.ActionGetContent);
-            getIntent.SetType("image/*");
+            getIntent.SetType("image/*,video/*");
             getIntent.PutExtra(Intent.ExtraAllowMultiple, true);
             getIntent.PutExtra(Intent.ExtraLocalOnly, true);
 
             Intent pickIntent = new Intent(Intent.ActionPick, Android.Provider.MediaStore.Images.Media.ExternalContentUri);
-            pickIntent.SetType("image/*");
+            pickIntent.SetType("image/*,video/*");
             pickIntent.PutExtra(Intent.ExtraAllowMultiple, true);
             pickIntent.PutExtra(Intent.ExtraLocalOnly, true);
 
