@@ -24,7 +24,7 @@ namespace QuickShare.Droid
     {
         static readonly int FolderPickerId = 3000;
 
-        TextView txtVersionNumber, txtCloudClipboardModeDescription;
+        TextView txtVersionNumber, txtCloudClipboardModeDescription, txtUniversalClipboardNotAvailable;
         TextView linkTwitter, linkGitHub, linkPrivacyPolicy, linkLogOut;
         EditText txtDeviceName, txtReceiveLocation;
         Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme, swUseInAppRomeProcessOnWindows;
@@ -51,6 +51,7 @@ namespace QuickShare.Droid
 
             txtVersionNumber = FindViewById<TextView>(Resource.Id.settings_txt_version);
             txtCloudClipboardModeDescription = FindViewById<TextView>(Resource.Id.settings_cloudClipboardModeDescription);
+            txtUniversalClipboardNotAvailable = FindViewById<TextView>(Resource.Id.settings_universalClipboardNotAvailable);
             txtDeviceName = FindViewById<EditText>(Resource.Id.settings_deviceNameText);
             txtReceiveLocation = FindViewById<EditText>(Resource.Id.settings_fileReceiveLocationText);
             swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
@@ -150,6 +151,7 @@ namespace QuickShare.Droid
             swCloudClipboardMode.Checked = (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic);
             swCloudClipboardMode.CheckedChange += SwCloudClipboardMode_CheckedChange;
 
+            txtUniversalClipboardNotAvailable.Visibility = CrossSecureStorage.Current.HasKey("RoamitAccountId") ? ViewStates.Gone : ViewStates.Visible;
             swCloudClipboardActivity.Visibility = CrossSecureStorage.Current.HasKey("RoamitAccountId") ? ViewStates.Visible : ViewStates.Gone;
             swCloudClipboardMode.Visibility = swCloudClipboardActivity.Visibility;
             txtCloudClipboardModeDescription.Visibility = swCloudClipboardActivity.Visibility;

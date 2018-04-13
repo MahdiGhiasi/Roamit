@@ -87,6 +87,13 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="16dp" />
+            <TextView
+                android:text="You can enable Universal Clipboard from Roamit settings on your PC."
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_universalClipboardNotAvailable"
+                android:textStyle="bold" />
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,11 +112,11 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginTop="10dp" />
             <TextView
                 android:text="Advanced"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="30dp"
                 android:layout_marginBottom="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
