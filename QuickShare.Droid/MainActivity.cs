@@ -26,6 +26,7 @@ using QuickShare.Droid.Classes;
 using Com.Revmob;
 using Com.Revmob.Ads.Banner;
 using QuickShare.Droid.Classes.RevMob;
+using Android.Runtime;
 
 namespace QuickShare.Droid
 {
@@ -38,6 +39,11 @@ namespace QuickShare.Droid
 
             StartActivity(new Intent(this, typeof(WebViewContainerActivity)));
             Finish();
+        }
+
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
         }
     }
 }

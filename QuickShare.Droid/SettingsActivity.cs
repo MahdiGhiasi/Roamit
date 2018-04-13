@@ -15,16 +15,22 @@ using QuickShare.Droid.Classes;
 using Plugin.SecureStorage;
 using QuickShare.Droid.OnlineServiceHelpers;
 using System.Threading.Tasks;
+using QuickShare.Droid.Adapters;
 
 namespace QuickShare.Droid
 {
-    [Activity]
+    [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.settingspage")]
     internal class SettingsActivity : AppCompatActivity
     {
+        static readonly int FolderPickerId = 3000;
+
         TextView txtVersionNumber, txtCloudClipboardModeDescription;
         TextView linkTwitter, linkGitHub, linkPrivacyPolicy, linkLogOut;
-        EditText txtDeviceName;
+        EditText txtDeviceName, txtReceiveLocation;
         Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme, swUseInAppRomeProcessOnWindows;
+        Spinner groupReceivedBySpinner;
+
+        SettingsReceivedGroupByAdapter groupReceivedByAdapter;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -46,14 +52,16 @@ namespace QuickShare.Droid
             txtVersionNumber = FindViewById<TextView>(Resource.Id.settings_txt_version);
             txtCloudClipboardModeDescription = FindViewById<TextView>(Resource.Id.settings_cloudClipboardModeDescription);
             txtDeviceName = FindViewById<EditText>(Resource.Id.settings_deviceNameText);
+            txtReceiveLocation = FindViewById<EditText>(Resource.Id.settings_fileReceiveLocationText);
             swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
             swUiMode = FindViewById<Switch>(Resource.Id.settings_uiModeSwitch);
             swStayInBackground = FindViewById<Switch>(Resource.Id.settings_allowToStayInBackgroundSwitch);
             swDarkTheme = FindViewById<Switch>(Resource.Id.settings_darkThemeSwitch);
             swUseInAppRomeProcessOnWindows = FindViewById<Switch>(Resource.Id.settings_showReceiveUIOnWindowsSwitch);
+            groupReceivedBySpinner = FindViewById<Spinner>(Resource.Id.settings_groupReceivedBySpinner);
 
-            txtVersionNumber.Text = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
+            txtReceiveLocation.KeyListener = null; //Disable editing of receive location text box.
 
             linkTwitter = FindViewById<TextView>(Resource.Id.settings_twitterLink);
             linkTwitter.Click += LinkTwitter_Click;
@@ -155,6 +163,17 @@ namespace QuickShare.Droid
             swUseInAppRomeProcessOnWindows.Checked = settings.UseInAppServiceOnWindowsDevices;
             swUseInAppRomeProcessOnWindows.CheckedChange += SwUseInAppRomeProcessOnWindows_CheckedChange;
 
+            txtReceiveLocation.FocusChange += TxtReceiveLocation_FocusChange;
+            txtReceiveLocation.Click += TxtReceiveLocation_Click;
+            txtReceiveLocation.Text = settings.DefaultDownloadFolder;
+
+            groupReceivedByAdapter = new SettingsReceivedGroupByAdapter(this);
+            groupReceivedBySpinner.Adapter = groupReceivedByAdapter;
+            groupReceivedBySpinner.SetSelection(groupReceivedByAdapter.SelectedItemPosition, false);
+            groupReceivedBySpinner.ItemSelected += GroupReceivedBySpinner_ItemSelected;
+
+            txtVersionNumber.Text = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
+
             if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
             {
                 swCloudClipboardMode.Enabled = false;
@@ -169,6 +188,14 @@ namespace QuickShare.Droid
 
                 swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
             }
+        }
+
+        private void GroupReceivedBySpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            var item = groupReceivedByAdapter[e.Position];
+
+            Settings settings = new Settings(this);
+            settings.DownloadGroupByState = item.State;
         }
 
         private void SwUseInAppRomeProcessOnWindows_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -230,6 +257,47 @@ namespace QuickShare.Droid
             swCloudClipboardMode.Enabled = e.IsChecked;
 
             await ServiceFunctions.SetCloudClipboardActivationStatus(e.IsChecked);
+        }
+
+        private void TxtReceiveLocation_Click(object sender, EventArgs e)
+        {
+            ChooseReceiveLocation();
+        }
+
+        private void TxtReceiveLocation_FocusChange(object sender, View.FocusChangeEventArgs e)
+        {
+            if (e.HasFocus)
+            {
+                ChooseReceiveLocation();
+            }
+        }
+
+        private void ChooseReceiveLocation()
+        {
+            Settings settings = new Settings(this);
+            Intent i = new Intent(Intent.ActionOpenDocumentTree);
+            i.AddCategory(Intent.CategoryDefault);
+            i.PutExtra("android.content.extra.SHOW_ADVANCED", true);
+            i.PutExtra("android.content.extra.FANCY", true);
+            i.PutExtra("android.content.extra.SHOW_FILESIZE", true);
+            i.PutExtra("android.provider.extra.INITIAL_URI", settings.DefaultDownloadFolder);
+            StartActivityForResult(Intent.CreateChooser(i, "Choose receive location"), FolderPickerId);
+        }
+
+        //TODO: Check why this is not called?
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            if (requestCode == FolderPickerId)
+            {
+                if ((resultCode == Result.Ok) && (data != null))
+                {
+                    var path = FilePathHelper.GetPathForDocTree(this, data.Data);
+                    txtReceiveLocation.Text = path;
+                    
+                    Settings settings = new Settings(this);
+                    settings.DefaultDownloadFolder = path;
+                }
+            }
         }
     }
 }

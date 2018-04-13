@@ -34,6 +34,31 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/settings_deviceNameText"
                 android:text="Android" />
+            <TextView
+                android:text="File receive location"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView5"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_fileReceiveLocationText"
+                android:text="/storage/"
+                android:singleLine="false"
+                android:inputType="none" />
+            <TextView
+                android:text="Group received files by"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView6"
+                android:layout_marginTop="16dp" />
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_groupReceivedBySpinner" />
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,7 +66,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Dark theme" />
             <TextView
-                android:text="You'll see the change next time you start the app."
+                android:text="You'll see the new theme next time you start the app."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
@@ -102,18 +127,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="30dp" />
-          <Switch
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/settings_showReceiveUIOnWindowsSwitch"
-    android:text="Show file receive progress on my Windows devices" />
-          <TextView
-              android:text="Disabling this might cause some issues with transferring large files for some users."
-              android:textAppearance="?android:attr/textAppearanceSmall"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="10dp"
-              android:layout_marginBottom="30dp" />
+            <Switch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_showReceiveUIOnWindowsSwitch"
+                android:text="Show file receive progress on my Windows devices" />
+            <TextView
+                android:text="Disabling this might cause some issues with transferring large files for some users."
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp" />
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

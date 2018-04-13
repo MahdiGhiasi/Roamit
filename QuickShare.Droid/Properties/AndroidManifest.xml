@@ -18,6 +18,7 @@
 		</receiver>
 		<activity android:name="com.ghiasi.quickshare.sendpage" android:theme="@style/MyTheme.Legacy" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
 		<activity android:name="com.ghiasi.quickshare.webviewcontainerpage" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
+    <activity android:name="com.ghiasi.quickshare.settingspage" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
 		<activity android:name="com.ghiasi.quickshare.mainpage" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize"></activity>
 		<activity android:name="com.ghiasi.quickshare.intro" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
 			<intent-filter>

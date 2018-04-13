@@ -194,6 +194,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\SettingsReceivedGroupByAdapter.cs" />
     <Compile Include="Classes\CloudClipboardNotifier.cs" />
     <Compile Include="Classes\DownloadFolderDecider.cs" />
     <Compile Include="Classes\MessageReceiveHelper.cs" />
