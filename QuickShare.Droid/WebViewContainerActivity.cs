@@ -39,8 +39,9 @@ namespace QuickShare.Droid
     public class WebViewContainerActivity : Activity
     {
         readonly string homeUrl = "file:///android_asset/html/home.html";
-        static readonly int PickImageId = 1000;
-        static readonly int PickFileId = 1001;
+        readonly int PickImageId = 1000;
+        readonly int PickFileId = 1001;
+        readonly int SettingsId = 999;
 
         bool automaticRemoteSystemSelectionAllowed = true;
         int remoteSystemPrevCount = 0;
@@ -72,21 +73,7 @@ namespace QuickShare.Droid
             webView.Settings.JavaScriptEnabled = true;
 
             var settings = new Classes.Settings(this);
-            if (IsShareDialog)
-            {
-                InitShareDialog(settings.Theme);
-            }
-            else
-            {
-                if (settings.Theme == AppTheme.Dark)
-                    webView.LoadUrl($"{homeUrl}#dark");
-                else
-                    webView.LoadUrl($"{homeUrl}#light");
-
-                ShowWhatsNewIfNecessary();
-            }
-
-            SetNavBarColor(settings.Theme);
+            InitUI(settings);
 
             checkClipboardTextTimer = new System.Timers.Timer()
             {
@@ -158,6 +145,25 @@ namespace QuickShare.Droid
                 StartService(new Intent(this, typeof(Services.RomeReadyService)));
 
             CheckForLegacyVersionInstallations();
+        }
+
+        private void InitUI(Classes.Settings settings)
+        {
+            if (IsShareDialog)
+            {
+                InitShareDialog(settings.Theme);
+            }
+            else
+            {
+                if (settings.Theme == AppTheme.Dark)
+                    webView.LoadUrl($"{homeUrl}#dark");
+                else
+                    webView.LoadUrl($"{homeUrl}#light");
+
+                ShowWhatsNewIfNecessary();
+            }
+
+            SetNavBarColor(settings.Theme);
         }
 
         private void SetNavBarColor(AppTheme theme)
@@ -649,6 +655,11 @@ namespace QuickShare.Droid
                     await SendFiles(files, true);
                 }
             }
+            else if (requestCode == SettingsId)
+            {
+                var settings = new Classes.Settings(this);
+                InitUI(settings);
+            }
 
             base.OnActivityResult(requestCode, resultCode, data);
         }
@@ -1093,7 +1104,7 @@ namespace QuickShare.Droid
                 if (url == "file:///android_asset/html/settings.html")
                 {
                     var intent = new Intent(context, typeof(SettingsActivity));
-                    context.StartActivity(intent);
+                    context.StartActivityForResult(intent, context.SettingsId);
                 }
                 else if (url == "file:///android_asset/html/stopAutomaticSelection.html")
                 {

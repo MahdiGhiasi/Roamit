@@ -22,7 +22,7 @@ namespace QuickShare.Droid
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.settingspage")]
     internal class SettingsActivity : AppCompatActivity
     {
-        static readonly int FolderPickerId = 3000;
+        readonly int FolderPickerId = 3000;
 
         TextView txtVersionNumber, txtCloudClipboardModeDescription, txtUniversalClipboardNotAvailable;
         TextView linkTwitter, linkGitHub, linkPrivacyPolicy, linkLogOut;
@@ -212,6 +212,10 @@ namespace QuickShare.Droid
             Settings settings = new Settings(this);
 
             settings.Theme = e.IsChecked ? AppTheme.Dark : AppTheme.Light;
+
+            Finish();
+            StartActivity(Intent);
+            OverridePendingTransition(Android.Resource.Animation.FadeIn, 0);
         }
 
         private void TxtDeviceName_AfterTextChanged(object sender, Android.Text.AfterTextChangedEventArgs e)

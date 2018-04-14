@@ -453,9 +453,6 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\html\dark.css" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="GeneratedBindingInfo.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
