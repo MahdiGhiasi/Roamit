@@ -19,8 +19,6 @@ using Android.Database;
 using Android.Provider;
 using QuickShare.Droid.Classes;
 using System.Threading.Tasks;
-using Com.Github.Angads25.Filepicker.Model;
-using Com.Github.Angads25.Filepicker.View;
 using QuickShare.Common;
 using QuickShare.FileTransfer;
 using Plugin.DeviceInfo;

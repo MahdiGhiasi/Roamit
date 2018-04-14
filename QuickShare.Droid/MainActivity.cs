@@ -40,11 +40,6 @@ namespace QuickShare.Droid
             StartActivity(new Intent(this, typeof(WebViewContainerActivity)));
             Finish();
         }
-
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-        }
     }
 }
 
