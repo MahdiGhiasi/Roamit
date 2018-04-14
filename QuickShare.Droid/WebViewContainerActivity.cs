@@ -646,7 +646,6 @@ namespace QuickShare.Droid
                 {
                     var files = Utils.GetSelectedFilesFromResult(data).Select(x => Utils.GetFileForUri(x).AbsolutePath).ToArray();
 
-                    // TODO: Make SendFiles work with folders too
                     await SendFiles(files, true);
                 }
             }
@@ -748,23 +747,77 @@ namespace QuickShare.Droid
             }
         }
 
-        private IEnumerable<FileSendInfo> GetFiles(string[] files, bool preserveFolderStructure)
+        private async Task<IEnumerable<FileSendInfo>> GetFiles(string[] files, bool preserveFolderStructure)
         {
-            if (preserveFolderStructure)
-            {
-                var paths = files
-                    .Select(x => Path.GetDirectoryName(x))
-                    .Distinct();
-                var rootFolderPath = new string(paths.Select(str => str.TakeWhile((c, index) => paths.All(s => s[index] == c))).FirstOrDefault().ToArray());
-                
-                return files.Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x), rootFolderPath));
-            }
-            else
-            {
-                return files.Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x)));
-            }
+            var items = files.Select(x => new Java.IO.File(x)).ToList();
+
+            return preserveFolderStructure ? await GetFiles(items) : await GetFilesWithoutFolderStructure(items);
         }
-        
+
+        private async Task<List<FileSendInfo>> GetFilesWithoutFolderStructure(IEnumerable<Java.IO.File> items)
+        {
+            var output = new List<FileSendInfo>();
+
+            var files = items.Where(x => x.IsFile)
+                .Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x.AbsolutePath))).ToList();
+            var folders = items.Where(x => x.IsDirectory).ToList();
+
+            output.AddRange(files);
+
+            foreach (var folder in folders)
+            {
+                output.AddRange(await GetFilesWithoutFolderStructure(await folder.ListFilesAsync()));
+            }
+
+            return output;
+        }
+
+        private async Task<List<FileSendInfo>> GetFiles(List<Java.IO.File> items)
+        {
+            var output = new List<FileSendInfo>();
+
+            var files = items.Where(x => x.IsFile)
+                .Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x.AbsolutePath), Path.GetDirectoryName(x.AbsolutePath))).ToList();
+            var folders = items.Where(x => x.IsDirectory).ToList();
+
+            var paths = files
+                .Select(x => Path.GetDirectoryName(x.File.Path))
+                .Union(folders.Select(x => x.Path))
+                .Distinct();
+            var rootFolderPath = new string(paths.Select(str => str.TakeWhile((c, index) => paths.All(s => s[index] == c))).FirstOrDefault().ToArray());
+            if (folders.Count() == 1 && files.Count() == 0) // In case it's a single folder, exclude the folder name
+                rootFolderPath = Path.GetDirectoryName(rootFolderPath) ?? rootFolderPath;
+
+            output.AddRange(files);
+
+            foreach (var folder in folders)
+            {
+                output.AddRange(await GetFilesOfFolder(folder, rootFolderPath));
+            }
+
+            return output;
+        }
+
+        private async Task<List<FileSendInfo>> GetFilesOfFolder(Java.IO.File f, string rootFolder = null)
+        {
+            if (rootFolder == null)
+                rootFolder = f.AbsolutePath;
+
+            var items = await f.ListFilesAsync();
+
+            List<FileSendInfo> files = (from x in items.Where(x => x.IsFile)
+                                        select new FileSendInfo(new PCLStorage.FileSystemFile(x.AbsolutePath), rootFolder)).ToList();
+
+            var folders = items.Where(x => x.IsDirectory).ToList();
+
+            foreach (var folder in folders)
+            {
+                files.AddRange(await GetFilesOfFolder(folder, rootFolder));
+            }
+
+            return files;
+        }
+
         private async Task SendFilesToWindowsDevice(string[] files, bool preserveFolderStructure)
         {
             Classes.Settings settings = new Classes.Settings(this);
@@ -828,7 +881,7 @@ namespace QuickShare.Droid
                 }
                 await Task.Run(async () =>
                 {
-                    transferResult = await fs.Send(GetFiles(files, preserveFolderStructure).ToList(), sendFileCancellationTokenSource.Token);
+                    transferResult = await fs.Send((await GetFiles(files, preserveFolderStructure)).ToList(), sendFileCancellationTokenSource.Token);
                 });
                 sendFileCancellationTokenSource = null;
             }
