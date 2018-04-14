@@ -32,6 +32,8 @@ using Com.Revmob;
 using System.Collections.Specialized;
 using QuickShare.Common.Rome;
 using System.IO;
+using Com.Nononsenseapps.Filepicker;
+using QuickShare.Droid.Classes.FilePicker;
 
 namespace QuickShare.Droid
 {
@@ -39,6 +41,8 @@ namespace QuickShare.Droid
     public class WebViewContainerActivity : Activity
     {
         readonly string homeUrl = "file:///android_asset/html/home.html";
+        static readonly int PickImageId = 1000;
+        static readonly int PickFileId = 1001;
 
         bool automaticRemoteSystemSelectionAllowed = true;
         int remoteSystemPrevCount = 0;
@@ -550,7 +554,6 @@ namespace QuickShare.Droid
         }
 
         #region Send
-        public static readonly int PickImageId = 1000;
 
         private void ShowProgress()
         {
@@ -639,6 +642,16 @@ namespace QuickShare.Droid
 
                 }
             }
+            else if (requestCode == PickFileId)
+            {
+                if ((resultCode == Result.Ok) && (data != null))
+                {
+                    var files = Utils.GetSelectedFilesFromResult(data).Select(x => Utils.GetFileForUri(x).AbsolutePath).ToArray();
+
+                    // TODO: Make SendFiles work with folders too
+                    await SendFiles(files, true);
+                }
+            }
 
             base.OnActivityResult(requestCode, resultCode, data);
         }
@@ -661,42 +674,19 @@ namespace QuickShare.Droid
             StartActivityForResult(chooserIntent, PickImageId);
         }
 
-        private async Task PickAndSendFile()
+        private void PickAndSendFile()
         {
-            //TODO: check permission.
+            var settings = new Classes.Settings(this);
 
-            var filePickerTask = new TaskCompletionSource<string[]>();
+            Intent i = new Intent(this, settings.Theme == AppTheme.Dark ? typeof(BackHandlingFilePickerActivityDark) : typeof(BackHandlingFilePickerActivityLight));
+            
+            i.PutExtra(FilePickerActivity.ExtraAllowMultiple, true);
+            i.PutExtra(FilePickerActivity.ExtraAllowCreateDir, false);
+            i.PutExtra(FilePickerActivity.ExtraMode, FilePickerActivity.ModeFileAndDir);
 
-            DialogProperties properties = new DialogProperties()
-            {
-                SelectionMode = DialogConfigs.MultiMode,
-                SelectionType = DialogConfigs.FileSelect,
-                Root = new Java.IO.File(DialogConfigs.DefaultDir),
-                ErrorDir = new Java.IO.File(DialogConfigs.DefaultDir),
-                Offset = new Java.IO.File(DialogConfigs.DefaultDir),
-                Extensions = null
-            };
+            i.PutExtra(FilePickerActivity.ExtraStartPath, Android.OS.Environment.ExternalStorageDirectory.AbsolutePath);
 
-            FilePickerDialog dialog = new FilePickerDialog(this, properties);
-            dialog.SetTitle("Select files");
-            dialog.DialogSelection += (ss, ee) =>
-            {
-                filePickerTask.TrySetResult(ee.P0);
-            };
-            dialog.DismissEvent += (ss, ee) =>
-            {
-                filePickerTask.TrySetResult(new string[] { });
-            };
-            dialog.Show();
-
-            string[] files = await filePickerTask.Task;
-
-            if (files.Length == 0)
-            {
-                return;
-            }
-
-            await SendFiles(files, true);
+            StartActivityForResult(i, PickFileId);
         }
 
         private async Task RetrySendFiles()
@@ -768,7 +758,7 @@ namespace QuickShare.Droid
                     .Select(x => Path.GetDirectoryName(x))
                     .Distinct();
                 var rootFolderPath = new string(paths.Select(str => str.TakeWhile((c, index) => paths.All(s => s[index] == c))).FirstOrDefault().ToArray());
-
+                
                 return files.Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x), rootFolderPath));
             }
             else
@@ -1150,7 +1140,7 @@ namespace QuickShare.Droid
                         context.PickAndSendPicture();
                         break;
                     case "File":
-                        await context.PickAndSendFile();
+                        context.PickAndSendFile();
                         break;
                     case "Url":
                         await context.OpenUrl(ClipboardHelper.GetClipboardText(context));
