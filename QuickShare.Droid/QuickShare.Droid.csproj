@@ -318,10 +318,6 @@
     <GoogleServicesJson Include="google-services.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Binding_Filepicker\Binding_Filepicker.csproj">
-      <Project>{d1ef6f83-0ff5-49c9-9b93-d206522a68fb}</Project>
-      <Name>Binding_Filepicker</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{E9E7916C-D4FD-4B08-B904-3BCAE5DE1AF0}</Project>
       <Name>Common</Name>
