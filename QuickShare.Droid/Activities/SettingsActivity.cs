@@ -20,7 +20,7 @@ using QuickShare.Droid.Adapters;
 namespace QuickShare.Droid.Activities
 {
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.settingspage")]
-    internal class SettingsActivity : AppCompatActivity
+    internal class SettingsActivity : ThemeAwareActivity
     {
         readonly int FolderPickerId = 3000;
 

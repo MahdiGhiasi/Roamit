@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+        <TextView
+            android:text="3 files from Mahdi-Surface"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/historyListItemLayout_title"
+            android:textSize="18dp" />
+        <TextView
+            android:text="a.txt, b.txt, c.txt, ..."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/historyListItemLayout_subtitle"
+            android:textSize="16dp" />
+        <TextView
+            android:text="4/16/2018 12:30:21"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/historyListItemLayout_date"
+            android:gravity="right"
+            android:layout_marginTop="6dp"
+            android:textSize="12dp" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#aaaaaaaa"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:height="1dp" />
+</LinearLayout>

@@ -53,6 +53,11 @@ namespace QuickShare.DataStore
             return data.Find(x => (x.Completed == true)).OrderByDescending(x => x.ReceiveTime).Skip(startIndex).Take(count);
         }
 
+        public IEnumerable<HistoryRow> GetAll()
+        {
+            return data.Find(x => (x.Completed == true)).OrderByDescending(x => x.ReceiveTime);
+        }
+
         public void ChangeCompletedStatus(Guid guid, bool isCompleted)
         {
             var item = GetItem(guid);

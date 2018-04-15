@@ -200,6 +200,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\HistoryListActivity.cs" />
+    <Compile Include="Activities\ThemeAwareActivity.cs" />
+    <Compile Include="Adapters\HistoryListAdapter.cs" />
     <Compile Include="Adapters\SettingsReceivedGroupByAdapter.cs" />
     <Compile Include="Classes\CloudClipboardNotifier.cs" />
     <Compile Include="Classes\DownloadFolderDecider.cs" />
@@ -207,6 +210,7 @@
     <Compile Include="Classes\FilePicker\BackHandlingFilePickerActivityDark.cs" />
     <Compile Include="Classes\FilePicker\BackHandlingFilePickerActivityLight.cs" />
     <Compile Include="Classes\FilePicker\BackHandlingFilePickerFragment.cs" />
+    <Compile Include="Classes\History\HistoryItemHolder.cs" />
     <Compile Include="Classes\MessageReceiveHelper.cs" />
     <Compile Include="Classes\OSHelper.cs" />
     <Compile Include="Classes\RevMob\CallbackShowBanner.cs" />
@@ -297,6 +301,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\HistoryList.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\HistoryListItemLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
