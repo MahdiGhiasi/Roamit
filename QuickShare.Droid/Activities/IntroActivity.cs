@@ -14,7 +14,7 @@ using QuickShare.Droid.OnlineServiceHelpers;
 using Android.Webkit;
 using QuickShare.Droid.Classes;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Activities
 {
     [Activity(Label = "Roamit", Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.intro")]
     [IntentFilter(new[] { Intent.ActionSend, Intent.ActionSendMultiple }, Categories = new[] { Intent.CategoryDefault }, DataMimeType = "*/*", Label = "Roamit")]

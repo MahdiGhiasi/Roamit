@@ -3,7 +3,7 @@ using QuickShare.DevicesListManager;
 using QuickShare.Droid.RomeComponent;
 using System;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Classes
 {
     internal class RemoteSystemNormalizer : IAttributesNormalizer
     {

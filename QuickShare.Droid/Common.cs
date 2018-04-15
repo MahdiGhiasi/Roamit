@@ -13,6 +13,7 @@ using QuickShare.Droid.RomeComponent;
 using Microsoft.ConnectedDevices;
 using System.Threading.Tasks;
 using QuickShare.DevicesListManager;
+using QuickShare.Droid.Classes;
 
 namespace QuickShare.Droid
 {

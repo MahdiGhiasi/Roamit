@@ -13,7 +13,7 @@ using Java.Lang;
 using Microsoft.ConnectedDevices;
 using QuickShare.DevicesListManager;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Adapters
 {
     class DevicesListAdapter : BaseAdapter<NormalizedRemoteSystem>, IListAdapter
     {

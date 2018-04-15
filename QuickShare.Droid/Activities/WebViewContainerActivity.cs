@@ -33,7 +33,7 @@ using System.IO;
 using Com.Nononsenseapps.Filepicker;
 using QuickShare.Droid.Classes.FilePicker;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Activities
 {
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.webviewcontainerpage")]
     public class WebViewContainerActivity : Activity

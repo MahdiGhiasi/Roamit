@@ -10,6 +10,7 @@ using Android.Util;
 using QuickShare.Droid.Classes;
 using Android.Preferences;
 using Plugin.SecureStorage;
+using QuickShare.Droid.Activities;
 
 namespace QuickShare.Droid.Firebase
 {

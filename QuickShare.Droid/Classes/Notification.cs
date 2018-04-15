@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Media;
 using Android.Support.V4.App;
+using QuickShare.Droid.Activities;
 
 namespace QuickShare.Droid.Classes
 {

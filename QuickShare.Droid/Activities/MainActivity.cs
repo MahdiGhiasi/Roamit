@@ -28,7 +28,7 @@ using Com.Revmob.Ads.Banner;
 using QuickShare.Droid.Classes.RevMob;
 using Android.Runtime;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Activities
 {
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.mainpage")]
     public class MainActivity : AppCompatActivity

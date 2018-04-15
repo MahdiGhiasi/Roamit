@@ -17,7 +17,7 @@ using QuickShare.Droid.OnlineServiceHelpers;
 using System.Threading.Tasks;
 using QuickShare.Droid.Adapters;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Activities
 {
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.settingspage")]
     internal class SettingsActivity : AppCompatActivity

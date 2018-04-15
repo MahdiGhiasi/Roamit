@@ -216,7 +216,7 @@
     <Compile Include="Classes\StringExtension.cs" />
     <Compile Include="Classes\WhatsNew.cs" />
     <Compile Include="Common.cs" />
-    <Compile Include="DevicesListAdapter.cs" />
+    <Compile Include="Adapters\DevicesListAdapter.cs" />
     <Compile Include="Firebase\MyFirebaseInstanceIdService.cs" />
     <Compile Include="Firebase\MyFirebaseListenerService.cs" />
     <Compile Include="Classes\Analytics.cs" />
@@ -224,26 +224,25 @@
     <Compile Include="Classes\FilePathHelper.cs" />
     <Compile Include="Classes\Notification.cs" />
     <Compile Include="Classes\ProgressNotifier.cs" />
-    <Compile Include="IntroActivity.cs" />
-    <Compile Include="MainActivity.cs" />
+    <Compile Include="Activities\IntroActivity.cs" />
+    <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
-    <Compile Include="IntroViewPagerAdapter.cs" />
-    <Compile Include="MessageShowActivity.cs" />
-    <Compile Include="NotificationLaunchActivity.cs" />
+    <Compile Include="Activities\MessageShowActivity.cs" />
+    <Compile Include="Activities\NotificationLaunchActivity.cs" />
     <Compile Include="OnlineServiceHelpers\AuthenticateDialog.cs" />
     <Compile Include="OnlineServiceHelpers\ServiceFunctions.cs" />
     <Compile Include="OnlineServiceHelpers\MSAAuthenticator.cs" />
     <Compile Include="OnlineServiceHelpers\MsaWebViewClient.cs" />
     <Compile Include="Classes\NetworkHelper.cs" />
-    <Compile Include="RemoteSystemNormalizer.cs" />
+    <Compile Include="Classes\RemoteSystemNormalizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Services\CloudClipboardService.cs" />
     <Compile Include="Services\MessageCarrierService.cs" />
     <Compile Include="Services\RomeReadyService.cs" />
     <Compile Include="Services\WaiterService.cs" />
-    <Compile Include="SettingsActivity.cs" />
-    <Compile Include="WebViewContainerActivity.cs" />
+    <Compile Include="Activities\SettingsActivity.cs" />
+    <Compile Include="Activities\WebViewContainerActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -295,6 +294,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\WebViewContainer.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\HistoryList.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

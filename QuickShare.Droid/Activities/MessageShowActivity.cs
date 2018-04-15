@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using QuickShare.Droid.Classes;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Activities
 {
     [Activity]
     internal class MessageShowActivity : Activity

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Android.Util;
 using PCLStorage;
 using QuickShare.DataStore;
+using QuickShare.Droid.Activities;
 
 namespace QuickShare.Droid.Classes
 {

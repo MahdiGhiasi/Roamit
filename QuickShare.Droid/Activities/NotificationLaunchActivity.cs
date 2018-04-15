@@ -16,7 +16,7 @@ using Android.Webkit;
 using QuickShare.Droid.Services;
 using QuickShare.Droid.Classes;
 
-namespace QuickShare.Droid
+namespace QuickShare.Droid.Activities
 {
     [Activity]
     internal class NotificationLaunchActivity : Activity
