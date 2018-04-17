@@ -32,6 +32,7 @@ namespace QuickShare.Droid.Activities
             SetContentView(Resource.Layout.HistoryList);
 
             historyAdapter = new HistoryListAdapter();
+            historyAdapter.MoveFilesRequested += HistoryAdapter_MoveFilesRequested;
             historyAdapter.BrowseFilesRequested += HistoryAdapter_BrowseFilesRequested;
             historyAdapter.CopyToClipboardRequested += HistoryAdapter_CopyToClipboardRequested;
             historyAdapter.OpenFileRequested += HistoryAdapter_OpenFileRequested;
@@ -50,8 +51,11 @@ namespace QuickShare.Droid.Activities
             var toolbar = FindViewById<Toolbar>(Resource.Id.historyList_toolbar);
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = "Receive History";
+        }
 
-            
+        private void HistoryAdapter_MoveFilesRequested(object sender, HistoryListItem e)
+        {
+            throw new NotImplementedException();
         }
 
         private void HistoryAdapter_BrowseFilesRequested(object sender, HistoryListItem e)

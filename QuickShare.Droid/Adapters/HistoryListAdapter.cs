@@ -24,6 +24,7 @@ namespace QuickShare.Droid.Adapters
         public event EventHandler<HistoryListItem> CopyToClipboardRequested;
         public event EventHandler<HistoryListItem> BrowseFilesRequested;
         public event EventHandler<HistoryListItem> OpenFileRequested;
+        public event EventHandler<HistoryListItem> MoveFilesRequested;
         public event EventHandler<HistoryListItem> RemoveItemRequested;
 
         public HistoryListAdapter()
@@ -63,6 +64,9 @@ namespace QuickShare.Droid.Adapters
                     break;
                 case HistoryItemHolder.EventAction.OpenFile:
                     OpenFileRequested?.Invoke(this, new HistoryListItem(item, pos));
+                    break;
+                case HistoryItemHolder.EventAction.MoveFiles:
+                    MoveFilesRequested?.Invoke(this, new HistoryListItem(item, pos));
                     break;
                 case HistoryItemHolder.EventAction.RemoveItem:
                     RemoveItemRequested?.Invoke(this, new HistoryListItem(item, pos));

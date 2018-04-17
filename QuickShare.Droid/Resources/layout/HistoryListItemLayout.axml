@@ -74,6 +74,12 @@
                 android:gravity="right"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp">
+              <Button
+                    android:text="Move"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/historyListItemLayout_moveFiles"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored" />
                 <Button
                     android:text="Open file"
                     android:layout_width="wrap_content"
