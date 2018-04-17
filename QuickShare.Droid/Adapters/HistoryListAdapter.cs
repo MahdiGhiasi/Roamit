@@ -17,60 +17,25 @@ namespace QuickShare.Droid.Adapters
 {
     internal class HistoryListAdapter : RecyclerView.Adapter
     {
-        List<HistoryRow> historyData;
+        HistoryDataLoader historyDataLoader;
 
-        public override int ItemCount => historyData.Count;
-        public event EventHandler<HistoryRow> ItemClick;
+        public override int ItemCount => historyDataLoader.ItemsCount;
+        public event EventHandler<HistoryListItem> UrlLaunchRequested;
+        public event EventHandler<HistoryListItem> CopyToClipboardRequested;
+        public event EventHandler<HistoryListItem> BrowseFilesRequested;
+        public event EventHandler<HistoryListItem> OpenFileRequested;
+        public event EventHandler<HistoryListItem> RemoveItemRequested;
 
         public HistoryListAdapter()
         {
-            DataStorageProviders.HistoryManager.OpenAsync().Wait();
-            historyData = DataStorageProviders.HistoryManager.GetAll().ToList();
-            DataStorageProviders.HistoryManager.Close();
+            historyDataLoader = new HistoryDataLoader(50);
         }
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             var vh = holder as HistoryItemHolder;
-            var row = historyData[position];
-
-            if (row.Data is ReceivedUrl)
-            {
-                vh.Title.Text = $"Link from {row.RemoteDeviceName}";
-                vh.Subtitle.Text = Concat($"{(row.Data as ReceivedUrl).Uri.AbsolutePath}");
-            }
-            else if (row.Data is ReceivedText)
-            {
-                vh.Title.Text = $"Clipboard content from {row.RemoteDeviceName}";
-                DataStorageProviders.TextReceiveContentManager.OpenAsync().Wait();
-                var clipboardData = DataStorageProviders.TextReceiveContentManager.GetItemContent(row.Id);
-                DataStorageProviders.TextReceiveContentManager.Close();
-                vh.Subtitle.Text = Concat($"{clipboardData}");
-            }
-            else if (row.Data is ReceivedFile)
-            {
-                vh.Title.Text = $"File from {row.RemoteDeviceName}";
-                vh.Subtitle.Text = Concat($"{System.IO.Path.GetFileName((row.Data as ReceivedFile).Name)}");
-            }
-            else if (row.Data is ReceivedFileCollection)
-            {
-                var files = row.Data as ReceivedFileCollection;
-                if (files.Files.Count == 1)
-                    vh.Title.Text = $"File from {row.RemoteDeviceName}";
-                else
-                    vh.Title.Text = $"{files.Files.Count} files from {row.RemoteDeviceName}";
-                vh.Subtitle.Text = Concat($"{string.Join(", ", (row.Data as ReceivedFileCollection).Files.Select(x => System.IO.Path.GetFileName(x.Name)))}");
-            }
-
-            vh.Date.Text = $"{row.ReceiveTime}";
-        }
-
-        private string Concat(string s)
-        {
-            if (s.Length < 100)
-                return s;
-            else
-                return s.Substring(0, 99) + "...";
+            var row = historyDataLoader.GetItem(position).GetAwaiter().GetResult();
+            vh.Fill(row);
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -80,10 +45,31 @@ namespace QuickShare.Droid.Adapters
             HistoryItemHolder holder = new HistoryItemHolder(itemView, OnClick);
             return holder;
         }
-
-        private void OnClick(int pos)
+       
+        private async void OnClick(int pos, HistoryItemHolder.EventAction action)
         {
-            ItemClick?.Invoke(this, historyData[pos]);
+            var item = await historyDataLoader.GetItem(pos);
+
+            switch (action)
+            {
+                case HistoryItemHolder.EventAction.LaunchUrl:
+                    UrlLaunchRequested?.Invoke(this, new HistoryListItem(item, pos));
+                    break;
+                case HistoryItemHolder.EventAction.CopyToClipboard:
+                    CopyToClipboardRequested?.Invoke(this, new HistoryListItem(item, pos));
+                    break;
+                case HistoryItemHolder.EventAction.BrowseFiles:
+                    BrowseFilesRequested?.Invoke(this, new HistoryListItem(item, pos));
+                    break;
+                case HistoryItemHolder.EventAction.OpenFile:
+                    OpenFileRequested?.Invoke(this, new HistoryListItem(item, pos));
+                    break;
+                case HistoryItemHolder.EventAction.RemoveItem:
+                    RemoveItemRequested?.Invoke(this, new HistoryListItem(item, pos));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

@@ -53,9 +53,9 @@ namespace QuickShare.DataStore
             return data.Find(x => (x.Completed == true)).OrderByDescending(x => x.ReceiveTime).Skip(startIndex).Take(count);
         }
 
-        public IEnumerable<HistoryRow> GetAll()
+        public int GetCount()
         {
-            return data.Find(x => (x.Completed == true)).OrderByDescending(x => x.ReceiveTime);
+            return data.Count(x => (x.Completed == true));
         }
 
         public void ChangeCompletedStatus(Guid guid, bool isCompleted)

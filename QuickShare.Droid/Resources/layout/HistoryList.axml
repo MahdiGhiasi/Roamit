@@ -4,11 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include
-        android:id="@+id/toolbar"
+        android:id="@+id/historyList_toolbar"
         layout="@layout/toolbar" />
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/historyList_RecyclerView"
-        android:scrollbars="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/historyList_RecyclerView"
+            android:scrollbars="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+        <TextView
+            android:text="Things you've received from your other devices will appear here."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@id/historyList_RecyclerView"
+            android:gravity="center"
+            android:id="@+id/historyList_emptyMessage" />
+    </RelativeLayout>
 </LinearLayout>
