@@ -46,6 +46,13 @@ namespace QuickShare.Droid.Adapters
             HistoryItemHolder holder = new HistoryItemHolder(itemView, OnClick);
             return holder;
         }
+
+        public new void NotifyItemRemoved(int position)
+        {
+            historyDataLoader.RemoveItem(position);
+
+            base.NotifyItemRemoved(position);
+        }
        
         private async void OnClick(int pos, HistoryItemHolder.EventAction action)
         {

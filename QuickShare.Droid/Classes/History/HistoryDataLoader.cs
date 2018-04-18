@@ -19,7 +19,7 @@ namespace QuickShare.Droid.Classes.History
         private int pageSize;
         private List<HistoryRow> historyData = new List<HistoryRow>();
 
-        public int ItemsCount { get; }
+        public int ItemsCount { get; private set; }
 
         public HistoryDataLoader(int pageSize)
         {
@@ -64,6 +64,12 @@ namespace QuickShare.Droid.Classes.History
                 Prefetch(index);
 
             return historyData[index];
+        }
+
+        internal void RemoveItem(int position)
+        {
+            historyData.RemoveAt(position);
+            ItemsCount--;
         }
     }
 }
