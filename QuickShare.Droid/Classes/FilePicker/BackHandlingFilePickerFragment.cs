@@ -7,10 +7,12 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
 using Com.Nononsenseapps.Filepicker;
 using Java.IO;
+using Java.Lang;
 
 namespace QuickShare.Droid.Classes.FilePicker
 {
@@ -39,7 +41,14 @@ namespace QuickShare.Droid.Classes.FilePicker
          */
         public override void GoUp()
         {
-            MCurrentPath = GetParent(MCurrentPath);
+            var rootPath = GetParent(GetPath(Arguments.GetString(KeyStartPath, "/"))) as File;
+            var newPath = GetParent(MCurrentPath) as File;
+
+            //Block going further up than internal storage root.
+            if (newPath.AbsolutePath == rootPath.AbsolutePath)
+                return;
+
+            MCurrentPath = newPath;
             MCheckedItems.Clear();
             MCheckedVisibleViewHolders.Clear();
             Refresh(MCurrentPath);
