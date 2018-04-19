@@ -109,7 +109,7 @@ namespace QuickShare.Droid.Classes.History
         private string GetFileListPreview(ReceivedFileCollection receivedFileCollection)
         {
             var files = receivedFileCollection.Files.Select(x => System.IO.Path.GetFileName(x.Name)).OrderBy(x => x).Select(x => Concat(x, 25)).ToList();
-            var filesPart = (files.Count <= 3) ? files : files.Take(3).Concat(new string[] { $"and {files.Count - 3} other file{(files.Count - 3 > 1 ? "s" : "")}." });
+            var filesPart = (files.Count <= 4) ? files : files.Take(3).Concat(new string[] { $"and {files.Count - 3} other files." });
 
             return $"{string.Join(", ", filesPart)}";
         }
