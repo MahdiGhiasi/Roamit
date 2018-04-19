@@ -50,7 +50,7 @@ namespace QuickShare.Droid.Classes
             }
             catch (Exception ex)
             {
-                MessageReceiveHelper.ShowToast(context, "Cannot open file.", ToastLength.Long);
+                ToastHelper.ShowToast(context, "Cannot open file.", ToastLength.Long);
                 Log.Debug(TAG, "Cannot open file: " + ex.ToString());
             }
         }
