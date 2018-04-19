@@ -753,7 +753,7 @@ namespace QuickShare.Droid.Activities
             }
             else
             {
-                SetProgressText("Finished.");
+                SetProgressText("Done.");
                 Analytics.TrackEvent(sendEventText, "file", "Success");
             }
         }
@@ -932,7 +932,7 @@ namespace QuickShare.Droid.Activities
             SetProgressValue(1.0, 1.0);
             if (result == RomeRemoteLaunchUriStatus.Success)
             {
-                SetProgressText("Finished.");
+                SetProgressText("Done.");
 
                 Analytics.TrackEvent(eventTrackCat, "launchUri", "Success");
             }
@@ -980,7 +980,7 @@ namespace QuickShare.Droid.Activities
                 return;
             }
 
-            SetProgressText("Finished.");
+            SetProgressText("Done.");
             SetProgressValue(1.0, 1.0);
             Analytics.TrackEvent("SendToAndroid", "text", "Success");
         }
@@ -1037,7 +1037,7 @@ namespace QuickShare.Droid.Activities
                 Common.PackageManager.CloseAppService();
             }
 
-            SetProgressText("Finished.");
+            SetProgressText("Done.");
             SetProgressValue(1.0, 1.0);
             Analytics.TrackEvent("SendToWindows", "text", "Success");
         }

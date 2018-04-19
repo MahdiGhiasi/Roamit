@@ -443,7 +443,7 @@ namespace QuickShare
             {
                 await SendFinishService(packageManager);
 
-                ViewModel.SendStatus = "Finished.";
+                ViewModel.SendStatus = "Done.";
             }
 
             return result;
@@ -576,7 +576,7 @@ namespace QuickShare
             if (sendResult)
             {
                 await SendFinishService(packageManager);
-                ViewModel.SendStatus = "Finished.";
+                ViewModel.SendStatus = "Done.";
             }
             else
             {
@@ -608,7 +608,7 @@ namespace QuickShare
 
         private void SendTextFinished(string errorMessage)
         {
-            ViewModel.SendStatus = (errorMessage.Length == 0) ? "Finished." : errorMessage;
+            ViewModel.SendStatus = (errorMessage.Length == 0) ? "Done." : errorMessage;
             ViewModel.ProgressIsIndeterminate = false;
             ViewModel.ProgressMaximum = 100;
             ViewModel.ProgressValue = ViewModel.ProgressMaximum;
