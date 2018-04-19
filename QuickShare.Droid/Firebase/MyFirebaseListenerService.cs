@@ -72,16 +72,12 @@ namespace QuickShare.Droid.Firebase
                     try
                     {
                         string url = message.Data["Url"];
-
-                        Intent i = new Intent(Intent.ActionView);
-                        i.SetData(Android.Net.Uri.Parse(url));
-                        i.SetFlags(ActivityFlags.NewTask);
-                        StartActivity(i);
+                        LaunchHelper.LaunchUrl(this, url);
                     }
                     catch (Exception ex)
                     {
                         Log.Debug(TAG, ex.Message);
-                        MessageReceiveHelper.ShowToast(this, "Couldn't launch URL.", Android.Widget.ToastLength.Long);
+                        ToastHelper.ShowToast(this, "Couldn't launch URL.", Android.Widget.ToastLength.Long);
                     }
                 }
                 else if ((message.Data["Action"] == "FastClipboard") && (message.Data.ContainsKey("SenderName")) && (message.Data.ContainsKey("Text")))
@@ -91,7 +87,7 @@ namespace QuickShare.Droid.Firebase
 
                     Guid guid = await TextReceiver.QuickTextReceivedAsync(senderName, text);
 
-                    MessageReceiveHelper.CopyTextToClipboard(this, guid);
+                    await ClipboardHelper.CopyTextToClipboard(this, guid);
                 }
                 else if (message.Data["Action"] == "CloudClipboard")
                 {

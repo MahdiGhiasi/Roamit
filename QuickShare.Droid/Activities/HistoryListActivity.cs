@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Android.Views;
 using Android.Widget;
 using QuickShare.DataStore;
 using QuickShare.Droid.Adapters;
+using QuickShare.Droid.Classes;
 using QuickShare.Droid.Classes.History;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -63,14 +65,21 @@ namespace QuickShare.Droid.Activities
             throw new NotImplementedException();
         }
 
-        private void HistoryAdapter_CopyToClipboardRequested(object sender, HistoryListItem e)
+        private async void HistoryAdapter_CopyToClipboardRequested(object sender, HistoryListItem e)
         {
-            throw new NotImplementedException();
+            await ClipboardHelper.CopyTextToClipboard(this, e.Data.Id);
         }
 
         private void HistoryAdapter_OpenFileRequested(object sender, HistoryListItem e)
         {
-            throw new NotImplementedException();
+            ReceivedFile file;
+            if (e.Data.Data is ReceivedFile)
+                file = e.Data.Data as ReceivedFile;
+            else
+                file = (e.Data.Data as ReceivedFileCollection).Files.First();
+
+            var filePath = Path.Combine(file.StorePath, file.Name);
+            LaunchHelper.OpenFile(this, filePath);
         }
 
         private async void HistoryAdapter_RemoveItemRequested(object sender, HistoryListItem e)
@@ -84,7 +93,7 @@ namespace QuickShare.Droid.Activities
 
         private void HistoryAdapter_UrlLaunchRequested(object sender, HistoryListItem e)
         {
-            throw new NotImplementedException();
+            LaunchHelper.LaunchUrl(this, (e.Data.Data as ReceivedUrl).Uri.OriginalString);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

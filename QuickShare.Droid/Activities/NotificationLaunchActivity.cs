@@ -36,43 +36,10 @@ namespace QuickShare.Droid.Activities
                 DataStorageProviders.HistoryManager.Close();
 
                 string fileName = Path.Combine((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
-
-                OpenFile(Android.Net.Uri.FromFile(new Java.IO.File(fileName)), GetMimeType(fileName));
+                LaunchHelper.OpenFile(this, fileName);
             }
 
             Finish();
-        }
-
-        private void OpenFile(Android.Net.Uri file, string mimeType)
-        {
-            try
-            {
-                Intent openFile = new Intent(Intent.ActionView);
-                openFile.SetDataAndType(file, mimeType);
-                openFile.AddFlags(ActivityFlags.GrantReadUriPermission);
-
-                StartActivity(openFile);
-            }
-            catch (Exception ex)
-            {
-                MessageReceiveHelper.ShowToast(this, "Cannot open file.", ToastLength.Long);
-                Log.Debug(TAG, "Cannot open file: " + ex.ToString());
-            }
-        }
-
-        private string GetMimeType(string file)
-        {
-            string type = null;
-            string extension = Path.GetExtension(file).Substring(1);
-            if (extension != null)
-            {
-                type = MimeTypeMap.Singleton.GetMimeTypeFromExtension(extension);
-            }
-
-            if (type == null)
-                type = "*/*";
-
-            return type;
         }
     }
 }

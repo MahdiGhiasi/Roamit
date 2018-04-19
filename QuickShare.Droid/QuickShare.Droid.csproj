@@ -216,6 +216,7 @@
     <Compile Include="Classes\History\HistoryDataLoader.cs" />
     <Compile Include="Classes\History\HistoryItemHolder.cs" />
     <Compile Include="Classes\History\HistoryListItem.cs" />
+    <Compile Include="Classes\LaunchHelper.cs" />
     <Compile Include="Classes\MessageReceiveHelper.cs" />
     <Compile Include="Classes\OSHelper.cs" />
     <Compile Include="Classes\RevMob\CallbackShowBanner.cs" />
@@ -223,6 +224,7 @@
     <Compile Include="Classes\RevMob\RevMobHelper.cs" />
     <Compile Include="Classes\Settings.cs" />
     <Compile Include="Classes\StringExtension.cs" />
+    <Compile Include="Classes\ToastHelper.cs" />
     <Compile Include="Classes\WhatsNew.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="Adapters\DevicesListAdapter.cs" />
