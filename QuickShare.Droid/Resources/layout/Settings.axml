@@ -180,21 +180,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:textColor="?colorPrimary" />
+                android:textColor="?colorAccent" />
             <TextView
                 android:id="@+id/settings_gitHubLink"
                 android:text="@string/GitHubLink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:textColor="?colorPrimary" />
+                android:textColor="?colorAccent" />
             <TextView
                 android:id="@+id/settings_privacyPolicyLink"
                 android:text="@string/PrivacyPolicyLink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:textColor="?colorPrimary" />
+                android:textColor="?colorAccent" />
             <TextView
                 android:id="@+id/settings_logOutLink"
                 android:text="@string/LogOutLink"
@@ -202,7 +202,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
-                android:textColor="?colorPrimary" />
+                android:textColor="?colorAccent" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
