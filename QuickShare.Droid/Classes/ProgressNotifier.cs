@@ -36,6 +36,12 @@ namespace QuickShare.Droid.Classes
 
         string failedMessage;
 
+        public ProgressNotifier(Context _context) :
+            this(_context, "")
+        {
+        }
+
+
         public ProgressNotifier(Context _context, string _failedMessage)
         {
             context = _context;
@@ -87,6 +93,9 @@ namespace QuickShare.Droid.Classes
             lastActivityGuid = Guid.Empty;
             notificationManager.Cancel(notifId);
             RefreshNotifId();
+
+            if (failedMessage.Length == 0)
+                return;
 
             builder = new NotificationCompat.Builder(context)
                 .SetContentTitle(failedMessage)

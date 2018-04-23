@@ -96,7 +96,7 @@ namespace QuickShare.Droid.Classes
                 return;
             }
 
-            progressNotifier = new ProgressNotifier(context, "Receive failed. (1)");
+            progressNotifier = new ProgressNotifier(context);
             progressNotifier.SendInitialNotification(title, "");
         }
 
