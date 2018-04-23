@@ -19,7 +19,7 @@ namespace QuickShare.Droid.Classes
     {
         static int lastNotifId = 1000;
 
-        readonly TimeSpan _minimumTimeBetweenNotifs = TimeSpan.FromSeconds(0.5);
+        readonly TimeSpan _minimumTimeBetweenNotifs = TimeSpan.FromSeconds(1);
         readonly TimeSpan _minimumTimeBetweenFinalNotifAndPrev = TimeSpan.FromSeconds(1.5);
         readonly TimeSpan _timeoutSpan = TimeSpan.FromSeconds(20);
 
