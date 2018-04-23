@@ -10,10 +10,14 @@ using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Views;
+using Android.Views.Animations;
 using Android.Widget;
+using Com.Nononsenseapps.Filepicker;
+using Newtonsoft.Json;
 using QuickShare.DataStore;
 using QuickShare.Droid.Adapters;
 using QuickShare.Droid.Classes;
+using QuickShare.Droid.Classes.FilePicker;
 using QuickShare.Droid.Classes.History;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -34,6 +38,7 @@ namespace QuickShare.Droid.Activities
             SetContentView(Resource.Layout.HistoryList);
 
             historyAdapter = new HistoryListAdapter();
+            historyAdapter.ShareItemRequested += HistoryAdapter_ShareItemRequested;
             historyAdapter.MoveFilesRequested += HistoryAdapter_MoveFilesRequested;
             historyAdapter.BrowseFilesRequested += HistoryAdapter_BrowseFilesRequested;
             historyAdapter.CopyToClipboardRequested += HistoryAdapter_CopyToClipboardRequested;
@@ -44,30 +49,68 @@ namespace QuickShare.Droid.Activities
             historyRecyclerView = FindViewById<RecyclerView>(Resource.Id.historyList_RecyclerView);
             historyRecyclerView.SetAdapter(historyAdapter);
 
-            historyEmptyMessage = FindViewById<TextView>(Resource.Id.historyList_emptyMessage);
-            historyEmptyMessage.Visibility = (historyAdapter.ItemCount == 0) ? ViewStates.Visible : ViewStates.Gone;
-
             historyLayoutManager = new LinearLayoutManager(this);
             historyRecyclerView.SetLayoutManager(historyLayoutManager);
+
+            historyEmptyMessage = FindViewById<TextView>(Resource.Id.historyList_emptyMessage);
+            historyEmptyMessage.Visibility = (historyAdapter.ItemCount == 0) ? ViewStates.Visible : ViewStates.Gone;
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.historyList_toolbar);
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = "Receive History";
         }
 
+        private async void HistoryAdapter_ShareItemRequested(object sender, HistoryListItem e)
+        {
+            if (e.Data.Data is ReceivedText)
+            {
+                await DataStorageProviders.TextReceiveContentManager.OpenAsync();
+                string text = DataStorageProviders.TextReceiveContentManager.GetItemContent(e.Data.Id);
+                DataStorageProviders.TextReceiveContentManager.Close();
+
+                ShareHelper.ShareText(this, text);
+            }
+            else if (e.Data.Data is ReceivedUrl)
+            {
+                ShareHelper.ShareText(this, (e.Data.Data as ReceivedUrl).Uri.OriginalString);
+            }
+            else if (e.Data.Data is ReceivedFile || e.Data.Data is ReceivedFileCollection)
+            {
+                ReceivedFile receivedFile;
+                if (e.Data.Data is ReceivedFile)
+                    receivedFile = e.Data.Data as ReceivedFile;
+                else
+                    receivedFile = (e.Data.Data as ReceivedFileCollection).Files.First();
+
+                Java.IO.File file = new Java.IO.File(Path.Combine(receivedFile.StorePath, receivedFile.Name));
+                ShareHelper.ShareFile(this, file);
+            }
+        }
+
         private void HistoryAdapter_MoveFilesRequested(object sender, HistoryListItem e)
         {
-            throw new NotImplementedException();
+
         }
 
         private void HistoryAdapter_BrowseFilesRequested(object sender, HistoryListItem e)
         {
-            throw new NotImplementedException();
+            var intent = new Intent(this, typeof(HistoryBrowseActivity));
+            intent.PutExtra("guid", e.Data.Id.ToString());
+            StartActivity(intent);
         }
 
         private async void HistoryAdapter_CopyToClipboardRequested(object sender, HistoryListItem e)
         {
-            await ClipboardHelper.CopyTextToClipboard(this, e.Data.Id);
+            if (e.Data.Data is ReceivedText)
+            {
+                await ClipboardHelper.CopyTextToClipboard(this, e.Data.Id);
+            }
+            else if (e.Data.Data is ReceivedUrl)
+            {
+                var uriString = (e.Data.Data as ReceivedUrl).Uri.OriginalString;
+
+                ClipboardHelper.SetClipboardText(this, uriString);
+            }
         }
 
         private void HistoryAdapter_OpenFileRequested(object sender, HistoryListItem e)

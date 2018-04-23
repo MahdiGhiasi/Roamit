@@ -34,6 +34,7 @@
                         android:minHeight="0dp"
                         style="@style/Widget.AppCompat.Button.Borderless"
                         android:drawableLeft="@android:drawable/ic_menu_delete"
+                        android:drawableTint="?android:attr/colorForeground"
                         android:height="52dp" />
                 </LinearLayout>
                 <LinearLayout
@@ -74,7 +75,7 @@
                 android:gravity="right"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp">
-              <Button
+                <Button
                     android:text="Move"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -93,7 +94,7 @@
                     android:id="@+id/historyListItemLayout_browseFiles"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored" />
                 <Button
-                    android:text="Copy to clipboard"
+                    android:text="Copy to\nclipboard"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:id="@+id/historyListItemLayout_copyToClipboard"
@@ -103,6 +104,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:id="@+id/historyListItemLayout_openUrl"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+              <Button
+                    android:text="Share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/historyListItemLayout_share"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored" />
             </LinearLayout>
             <TextView

@@ -28,6 +28,7 @@ namespace QuickShare.Droid.Classes.History
         public Button OpenFile { get; private set; }
         public Button MoveFiles { get; private set; }
         public Button RemoveItem { get; private set; }
+        public Button Share { get; private set; }
 
         public HistoryItemHolder(View itemView, Action<int, EventAction> listener) : 
             base(itemView)
@@ -41,6 +42,7 @@ namespace QuickShare.Droid.Classes.History
             OpenFile = itemView.FindViewById<Button>(Resource.Id.historyListItemLayout_openFile);
             MoveFiles = itemView.FindViewById<Button>(Resource.Id.historyListItemLayout_moveFiles);
             RemoveItem = itemView.FindViewById<Button>(Resource.Id.historyListItemLayout_removeItem);
+            Share = itemView.FindViewById<Button>(Resource.Id.historyListItemLayout_share);
 
             OpenUrl.Click += (sender, e) => listener(base.LayoutPosition, EventAction.LaunchUrl);
             CopyToClipboard.Click += (sender, e) => listener(base.LayoutPosition, EventAction.CopyToClipboard);
@@ -48,6 +50,7 @@ namespace QuickShare.Droid.Classes.History
             OpenFile.Click += (sender, e) => listener(base.LayoutPosition, EventAction.OpenFile);
             MoveFiles.Click += (sender, e) => listener(base.LayoutPosition, EventAction.MoveFiles);
             RemoveItem.Click += (sender, e) => listener(base.LayoutPosition, EventAction.RemoveItem);
+            Share.Click += (sender, e) => listener(base.LayoutPosition, EventAction.Share);
         }
 
         internal void Fill(HistoryRow row)
@@ -99,7 +102,8 @@ namespace QuickShare.Droid.Classes.History
                     SetButtonsVisibility(this, HistoryItemState.MultipleFiles);
                 }
 
-                this.TextPreview.Text = Concat(GetFileListPreview(row.Data as ReceivedFileCollection));
+                this.TextPreview.Text = Concat(GetFileListPreview(row.Data as ReceivedFileCollection)) + "\n\n" +
+                    $"Stored in {files.StoreRootPath}";
             }
 
             this.Date.Text = $"{row.ReceiveTime}";
@@ -139,6 +143,7 @@ namespace QuickShare.Droid.Classes.History
                     holder.BrowseFiles.Visibility = ViewStates.Gone;
                     holder.OpenUrl.Visibility = ViewStates.Visible;
                     holder.CopyToClipboard.Visibility = ViewStates.Visible;
+                    holder.Share.Visibility = ViewStates.Visible;
                     break;
                 case HistoryItemState.Text:
                     holder.MoveFiles.Visibility = ViewStates.Gone;
@@ -146,6 +151,7 @@ namespace QuickShare.Droid.Classes.History
                     holder.BrowseFiles.Visibility = ViewStates.Gone;
                     holder.OpenUrl.Visibility = ViewStates.Gone;
                     holder.CopyToClipboard.Visibility = ViewStates.Visible;
+                    holder.Share.Visibility = ViewStates.Visible;
                     break;
                 case HistoryItemState.SingleFile:
                     holder.MoveFiles.Visibility = ViewStates.Visible;
@@ -153,6 +159,7 @@ namespace QuickShare.Droid.Classes.History
                     holder.BrowseFiles.Visibility = ViewStates.Gone;
                     holder.OpenUrl.Visibility = ViewStates.Gone;
                     holder.CopyToClipboard.Visibility = ViewStates.Gone;
+                    holder.Share.Visibility = ViewStates.Visible;
                     break;
                 case HistoryItemState.MultipleFiles:
                     holder.MoveFiles.Visibility = ViewStates.Visible;
@@ -160,6 +167,7 @@ namespace QuickShare.Droid.Classes.History
                     holder.BrowseFiles.Visibility = ViewStates.Visible;
                     holder.OpenUrl.Visibility = ViewStates.Gone;
                     holder.CopyToClipboard.Visibility = ViewStates.Gone;
+                    holder.Share.Visibility = ViewStates.Gone;
                     break;
                 default:
                     holder.MoveFiles.Visibility = ViewStates.Gone;
@@ -167,6 +175,7 @@ namespace QuickShare.Droid.Classes.History
                     holder.BrowseFiles.Visibility = ViewStates.Gone;
                     holder.OpenUrl.Visibility = ViewStates.Gone;
                     holder.CopyToClipboard.Visibility = ViewStates.Gone;
+                    holder.Share.Visibility = ViewStates.Gone;
                     break;
             }
         }
@@ -188,6 +197,7 @@ namespace QuickShare.Droid.Classes.History
             OpenFile,
             MoveFiles,
             RemoveItem,
+            Share,
         }
     }
 }

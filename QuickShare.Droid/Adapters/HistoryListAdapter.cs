@@ -18,6 +18,7 @@ namespace QuickShare.Droid.Adapters
     internal class HistoryListAdapter : RecyclerView.Adapter
     {
         HistoryDataLoader historyDataLoader;
+        Dictionary<int, HistoryItemHolder> holders = new Dictionary<int, HistoryItemHolder>();
 
         public override int ItemCount => historyDataLoader.ItemsCount;
         public event EventHandler<HistoryListItem> UrlLaunchRequested;
@@ -26,10 +27,16 @@ namespace QuickShare.Droid.Adapters
         public event EventHandler<HistoryListItem> OpenFileRequested;
         public event EventHandler<HistoryListItem> MoveFilesRequested;
         public event EventHandler<HistoryListItem> RemoveItemRequested;
+        public event EventHandler<HistoryListItem> ShareItemRequested;
 
         public HistoryListAdapter()
         {
             historyDataLoader = new HistoryDataLoader(50);
+        }
+
+        public HistoryItemHolder GetHolder(int position)
+        {
+            return holders[position];
         }
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
@@ -37,6 +44,8 @@ namespace QuickShare.Droid.Adapters
             var vh = holder as HistoryItemHolder;
             var row = historyDataLoader.GetItem(position).GetAwaiter().GetResult();
             vh.Fill(row);
+
+            holders[position] = vh;
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -77,6 +86,9 @@ namespace QuickShare.Droid.Adapters
                     break;
                 case HistoryItemHolder.EventAction.RemoveItem:
                     RemoveItemRequested?.Invoke(this, new HistoryListItem(item, pos));
+                    break;
+                case HistoryItemHolder.EventAction.Share:
+                    ShareItemRequested?.Invoke(this, new HistoryListItem(item, pos));
                     break;
                 default:
                     break;

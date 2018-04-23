@@ -38,8 +38,6 @@ namespace QuickShare.Droid.Classes
             string text = DataStorageProviders.TextReceiveContentManager.GetItemContent(guid);
             DataStorageProviders.TextReceiveContentManager.Close();
             SetClipboardText(context, text);
-
-            ToastHelper.ShowToast(context, "Text copied to clipboard.", ToastLength.Long);
         }
 
         public static void SetClipboardText(Context context, string text)
@@ -51,6 +49,8 @@ namespace QuickShare.Droid.Classes
                 ClipData clip = ClipData.NewPlainText(text, text);
                 clipboard.PrimaryClip = clip;
             });
+
+            ToastHelper.ShowToast(context, "Text copied to clipboard.", ToastLength.Long);
         }
     }
 }

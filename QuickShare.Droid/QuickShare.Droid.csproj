@@ -203,8 +203,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\HistoryBrowseActivity.cs" />
     <Compile Include="Activities\HistoryListActivity.cs" />
     <Compile Include="Activities\ThemeAwareActivity.cs" />
+    <Compile Include="Adapters\HistoryBrowseAdapter.cs" />
     <Compile Include="Adapters\HistoryListAdapter.cs" />
     <Compile Include="Adapters\SettingsReceivedGroupByAdapter.cs" />
     <Compile Include="Classes\CloudClipboardNotifier.cs" />
@@ -213,6 +215,7 @@
     <Compile Include="Classes\FilePicker\BackHandlingFilePickerActivityDark.cs" />
     <Compile Include="Classes\FilePicker\BackHandlingFilePickerActivityLight.cs" />
     <Compile Include="Classes\FilePicker\BackHandlingFilePickerFragment.cs" />
+    <Compile Include="Classes\History\HistoryBrowseItemHolder.cs" />
     <Compile Include="Classes\History\HistoryDataLoader.cs" />
     <Compile Include="Classes\History\HistoryItemHolder.cs" />
     <Compile Include="Classes\History\HistoryListItem.cs" />
@@ -223,6 +226,9 @@
     <Compile Include="Classes\RevMob\CallbackStartSessionListener.cs" />
     <Compile Include="Classes\RevMob\RevMobHelper.cs" />
     <Compile Include="Classes\Settings.cs" />
+    <Compile Include="Classes\ShareHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Classes\StringExtension.cs" />
     <Compile Include="Classes\ToastHelper.cs" />
     <Compile Include="Classes\WhatsNew.cs" />
@@ -311,6 +317,12 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\HistoryListItemLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\HistoryBrowse.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\HistoryBrowseItemLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -466,6 +478,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\history.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_doc_folder.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
