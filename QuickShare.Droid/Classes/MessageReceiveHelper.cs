@@ -82,7 +82,7 @@ namespace QuickShare.Droid.Classes
             TextTransfer.TextReceiver.ClearEventRegistrations();
             TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
 
-            FileTransfer.FileReceiver.ClearEventRegistrations();
+            FileTransfer.FileReceiver2.ClearEventRegistrations();
             FileTransfer.FileReceiver2.FileTransferProgress += FileReceiver_FileTransferProgress;
 
             context = _context;
@@ -91,9 +91,12 @@ namespace QuickShare.Droid.Classes
         public static void InitProgressNotifier(string title = "Connecting...")
         {
             if (progressNotifier != null)
+            {
+                progressNotifier.UpdateTitle(title);
                 return;
+            }
 
-            progressNotifier = new ProgressNotifier(context, "Receive failed.");
+            progressNotifier = new ProgressNotifier(context, "Receive failed. (1)");
             progressNotifier.SendInitialNotification(title, "");
         }
 
