@@ -81,12 +81,14 @@ namespace QuickShare
                     return;
             }
 
-            if (thumbnails.Count >= 1)
-                img1.Source = thumbnails[0].Thumbnail;
-            if (thumbnails.Count >= 2)
-                img2.Source = thumbnails[1].Thumbnail;
-            if (thumbnails.Count >= 3)
-                img3.Source = thumbnails[2].Thumbnail;
+            var selectedThumbnails = thumbnails.Where(x => x.IsAvailable).Take(3).ToArray();
+
+            if (selectedThumbnails.Length >= 1)
+                img1.Source = selectedThumbnails[0].Thumbnail;
+            if (selectedThumbnails.Length >= 2)
+                img2.Source = selectedThumbnails[1].Thumbnail;
+            if (selectedThumbnails.Length >= 3)
+                img3.Source = selectedThumbnails[2].Thumbnail;
             imageShowStoryboard.Begin();
         }
 
