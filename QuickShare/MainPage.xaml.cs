@@ -449,7 +449,9 @@ namespace QuickShare
                 ViewModel.ListManager.SelectHighScoreItem();
             ViewModel.RemoteSystemCollectionChanged();
 
-            await Common.Service.Device.WakeAndroidDevices(userId);
+            PackageManagerHelper.InitAndroidPackageManagerMode();
+            if (AndroidPackageManager.Mode == AndroidRomePackageManager.AndroidPackageManagerMode.MessageCarrier)
+                await Common.Service.Device.WakeAndroidDevices(userId);
 
             return true;
         }
