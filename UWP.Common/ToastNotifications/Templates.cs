@@ -74,7 +74,7 @@ namespace QuickShare.ToastNotifications
   </visual>
   <actions>
     <action content='Open containing folder' imageUri='Assets/ToastNotificationIcons/OpenFolder.png' activationType='foreground' arguments='action=openFolderSingleFile&amp;guid={guid}'/>
-    <action content='Move received files' imageUri='Assets/ToastNotificationIcons/Move.png' activationType='foreground' arguments='action=saveAsSingleFile&amp;guid={guid}'/>
+    <action content='Move received file' imageUri='Assets/ToastNotificationIcons/Move.png' activationType='foreground' arguments='action=saveAsSingleFile&amp;guid={guid}'/>
   </actions>
 </toast>";
 
