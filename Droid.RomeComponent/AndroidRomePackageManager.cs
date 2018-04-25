@@ -31,7 +31,7 @@ namespace QuickShare.Droid.RomeComponent
 
         public async Task DiscoverAndroidDevices(string currentDeviceUniqueId)
         {
-            foreach (var item in await DevicesLoader.GetAndroidDevices(userId))
+            foreach (var item in await Device.GetAndroidDevices(userId))
             {
                 if (item.Id == currentDeviceUniqueId)
                     continue;
@@ -49,7 +49,7 @@ namespace QuickShare.Droid.RomeComponent
         {
             var dataJson = JsonConvert.SerializeObject(data);
 
-            bool result = await DevicesLoader.SendMessage(userId, deviceId, dataJson);
+            bool result = await Device.SendMessage(userId, deviceId, dataJson);
 
             if (result)
                 return new RomeAppServiceResponse
@@ -67,7 +67,7 @@ namespace QuickShare.Droid.RomeComponent
 
         public async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri _uri, NormalizedRemoteSystem _remoteSystem)
         {
-            bool result = await DevicesLoader.LaunchUri(userId, _remoteSystem.Id, _uri);
+            bool result = await Device.LaunchUri(userId, _remoteSystem.Id, _uri);
 
             if (result)
                 return RomeRemoteLaunchUriStatus.Success;
@@ -80,7 +80,7 @@ namespace QuickShare.Droid.RomeComponent
             if ((text + senderName).Length > 2100)
                 return false;
 
-            bool result = await DevicesLoader.SendClipboard(userId, remoteSystem.Id, text, senderName);
+            bool result = await Device.SendClipboard(userId, remoteSystem.Id, text, senderName);
 
             return result;
         }

@@ -439,7 +439,7 @@ namespace QuickShare
             alreadyDiscovered = true;
 
             var userId = SecureKeyStorage.GetUserId();
-            var devices = await Common.Service.DevicesLoader.GetAndroidDevices(userId);
+            var devices = await Common.Service.Device.GetAndroidDevices(userId);
 
             foreach (var item in devices)
                 if (ViewModel.ListManager.RemoteSystems.FirstOrDefault(x => x.Id == item.Id) == null) //if not already exists
@@ -449,7 +449,7 @@ namespace QuickShare
                 ViewModel.ListManager.SelectHighScoreItem();
             ViewModel.RemoteSystemCollectionChanged();
 
-            await Common.Service.DevicesLoader.WakeAndroidDevices(userId);
+            await Common.Service.Device.WakeAndroidDevices(userId);
 
             return true;
         }

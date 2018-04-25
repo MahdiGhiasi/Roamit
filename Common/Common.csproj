@@ -69,7 +69,7 @@
     <Compile Include="Rome\RomeRemoteLaunchUriStatus.cs" />
     <Compile Include="Secrets.cs" />
     <Compile Include="Service\Models\Device.cs" />
-    <Compile Include="Service\DevicesLoader.cs" />
+    <Compile Include="Service\Device.cs" />
     <Compile Include="Service\CloudClipboardService.cs" />
     <Compile Include="Service\UpgradeDetails.cs" />
     <Compile Include="StringExtensions.cs" />

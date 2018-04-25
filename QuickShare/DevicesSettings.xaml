@@ -20,9 +20,6 @@
         <Grid MaxWidth="700">
             <ScrollViewer>
                 <StackPanel HorizontalAlignment="Stretch" Margin="16">
-                    <TextBlock Text="Receive universal clipboard content on these devices:" 
-                               TextWrapping="Wrap"
-                               Opacity="0.8" />
                     <ListView ItemsSource="{x:Bind Model.Devices, Mode=OneWay}"
                               IsEnabled="True"
                               Margin="0,12,0,4"
@@ -30,22 +27,41 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid Margin="0,8,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="100" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0"
-                                               FontFamily="Segoe MDL2 Assets" 
-                                               Margin="0,0,8,0" 
-                                               VerticalAlignment="Center" 
-                                               FontSize="26" 
-                                               Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}" />
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding Name}"
-                                               VerticalAlignment="Center" />
-                                    <ToggleSwitch Grid.Column="2"
-                                                  IsOn="{Binding IsActive, Mode=TwoWay}" />
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="100" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0"
+                                                   FontFamily="Segoe MDL2 Assets" 
+                                                   Margin="0,0,8,0" 
+                                                   VerticalAlignment="Center" 
+                                                   FontSize="26" 
+                                                   Text="{Binding Kind, Converter={StaticResource RemoteSystemKindToIconConverter}}" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Name}"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
+
+                                    <StackPanel Grid.Row="1" 
+                                                Margin="16,8,0,0" 
+                                                Padding="8,0,0,0"
+                                                BorderBrush="#666666"
+                                                BorderThickness="2,0,0,0">
+                                        <TextBlock Text="Receive universal clipboard content" />
+                                        <ToggleSwitch IsOn="{Binding IsReceiveUniversalClipboardActive, Mode=TwoWay}" />
+                                        <HyperlinkButton Margin="0,4,0,0" 
+                                                         Visibility="{Binding CanRemoveDevice, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                         Tag="{Binding}"
+                                                         Content="Remove device" 
+                                                         Foreground="SkyBlue"
+                                                         Tapped="RemoveDevice_Tapped" />
+                                    </StackPanel>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>

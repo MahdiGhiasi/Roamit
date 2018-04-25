@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace QuickShare.Common.Service
 {
-    public static class DevicesLoader
+    public static class Device
     {
         public static async Task<IEnumerable<NormalizedRemoteSystem>> GetAndroidDevices(string userId)
         {
@@ -174,5 +174,28 @@ namespace QuickShare.Common.Service
 
             return true;
         }
+
+        public static async Task<bool> RemoveDevice(string accountId, string deviceId)
+        {
+            try
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    var result = await httpClient.GetAsync($"{Constants.ServerAddress}/v2/User/{accountId}/{deviceId}/RemoveDevice");
+                    var s = await result.Content.ReadAsStringAsync();
+
+                    if (s == "1, removed")
+                        return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception in RemoveDevice: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }
