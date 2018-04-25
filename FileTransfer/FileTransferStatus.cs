@@ -7,15 +7,25 @@
         public ulong LastSliceSize { get; set; }
         public ulong SliceMaxSize { get; set; }
 
-        public ulong TotalSize { get => (SlicesCount - 1) * SliceMaxSize + LastSliceSize; }
+        public ulong TotalSize
+        {
+            get
+            {
+                if (SlicesCount == 0)
+                    return 0;
+                return ((SlicesCount - 1) * SliceMaxSize + LastSliceSize);
+            }
+        }
+
         public ulong TransferredSize
         {
             get
             {
+                if (SlicesCount == 0)
+                    return 0;
                 if (NextSlice == SlicesCount)
                     return (SlicesCount - 1) * SliceMaxSize + LastSliceSize;
-                else
-                    return NextSlice * SliceMaxSize;
+                return NextSlice * SliceMaxSize;
             }
         }
     }
