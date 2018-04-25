@@ -140,7 +140,7 @@
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Margin="0,24,0,0" Visibility="Collapsed">
+                        <StackPanel Margin="0,24,0,0">
                             <TextBlock Text="Account" FontWeight="Bold" />
                             <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                         Background="#aa333333"
