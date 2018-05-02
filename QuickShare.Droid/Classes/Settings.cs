@@ -104,6 +104,22 @@ namespace QuickShare.Droid.Classes
             }
         }
 
+        internal bool UseSystemFolderPicker
+        {
+            get
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                return prefs.GetBoolean("UseSystemFolderPicker", defValue: (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop));
+            }
+            set
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutBoolean("UseSystemFolderPicker", value);
+                editor.Apply();
+            }
+        }
+
         internal Version LatestShownWhatsNewVersion
         {
             get

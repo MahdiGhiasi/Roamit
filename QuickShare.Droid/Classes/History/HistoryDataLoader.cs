@@ -71,5 +71,14 @@ namespace QuickShare.Droid.Classes.History
             historyData.RemoveAt(position);
             ItemsCount--;
         }
+
+        internal void RefreshItem(int position)
+        {
+            var guid = historyData[position].Id;
+
+            DataStorageProviders.HistoryManager.OpenAsync().Wait();
+            historyData[position] = DataStorageProviders.HistoryManager.GetItem(guid);
+            DataStorageProviders.HistoryManager.Close();
+        }
     }
 }

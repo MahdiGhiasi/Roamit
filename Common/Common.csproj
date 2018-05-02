@@ -45,6 +45,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <ProjectReference Include="..\DataStore\DataStore.csproj">
+      <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
+      <Name>DataStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevicesListManager\DevicesListManager.csproj">
       <Project>{3085ef40-87c7-4b3b-929c-50e6a15fc42b}</Project>
       <Name>DevicesListManager</Name>
@@ -52,6 +56,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AwaitTimeout.cs" />
+    <Compile Include="Classes\ReceivedSaveAsHelper.cs" />
+    <Compile Include="Classes\SaveAsFailedException.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DateTimeExtension.cs" />
     <Compile Include="Classes\DownloadGroupByItem.cs" />

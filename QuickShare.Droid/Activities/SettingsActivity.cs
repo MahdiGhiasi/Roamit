@@ -16,18 +16,21 @@ using Plugin.SecureStorage;
 using QuickShare.Droid.OnlineServiceHelpers;
 using System.Threading.Tasks;
 using QuickShare.Droid.Adapters;
+using QuickShare.Droid.Classes.FilePicker;
+using Com.Nononsenseapps.Filepicker;
 
 namespace QuickShare.Droid.Activities
 {
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.settingspage")]
     internal class SettingsActivity : ThemeAwareActivity
     {
-        readonly int FolderPickerId = 3000;
+        readonly int SystemFolderPickerId = 3000;
+        readonly int CustomFolderPickerId = 3001;
 
         TextView txtVersionNumber, txtCloudClipboardModeDescription, txtUniversalClipboardNotAvailable;
         TextView linkTwitter, linkGitHub, linkPrivacyPolicy, linkLogOut;
         EditText txtDeviceName, txtReceiveLocation;
-        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme, swUseInAppRomeProcessOnWindows;
+        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme, swUseInAppRomeProcessOnWindows, swUseSystemFolderPicker;
         Spinner groupReceivedBySpinner;
 
         SettingsReceivedGroupByAdapter groupReceivedByAdapter;
@@ -60,6 +63,7 @@ namespace QuickShare.Droid.Activities
             swStayInBackground = FindViewById<Switch>(Resource.Id.settings_allowToStayInBackgroundSwitch);
             swDarkTheme = FindViewById<Switch>(Resource.Id.settings_darkThemeSwitch);
             swUseInAppRomeProcessOnWindows = FindViewById<Switch>(Resource.Id.settings_showReceiveUIOnWindowsSwitch);
+            swUseSystemFolderPicker = FindViewById<Switch>(Resource.Id.settings_useSystemFolderPicker);
             groupReceivedBySpinner = FindViewById<Spinner>(Resource.Id.settings_groupReceivedBySpinner);
 
             txtReceiveLocation.KeyListener = null; //Disable editing of receive location text box.
@@ -165,6 +169,10 @@ namespace QuickShare.Droid.Activities
             swUseInAppRomeProcessOnWindows.Checked = settings.UseInAppServiceOnWindowsDevices;
             swUseInAppRomeProcessOnWindows.CheckedChange += SwUseInAppRomeProcessOnWindows_CheckedChange;
 
+            swUseSystemFolderPicker.Enabled = (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop);
+            swUseSystemFolderPicker.Checked = settings.UseSystemFolderPicker;
+            swUseSystemFolderPicker.CheckedChange += SwUseSystemFolderPicker_CheckedChange;
+
             txtReceiveLocation.FocusChange += TxtReceiveLocation_FocusChange;
             txtReceiveLocation.Click += TxtReceiveLocation_Click;
             txtReceiveLocation.Text = settings.DefaultDownloadFolder;
@@ -190,6 +198,13 @@ namespace QuickShare.Droid.Activities
 
                 swCloudClipboardActivity.CheckedChange += SwCloudClipboardActivity_CheckedChange;
             }
+        }
+
+        private void SwUseSystemFolderPicker_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            Settings settings = new Settings(this);
+
+            settings.UseSystemFolderPicker = e.IsChecked;
         }
 
         private void GroupReceivedBySpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
@@ -281,29 +296,55 @@ namespace QuickShare.Droid.Activities
         private void ChooseReceiveLocation()
         {
             Settings settings = new Settings(this);
-            Intent i = new Intent(Intent.ActionOpenDocumentTree);
-            i.AddCategory(Intent.CategoryDefault);
-            i.PutExtra("android.content.extra.SHOW_ADVANCED", true);
-            i.PutExtra("android.content.extra.FANCY", true);
-            i.PutExtra("android.content.extra.SHOW_FILESIZE", true);
-            i.PutExtra("android.provider.extra.INITIAL_URI", settings.DefaultDownloadFolder);
-            StartActivityForResult(Intent.CreateChooser(i, "Choose receive location"), FolderPickerId);
+
+            if (settings.UseSystemFolderPicker)
+            {
+                Intent i = new Intent(Intent.ActionOpenDocumentTree);
+                i.AddCategory(Intent.CategoryDefault);
+                i.PutExtra("android.content.extra.SHOW_ADVANCED", true);
+                i.PutExtra("android.content.extra.FANCY", true);
+                i.PutExtra("android.content.extra.SHOW_FILESIZE", true);
+                i.PutExtra("android.provider.extra.INITIAL_URI", settings.DefaultDownloadFolder);
+                StartActivityForResult(Intent.CreateChooser(i, "Choose receive location"), SystemFolderPickerId);
+            }
+            else
+            {
+                Intent i = new Intent(this, settings.Theme == AppTheme.Dark ? typeof(BackHandlingFilePickerActivityDark) : typeof(BackHandlingFilePickerActivityLight));
+
+                i.PutExtra(FilePickerActivity.ExtraAllowCreateDir, true);
+                i.PutExtra(FilePickerActivity.ExtraMode, FilePickerActivity.ModeDir);
+                i.PutExtra(FilePickerActivity.ExtraStartPath, settings.DefaultDownloadFolder);
+
+                StartActivityForResult(i, CustomFolderPickerId);
+            }
         }
 
-        //TODO: Check why this is not called?
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
-            if (requestCode == FolderPickerId)
+            if (requestCode == SystemFolderPickerId)
             {
                 if ((resultCode == Result.Ok) && (data != null))
                 {
                     var path = FilePathHelper.GetPathForDocTree(this, data.Data);
-                    txtReceiveLocation.Text = path;
-                    
-                    Settings settings = new Settings(this);
-                    settings.DefaultDownloadFolder = path;
+                    ApplyReceiveLocationPathUpdate(path);
                 }
             }
+            else if (requestCode == CustomFolderPickerId)
+            {
+                if ((resultCode == Result.Ok) && (data != null))
+                {
+                    var path = Utils.GetSelectedFilesFromResult(data).Select(x => Utils.GetFileForUri(x).AbsolutePath).First();
+                    ApplyReceiveLocationPathUpdate(path);
+                }
+            }
+        }
+
+        private void ApplyReceiveLocationPathUpdate(string path)
+        {
+            txtReceiveLocation.Text = path;
+
+            Settings settings = new Settings(this);
+            settings.DefaultDownloadFolder = path;
         }
     }
 }

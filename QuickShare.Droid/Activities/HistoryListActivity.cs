@@ -14,6 +14,7 @@ using Android.Views.Animations;
 using Android.Widget;
 using Com.Nononsenseapps.Filepicker;
 using Newtonsoft.Json;
+using PCLStorage;
 using QuickShare.DataStore;
 using QuickShare.Droid.Adapters;
 using QuickShare.Droid.Classes;
@@ -26,10 +27,15 @@ namespace QuickShare.Droid.Activities
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.historylistpage")]
     internal class HistoryListActivity : ThemeAwareActivity
     {
+        readonly int SystemFolderPickerId = 3000;
+        readonly int CustomFolderPickerId = 3001;
+
         private RecyclerView historyRecyclerView;
         private HistoryListAdapter historyAdapter;
         private LinearLayoutManager historyLayoutManager;
         private TextView historyEmptyMessage;
+
+        private HistoryListItem moveItem;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -89,7 +95,29 @@ namespace QuickShare.Droid.Activities
 
         private void HistoryAdapter_MoveFilesRequested(object sender, HistoryListItem e)
         {
+            moveItem = e;
 
+            Settings settings = new Settings(this);
+            if (settings.UseSystemFolderPicker)
+            {
+                Intent i = new Intent(Intent.ActionOpenDocumentTree);
+                i.AddCategory(Intent.CategoryDefault);
+                i.PutExtra("android.content.extra.SHOW_ADVANCED", true);
+                i.PutExtra("android.content.extra.FANCY", true);
+                i.PutExtra("android.content.extra.SHOW_FILESIZE", true);
+                i.PutExtra("android.provider.extra.INITIAL_URI", settings.DefaultDownloadFolder);
+                StartActivityForResult(Intent.CreateChooser(i, "Move to"), SystemFolderPickerId);
+            }
+            else
+            {
+                Intent i = new Intent(this, settings.Theme == AppTheme.Dark ? typeof(BackHandlingFilePickerActivityDark) : typeof(BackHandlingFilePickerActivityLight));
+
+                i.PutExtra(FilePickerActivity.ExtraAllowCreateDir, true);
+                i.PutExtra(FilePickerActivity.ExtraMode, FilePickerActivity.ModeDir);
+                i.PutExtra(FilePickerActivity.ExtraStartPath, settings.DefaultDownloadFolder);
+
+                StartActivityForResult(i, CustomFolderPickerId);
+            }
         }
 
         private void HistoryAdapter_BrowseFilesRequested(object sender, HistoryListItem e)
@@ -176,5 +204,64 @@ namespace QuickShare.Droid.Activities
             StartActivity(Intent);
             OverridePendingTransition(Android.Resource.Animation.FadeIn, Android.Resource.Animation.FadeOut);
         }
+
+        protected override async void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            if (requestCode == SystemFolderPickerId)
+            {
+                if ((resultCode == Result.Ok) && (data != null))
+                {
+                    var path = FilePathHelper.GetPathForDocTree(this, data.Data);
+                    await Move(moveItem, path);
+                }
+            }
+            else if (requestCode == CustomFolderPickerId)
+            {
+                if ((resultCode == Result.Ok) && (data != null))
+                {
+                    var path = Utils.GetSelectedFilesFromResult(data).Select(x => Utils.GetFileForUri(x).AbsolutePath).First();
+                    await Move(moveItem, path);
+                }
+            }
+        }
+
+        private async Task Move(HistoryListItem item, string newPath)
+        {
+            Settings settings = new Settings(this);
+
+            try
+            {
+                //QuickShare.Common.Classes.ReceivedSaveAsHelper.SaveAsProgress += ReceivedSaveAsHelper_SaveAsProgress;
+                await QuickShare.Common.Classes.ReceivedSaveAsHelper.SaveAs(guid: item.Data.Id,
+                    selectedFolder: new FileSystemFolder(newPath),
+                    defaultDownloadFolder: settings.DefaultDownloadFolder,
+                    pathToFileConverter: async path =>
+                    {
+                        if (!File.Exists(path))
+                            throw new FileNotFoundException("File not found.");
+                        return new FileSystemFile(path);
+                    },
+                    pathToFolderConverter: async path =>
+                    {
+                        return new FileSystemFolder(path);
+                    });
+
+                Toast.MakeText(this, "Files moved successfully.", ToastLength.Long).Show();
+                historyAdapter.NotifyItemChanged(item.Position);
+            }
+            catch (QuickShare.Common.Classes.SaveAsFailedException ex)
+            {
+                Toast.MakeText(this, ex.Message + "\n" + ex.ExtraDetails, ToastLength.Long).Show();
+            }
+            finally
+            {
+                //QuickShare.Common.Classes.ReceivedSaveAsHelper.SaveAsProgress -= ReceivedSaveAsHelper_SaveAsProgress;
+            }
+        }
+
+        //private static void ReceivedSaveAsHelper_SaveAsProgress(double percent)
+        //{
+            
+        //}
     }
 }

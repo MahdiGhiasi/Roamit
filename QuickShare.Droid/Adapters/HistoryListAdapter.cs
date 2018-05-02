@@ -62,7 +62,15 @@ namespace QuickShare.Droid.Adapters
 
             base.NotifyItemRemoved(position);
         }
-       
+      
+
+        public new void NotifyItemChanged(int position)
+        {
+            historyDataLoader.RefreshItem(position);
+
+            base.NotifyItemChanged(position);
+        }
+
         private async void OnClick(int pos, HistoryItemHolder.EventAction action)
         {
             var item = await historyDataLoader.GetItem(pos);

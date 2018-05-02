@@ -1,4 +1,5 @@
-﻿using QuickShare.Common;
+﻿using PCLStorage;
+using QuickShare.Common;
 using QuickShare.DataStore;
 using QuickShare.ToastNotifications;
 using System;
@@ -33,102 +34,36 @@ namespace QuickShare.HelperClasses
             FutureAccessListHelper.MakeSureFutureAccessListIsNotFull();
             futureAccessList.AddOrReplace(selectedFolder.Path.Replace(":", "").Replace('\\', '/'), selectedFolder);
 
-            await SaveAs(guid, selectedFolder);
+            try
+            {
+                Common.Classes.ReceivedSaveAsHelper.SaveAsProgress += ReceivedSaveAsHelper_SaveAsProgress;
+                await Common.Classes.ReceivedSaveAsHelper.SaveAs(guid: guid,
+                    selectedFolder: new WinRTFolder(selectedFolder),
+                    defaultDownloadFolder: (await DownloadFolderHelper.GetDefaultDownloadFolderAsync()).Path,
+                    pathToFileConverter: async path =>
+                    {
+                        return new WinRTFile(await StorageFile.GetFileFromPathAsync(path));
+                    },
+                    pathToFolderConverter: async path =>
+                    {
+                        return new WinRTFolder(await StorageFolder.GetFolderFromPathAsync(path));
+                    });
+
+                Toaster.ShowFileReceiveFinishedSavedAsNotification(guid);
+            }
+            catch (Common.Classes.SaveAsFailedException ex)
+            {
+                ToastFunctions.SendToast(ex.Message, ex.ExtraDetails);
+            }
+            finally
+            {
+                Common.Classes.ReceivedSaveAsHelper.SaveAsProgress -= ReceivedSaveAsHelper_SaveAsProgress;
+            }
         }
 
-        private static async Task SaveAs(Guid guid, StorageFolder selectedFolder)
+        private static void ReceivedSaveAsHelper_SaveAsProgress(double percent)
         {
-            HistoryRow hr;
-            await DataStorageProviders.HistoryManager.OpenAsync();
-            hr = DataStorageProviders.HistoryManager.GetItem(guid);
-            DataStorageProviders.HistoryManager.Close();
-
-            var files = (hr.Data as ReceivedFileCollection);
-            var rootPath = files.StoreRootPath;
-
-            Dictionary<ReceivedFile, StorageFile> fileMap = new Dictionary<ReceivedFile, StorageFile>();
-
-            // Make sure all files are still there
-            foreach (var item in files.Files)
-            {
-                try
-                {
-                    fileMap.Add(item, await StorageFile.GetFileFromPathAsync(System.IO.Path.Combine(item.StorePath, item.Name)));
-                }
-                catch (Exception ex)
-                {
-                    ToastFunctions.SendToast("Couldn't move received files to the desired location", item.StorePath + item.Name + ex.Message);
-                    return;
-                }
-            }
-
-            // Move files
-            int cur = 0;
-            int total = files.Files.Count;
-            foreach (var item in files.Files)
-            {
-                StorageFolder dest = selectedFolder;
-                string relativePath = "";
-
-                if (item.StorePath.Length >= rootPath.Length)
-                {
-                    relativePath = item.StorePath.Substring(rootPath.Length);
-
-                    if ((relativePath.Length > 0) && (relativePath[0] == '\\'))
-                        relativePath = relativePath.Substring(1);
-
-                    if (relativePath.Length > 0)
-                    {
-                        string[] pathParts = relativePath.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-
-                        foreach (var fName in pathParts)
-                        {
-                            var x = await dest.TryGetItemAsync(fName);
-
-                            if ((x == null) || (!(x is StorageFolder)))
-                                dest = await dest.CreateFolderAsync(fName);
-                            else
-                                dest = x as StorageFolder;
-                        }
-                    }
-                }
-
-                var finalName = fileMap[item].Name;
-                int i = 2;
-                var existingFile = await dest.TryGetItemAsync(finalName);
-                while ((existingFile != null) && (existingFile is StorageFile))
-                {
-                    finalName = $"{System.IO.Path.GetFileNameWithoutExtension(fileMap[item].Name)} ({i}){System.IO.Path.GetExtension(fileMap[item].Name)}";
-                    existingFile = await dest.TryGetItemAsync(finalName);
-                    i++;
-                }
-
-                await fileMap[item].MoveAsync(dest, finalName);
-                item.StorePath = System.IO.Path.Combine(selectedFolder.Path, relativePath);
-                item.Name = finalName;
-                cur++;
-                SaveAsProgress?.Invoke(((double)cur) / total);
-            }
-            //Delete old folder if necessary
-            var rootFolder = await StorageFolder.GetFolderFromPathAsync(files.StoreRootPath);
-            if (rootFolder.Path != (await DownloadFolderHelper.GetDefaultDownloadFolderAsync()).Path)
-            {
-                if ((await rootFolder.GetBasicPropertiesAsync()).Size == 0)
-                {
-                    await rootFolder.DeleteAsync(StorageDeleteOption.PermanentDelete);
-                }
-            }
-
-            //Set new StoreRootPath
-            files.StoreRootPath = selectedFolder.Path;
-
-            //Update database
-            await DataStorageProviders.HistoryManager.OpenAsync();
-            DataStorageProviders.HistoryManager.Remove(guid);
-            DataStorageProviders.HistoryManager.Add(hr.Id, hr.ReceiveTime, hr.RemoteDeviceName, hr.Data, hr.Completed);
-            DataStorageProviders.HistoryManager.Close();
-
-            Toaster.ShowFileReceiveFinishedSavedAsNotification(hr.Id);
+            SaveAsProgress?.Invoke(percent);
         }
     }
 }

@@ -52,9 +52,9 @@ namespace QuickShare.FileTransfer
                         //TODO
                         Debug.WriteLine("Received ResumeReceive request. TODO.");
                         return new Dictionary<string, object>
-                    {
-                        { "Accepted", "true" },
-                    };
+                        {
+                            { "Accepted", "true" },
+                        };
                     default:
                         throw new InvalidOperationException($"Type '{request["Type"]}' is invalid.");
                 }
