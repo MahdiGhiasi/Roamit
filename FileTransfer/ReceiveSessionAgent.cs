@@ -84,7 +84,7 @@ namespace QuickShare.FileTransfer
                         Size = (long)x.FileSize,
                         StorePath = Path.Combine(downloadRootFolder.Path, NormalizePathForCombine(x.RelativePath)),
                         Completed = false,
-                        LastSliceReceived = null,
+                        DownloadStarted = false,
                     }).ToList(),
                     StoreRootPath = downloadRootFolder.Path,
                 },
@@ -148,30 +148,51 @@ namespace QuickShare.FileTransfer
 
             IFile file;
             uint firstSliceToReceive = 0;
-            if (origFile.LastSliceReceived == null)
+            if (origFile.DownloadStarted == false)
             {
-                file = await FileHelper.CreateFile(downloadFolder, fileInfo.FileName);
-
-                if (file.Name != fileInfo.FileName) //File already existed, so new name generated for it. We should update database now.
-                {
-                    await DataStorageProviders.HistoryManager.OpenAsync();
-                    DataStorageProviders.HistoryManager.UpdateFileName(sessionKey, fileInfo.FileName, file.Name, downloadFolder.Path);
-                    DataStorageProviders.HistoryManager.Close();
-                }
+                file = await CreateFile(fileInfo, sessionKey, downloadFolder);
+            }
+            else if (origFile.Completed == true)
+            {
+                return;
             }
             else
             {
                 file = await FileHelper.GetFile(downloadFolder, origFile.Name);
+                var stats = await file.GetFileStats();
 
-                firstSliceToReceive = (uint)(origFile.LastSliceReceived) + 1;
-                progressCalculator.SliceReceived(fileInfo, (uint)(origFile.LastSliceReceived));
+                if (stats.Length == (long)(fileInfo.SlicesCount * fileInfo.SliceMaxLength + fileInfo.LastSliceSize))
+                {
+                    //It's already finished.
+                    await DataStorageProviders.HistoryManager.OpenAsync();
+                    DataStorageProviders.HistoryManager.MarkFileAsCompleted(sessionKey, file.Name, downloadFolder.Path);
+                    DataStorageProviders.HistoryManager.Close();
+                    return;
+                }
+                else if (stats.Length % (long)fileInfo.SliceMaxLength != 0)
+                {
+                    //Invalid size. Will start over.
+                    await file.DeleteAsync();
+                    file = await CreateFile(fileInfo, sessionKey, downloadFolder);
+                    firstSliceToReceive = 0;
+                }
+                else
+                {
+                    firstSliceToReceive = (uint)(stats.Length / (long)fileInfo.SliceMaxLength);
+                    if (firstSliceToReceive > 0)
+                        progressCalculator.SliceReceived(fileInfo, firstSliceToReceive - 1);
+                }
             }
 
             ulong totalBytesReceived = 0;
             using (var stream = await file.OpenAsync(PCLStorage.FileAccess.ReadAndWrite))
             {
                 stream.Seek(stream.Length, SeekOrigin.Begin);
-                bool b = false;
+
+                await DataStorageProviders.HistoryManager.OpenAsync();
+                DataStorageProviders.HistoryManager.SetDownloadStarted(sessionKey, file.Name, downloadFolder.Path);
+                DataStorageProviders.HistoryManager.Close();
+
                 for (uint i = firstSliceToReceive; i < fileInfo.SlicesCount; i++)
                 {
                     string url = $"http://{serverIp}:{Constants.CommunicationPort}/{fileInfo.UniqueKey}/{i}/";
@@ -202,19 +223,26 @@ namespace QuickShare.FileTransfer
                     totalBytesReceived += (ulong)expectedLength;
 
                     progressCalculator.SliceReceived(fileInfo, i);
-
-                    await DataStorageProviders.HistoryManager.OpenAsync();
-                    DataStorageProviders.HistoryManager.SetFileLastSliceReceived(sessionKey, file.Name, downloadFolder.Path, i);
-                    DataStorageProviders.HistoryManager.Close();
-
-                    if (b)
-                        throw new Exception();
                 }
             }
 
             await DataStorageProviders.HistoryManager.OpenAsync();
             DataStorageProviders.HistoryManager.MarkFileAsCompleted(sessionKey, file.Name, downloadFolder.Path);
             DataStorageProviders.HistoryManager.Close();
+        }
+
+        private static async Task<IFile> CreateFile(FileSendInfo fileInfo, Guid sessionKey, IFolder downloadFolder)
+        {
+            var file = await FileHelper.CreateFile(downloadFolder, fileInfo.FileName);
+
+            if (file.Name != fileInfo.FileName) //File already existed, so new name generated for it. We should update database now.
+            {
+                await DataStorageProviders.HistoryManager.OpenAsync();
+                DataStorageProviders.HistoryManager.UpdateFileName(sessionKey, fileInfo.FileName, file.Name, downloadFolder.Path);
+                DataStorageProviders.HistoryManager.Close();
+            }
+
+            return file;
         }
 
         private async Task<QueueInfo> GetQueueInfoAsync(string ip, Guid sessionKey, CancellationToken cancellationToken)

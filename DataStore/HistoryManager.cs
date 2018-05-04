@@ -119,10 +119,9 @@ namespace QuickShare.DataStore
             return file;
         }
 
-        public void SetFileLastSliceReceived(Guid guid, string fileName, string path, uint lastSliceReceived)
+        public void SetDownloadStarted(Guid guid, string fileName, string path)
         {
-
-            System.Diagnostics.Debug.WriteLine($"Set lastSliceReceived={lastSliceReceived} for {fileName} ({guid}).");
+            System.Diagnostics.Debug.WriteLine($"Set DownloadStarted = true for {fileName} ({guid}).");
 
             var item = GetItem(guid);
             var d = item.Data as ReceivedFileCollection;
@@ -135,7 +134,7 @@ namespace QuickShare.DataStore
             if (file == null)
                 return;
 
-            file.LastSliceReceived = lastSliceReceived;
+            file.DownloadStarted = true;
 
             data.Update(guid, item);
         }
