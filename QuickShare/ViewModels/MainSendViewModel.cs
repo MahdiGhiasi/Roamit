@@ -1,10 +1,19 @@
 ﻿using System.ComponentModel;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
+using System;
 
 namespace QuickShare.ViewModels
 {
     public class MainSendViewModel : INotifyPropertyChanged
     {
+        private CoreDispatcher dispatcher;
+
+        public MainSendViewModel(CoreDispatcher dispatcher)
+        {
+            this.dispatcher = dispatcher;
+        }
+
         string sendStatus;
         public string SendStatus
         {
@@ -118,6 +127,7 @@ namespace QuickShare.ViewModels
         }
 
         string progressSpeed;
+
         public string ProgressCaption
         {
             get
@@ -134,9 +144,12 @@ namespace QuickShare.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         // Create the OnPropertyChanged method to raise the event
-        protected void OnPropertyChanged(string name)
+        protected async void OnPropertyChanged(string name)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            });
         }
     }
 }

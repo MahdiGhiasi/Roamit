@@ -48,7 +48,7 @@ namespace QuickShare
         {
             this.InitializeComponent();
 
-            ViewModel = new MainSendViewModel()
+            ViewModel = new MainSendViewModel(Dispatcher)
             {
                 SendStatus = "Connecting...",
                 ProgressIsIndeterminate = true,
