@@ -9,7 +9,7 @@ namespace QuickShare.FileTransfer
 {
     internal class FileSendProgressCalculator : FileTransferProgressCalculator
     {
-        readonly TimeSpan maximumInactiveTime = TimeSpan.FromSeconds(10);
+        readonly TimeSpan maximumInactiveTime = TimeSpan.FromSeconds(6);
         readonly int maxTimeoutCount = 2;
 
         Timer timer;
