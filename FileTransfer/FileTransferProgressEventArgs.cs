@@ -33,5 +33,7 @@ namespace QuickShare.FileTransfer
         DataTransfer = 2,
         Finished = 3,
         Error = 4,
+        Reconnecting = 5,
+        Reconnected = 6,
     }
 }

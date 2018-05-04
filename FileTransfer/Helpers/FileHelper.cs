@@ -14,6 +14,11 @@ namespace QuickShare.FileTransfer.Helpers
             return await downloadFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
         }
 
+        internal static async Task<IFile> GetFile(IFolder downloadFolder, string fileName)
+        {
+            return await downloadFolder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
+        }
+
         internal static async Task<IFolder> CreateDirectoryIfNecessary(IFolder downloadMainFolder, string directory)
         {
             string[] directories = directory.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);

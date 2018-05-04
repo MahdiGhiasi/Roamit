@@ -73,6 +73,8 @@
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="QueueInfo.cs" />
+    <Compile Include="ReceiveCancelledException.cs" />
+    <Compile Include="ReceiveSessionAgent.cs" />
     <Compile Include="SliceRequestedEventArgs.cs" />
     <Compile Include="FileSliceSender.cs" />
     <Compile Include="FileTransferProgressEventArgs.cs" />

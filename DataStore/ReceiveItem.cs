@@ -19,6 +19,8 @@ namespace QuickShare.DataStore
         public string Name { get; set; }
         public long Size { get; set; }
         public bool? Completed { get; set; }
+        public uint? LastSliceReceived { get; set; }
+        public string OriginalName { get; set; }
     }
 
     public class ReceivedText : IReceivedData

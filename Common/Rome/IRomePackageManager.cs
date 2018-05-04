@@ -8,6 +8,7 @@ namespace QuickShare.Common.Rome
     public interface IRomePackageManager
     {
         //void Initialize(string appServiceName);
+        Task<RomeAppServiceConnectionStatus> Connect();
         //Task<RomeAppServiceConnectionStatus> Connect(object _remoteSystem, bool keepAlive);
         //Task<RomeAppServiceConnectionStatus> Connect(object _remoteSystem, bool keepAlive, Uri wakeUri);
         //Task<RomeRemoteLaunchUriStatus> LaunchStoreForApp();

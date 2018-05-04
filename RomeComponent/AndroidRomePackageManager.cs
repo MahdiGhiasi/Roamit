@@ -208,7 +208,7 @@ namespace QuickShare.UWP.Rome
             return await Connect();
         }
 
-        private async Task<RomeAppServiceConnectionStatus> Connect()
+        public async Task<RomeAppServiceConnectionStatus> Connect()
         {
             if (Mode == AndroidPackageManagerMode.PushNotification)
             {

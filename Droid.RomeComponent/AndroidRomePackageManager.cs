@@ -84,5 +84,10 @@ namespace QuickShare.Droid.RomeComponent
 
             return result;
         }
+
+        public async Task<RomeAppServiceConnectionStatus> Connect()
+        {
+            return RomeAppServiceConnectionStatus.Success;
+        }
     }
 }

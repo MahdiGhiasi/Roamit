@@ -177,7 +177,7 @@ namespace QuickShare.FileTransfer
         private async Task<FileTransferResult> SendFiles(string sessionKey, string ip, FileSendProgressCalculator transferProgress, CancellationToken cancellationToken = default(CancellationToken))
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            SendInitReceiverMessage(transferProgress.TotalSlices, sessionKey, ip);
+            SendInitReceiverMessage(transferProgress.TotalSlices, sessionKey, ip, false);
 #pragma warning restore CS4014
 
             transferProgress.InitTimeout(timeoutTcs);
@@ -194,12 +194,24 @@ namespace QuickShare.FileTransfer
                     {
                         if (transferProgress.TransferStarted)
                         {
-                            timeoutTcs = new TaskCompletionSource<FileTransferResult>();
-                            transferProgress.InitTimeout(timeoutTcs);
+                            // Resume Request
+                            FileTransferProgress?.Invoke(this, new FileTransfer2ProgressEventArgs
+                            {
+                                State = FileTransferState.Reconnecting,
+                            });
+                            await packageManager.Connect();
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                            SendResumeReceiverMessage(sessionKey);
+                            SendInitReceiverMessage(transferProgress.TotalSlices, sessionKey, ip, isResume: true);
 #pragma warning restore CS4014
+
+                            FileTransferProgress?.Invoke(this, new FileTransfer2ProgressEventArgs
+                            {
+                                State = FileTransferState.Reconnected,
+                            });
+
+                            timeoutTcs = new TaskCompletionSource<FileTransferResult>();
+                            transferProgress.InitTimeout(timeoutTcs);
                         }
                         else
                         {
@@ -218,42 +230,13 @@ namespace QuickShare.FileTransfer
             }
         }
 
-        private async Task<bool> SendResumeReceiverMessage(string sessionKey)
-        {
-            Dictionary<string, object> qInit = new Dictionary<string, object>
-            {
-                { "Receiver", "FileReceiver" },
-                { "Type", "ResumeReceive" },
-                { "SessionKey", sessionKey },
-            };
-            var result = await packageManager.Send(qInit);
-
-            if (result.Status == RomeAppServiceResponseStatus.Success)
-            {
-                if (result.Message.ContainsKey("Accepted") && result.Message["Accepted"].ToString() == "true")
-                {
-                    return true;
-                }
-                else
-                {
-                    Debug.WriteLine($"SendResumeReceiverMessage: Request rejected ({result.Message["Accepted"].ToString()})");
-                    return false;
-                }
-            }
-            else
-            {
-                Debug.WriteLine($"SendResumeReceiverMessage: Send failed ({result.Status.ToString()})");
-                return false;
-            }
-        }
-
-        private async Task<bool> SendInitReceiverMessage(long totalSlices, string key, string ip)
+        private async Task<bool> SendInitReceiverMessage(long totalSlices, string key, string ip, bool isResume)
         {
             // This list must stay backward compatible with older versions of FileReceiver.
             Dictionary<string, object> qInit = new Dictionary<string, object>
             {
                 { "Receiver", "FileReceiver" },
-                { "Type", "QueueInit" },
+                { "Type", isResume ? "ResumeReceive" : "QueueInit" },
                 { "TotalSlices", (long)totalSlices },
                 { "QueueFinishKey", key },
                 { "ServerIP", ip },

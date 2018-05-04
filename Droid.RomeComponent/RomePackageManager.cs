@@ -22,6 +22,9 @@ namespace QuickShare.Droid.RomeComponent
         RemoteSystem remoteSystem;
         RemoteSystemConnectionRequest connectionRequest;
         RomeHelper romeHelper = new RomeHelper();
+        bool keepAlive;
+        private Uri wakeUri;
+
         //AppServiceConnectionListener connectionListener = new AppServiceConnectionListener();
         //AppServiceResponseListener responseListener = new AppServiceResponseListener();
 
@@ -54,12 +57,16 @@ namespace QuickShare.Droid.RomeComponent
                 if (count > 20)
                     return null;
 
-                await Task.Delay(50);
+                await Task.Delay(100);
             }
 
             return rsNew;
         }
 
+        public async Task<RomeAppServiceConnectionStatus> Connect()
+        {
+            return await Connect(await RediscoverRemoteSystem(this.remoteSystem), this.keepAlive, wakeUri);
+        }
 
         public async Task<RomeAppServiceConnectionStatus> Connect(object _remoteSystem, bool keepAlive)
         {
@@ -73,22 +80,32 @@ namespace QuickShare.Droid.RomeComponent
                 throw new InvalidCastException();
 
             remoteSystem = rs;
+            this.keepAlive = keepAlive;
+            this.wakeUri = wakeUri;
 
-            if ((wakeUri != null) && (!rs.IsAvailableByProximity) && (rs.Kind.Value == RemoteSystemKinds.Phone.Value))
+            if (wakeUri != null)
             {
-                //Wake device first
-                var wakeResult = await LaunchUri(wakeUri, rs);
-
-                if (wakeResult == RomeRemoteLaunchUriStatus.Success)
+                if ((!rs.IsAvailableByProximity) && (rs.Kind.Value == RemoteSystemKinds.Phone.Value))
                 {
-                    RemoteSystem rsNew = await RediscoverRemoteSystem(rs);
-                    System.Diagnostics.Debug.WriteLine(rsNew.IsAvailableByProximity);
-                    if (rsNew == null)
-                        return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
-                    else
-                        rs = rsNew;
+                    //Wake device first
+                    var wakeResult = await LaunchUri(wakeUri, rs);
+
+                    if (wakeResult == RomeRemoteLaunchUriStatus.Success)
+                    {
+                        RemoteSystem rsNew = await RediscoverRemoteSystem(rs);
+                        System.Diagnostics.Debug.WriteLine(rsNew.IsAvailableByProximity);
+                        if (rsNew == null)
+                            return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
+                        else
+                            rs = rsNew;
+                    }
+                }
+                else if (rs.Kind.Value != RemoteSystemKinds.Phone.Value)
+                {
+                    await LaunchUri(wakeUri, rs).WithTimeout(TimeSpan.FromSeconds(5));
                 }
             }
+            
 
             try
             {
@@ -112,7 +129,7 @@ namespace QuickShare.Droid.RomeComponent
 
         public void CloseAppService()
         {
-            //Doesn't need to to anything
+            
         }
 
         public async Task InitializeDiscovery()

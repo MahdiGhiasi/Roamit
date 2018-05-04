@@ -385,6 +385,15 @@ namespace QuickShare
                         result = FileTransferResult.FailedOnSend;
                         message = result.ToString(); // TODO
                     }
+                    else if (ee.State == FileTransferState.Reconnecting)
+                    {
+                        ViewModel.SendStatus = "Reconnecting...";
+                        ViewModel.ProgressIsIndeterminate = true;
+                    }
+                    else if (ee.State == FileTransferState.Reconnected)
+                    {
+                        ViewModel.SendStatus = "Waiting for response...";
+                    }
                     else
                     {
                         await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>

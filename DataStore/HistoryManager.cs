@@ -105,5 +105,39 @@ namespace QuickShare.DataStore
 
             data.Update(guid, item);
         }
+
+        public ReceivedFile GetFileFromOriginalName(Guid guid, string originalFileName, string path)
+        {
+            var item = GetItem(guid);
+            var d = item.Data as ReceivedFileCollection;
+
+            if (d == null)
+                return null;
+
+            var file = d.Files.LastOrDefault(x => (x.OriginalName == originalFileName && (x.StorePath == path || x.StorePath == (path + "\\"))));
+
+            return file;
+        }
+
+        public void SetFileLastSliceReceived(Guid guid, string fileName, string path, uint lastSliceReceived)
+        {
+
+            System.Diagnostics.Debug.WriteLine($"Set lastSliceReceived={lastSliceReceived} for {fileName} ({guid}).");
+
+            var item = GetItem(guid);
+            var d = item.Data as ReceivedFileCollection;
+
+            if (d == null)
+                return;
+
+            var file = d.Files.LastOrDefault(x => (x.Name == fileName && (x.StorePath == path || x.StorePath == (path + "\\"))));
+
+            if (file == null)
+                return;
+
+            file.LastSliceReceived = lastSliceReceived;
+
+            data.Update(guid, item);
+        }
     }
 }

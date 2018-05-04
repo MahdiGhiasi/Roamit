@@ -21,12 +21,11 @@ namespace QuickShare.FileTransfer
     public static class FileReceiver2
     {
         static readonly int fileReceiverVersion = 2;
-        static readonly int numberOfParallelDownloads = 4;
 
         public delegate void ReceiveFileProgressEventHandler(FileTransfer2ProgressEventArgs e);
         public static event ReceiveFileProgressEventHandler FileTransferProgress;
 
-        static FileReceiveProgressCalculator progressCalculator;
+        static ReceiveSessionAgent currentReceiveSessionAgent;
 
         public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, IDownloadFolderDecider downloadFolderDecider)
         {
@@ -46,15 +45,17 @@ namespace QuickShare.FileTransfer
                 switch (request["Type"] as string)
                 {
                     case "QueueInit":
-                        await ProcessRequest(request, fileSenderVersion, downloadFolderDecider);
+                        await ProcessRequest(request, fileSenderVersion, downloadFolderDecider, isResume: false);
                         return new Dictionary<string, object>();
                     case "ResumeReceive":
-                        //TODO
                         Debug.WriteLine("Received ResumeReceive request. TODO.");
-                        return new Dictionary<string, object>
+                        if (currentReceiveSessionAgent != null)
                         {
-                            { "Accepted", "true" },
-                        };
+                            currentReceiveSessionAgent.Stop();
+                            await Task.Delay(500);
+                        }
+                        await ProcessRequest(request, fileSenderVersion, downloadFolderDecider, isResume: true);
+                        return new Dictionary<string, object>();
                     default:
                         throw new InvalidOperationException($"Type '{request["Type"]}' is invalid.");
                 }
@@ -90,7 +91,7 @@ namespace QuickShare.FileTransfer
             });
         }
 
-        private static async Task ProcessRequest(Dictionary<string, object> request, int fileSenderVersion, IDownloadFolderDecider downloadFolderDecider)
+        private static async Task ProcessRequest(Dictionary<string, object> request, int fileSenderVersion, IDownloadFolderDecider downloadFolderDecider, bool isResume)
         {
             var sessionKey = Guid.Parse(request["Guid"] as string);
             var ip = request["ServerIP"].ToString();
@@ -105,126 +106,15 @@ namespace QuickShare.FileTransfer
                 // TODO
                 return;
             }
-            
-            var queueInfo = await GetQueueInfoAsync(ip, sessionKey);
-            var downloadFolder = await downloadFolderDecider.DecideAsync(queueInfo.Files.Select(x => Path.GetExtension(x.FileName)).ToArray());
-            await StartDownload(queueInfo, senderName, ip, sessionKey, downloadFolder);
-        }
 
-        private static async Task AddToHistory(QueueInfo queueInfo, Guid sessionKey, string senderName, IFolder downloadRootFolder)
-        {
-            await DataStorageProviders.HistoryManager.OpenAsync();
-            DataStorageProviders.HistoryManager.Add(sessionKey,
-                DateTime.Now,
-                senderName,
-                new ReceivedFileCollection
-                {
-                    Files = queueInfo.Files.Select(x => new ReceivedFile
-                    {
-                        Name = x.FileName,
-                        Size = (long)x.FileSize,
-                        StorePath = Path.Combine(downloadRootFolder.Path, NormalizePathForCombine(x.RelativePath)),
-                        Completed = false,
-                    }).ToList(),
-                    StoreRootPath = downloadRootFolder.Path,
-                },
-                false);
-            DataStorageProviders.HistoryManager.Close();
-        }
-
-        private static string NormalizePathForCombine(string path)
-        {
-            if (path.Length == 0)
-                return path;
-
-            return (path[0] == '\\' || path[0] == '/') ? path.Substring(1) : path;
-        }
-
-        private static async Task StartDownload(QueueInfo queueInfo, string senderName, string ip, Guid sessionKey, IFolder downloadRootFolder)
-        {
-            await AddToHistory(queueInfo, sessionKey, senderName, downloadRootFolder);
-            progressCalculator = new FileReceiveProgressCalculator(queueInfo, queueInfo.Files.First().SliceMaxLength, senderName, sessionKey);
-            progressCalculator.FileTransferProgress += ProgressCalculator_FileTransferProgress;
-
-            await queueInfo.Files.ParallelForEachAsync(numberOfParallelDownloads, async item =>
+            currentReceiveSessionAgent = new ReceiveSessionAgent(ip, sessionKey, senderName, downloadFolderDecider);
+            currentReceiveSessionAgent.FileTransferProgress += (e) =>
             {
-                await DownloadFile(item, downloadRootFolder, ip, sessionKey);
-            });
+                FileTransferProgress?.Invoke(e);
+            };
 
-            await DataStorageProviders.HistoryManager.OpenAsync();
-            DataStorageProviders.HistoryManager.ChangeCompletedStatus(sessionKey, true);
-            DataStorageProviders.HistoryManager.Close();
-
-            await SendFinishGetRequestAsync(ip, sessionKey);
-
-            FileTransferProgress?.Invoke(new FileTransfer2ProgressEventArgs
-            {
-                State = FileTransferState.Finished,
-                Guid = sessionKey,
-                TotalFiles = queueInfo.Files.Count,
-                SenderName = senderName,
-            });
-        }
-
-        private static void ProgressCalculator_FileTransferProgress(object sender, FileTransfer2ProgressEventArgs e)
-        {
-            FileTransferProgress?.Invoke(e);
-        }
-
-        private static async Task DownloadFile(FileSendInfo fileInfo, IFolder downloadRootFolder, string serverIp, Guid sessionKey)
-        {
-            //TODO: Add a semaphore or sth to make sure two threads don't start writing on one file.
-
-            IFolder downloadFolder = await FileHelper.CreateDirectoryIfNecessary(downloadRootFolder, fileInfo.RelativePath);
-
-            IFile file = await FileHelper.CreateFile(downloadFolder, fileInfo.FileName);
-
-            if (file.Name != fileInfo.FileName) //File already existed, so new name generated for it. We should update database now.
-            {
-                await DataStorageProviders.HistoryManager.OpenAsync();
-                DataStorageProviders.HistoryManager.UpdateFileName(sessionKey, fileInfo.FileName, file.Name, downloadFolder.Path);
-                DataStorageProviders.HistoryManager.Close();
-            }
-
-            ulong totalBytesReceived = 0;
-            using (var stream = await file.OpenAsync(PCLStorage.FileAccess.ReadAndWrite))
-            {
-                for (uint i = 0; i < fileInfo.SlicesCount; i++)
-                {
-                    string url = $"http://{serverIp}:{Constants.CommunicationPort}/{fileInfo.UniqueKey}/{i}/";
-
-                    byte[] buffer = await HttpHelper.DownloadDataFromUrl(url);
-
-                    int expectedLength;
-                    if (i == (fileInfo.SlicesCount - 1))
-                        expectedLength = (int)(fileInfo.FileSize % fileInfo.SliceMaxLength);
-                    else
-                        expectedLength = (int)fileInfo.SliceMaxLength;
-
-                    if (buffer.Length != expectedLength)
-                    {
-                        Debug.WriteLine("Slice length violation! Will retry...");
-                        i--;
-                        continue;
-                    }
-                    totalBytesReceived += (ulong)expectedLength;
-                    await stream.WriteAsync(buffer, 0, buffer.Length);
-
-                    progressCalculator.SliceReceived(fileInfo, i);
-                }
-
-                await stream.FlushAsync();
-            }
-
-            await DataStorageProviders.HistoryManager.OpenAsync();
-            DataStorageProviders.HistoryManager.MarkFileAsCompleted(sessionKey, file.Name, downloadFolder.Path);
-            DataStorageProviders.HistoryManager.Close();
-        }
-
-        private static async Task<QueueInfo> GetQueueInfoAsync(string ip, Guid sessionKey)
-        {
-            string data = await HttpHelper.SendGetRequestAsync($"http://{ip}:{Constants.CommunicationPort}/{sessionKey.ToString()}/queueInfo/");
-            return JsonConvert.DeserializeObject<QueueInfo>(data);
+            currentReceiveSessionAgent.StartReceive(isResume);
+            await currentReceiveSessionAgent.ReceiveFinishTcs.Task;
         }
 
         private static async Task SendVersionCheckGetRequestAsync(string ip, Guid sessionKey, bool isCompatible)
@@ -232,15 +122,6 @@ namespace QuickShare.FileTransfer
             try
             {
                 await HttpHelper.SendGetRequestAsync($"http://{ip}:{Constants.CommunicationPort}/{sessionKey.ToString()}/versionCheck/?receiverVersion={fileReceiverVersion}&receiverCompatible={(isCompatible ? "true" : "false")}");
-            }
-            catch { }
-        }
-
-        private static async Task SendFinishGetRequestAsync(string ip, Guid sessionKey)
-        {
-            try
-            {
-                await HttpHelper.SendGetRequestAsync($"http://{ip}:{Constants.CommunicationPort}/{sessionKey.ToString()}/finishQueue/");
             }
             catch { }
         }
