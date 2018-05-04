@@ -26,7 +26,7 @@
                               SelectionMode="None">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="0,8,0,0">
+                                <Grid Margin="0,8,0,20">
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
                                         <RowDefinition />
