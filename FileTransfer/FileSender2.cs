@@ -177,7 +177,7 @@ namespace QuickShare.FileTransfer
         private async Task<FileTransferResult> SendFiles(string sessionKey, string ip, FileSendProgressCalculator transferProgress, CancellationToken cancellationToken = default(CancellationToken))
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            SendInitReceiverMessage(transferProgress.TotalSlices, sessionKey, ip, false);
+            SendInitReceiverMessage(transferProgress.TotalSlices, sessionKey, ip, isResume: false);
 #pragma warning restore CS4014
 
             transferProgress.InitTimeout(timeoutTcs);
@@ -200,6 +200,7 @@ namespace QuickShare.FileTransfer
                                 State = FileTransferState.Reconnecting,
                             });
                             await packageManager.Connect();
+                            await Task.Delay(1000); // This is needed otherwise the message won't reach destination (Windows). Why? Idk, ask Project Rome SDK.
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                             SendInitReceiverMessage(transferProgress.TotalSlices, sessionKey, ip, isResume: true);

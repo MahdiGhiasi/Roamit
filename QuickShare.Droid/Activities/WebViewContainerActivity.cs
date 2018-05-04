@@ -833,14 +833,20 @@ namespace QuickShare.Droid.Activities
         {
             Classes.Settings settings = new Classes.Settings(this);
 
+            RomeAppServiceConnectionStatus result;
+            SetProgressText("Connecting...");
+
             if (settings.UseInAppServiceOnWindowsDevices)
             {
-                SetProgressText("Initializing...");
-                await Common.PackageManager.LaunchUri(new Uri("roamit://receiveDialog"), Common.GetCurrentRemoteSystem());
+                result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false, new Uri("roamit://receiveDialog"));
+                //SetProgressText("Initializing...");
+                //await Common.PackageManager.LaunchUri(new Uri("roamit://receiveDialog"), Common.GetCurrentRemoteSystem());
+            }
+            else
+            {
+                result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
             }
 
-            SetProgressText("Connecting...");
-            var result = await Common.PackageManager.Connect(Common.GetCurrentRemoteSystem(), false);
             if (result != RomeAppServiceConnectionStatus.Success)
             {
                 Analytics.TrackEvent("SendToWindows", "file", "Failed");
@@ -873,12 +879,26 @@ namespace QuickShare.Droid.Activities
                     {
                         transferResult = FileTransferResult.FailedOnSend;
                     }
+                    else if (ee.State == FileTransferState.Reconnecting)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            SetProgressText("Reconnecting...");
+                            SetProgressValueToIndetermine();
+                        });
+                    }
+                    else if (ee.State == FileTransferState.Reconnected)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            SetProgressText("Waiting for response...");
+                        });
+                    }
                     else
                     {
                         RunOnUiThread(() =>
                         {
                             SetProgressText(sendingText);
-
                             SetProgressValue(ee.Progress, 1.0);
                         });
                     }

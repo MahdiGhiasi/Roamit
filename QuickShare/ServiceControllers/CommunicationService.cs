@@ -71,7 +71,8 @@ namespace QuickShare
             if (receiver == "ServerIPFinder")
                 await FileTransfer.ServerIPFinder.ReceiveRequest(reqMessage);
             else if (receiver == "FileReceiver")
-                await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, new DownloadFolderDecider());
+                await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, new DownloadFolderDecider(), 
+                    async s => { return new WinRTFolder(await StorageFolder.GetFolderFromPathAsync(s)); });
             else if (receiver == "TextReceiver")
                 await TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
             else if (receiver == "CloudClipboardHandler")

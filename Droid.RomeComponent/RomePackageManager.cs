@@ -65,7 +65,7 @@ namespace QuickShare.Droid.RomeComponent
 
         public async Task<RomeAppServiceConnectionStatus> Connect()
         {
-            return await Connect(await RediscoverRemoteSystem(this.remoteSystem), this.keepAlive, wakeUri);
+            return await Connect(romeHelper.RemoteSystems.FirstOrDefault(x => x.Id == this.remoteSystem.Id), this.keepAlive, wakeUri);
         }
 
         public async Task<RomeAppServiceConnectionStatus> Connect(object _remoteSystem, bool keepAlive)
@@ -115,10 +115,16 @@ namespace QuickShare.Droid.RomeComponent
             catch
             { }
 
+            if (appService != null)
+            {
+                CloseAppService();
+                await Task.Delay(300);
+            }
+
             connectionRequest = new RemoteSystemConnectionRequest(rs);
             appService = new AppServiceConnection(AppServiceName, appIdentifier, connectionRequest);
             var result = await appService.OpenRemoteAsync();
-
+            
             var finalResult = result.ConvertToRomeAppServiceConnectionStatus();
 
             if (finalResult == RomeAppServiceConnectionStatus.AppNotInstalled)
@@ -129,7 +135,8 @@ namespace QuickShare.Droid.RomeComponent
 
         public void CloseAppService()
         {
-            
+            connectionRequest?.Dispose();
+            appService = null;
         }
 
         public async Task InitializeDiscovery()

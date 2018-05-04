@@ -29,15 +29,17 @@ namespace QuickShare.FileTransfer
         Guid sessionKey;
         string senderName;
         IDownloadFolderDecider downloadFolderDecider;
+        Func<string, Task<IFolder>> folderResolver;
         CancellationTokenSource cancellationTokenSource;
         FileReceiveProgressCalculator progressCalculator;
 
-        public ReceiveSessionAgent(string ip, Guid sessionKey, string senderName, IDownloadFolderDecider downloadFolderDecider)
+        public ReceiveSessionAgent(string ip, Guid sessionKey, string senderName, IDownloadFolderDecider downloadFolderDecider, Func<string, Task<IFolder>> folderResolver)
         {
             this.ip = ip;
             this.sessionKey = sessionKey;
             this.senderName = senderName;
             this.downloadFolderDecider = downloadFolderDecider;
+            this.folderResolver = folderResolver;
 
             ReceiveFinishTcs = new TaskCompletionSource<bool>();
             cancellationTokenSource = new CancellationTokenSource();
@@ -53,8 +55,7 @@ namespace QuickShare.FileTransfer
                 if (cancellationToken.IsCancellationRequested)
                     throw new ReceiveCancelledException();
 
-                var downloadFolder = await downloadFolderDecider.DecideAsync(queueInfo.Files.Select(x => Path.GetExtension(x.FileName)).ToArray());
-                await StartDownload(queueInfo, senderName, ip, sessionKey, downloadFolder, isResume, cancellationToken);
+                await StartDownload(queueInfo, senderName, ip, sessionKey, isResume, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -91,10 +92,20 @@ namespace QuickShare.FileTransfer
             DataStorageProviders.HistoryManager.Close();
         }
 
-        private async Task StartDownload(QueueInfo queueInfo, string senderName, string ip, Guid sessionKey, IFolder downloadRootFolder, bool isResume, CancellationToken cancellationToken)
+        private async Task StartDownload(QueueInfo queueInfo, string senderName, string ip, Guid sessionKey, bool isResume, CancellationToken cancellationToken)
         {
-            if (!isResume)
+            IFolder downloadRootFolder;
+            if (isResume)
+            {
+                await DataStorageProviders.HistoryManager.OpenAsync();
+                downloadRootFolder = await folderResolver((DataStorageProviders.HistoryManager.GetItem(sessionKey).Data as ReceivedFileCollection).StoreRootPath);
+                DataStorageProviders.HistoryManager.Close();
+            }
+            else
+            {
+                downloadRootFolder = await downloadFolderDecider.DecideAsync(queueInfo.Files.Select(x => Path.GetExtension(x.FileName)).ToArray());
                 await AddToHistory(queueInfo, sessionKey, senderName, downloadRootFolder);
+            }
             progressCalculator = new FileReceiveProgressCalculator(queueInfo, queueInfo.Files.First().SliceMaxLength, senderName, sessionKey);
             progressCalculator.FileTransferProgress += ProgressCalculator_FileTransferProgress;
 

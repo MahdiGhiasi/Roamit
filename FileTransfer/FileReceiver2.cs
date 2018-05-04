@@ -27,7 +27,7 @@ namespace QuickShare.FileTransfer
 
         static ReceiveSessionAgent currentReceiveSessionAgent;
 
-        public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, IDownloadFolderDecider downloadFolderDecider)
+        public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, IDownloadFolderDecider downloadFolderDecider, Func<string, Task<IFolder>> folderResolver)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace QuickShare.FileTransfer
                 switch (request["Type"] as string)
                 {
                     case "QueueInit":
-                        await ProcessRequest(request, fileSenderVersion, downloadFolderDecider, isResume: false);
+                        await ProcessRequest(request, fileSenderVersion, downloadFolderDecider, folderResolver, isResume: false);
                         return new Dictionary<string, object>();
                     case "ResumeReceive":
                         Debug.WriteLine("Received ResumeReceive request. TODO.");
@@ -54,7 +54,7 @@ namespace QuickShare.FileTransfer
                             currentReceiveSessionAgent.Stop();
                             await Task.Delay(500);
                         }
-                        await ProcessRequest(request, fileSenderVersion, downloadFolderDecider, isResume: true);
+                        await ProcessRequest(request, fileSenderVersion, downloadFolderDecider, folderResolver, isResume: true);
                         return new Dictionary<string, object>();
                     default:
                         throw new InvalidOperationException($"Type '{request["Type"]}' is invalid.");
@@ -91,14 +91,14 @@ namespace QuickShare.FileTransfer
             });
         }
 
-        private static async Task ProcessRequest(Dictionary<string, object> request, int fileSenderVersion, IDownloadFolderDecider downloadFolderDecider, bool isResume)
+        private static async Task ProcessRequest(Dictionary<string, object> request, int fileSenderVersion, IDownloadFolderDecider downloadFolderDecider, Func<string, Task<IFolder>> folderResolver, bool isResume)
         {
             var sessionKey = Guid.Parse(request["Guid"] as string);
             var ip = request["ServerIP"].ToString();
             var isCompatible = CompatibilityHelper.IsCompatible(fileSenderVersion, fileReceiverVersion);
             var senderName = request["SenderName"].ToString();
 
-            if (fileSenderVersion >= 2)
+            if ((!isResume) && (fileSenderVersion >= 2))
                 await SendVersionCheckGetRequestAsync(ip, sessionKey, isCompatible);
 
             if (!isCompatible)
@@ -107,7 +107,7 @@ namespace QuickShare.FileTransfer
                 return;
             }
 
-            currentReceiveSessionAgent = new ReceiveSessionAgent(ip, sessionKey, senderName, downloadFolderDecider);
+            currentReceiveSessionAgent = new ReceiveSessionAgent(ip, sessionKey, senderName, downloadFolderDecider, folderResolver);
             currentReceiveSessionAgent.FileTransferProgress += (e) =>
             {
                 FileTransferProgress?.Invoke(e);
