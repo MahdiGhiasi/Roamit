@@ -36,6 +36,20 @@ namespace QuickShare.ViewModels
 
                 Devices.Add(new DeviceItem(item));
             }
+
+            Loading = false;
+        }
+
+
+        private bool loading = true;
+        public bool Loading
+        {
+            get { return loading; }
+            set
+            {
+                loading = value;
+                OnPropertyChanged("Loading");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

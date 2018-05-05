@@ -17,6 +17,10 @@
     </Page.Transitions>
     
     <Grid Background="Transparent">
+        <ProgressBar Visibility="{x:Bind Model.Loading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     IsIndeterminate="True"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Top" />
         <Grid MaxWidth="700">
             <ScrollViewer>
                 <StackPanel HorizontalAlignment="Stretch" Margin="16">
