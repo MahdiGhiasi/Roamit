@@ -52,7 +52,7 @@
                                    Opacity="0.6"
                                    Margin="16,0,0,8"
                                    TextWrapping="Wrap" />
-                        <TextBlock Text="&#8226; Custom received files grouping"
+                        <TextBlock Text="&#8226; Customize received files grouping"
                                    Margin="0,0,0,8"
                                    TextWrapping="Wrap" />
                         <TextBlock Text="You can choose to group by month, day, item, or not group them at all."
