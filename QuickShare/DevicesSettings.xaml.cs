@@ -64,6 +64,8 @@ namespace QuickShare
                 if (await Device.RemoveDevice(item.AccountID, item.DeviceID))
                 {
                     Model.Devices.Remove(item);
+                    MainPage.Current.ViewModel.ListManager.RemoveAndroidDevices();
+                    await MainPage.Current.DiscoverOtherDevices(force: true, forceSelectHighScore: true);
                 }
                 else
                 {

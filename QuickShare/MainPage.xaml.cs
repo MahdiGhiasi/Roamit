@@ -429,7 +429,7 @@ namespace QuickShare
         }
 
         bool alreadyDiscovered = false;
-        internal async Task<bool> DiscoverOtherDevices(bool force = false)
+        internal async Task<bool> DiscoverOtherDevices(bool force = false, bool forceSelectHighScore = false)
         {
             if (!SecureKeyStorage.IsUserIdStored())
                 return false;
@@ -445,7 +445,7 @@ namespace QuickShare
                 if (ViewModel.ListManager.RemoteSystems.FirstOrDefault(x => x.Id == item.Id) == null) //if not already exists
                     ViewModel.ListManager.AddDevice(item);
 
-            if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!IsUserSelectedRemoteSystemManually) && (AllowedToChangeSelectedRemoteSystem()))
+            if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (((!IsUserSelectedRemoteSystemManually) && (AllowedToChangeSelectedRemoteSystem())) || forceSelectHighScore))
                 ViewModel.ListManager.SelectHighScoreItem();
             ViewModel.RemoteSystemCollectionChanged();
 
