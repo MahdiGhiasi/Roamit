@@ -41,6 +41,36 @@
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
+                    <StackPanel Tag="11" Margin="0,0,0,24" Visibility="Visible">
+                        <TextBlock Text="&#8226; File transfer logic has been rewritten from scratch."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="It's now faster and more reliable than ever!"
+                                   Margin="16,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="You'll need to have Roamit v3.0+ on both sides to see the improvements."
+                                   Opacity="0.6"
+                                   Margin="16,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Custom received files grouping"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="You can choose to group by month, day, item, or not group them at all."
+                                   Margin="16,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Picture picker performance improvements"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Notification improvements"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Ability to remove Android devices that you no longer have access to."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Fixed an issue causing Universal Clipboard agent to not start correctly."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
                     <StackPanel Tag="10" Margin="0,0,0,24" Visibility="Visible">
                         <TextBlock Text="&#8226; UI changes and improvements."
                                    Margin="0,0,0,8"
