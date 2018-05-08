@@ -79,31 +79,8 @@ namespace QuickShare.Classes.ItemSources
 
             foreach (var file in files)
             {
-                Windows.Storage.FileProperties.StorageItemThumbnail thumbnailStream = null;
-
-                try
-                {
-                    thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.PicturesView);
-                }
-                catch (Exception)
-                {
-                    thumbnailStream = await file.GetThumbnailAsync(Windows.Storage.FileProperties.ThumbnailMode.SingleItem);
-                }
-
-                if (thumbnailStream != null)
-                {
-                    var image = new BitmapImage();
-                    await image.SetSourceAsync(thumbnailStream);
-
-                    result.Add(new PicturePickerItem { File = file, Thumbnail = image });
-                }
-                else
-                {
-                    result.Add(new PicturePickerItem { File = file, Thumbnail = null });
-                }
-
+                result.Add(new PicturePickerItem { File = file });
             }
-
             allItems.AddRange(result);
 
             isFillingList = false;

@@ -84,11 +84,20 @@ namespace QuickShare
             var selectedThumbnails = thumbnails.Where(x => x.IsAvailable).Take(3).ToArray();
 
             if (selectedThumbnails.Length >= 1)
+            {
+                await selectedThumbnails[0].TryLoadThumbnail();
                 img1.Source = selectedThumbnails[0].Thumbnail;
+            }
             if (selectedThumbnails.Length >= 2)
+            {
+                await selectedThumbnails[1].TryLoadThumbnail();
                 img2.Source = selectedThumbnails[1].Thumbnail;
+            }
             if (selectedThumbnails.Length >= 3)
+            {
+                await selectedThumbnails[2].TryLoadThumbnail();
                 img3.Source = selectedThumbnails[2].Thumbnail;
+            }
             imageShowStoryboard.Begin();
         }
 
