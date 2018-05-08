@@ -34,6 +34,7 @@ using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
 using QuickShare.ViewModels.ShareTarget;
 using QuickShare.HelperClasses.Version;
+using Microsoft.Services.Store.Engagement;
 
 namespace QuickShare
 {
@@ -104,6 +105,13 @@ namespace QuickShare
                 LaunchTime = null;
                 InitApplication(e, typeof(Intro));
             }
+#if !DEBUG
+            var osVersion = DeviceInfo.SystemVersion.ToString();
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("OSVersion", osVersion).Build());
+
+            StoreServicesCustomEventLogger logger = StoreServicesCustomEventLogger.GetDefault();
+            logger.Log("AppLaunched_" + osVersion);
+#endif
         }
 
         private void InitApplication(LaunchActivatedEventArgs e, Type defaultPage)
