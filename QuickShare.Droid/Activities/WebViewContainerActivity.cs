@@ -1201,6 +1201,66 @@ namespace QuickShare.Droid.Activities
                 {
                     ProcessRequest("SendFile_Cancel");
                 }
+                else if (url == "file:///android_asset/html/history.html")
+                {
+                    var intent = new Intent(context, typeof(HistoryListActivity));
+                    context.StartActivity(intent);
+                }
+                //else if (url == "file:///android_asset/html/createDummyHistory.html")
+                //{
+                //    var r = new Random();
+                //    DateTime dt = DateTime.Now;
+                
+                //    for (int i = 0; i < 500; i++)
+                //    {
+                //        DataStore.DataStorageProviders.HistoryManager.OpenAsync().Wait();
+                //        DataStore.DataStorageProviders.TextReceiveContentManager.OpenAsync().Wait();
+                //        dt = dt.AddSeconds(1);
+                //        var guid = Guid.NewGuid();
+                //        DataStore.IReceivedData data;
+                //        switch (r.Next(3))
+                //        {
+                //            case 0:
+                //                var x1 = new DataStore.ReceivedFileCollection
+                //                {
+                //                    StoreRootPath = "/"
+                //                };
+
+                //                for (int j = 0; j < r.Next(1, 10); j++)
+                //                {
+                //                    x1.Files.Add(new DataStore.ReceivedFile()
+                //                    {
+                //                        Completed = true,
+                //                        Name = $"File{j}",
+                //                        Size = j + 1,
+                //                        StorePath = "/",
+                //                    });
+                //                }
+
+                //                data = x1;
+                //                break;
+                //            case 1:
+                //                data = new DataStore.ReceivedText();
+
+                //                DataStore.DataStorageProviders.TextReceiveContentManager.Add(guid, $"Clipboard content #{i}!");
+
+                //                break;
+                //            case 2:
+                //                data = new DataStore.ReceivedUrl
+                //                {
+                //                    Uri = new Uri($"http://www.google.com/?x={i}"),
+                //                };
+                //                break;
+                //            default:
+                //                throw new Exception("wat");
+                //        }
+
+                //        DataStore.DataStorageProviders.HistoryManager.Add(guid, dt, $"Dummy #{i}", data, true);
+                //        DataStore.DataStorageProviders.TextReceiveContentManager.Close();
+                //        DataStore.DataStorageProviders.HistoryManager.Close();
+                //    }
+
+                //}
                 else
                 {
                     return false;

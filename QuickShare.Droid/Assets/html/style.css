@@ -149,6 +149,13 @@ body {
             transform: translateY(125px);
 }
 
+@media (max-height: 375px) {
+    .actionbuttons-landscape {
+        -webkit-transform: translateY(90px);
+                transform: translateY(90px);
+    }
+}
+
 .actionbutton-content {
     height: 100%;
     width: 100%;
@@ -531,4 +538,8 @@ body {
         .sharedialog-buttons button {
             margin-bottom: 0;
         }
+}
+
+.mdl-button {
+    margin-left: 12px;
 }

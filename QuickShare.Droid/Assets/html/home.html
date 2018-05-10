@@ -493,6 +493,10 @@
                 redirect("sendClipboard.html");
             });
 
+            $("#historyButton").on("click", function () {
+                redirect("history.html");
+            });
+
             $("#sendUrlButton").on("click", function () {
                 if ($(this).hasClass("inlinebutton-disabled"))
                     return;
@@ -512,9 +516,12 @@
                 <span class="mdl-layout-title"></span>
                 <div class="mdl-layout-spacer"></div>
                 <!-- Right aligned menu below button -->
+                <button id="historyButton" class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="material-icons">history</i>
+                </button>
                 <button id="demo-menu-lower-right" class="mdl-button mdl-js-button mdl-button--icon">
                     <i class="material-icons">more_vert</i>
-                    </button>
+                </button>
 
                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-right">
                     <li class="mdl-menu__item menuItem" data-destination="settings.html">Settings</li>
