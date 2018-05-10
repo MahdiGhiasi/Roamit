@@ -16,6 +16,8 @@ namespace QuickShare.Droid.RomeComponent
     public class RomePackageManager : IRomePackageManager
     {
         readonly string appIdentifier = "36835MahdiGhiasi.Roamit_yddpmccgg2mz2";
+        readonly TimeSpan ConnectLaunchUriTimeout = TimeSpan.FromSeconds(5);
+
         public string AppServiceName { get; set; } = "";
 
         AppServiceConnection appService;
@@ -102,7 +104,7 @@ namespace QuickShare.Droid.RomeComponent
                 }
                 else if (rs.Kind.Value != RemoteSystemKinds.Phone.Value)
                 {
-                    await LaunchUri(wakeUri, rs).WithTimeout(TimeSpan.FromSeconds(5));
+                    await LaunchUri(wakeUri, rs).WithTimeout(ConnectLaunchUriTimeout);
                 }
             }
             
