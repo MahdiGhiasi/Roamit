@@ -132,22 +132,13 @@ namespace QuickShare.Droid.Classes
             }
             else if (e.State == FileTransfer.FileTransferState.Finished)
             {
-                if (e.TotalFiles == 1)
-                {
-                    var intent = new Intent(context, typeof(NotificationLaunchActivity));
-                    intent.PutExtra("action", "openFile");
-                    intent.PutExtra("guid", e.Guid.ToString());
+                var intent = new Intent(context, typeof(HistoryListActivity)); //typeof(NotificationLaunchActivity));
+                intent.PutExtra("itemGuid", e.Guid.ToString());
 
-                    await progressNotifier?.FinishProgress($"Received a file from {e.SenderName}", "Tap to open", intent, context);
-                }
+                if (e.TotalFiles == 1)
+                    await progressNotifier?.FinishProgress($"Received a file from {e.SenderName}", "Tap to view", intent, context);
                 else
-                {
-                    await DataStorageProviders.HistoryManager.OpenAsync();
-                    var hr = DataStorageProviders.HistoryManager.GetItem(e.Guid);
-                    DataStorageProviders.HistoryManager.Close();
-                    var rootPath = (hr.Data as ReceivedFileCollection).StoreRootPath;
-                    await progressNotifier?.FinishProgress($"Received {e.TotalFiles} files from {e.SenderName}", $"They're located at {rootPath}");
-                }
+                    await progressNotifier?.FinishProgress($"Received {e.TotalFiles} files from {e.SenderName}", $"Tap to view", intent, context);
 
                 progressNotifier = null;
                 Finish?.Invoke();

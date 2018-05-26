@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -19,6 +19,7 @@ namespace QuickShare.Droid.Adapters
     {
         HistoryDataLoader historyDataLoader;
         Dictionary<int, HistoryItemHolder> holders = new Dictionary<int, HistoryItemHolder>();
+        private int positionToHighlight = -1;
 
         public override int ItemCount => historyDataLoader.ItemsCount;
         public event EventHandler<HistoryListItem> UrlLaunchRequested;
@@ -45,6 +46,9 @@ namespace QuickShare.Droid.Adapters
             var row = historyDataLoader.GetItem(position).GetAwaiter().GetResult();
             vh.Fill(row);
 
+            if (positionToHighlight >= 0 && position == positionToHighlight)
+                vh.Highlight();
+
             holders[position] = vh;
         }
 
@@ -69,6 +73,19 @@ namespace QuickShare.Droid.Adapters
             historyDataLoader.RefreshItem(position);
 
             base.NotifyItemChanged(position);
+        }
+
+        public Task<int> GetItemWithIdPosition(Guid guid)
+        {
+            return historyDataLoader.GetItemWithIdPosition(guid);
+        }
+
+        public void HighlightItem(int position)
+        {
+            if (holders.ContainsKey(position))
+                holders[position].Highlight();
+            else
+                positionToHighlight = position;
         }
 
         private async void OnClick(int pos, HistoryItemHolder.EventAction action)

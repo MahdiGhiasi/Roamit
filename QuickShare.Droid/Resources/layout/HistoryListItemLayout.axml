@@ -12,7 +12,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:id="@+id/historyListItemLayout_cardBackground">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -105,7 +106,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/historyListItemLayout_openUrl"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored" />
-              <Button
+                <Button
                     android:text="Share"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"

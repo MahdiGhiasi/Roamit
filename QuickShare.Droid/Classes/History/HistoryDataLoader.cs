@@ -47,7 +47,7 @@ namespace QuickShare.Droid.Classes.History
             }
         }
 
-        private async void Prefetch(int index)
+        private async Task Prefetch(int index)
         {
             await Task.Run(async () =>
             {
@@ -61,7 +61,9 @@ namespace QuickShare.Droid.Classes.History
             if (index >= historyData.Count)
                 await FetchUntil(index);
             else
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 Prefetch(index);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             return historyData[index];
         }
@@ -79,6 +81,20 @@ namespace QuickShare.Droid.Classes.History
             DataStorageProviders.HistoryManager.OpenAsync().Wait();
             historyData[position] = DataStorageProviders.HistoryManager.GetItem(guid);
             DataStorageProviders.HistoryManager.Close();
+        }
+
+        public async Task<int> GetItemWithIdPosition(Guid guid)
+        {
+            int counter = 0;
+
+            while (counter < ItemsCount)
+            {
+                if ((await GetItem(counter)).Id == guid)
+                    return counter;
+
+                counter++;
+            }
+            return -1;
         }
     }
 }

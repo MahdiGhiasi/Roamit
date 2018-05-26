@@ -29,6 +29,7 @@ namespace QuickShare.Droid.Classes.History
         public Button MoveFiles { get; private set; }
         public Button RemoveItem { get; private set; }
         public Button Share { get; private set; }
+        public LinearLayout CardBackground { get; private set; }
 
         public HistoryItemHolder(View itemView, Action<int, EventAction> listener) : 
             base(itemView)
@@ -43,6 +44,7 @@ namespace QuickShare.Droid.Classes.History
             MoveFiles = itemView.FindViewById<Button>(Resource.Id.historyListItemLayout_moveFiles);
             RemoveItem = itemView.FindViewById<Button>(Resource.Id.historyListItemLayout_removeItem);
             Share = itemView.FindViewById<Button>(Resource.Id.historyListItemLayout_share);
+            CardBackground = itemView.FindViewById<LinearLayout>(Resource.Id.historyListItemLayout_cardBackground);
 
             OpenUrl.Click += (sender, e) => listener(base.LayoutPosition, EventAction.LaunchUrl);
             CopyToClipboard.Click += (sender, e) => listener(base.LayoutPosition, EventAction.CopyToClipboard);
@@ -51,6 +53,19 @@ namespace QuickShare.Droid.Classes.History
             MoveFiles.Click += (sender, e) => listener(base.LayoutPosition, EventAction.MoveFiles);
             RemoveItem.Click += (sender, e) => listener(base.LayoutPosition, EventAction.RemoveItem);
             Share.Click += (sender, e) => listener(base.LayoutPosition, EventAction.Share);
+        }
+
+        internal void Highlight()
+        {
+            var settings = new Settings(ItemView.Context);
+            if (settings.Theme == AppTheme.Dark)
+            {
+                CardBackground.SetBackgroundColor(Color.Argb(255, 29, 73, 96));
+            }
+            else
+            {
+                CardBackground.SetBackgroundColor(Color.Argb(255, 255, 246, 196));
+            }
         }
 
         internal void Fill(HistoryRow row)

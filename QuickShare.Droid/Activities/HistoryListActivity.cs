@@ -37,7 +37,7 @@ namespace QuickShare.Droid.Activities
 
         private HistoryListItem moveItem;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
@@ -64,6 +64,17 @@ namespace QuickShare.Droid.Activities
             var toolbar = FindViewById<Toolbar>(Resource.Id.historyList_toolbar);
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = "Receive History";
+            
+            if (Intent.GetStringExtra("itemGuid") != null)
+            {
+                Guid itemGuid = Guid.Parse(Intent.GetStringExtra("itemGuid"));
+                var position = await historyAdapter.GetItemWithIdPosition(itemGuid);
+                if (position >= 0)
+                {
+                    historyAdapter.HighlightItem(position);
+                    historyRecyclerView.SmoothScrollToPosition(position);
+                }
+            }
         }
 
         private async void HistoryAdapter_ShareItemRequested(object sender, HistoryListItem e)

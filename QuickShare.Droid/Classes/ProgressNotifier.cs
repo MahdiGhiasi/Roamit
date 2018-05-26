@@ -163,6 +163,7 @@ namespace QuickShare.Droid.Classes
                 .SetContentTitle(title)
                 .SetContentText(text)
                 .SetProgress(0, 0, false)
+                .SetAutoCancel(true)
                 .SetStyle(new NotificationCompat.BigTextStyle()
                     .SetBigContentTitle(title)
                     .BigText(text));
@@ -185,8 +186,9 @@ namespace QuickShare.Droid.Classes
                 .SetPriority((int)NotificationPriority.Max)
                 .SetContentTitle(title)
                 .SetContentText(text)
-                .SetContentIntent(PendingIntent.GetActivity(_context, 0, intent, PendingIntentFlags.UpdateCurrent))
+                .SetContentIntent(PendingIntent.GetActivity(_context, GetNewNotifId(), intent, PendingIntentFlags.UpdateCurrent))
                 .SetProgress(0, 0, false)
+                .SetAutoCancel(true)
                 .SetStyle(new NotificationCompat.BigTextStyle()
                     .SetBigContentTitle(title)
                     .BigText(text));

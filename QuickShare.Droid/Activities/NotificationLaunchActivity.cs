@@ -25,21 +25,21 @@ namespace QuickShare.Droid.Activities
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);
+            //base.OnCreate(savedInstanceState);
 
-            if (Intent.GetStringExtra("action") == "openFile")
-            {
-                var guid = Guid.Parse(Intent.GetStringExtra("guid"));
+            //if (Intent.GetStringExtra("action") == "openFile")
+            //{
+            //    var guid = Guid.Parse(Intent.GetStringExtra("guid"));
 
-                await DataStorageProviders.HistoryManager.OpenAsync();
-                var hr = DataStorageProviders.HistoryManager.GetItem(guid);
-                DataStorageProviders.HistoryManager.Close();
+            //    await DataStorageProviders.HistoryManager.OpenAsync();
+            //    var hr = DataStorageProviders.HistoryManager.GetItem(guid);
+            //    DataStorageProviders.HistoryManager.Close();
 
-                string fileName = Path.Combine((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
-                LaunchHelper.OpenFile(this, fileName);
-            }
+            //    string fileName = Path.Combine((hr.Data as ReceivedFileCollection).Files[0].StorePath, (hr.Data as ReceivedFileCollection).Files[0].Name);
+            //    LaunchHelper.OpenFile(this, fileName);
+            //}
 
-            Finish();
+            //Finish();
         }
     }
 }
