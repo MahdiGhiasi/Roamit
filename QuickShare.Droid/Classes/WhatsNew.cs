@@ -76,6 +76,18 @@ namespace QuickShare.Droid.Classes
                 output.Add("Fixed an issue where send link button was not working.");
             }
 
+            if (lastShownVersion < new Version("3.0.1"))
+            {
+                output.Add("File transfer logic has been rewritten from scratch; It's now faster and more reliable than ever!");
+                output.Add("You can now see entire receive history on the device");
+                output.Add("New file picker");
+                output.Add("Customize receive location");
+                output.Add("Customize received files grouping");
+                output.Add("Receive notification improvements");
+                output.Add("Ability to move files after receive");
+                output.Add("Other fixes and improvements");
+            }
+
             return output;
         }
 
