@@ -220,6 +220,14 @@ namespace QuickShare.Droid.Activities
             Settings settings = new Settings(this);
 
             settings.UseInAppServiceOnWindowsDevices = e.IsChecked;
+
+            if (Common.PackageManager != null)
+            {
+                if (settings.UseInAppServiceOnWindowsDevices)
+                    Common.PackageManager.SetAppServiceName("com.roamit.serviceinapp", "com.roamit.service");
+                else
+                    Common.PackageManager.SetAppServiceName("com.roamit.service");
+            }
         }
 
         private void SwDarkTheme_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)

@@ -95,9 +95,9 @@ namespace QuickShare.Droid.Activities
                 Common.PackageManager = new RomePackageManager(this);
 
                 if (settings.UseInAppServiceOnWindowsDevices)
-                    Common.PackageManager.AppServiceName = "com.roamit.serviceinapp";
+                    Common.PackageManager.SetAppServiceName("com.roamit.serviceinapp", "com.roamit.service");
                 else
-                    Common.PackageManager.AppServiceName = "com.roamit.service";
+                    Common.PackageManager.SetAppServiceName("com.roamit.service");
             }
             else
             {
@@ -125,7 +125,7 @@ namespace QuickShare.Droid.Activities
             if (Common.MessageCarrierPackageManager == null)
             {
                 Common.MessageCarrierPackageManager = new RomePackageManager(this);
-                Common.MessageCarrierPackageManager.AppServiceName = "com.roamit.messagecarrierservice";
+                Common.MessageCarrierPackageManager.SetAppServiceName("com.roamit.messagecarrierservice");
             }
 
             InitRomeDiscovery();

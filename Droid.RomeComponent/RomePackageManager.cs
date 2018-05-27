@@ -18,7 +18,7 @@ namespace QuickShare.Droid.RomeComponent
         readonly string appIdentifier = "36835MahdiGhiasi.Roamit_yddpmccgg2mz2";
         readonly TimeSpan ConnectLaunchUriTimeout = TimeSpan.FromSeconds(5);
 
-        public string AppServiceName { get; set; } = "";
+        private List<string> appServiceNames = new List<string>();
 
         AppServiceConnection appService;
         RemoteSystem remoteSystem;
@@ -43,6 +43,15 @@ namespace QuickShare.Droid.RomeComponent
         public RomePackageManager(Context _context)
         {
             context = _context;
+        }
+
+        public void SetAppServiceName(params string[] serviceNames)
+        {
+            appServiceNames.Clear();
+            foreach (var item in serviceNames)
+            {
+                appServiceNames.Add(item);
+            }
         }
 
         private async Task<RemoteSystem> RediscoverRemoteSystem(RemoteSystem rs)
@@ -124,11 +133,18 @@ namespace QuickShare.Droid.RomeComponent
             }
 
             connectionRequest = new RemoteSystemConnectionRequest(rs);
-            appService = new AppServiceConnection(AppServiceName, appIdentifier, connectionRequest);
-            var result = await appService.OpenRemoteAsync();
-            
-            var finalResult = result.ConvertToRomeAppServiceConnectionStatus();
 
+            RomeAppServiceConnectionStatus finalResult = RomeAppServiceConnectionStatus.Unknown;
+            foreach (var appServiceName in appServiceNames)
+            {
+                appService = new AppServiceConnection(appServiceName, appIdentifier, connectionRequest);
+                var result = await appService.OpenRemoteAsync();
+
+                finalResult = result.ConvertToRomeAppServiceConnectionStatus();
+
+                if (finalResult != RomeAppServiceConnectionStatus.AppNotInstalled)
+                    break;
+            }
             if (finalResult == RomeAppServiceConnectionStatus.AppNotInstalled)
                 await LaunchStoreForApp(_remoteSystem);
 
