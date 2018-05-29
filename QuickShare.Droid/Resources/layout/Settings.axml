@@ -160,7 +160,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:id="@+id/settings_useSystemFolderPicker"
-                android:text="Use system folder picker when available" />
+                android:text="Use system folder picker for moving received files and changing default receive path" />
+          <Switch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:id="@+id/settings_useSystemFilePicker"
+                android:text="Use system file picker for selecting files to send" />
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

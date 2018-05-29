@@ -120,6 +120,23 @@ namespace QuickShare.Droid.Classes
             }
         }
 
+        internal bool UseSystemFilePicker
+        {
+            get
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                return prefs.GetBoolean("UseSystemFilePicker", defValue: false);
+            }
+            set
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutBoolean("UseSystemFilePicker", value);
+                editor.Apply();
+            }
+        }
+
+
         internal Version LatestShownWhatsNewVersion
         {
             get

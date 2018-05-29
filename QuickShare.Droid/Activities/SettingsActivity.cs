@@ -30,7 +30,7 @@ namespace QuickShare.Droid.Activities
         TextView txtVersionNumber, txtCloudClipboardModeDescription, txtUniversalClipboardNotAvailable;
         TextView linkTwitter, linkGitHub, linkPrivacyPolicy, linkLogOut;
         EditText txtDeviceName, txtReceiveLocation;
-        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme, swUseInAppRomeProcessOnWindows, swUseSystemFolderPicker;
+        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme, swUseInAppRomeProcessOnWindows, swUseSystemFolderPicker, swUseSystemFilePicker;
         Spinner groupReceivedBySpinner;
 
         SettingsReceivedGroupByAdapter groupReceivedByAdapter;
@@ -64,6 +64,7 @@ namespace QuickShare.Droid.Activities
             swDarkTheme = FindViewById<Switch>(Resource.Id.settings_darkThemeSwitch);
             swUseInAppRomeProcessOnWindows = FindViewById<Switch>(Resource.Id.settings_showReceiveUIOnWindowsSwitch);
             swUseSystemFolderPicker = FindViewById<Switch>(Resource.Id.settings_useSystemFolderPicker);
+            swUseSystemFilePicker = FindViewById<Switch>(Resource.Id.settings_useSystemFilePicker);
             groupReceivedBySpinner = FindViewById<Spinner>(Resource.Id.settings_groupReceivedBySpinner);
 
             txtReceiveLocation.KeyListener = null; //Disable editing of receive location text box.
@@ -173,6 +174,10 @@ namespace QuickShare.Droid.Activities
             swUseSystemFolderPicker.Checked = settings.UseSystemFolderPicker;
             swUseSystemFolderPicker.CheckedChange += SwUseSystemFolderPicker_CheckedChange;
 
+            swUseSystemFilePicker.Enabled = (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop);
+            swUseSystemFilePicker.Checked = settings.UseSystemFilePicker;
+            swUseSystemFilePicker.CheckedChange += SwUseSystemFilePicker_CheckedChange;
+
             txtReceiveLocation.FocusChange += TxtReceiveLocation_FocusChange;
             txtReceiveLocation.Click += TxtReceiveLocation_Click;
             txtReceiveLocation.Text = settings.DefaultDownloadFolder;
@@ -205,6 +210,13 @@ namespace QuickShare.Droid.Activities
             Settings settings = new Settings(this);
 
             settings.UseSystemFolderPicker = e.IsChecked;
+        }
+
+        private void SwUseSystemFilePicker_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            Settings settings = new Settings(this);
+
+            settings.UseSystemFilePicker = e.IsChecked;
         }
 
         private void GroupReceivedBySpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
@@ -333,8 +345,25 @@ namespace QuickShare.Droid.Activities
             {
                 if ((resultCode == Result.Ok) && (data != null))
                 {
-                    var path = FilePathHelper.GetPathForDocTree(this, data.Data);
-                    ApplyReceiveLocationPathUpdate(path);
+                    try
+                    {
+                        var path = FilePathHelper.GetPathForDocTree(this, data.Data);
+                        ApplyReceiveLocationPathUpdate(path);
+                    }
+                    catch (NonPrimaryExternalStorageNotSupportedException)
+                    {
+                        var alert = new Android.Support.V7.App.AlertDialog.Builder(this)
+                            .SetTitle("Receiving to SD Card is not currently supported.")
+                            .SetMessage("This will be added in a future version.")
+                            .SetPositiveButton("Ok", (s, e) => { });
+
+                        RunOnUiThread(() =>
+                        {
+                            alert.Show();
+                        });
+
+                        return;
+                    }
                 }
             }
             else if (requestCode == CustomFolderPickerId)

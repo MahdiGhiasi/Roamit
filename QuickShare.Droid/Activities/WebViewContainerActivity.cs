@@ -41,6 +41,7 @@ namespace QuickShare.Droid.Activities
         readonly string homeUrl = "file:///android_asset/html/home.html";
         readonly int PickImageId = 1000;
         readonly int PickFileId = 1001;
+        readonly int SystemFilePickerId = 1002;
         readonly int SettingsId = 999;
 
         bool automaticRemoteSystemSelectionAllowed = true;
@@ -655,6 +656,71 @@ namespace QuickShare.Droid.Activities
                     await SendFiles(files, true);
                 }
             }
+            else if (requestCode == SystemFilePickerId)
+            {
+                if ((resultCode == Result.Ok) && (data != null))
+                {
+                    List<string> files = new List<string>();
+
+                    try
+                    {
+                        ClipData clipData = data.ClipData;
+                        if (clipData != null)
+                        {
+                            for (int i = 0; i < clipData.ItemCount; i++)
+                            {
+                                ClipData.Item item = clipData.GetItemAt(i);
+                                var uri = item.Uri;
+                                files.Add(FilePathHelper.GetPath(this, uri));
+                            }
+                        }
+                        else
+                        {
+                            Android.Net.Uri uri = data.Data;
+                            var file = FilePathHelper.GetPath(this, uri);
+                            files.Add(file);
+                        }
+
+                        //Make sure files are valid
+                        files.Select(x => new Java.IO.File(x)).ToList();
+
+                        if (files.Count == 0)
+                        {
+                            return;
+                        }
+                    }
+                    catch (NonPrimaryExternalStorageNotSupportedException)
+                    {
+                        var alert = new AlertDialog.Builder(this)
+                            .SetTitle("Selecting from SD Card is not currently supported.")
+                            .SetMessage("This will be added in a future version.")
+                            .SetPositiveButton("Ok", (s, e) => { });
+
+                        RunOnUiThread(() =>
+                        {
+                            alert.Show();
+                        });
+
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        var alert = new AlertDialog.Builder(this)
+                            .SetTitle("Can't send selected files.")
+                            .SetMessage("Roamit can't access some of the selected files, or their provider is not supported.")
+                            .SetPositiveButton("Ok", (s, e) => { });
+
+                        RunOnUiThread(() =>
+                        {
+                            alert.Show();
+                        });
+
+                        return;
+                    }
+
+                    await SendFiles(files.ToArray(), false);
+                }
+            }
             else if (requestCode == SettingsId)
             {
                 var settings = new Classes.Settings(this);
@@ -686,15 +752,30 @@ namespace QuickShare.Droid.Activities
         {
             var settings = new Classes.Settings(this);
 
-            Intent i = new Intent(this, settings.Theme == AppTheme.Dark ? typeof(BackHandlingFilePickerActivityDark) : typeof(BackHandlingFilePickerActivityLight));
-            
-            i.PutExtra(FilePickerActivity.ExtraAllowMultiple, true);
-            i.PutExtra(FilePickerActivity.ExtraAllowCreateDir, false);
-            i.PutExtra(FilePickerActivity.ExtraMode, FilePickerActivity.ModeFileAndDir);
+            if (settings.UseSystemFilePicker)
+            {
+                Intent i = new Intent(Intent.ActionOpenDocument);
+                i.AddCategory(Intent.CategoryDefault);
+                i.PutExtra("android.content.extra.SHOW_ADVANCED", true);
+                i.PutExtra("android.content.extra.FANCY", true);
+                i.PutExtra("android.content.extra.SHOW_FILESIZE", true);
+                i.PutExtra(Intent.ExtraAllowMultiple, true);
+                i.SetType("*/*");
 
-            i.PutExtra(FilePickerActivity.ExtraStartPath, Android.OS.Environment.ExternalStorageDirectory.AbsolutePath);
+                StartActivityForResult(Intent.CreateChooser(i, "Select Files"), SystemFilePickerId);
+            }
+            else
+            {
+                Intent i = new Intent(this, settings.Theme == AppTheme.Dark ? typeof(BackHandlingFilePickerActivityDark) : typeof(BackHandlingFilePickerActivityLight));
 
-            StartActivityForResult(i, PickFileId);
+                i.PutExtra(FilePickerActivity.ExtraAllowMultiple, true);
+                i.PutExtra(FilePickerActivity.ExtraAllowCreateDir, false);
+                i.PutExtra(FilePickerActivity.ExtraMode, FilePickerActivity.ModeFileAndDir);
+
+                i.PutExtra(FilePickerActivity.ExtraStartPath, Android.OS.Environment.ExternalStorageDirectory.AbsolutePath);
+
+                StartActivityForResult(i, PickFileId);
+            }
         }
 
         private async Task RetrySendFiles()

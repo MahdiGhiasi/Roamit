@@ -156,7 +156,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
             var deviceId = GetDeviceUniqueId();
 
             var devices = await QuickShare.Common.Service.CloudClipboardService.GetDevices(accountId);
-            var currentDevice = devices.FirstOrDefault(x => x.DeviceID == deviceId);
+            var currentDevice = devices.FirstOrDefault(x => x?.DeviceID == deviceId);
 
             return currentDevice?.CloudClipboardEnabled ?? false;
         }
