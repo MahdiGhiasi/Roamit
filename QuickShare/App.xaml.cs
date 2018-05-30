@@ -83,7 +83,8 @@ namespace QuickShare
         {
             try
             {
-                var message = new MessageDialog(msg, "Unhandled exception occured.");
+                string appIdentity = $"({DeviceInfo.ApplicationName} {DeviceInfo.ApplicationVersionString} - {DeviceInfo.SystemArchitecture} {DeviceInfo.SystemFamily} {DeviceInfo.SystemVersion})\n";
+                var message = new MessageDialog(appIdentity + msg, "Unhandled exception occured.");
                 await message.ShowAsync();
             }
             catch { }
