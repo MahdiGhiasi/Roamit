@@ -48,7 +48,7 @@ namespace QuickShare
         {
             this.InitializeComponent();
 
-            ViewModel = new MainSendViewModel()
+            ViewModel = new MainSendViewModel(Dispatcher)
             {
                 SendStatus = "Connecting...",
                 ProgressIsIndeterminate = true,
@@ -116,6 +116,8 @@ namespace QuickShare
             if (Frame.BackStackDepth > 0)
                 if (Frame.BackStack[Frame.BackStackDepth - 1].SourcePageType == typeof(MainSend))
                     Frame.BackStack.RemoveAt(Frame.BackStackDepth - 1);
+
+            bool preserveFolderStructure = (Frame.BackStackDepth <= 0 || Frame.BackStack[Frame.BackStackDepth - 1].SourcePageType != typeof(PicturePicker));
 
             var rs = MainPage.Current.GetSelectedSystem();
 
@@ -233,7 +235,7 @@ namespace QuickShare
                     if (!isDestinationAndroid)
                         ViewModel.LeaveScreenOnNoticeVisibility = Visibility.Visible;
 
-                    fileTransferResult = await SendFile(rs, packageManager, deviceName);
+                    fileTransferResult = await SendFile(rs, packageManager, deviceName, preserveFolderStructure);
                     if (fileTransferResult != FileTransferResult.Successful)
                     {
                         succeed = false;
@@ -352,7 +354,7 @@ namespace QuickShare
             }
         }
 
-        private async Task<FileTransferResult> SendFile(object rs, IRomePackageManager packageManager, string deviceName)
+        private async Task<FileTransferResult> SendFile(object rs, IRomePackageManager packageManager, string deviceName, bool preserveFolderStructure)
         {
             string sendingText = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Sending file..." : "Sending files...";
 
@@ -368,11 +370,11 @@ namespace QuickShare
 
             ViewModel.SendStatus = "Preparing...";
 
-            using (FileSender fs = new FileSender(rs,
-                                                  new QuickShare.UWP.WebServerGenerator(),
-                                                  packageManager,
-                                                  FindMyIPAddresses(),
-                                                  deviceName))
+            using (FileSender2 fs = new FileSender2(rs,
+                                                   new QuickShare.UWP.WebServerGenerator(),
+                                                   packageManager,
+                                                   FindMyIPAddresses(),
+                                                   deviceName))
             {
                 ViewModel.ProgressMaximum = 1;
 
@@ -381,19 +383,28 @@ namespace QuickShare
                     if (ee.State == FileTransferState.Error)
                     {
                         result = FileTransferResult.FailedOnSend;
-                        message = ee.Message;
+                        message = result.ToString(); // TODO
+                    }
+                    else if (ee.State == FileTransferState.Reconnecting)
+                    {
+                        ViewModel.SendStatus = "Reconnecting...";
+                        ViewModel.ProgressIsIndeterminate = true;
+                    }
+                    else if (ee.State == FileTransferState.Reconnected)
+                    {
+                        ViewModel.SendStatus = "Waiting for response...";
                     }
                     else
                     {
                         await DispatcherEx.RunOnCoreDispatcherIfPossible(() =>
                         {
                             ViewModel.SendStatus = sendingText;
-                            ViewModel.ProgressMaximum = (int)ee.Total + 1;
-                            ViewModel.ProgressValue = (int)ee.CurrentPart;
+                            ViewModel.ProgressMaximum = 1.0;
+                            ViewModel.ProgressValue = ee.Progress;
                             ViewModel.ProgressIsIndeterminate = false;
 
-                            if (ee.TotalBytesTransferred > 0)
-                                ViewModel.ProgressCaption = StringFunctions.GetSizeString(ee.TotalBytesTransferred);
+                            if (ee.TotalTransferredBytes > 0)
+                                ViewModel.ProgressCaption = StringFunctions.GetSizeString(ee.TotalTransferredBytes);
                         }, false);
                     }
                 };
@@ -404,32 +415,13 @@ namespace QuickShare
                     ViewModel.ProgressIsIndeterminate = false;
                     return FileTransferResult.NoFiles;
                 }
-                else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile))
+                
+                await Task.Run(async () =>
                 {
-                    await Task.Run(async () =>
-                    {
-                        result = await fs.SendFile(sendFileCancellationTokenSource.Token, new PCLStorage.WinRTFile(SendDataTemporaryStorage.Files[0] as StorageFile));
-                    });
-                }
-                else if ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFolder))
-                {
-                    var folder = SendDataTemporaryStorage.Files[0] as StorageFolder;
-
-                    await Task.Run(async () =>
-                    {
-                        result = await fs.SendQueue(sendFileCancellationTokenSource.Token, await GetFilesOfFolder(folder), folder.DisplayName);
-                    });
-                }
-                else
-                {
-                    await Task.Run(async () =>
-                    {
-                        result = await fs.SendQueue(sendFileCancellationTokenSource.Token, 
-                            await GetFiles(SendDataTemporaryStorage.Files),
-                            DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "\\");
-                    });
-                }
-
+                    result = await fs.Send(preserveFolderStructure ? await GetFiles(SendDataTemporaryStorage.Files) : await GetFilesWithoutFolderStructure(SendDataTemporaryStorage.Files), 
+                        sendFileCancellationTokenSource.Token);
+                });
+                
                 ViewModel.ProgressValue = ViewModel.ProgressMaximum;
             }
 
@@ -460,7 +452,7 @@ namespace QuickShare
             {
                 await SendFinishService(packageManager);
 
-                ViewModel.SendStatus = "Finished.";
+                ViewModel.SendStatus = "Done.";
             }
 
             return result;
@@ -499,12 +491,12 @@ namespace QuickShare
             }            
         }
 
-        private async Task<List<Tuple<string, IFile>>> GetFiles(List<IStorageItem> items, string relPath = "")
+        private async Task<List<FileSendInfo>> GetFilesWithoutFolderStructure(IEnumerable<IStorageItem> items)
         {
-            var output = new List<Tuple<string, IFile>>();
+            var output = new List<FileSendInfo>();
 
             var files = items.Where(x => x is StorageFile)
-                .Select(x => new Tuple<string, IFile>(relPath, new WinRTFile(x as StorageFile)));
+                .Select(x => new FileSendInfo(new WinRTFile(x as StorageFile)));
             var folders = items.Where(x => x is StorageFolder)
                 .Select(x => x as StorageFolder);
 
@@ -512,22 +504,52 @@ namespace QuickShare
 
             foreach (var folder in folders)
             {
-                output.AddRange(await GetFilesOfFolder(folder, relPath));
+                output.AddRange(await GetFilesWithoutFolderStructure(await folder.GetItemsAsync()));
             }
 
             return output;
         }
 
-        private async Task<List<Tuple<string, IFile>>> GetFilesOfFolder(StorageFolder f, string relPath = "")
+        private async Task<List<FileSendInfo>> GetFiles(List<IStorageItem> items)
         {
-            List<Tuple<string, IFile>> files = (from x in await f.GetFilesAsync()
-                                                select new Tuple<string, IFile>(relPath + f.Name + "\\", new WinRTFile(x))).ToList();
+            var output = new List<FileSendInfo>();
+
+            var files = items.Where(x => x is StorageFile)
+                .Select(x => new FileSendInfo(new WinRTFile(x as StorageFile), Path.GetDirectoryName(x.Path)));
+            var folders = items.Where(x => x is StorageFolder)
+                .Select(x => x as StorageFolder);
+
+            var paths = files
+                .Select(x => Path.GetDirectoryName(x.File.Path))
+                .Union(folders.Select(x => x.Path))
+                .Distinct();
+            var rootFolderPath = new string(paths.Select(str => str.TakeWhile((c, index) => paths.All(s => s[index] == c))).FirstOrDefault().ToArray());
+            if (folders.Count() == 1 && files.Count() == 0) // In case it's a single folder, exclude the folder name
+                rootFolderPath = Path.GetDirectoryName(rootFolderPath) ?? rootFolderPath; 
+
+            output.AddRange(files);
+            
+            foreach (var folder in folders)
+            {
+                output.AddRange(await GetFilesOfFolder(folder, rootFolderPath));
+            }
+
+            return output;
+        }
+
+        private async Task<List<FileSendInfo>> GetFilesOfFolder(StorageFolder f, string rootFolder = null)
+        {
+            if (rootFolder == null)
+                rootFolder = f.Path;
+
+            List<FileSendInfo> files = (from x in await f.GetFilesAsync()
+                                        select new FileSendInfo(new WinRTFile(x), rootFolder)).ToList();
 
             var folders = await f.GetFoldersAsync();
 
             foreach (var folder in folders)
             {
-                files.AddRange(await GetFilesOfFolder(folder, relPath + f.Name + "\\"));
+                files.AddRange(await GetFilesOfFolder(folder, rootFolder));
             }
 
             return files;
@@ -563,7 +585,7 @@ namespace QuickShare
             if (sendResult)
             {
                 await SendFinishService(packageManager);
-                ViewModel.SendStatus = "Finished.";
+                ViewModel.SendStatus = "Done.";
             }
             else
             {
@@ -595,7 +617,7 @@ namespace QuickShare
 
         private void SendTextFinished(string errorMessage)
         {
-            ViewModel.SendStatus = (errorMessage.Length == 0) ? "Finished." : errorMessage;
+            ViewModel.SendStatus = (errorMessage.Length == 0) ? "Done." : errorMessage;
             ViewModel.ProgressIsIndeterminate = false;
             ViewModel.ProgressMaximum = 100;
             ViewModel.ProgressValue = ViewModel.ProgressMaximum;

@@ -16,10 +16,10 @@ namespace QuickShare
 {
     internal static class NotificationHandler
     {
-        internal static async Task HandleAsync(FileTransferProgressEventArgs e)
+        internal static async Task HandleAsync(FileTransfer2ProgressEventArgs e)
         {
 #if NOTIFICATIONHANDLER_DEBUGINFO
-            Debug.WriteLine("Notification received: " + e.CurrentPart + " / " + e.Total + " (" + e.State.ToString() + ")");
+            Debug.WriteLine("Notification received: " + e.Progress + " (" + e.State.ToString() + ")");
 #endif
             bool UISuccess = false;
             if ((CoreApplication.MainView.CoreWindow?.Dispatcher != null) && (MainPage.Current != null))

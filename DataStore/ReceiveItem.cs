@@ -18,6 +18,9 @@ namespace QuickShare.DataStore
         public string StorePath { get; set; }
         public string Name { get; set; }
         public long Size { get; set; }
+        public bool? Completed { get; set; }
+        public bool? DownloadStarted { get; set; }
+        public string OriginalName { get; set; }
     }
 
     public class ReceivedText : IReceivedData

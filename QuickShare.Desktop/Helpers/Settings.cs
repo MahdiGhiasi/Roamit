@@ -25,10 +25,15 @@ namespace QuickShare.Desktop.Helpers
                 {
                     var json = File.ReadAllText(storageFile);
                     Data = JsonConvert.DeserializeObject<SettingsData>(json);
+
+                    if (Data == null)
+                        throw new Exception("Data is null");
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Failed to read config: {ex.Message}");
+
+                    Data = new SettingsData();
                 }
             }
         }

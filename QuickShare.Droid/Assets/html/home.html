@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="style.css">
 
     <script>
-        var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview, showSearchSpinner, hideSearchSpinner;
+        var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview, showSearchSpinner, hideSearchSpinner, showProgressButtons, hideProgressButtons, setProgressSubtext;
         var allowRedirects = true; //false only when debugging on browser.
 
         $(document).ready(function () {
@@ -138,7 +138,15 @@
                     
             }
 
+            function resetProgress() {
+                setProgressText("‌"); //This is not empty. it contains a zero-width joiner.
+                setProgressSubtext("");
+                hideProgressButtons();
+                setProgressValue(-1);
+            }
+
             showProgress = function () {
+                resetProgress();
                 window.location.hash = "progress";
             }
 
@@ -199,6 +207,16 @@
                 }, 125);
             }
 
+            showProgressButtons = function () {
+                $(".spinner-container").addClass("hidden");
+                $(".progress-status-buttons").addClass("visible");
+            }
+
+            hideProgressButtons = function () {
+                $(".progress-status-buttons").removeClass("visible");
+                $(".spinner-container").removeClass("hidden");
+            }
+
             hideSearchSpinner = function () {
                 $(".footer-spinner-container").css("display", "none");
             }
@@ -212,7 +230,11 @@
             }
 
             setProgressText = function(_text) {
-                $(".progress-status").text(_text);
+                $(".progress-status:first").text(_text);
+            }
+
+            setProgressSubtext = function (_text) {
+                $(".progress-status-subtitle").text(_text);
             }
 
             setProgressValue = function(_d) {
@@ -340,11 +362,17 @@
                 var type = window.location.hash.substr(1);
                 if (type == "progress") {
                     $(".progress").addClass("progress-show");
-                    setProgressText("‌"); //This is not empty. it contains a zero-width joiner.
-                    setProgressValue(-1);
+                    resetProgress();
+
+                    setTimeout(function () {
+                        $(".progress").addClass("progress-show-finishedanim");
+                    });
                 }
                 else {
-                    $(".progress").removeClass("progress-show");
+                    $(".progress").removeClass("progress-show-finishedanim");
+                    setTimeout(function () {
+                        $(".progress").removeClass("progress-show");
+                    }, 200);
                 }
 				
                 if ((type.substr(0, 5) == "share") || (type.substr(0, 5) == "shar2")) {
@@ -445,6 +473,14 @@
                 }, 100);
             });
 
+            $(document).on("click", ".sendRetryButton", function () {
+                redirect("sendFileActionRetry.html");
+            });
+
+            $(document).on("click", ".sendCancelButton", function () {
+                redirect("sendFileActionCancel.html");
+            });
+
             $("#sendFileButton").on("click", function () {
                 redirect("sendFile.html");
             });
@@ -455,6 +491,10 @@
 
             $("#sendClipboardButton").on("click", function () {
                 redirect("sendClipboard.html");
+            });
+
+            $("#historyButton").on("click", function () {
+                redirect("history.html");
             });
 
             $("#sendUrlButton").on("click", function () {
@@ -476,9 +516,12 @@
                 <span class="mdl-layout-title"></span>
                 <div class="mdl-layout-spacer"></div>
                 <!-- Right aligned menu below button -->
+                <button id="historyButton" class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="material-icons">history</i>
+                </button>
                 <button id="demo-menu-lower-right" class="mdl-button mdl-js-button mdl-button--icon">
                     <i class="material-icons">more_vert</i>
-                    </button>
+                </button>
 
                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-right">
                     <li class="mdl-menu__item menuItem" data-destination="settings.html">Settings</li>
@@ -579,9 +622,14 @@
                 </ul>
             </div>
         </main>
-        <div class="progress opacity-animation">
+        <div class="progress">
             <div class="progress-content">
                 <div class="progress-status">...</div>
+                <div class="progress-status progress-status-subtitle"></div>
+                <div class="progress-status-buttons">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect sendCancelButton">Cancel</button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent sendRetryButton">Retry</button>
+                </div>
                 <div class="spinner-container progress-spinner">
                     <div style="position:absolute">
                         <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active progress-spinner spinner-hidden" id="spinner1"></div>

@@ -48,8 +48,8 @@ namespace QuickShare.ServiceTask
                 _appServiceconnection.RequestReceived += OnRequestReceived;
                 _appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed;
 
-                FileTransfer.FileReceiver.ClearEventRegistrations();
-                FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
+                FileTransfer.FileReceiver2.ClearEventRegistrations();
+                FileTransfer.FileReceiver2.FileTransferProgress += FileReceiver_FileTransferProgress;
 
                 TextTransfer.TextReceiver.ClearEventRegistrations();
                 TextTransfer.TextReceiver.TextReceiveFinished += TextReceiver_TextReceiveFinished;
@@ -106,7 +106,8 @@ namespace QuickShare.ServiceTask
                     }
                     else if (receiver == "FileReceiver")
                     {
-                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, DecideDownloadFolder);
+                        await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, new DownloadFolderDecider(),
+                            async s => { return new WinRTFolder(await StorageFolder.GetFolderFromPathAsync(s)); });
                     }
                     else if (receiver == "TextReceiver")
                     {
@@ -144,11 +145,6 @@ namespace QuickShare.ServiceTask
             {
                 requestDeferral?.Complete();
             }
-        }
-
-        private async Task<IFolder> DecideDownloadFolder(string[] fileTypes)
-        {
-            return await DownloadFolderDecider.DecideAsync(fileTypes);
         }
 
         public static void SendToast(string text)
@@ -204,7 +200,7 @@ namespace QuickShare.ServiceTask
             return true;
         }
 
-        private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransferProgressEventArgs e)
+        private async void FileReceiver_FileTransferProgress(FileTransfer.FileTransfer2ProgressEventArgs e)
         {
             ShowFileTransferProgressToast(e);
 
@@ -245,7 +241,7 @@ namespace QuickShare.ServiceTask
             notificationSemaphoreSlim.Release();
         }
 
-        private void ShowFileTransferProgressToast(FileTransfer.FileTransferProgressEventArgs e)
+        private void ShowFileTransferProgressToast(FileTransfer.FileTransfer2ProgressEventArgs e)
         {
             if (e.State == FileTransferState.Finished)
             {
@@ -253,12 +249,11 @@ namespace QuickShare.ServiceTask
             }
             else if (e.State == FileTransferState.Error)
             {
-                Toaster.ShowFileReceiveFailedNotification(e.Guid);
+                Toaster.ShowFileReceiveFailedNotification(e.Guid, e.Exception);
             }
             else
             {
-                double percent = ((double)e.CurrentPart) / ((double)e.Total);
-                Toaster.ShowFileReceiveProgressNotification(e.SenderName, e.Total == 0 ? -1.0 : percent, e.TotalBytesTransferred, e.Guid);
+                Toaster.ShowFileReceiveProgressNotification(e.SenderName, e.Progress, e.TotalTransferredBytes, e.Guid);
             }
         }
 

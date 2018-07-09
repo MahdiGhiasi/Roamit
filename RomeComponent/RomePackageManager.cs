@@ -136,6 +136,11 @@ namespace QuickShare.UWP.Rome
             await (new MessageDialog("RECEIVED!")).ShowAsync();
         }
 
+        public async Task<RomeAppServiceConnectionStatus> Connect()
+        {
+            return await Connect(this.remoteSystem, this.keepCurrentConnectionAlive);
+        }
+
         public async Task<RomeAppServiceConnectionStatus> Connect(object _remoteSystem, bool keepAlive)
         {
             return await Connect(_remoteSystem, keepAlive, null);

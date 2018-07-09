@@ -16,6 +16,9 @@ namespace QuickShare.FileTransfer
         public delegate void IPDetectionCompletedEventHandler(object sender, IPDetectionCompletedEventArgs e);
         public event IPDetectionCompletedEventHandler IPDetectionCompleted;
 
+        public delegate void ReceiveFileProgressEventHandler();
+        public static event ReceiveFileProgressEventHandler IPDetectionFailed;
+
         List<KeyValuePair<string, IWebServer>> servers;
 
         IWebServerGenerator webServerGenerator;
@@ -27,7 +30,7 @@ namespace QuickShare.FileTransfer
             packageManager = _packageManager;
         }
 
-        public async Task<bool> StartFindingMyLocalIP(List<string> myIPs)
+        public async Task<bool> StartFindingMyLocalIP(IEnumerable<string> myIPs)
         {
             var key = RandomFunctions.RandomString(10);
 
@@ -35,11 +38,13 @@ namespace QuickShare.FileTransfer
 
             System.Diagnostics.Debug.WriteLine("Waiting...");
 
-            Dictionary<string, object> vs = new Dictionary<string, object>();
-            vs.Add("Receiver", "ServerIPFinder");
-            vs.Add("IPs", JsonConvert.SerializeObject(myIPs));
-            vs.Add("DefaultMessage", webServerGenerator.GenerateInstance().DefaultRootPage());
-            vs.Add("InterruptKey", key);
+            Dictionary<string, object> vs = new Dictionary<string, object>
+            {
+                { "Receiver", "ServerIPFinder" },
+                { "IPs", JsonConvert.SerializeObject(myIPs) },
+                { "DefaultMessage", webServerGenerator.GenerateInstance().DefaultRootPage() },
+                { "InterruptKey", key }
+            };
 
             var response = await packageManager.Send(vs);
             if (response.Status == RomeAppServiceResponseStatus.Success)
@@ -102,7 +107,7 @@ namespace QuickShare.FileTransfer
             return "success";
         }
 
-        private List<KeyValuePair<string, IWebServer>> StartListeners(List<string> IPs, string communicationKey)
+        private List<KeyValuePair<string, IWebServer>> StartListeners(IEnumerable<string> IPs, string communicationKey)
         {
             var servers = new List<KeyValuePair<string, IWebServer>>();
 
@@ -126,6 +131,7 @@ namespace QuickShare.FileTransfer
         public static async Task ReceiveRequest(Dictionary<string, object> request)
         {
             string interruptKey = "";
+            FileReceiver2.InitHandshakerEvents();
 
             try
             {
@@ -161,6 +167,7 @@ namespace QuickShare.FileTransfer
                 {
                     await NotifySender(senderIP, interruptKey, "success=false&message=" + System.Net.WebUtility.UrlEncode(ex.Message));
                 }
+                IPDetectionFailed?.Invoke();
             }
         }
 
@@ -223,6 +230,11 @@ namespace QuickShare.FileTransfer
                     item.Value.StopListener();
                     item.Value.Dispose();
                 }
+        }
+
+        public static void ClearEventRegistrations()
+        {
+            IPDetectionFailed = null;
         }
     }
 }

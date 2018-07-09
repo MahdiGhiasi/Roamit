@@ -53,6 +53,11 @@ namespace QuickShare.DataStore
             return data.Find(x => (x.Completed == true)).OrderByDescending(x => x.ReceiveTime).Skip(startIndex).Take(count);
         }
 
+        public int GetCount()
+        {
+            return data.Count(x => (x.Completed == true));
+        }
+
         public void ChangeCompletedStatus(Guid guid, bool isCompleted)
         {
             var item = GetItem(guid);
@@ -77,6 +82,59 @@ namespace QuickShare.DataStore
                 return;
 
             file.Name = newName;
+
+            data.Update(guid, item);
+        }
+
+        public void MarkFileAsCompleted(Guid guid, string fileName, string path)
+        {
+            System.Diagnostics.Debug.WriteLine($"Marked {fileName} ({guid}) as completed.");
+
+            var item = GetItem(guid);
+            var d = item.Data as ReceivedFileCollection;
+
+            if (d == null)
+                return;
+
+            var file = d.Files.LastOrDefault(x => (x.Name == fileName && (x.StorePath == path || x.StorePath == (path + "\\"))));
+
+            if (file == null)
+                return;
+
+            file.Completed = true;
+
+            data.Update(guid, item);
+        }
+
+        public ReceivedFile GetFileFromOriginalName(Guid guid, string originalFileName, string path)
+        {
+            var item = GetItem(guid);
+            var d = item.Data as ReceivedFileCollection;
+
+            if (d == null)
+                return null;
+
+            var file = d.Files.LastOrDefault(x => (x.OriginalName == originalFileName && (x.StorePath == path || x.StorePath == (path + "\\"))));
+
+            return file;
+        }
+
+        public void SetDownloadStarted(Guid guid, string fileName, string path)
+        {
+            System.Diagnostics.Debug.WriteLine($"Set DownloadStarted = true for {fileName} ({guid}).");
+
+            var item = GetItem(guid);
+            var d = item.Data as ReceivedFileCollection;
+
+            if (d == null)
+                return;
+
+            var file = d.Files.LastOrDefault(x => (x.Name == fileName && (x.StorePath == path || x.StorePath == (path + "\\"))));
+
+            if (file == null)
+                return;
+
+            file.DownloadStarted = true;
 
             data.Update(guid, item);
         }

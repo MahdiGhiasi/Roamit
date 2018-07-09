@@ -17,16 +17,18 @@ namespace QuickShare.Droid.Classes
 {
     internal class ProgressNotifier
     {
-        readonly TimeSpan _minimumTimeBetweenNotifs = TimeSpan.FromSeconds(0.5);
+        static int lastNotifId = 1000;
+
+        readonly TimeSpan _minimumTimeBetweenNotifs = TimeSpan.FromSeconds(1);
         readonly TimeSpan _minimumTimeBetweenFinalNotifAndPrev = TimeSpan.FromSeconds(1.5);
         readonly TimeSpan _timeoutSpan = TimeSpan.FromSeconds(20);
 
         // We have just one progress notification, but 
         // more than one finish notifications.
-        static int id = Notification.GetNewNotifId();
         Context context;
         NotificationManager notificationManager;
         NotificationCompat.Builder builder;
+        int notifId;
 
         DateTime lastProgressNotif = DateTime.MinValue;
 
@@ -34,12 +36,30 @@ namespace QuickShare.Droid.Classes
 
         string failedMessage;
 
+        public ProgressNotifier(Context _context) :
+            this(_context, "")
+        {
+        }
+
+
         public ProgressNotifier(Context _context, string _failedMessage)
         {
             context = _context;
             failedMessage = _failedMessage;
 
             notificationManager = NotificationManager.FromContext(_context);
+            RefreshNotifId();
+        }
+
+        private void RefreshNotifId()
+        {
+            notifId = GetNewNotifId();
+        }
+
+        private int GetNewNotifId()
+        {
+            lastNotifId++;
+            return lastNotifId;
         }
 
         public void SendInitialNotification(string title, string text)
@@ -50,7 +70,7 @@ namespace QuickShare.Droid.Classes
                 .SetSmallIcon(Resource.Drawable.Icon)
                 .SetProgress(0, 0, true);
 
-            notificationManager.Notify(id, builder.Build());
+            notificationManager.Notify(notifId, builder.Build());
             lastProgressNotif = DateTime.Now;
 
             Timeout();
@@ -71,8 +91,11 @@ namespace QuickShare.Droid.Classes
                 return;
 
             lastActivityGuid = Guid.Empty;
+            notificationManager.Cancel(notifId);
+            RefreshNotifId();
 
-            notificationManager.Cancel(id);
+            if (failedMessage.Length == 0)
+                return;
 
             builder = new NotificationCompat.Builder(context)
                 .SetContentTitle(failedMessage)
@@ -80,7 +103,7 @@ namespace QuickShare.Droid.Classes
                 .SetSmallIcon(Resource.Drawable.Icon)
                 .SetProgress(0, 0, false);
 
-            notificationManager.Notify(Notification.GetNewNotifId(), builder.Build());
+            notificationManager.Notify(notifId, builder.Build());
         }
 
         public void UpdateTitle(string title)
@@ -90,7 +113,7 @@ namespace QuickShare.Droid.Classes
 
             builder.SetContentTitle(title);
 
-            notificationManager.Notify(id, builder.Build());
+            notificationManager.Notify(notifId, builder.Build());
             lastProgressNotif = DateTime.Now;
 
             Timeout();
@@ -108,7 +131,7 @@ namespace QuickShare.Droid.Classes
                 .SetContentTitle(title)
                 .SetContentText($"{percent}%");
 
-            notificationManager.Notify(id, builder.Build());
+            notificationManager.Notify(notifId, builder.Build());
             lastProgressNotif = DateTime.Now;
 
             Timeout();
@@ -119,7 +142,7 @@ namespace QuickShare.Droid.Classes
             builder.SetProgress(0, 0, true)
                 .SetContentText(text);
 
-            notificationManager.Notify(id, builder.Build());
+            notificationManager.Notify(notifId, builder.Build());
 
             Timeout();
         }
@@ -128,10 +151,10 @@ namespace QuickShare.Droid.Classes
         {
             lastActivityGuid = Guid.Empty;
 
-            if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenFinalNotifAndPrev)
-                await Task.Delay(DateTime.Now - lastProgressNotif);
+            await WaitForNotificationUpdateThreshold();
 
-            notificationManager.Cancel(id);
+            notificationManager.Cancel(notifId);
+            RefreshNotifId();
 
             builder = new NotificationCompat.Builder(context)
                 .SetSmallIcon(Resource.Drawable.Icon)
@@ -140,21 +163,22 @@ namespace QuickShare.Droid.Classes
                 .SetContentTitle(title)
                 .SetContentText(text)
                 .SetProgress(0, 0, false)
+                .SetAutoCancel(true)
                 .SetStyle(new NotificationCompat.BigTextStyle()
                     .SetBigContentTitle(title)
                     .BigText(text));
 
-            notificationManager.Notify(Notification.GetNewNotifId(), builder.Build());
+            notificationManager.Notify(notifId, builder.Build());
         }
 
         public async Task FinishProgress(string title, string text, Intent intent, Context _context)
         {
             lastActivityGuid = Guid.Empty;
 
-            if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenFinalNotifAndPrev)
-                await Task.Delay(DateTime.Now - lastProgressNotif);
+            await WaitForNotificationUpdateThreshold();
 
-            notificationManager.Cancel(id);
+            notificationManager.Cancel(notifId);
+            RefreshNotifId();
 
             builder = new NotificationCompat.Builder(_context)
                 .SetSmallIcon(Resource.Drawable.Icon)
@@ -162,23 +186,27 @@ namespace QuickShare.Droid.Classes
                 .SetPriority((int)NotificationPriority.Max)
                 .SetContentTitle(title)
                 .SetContentText(text)
-                .SetContentIntent(PendingIntent.GetActivity(_context, 0, intent, PendingIntentFlags.UpdateCurrent))
+                .SetContentIntent(PendingIntent.GetActivity(_context, GetNewNotifId(), intent, PendingIntentFlags.UpdateCurrent))
                 .SetProgress(0, 0, false)
+                .SetAutoCancel(true)
                 .SetStyle(new NotificationCompat.BigTextStyle()
                     .SetBigContentTitle(title)
                     .BigText(text));
             
-            notificationManager.Notify(Notification.GetNewNotifId(), builder.Build());
+            notificationManager.Notify(notifId, builder.Build());
         }
 
         internal async Task ClearProgressNotification()
         {
             lastActivityGuid = Guid.Empty;
+            await WaitForNotificationUpdateThreshold();
+            notificationManager.Cancel(notifId);
+        }
 
+        private async Task WaitForNotificationUpdateThreshold()
+        {
             if ((DateTime.Now - lastProgressNotif) < _minimumTimeBetweenFinalNotifAndPrev)
                 await Task.Delay(DateTime.Now - lastProgressNotif);
-
-            notificationManager.Cancel(id);
         }
     }
 }

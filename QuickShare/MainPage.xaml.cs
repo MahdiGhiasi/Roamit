@@ -84,7 +84,7 @@ namespace QuickShare
             Window.Current.Closed += Window_Closed;
         }
 
-        public async Task FileTransferProgress(FileTransferProgressEventArgs e)
+        public async Task FileTransferProgress(FileTransfer2ProgressEventArgs e)
         {
             if (ContentFrame.CurrentSourcePageType == typeof(MainReceive))
             {
@@ -116,7 +116,7 @@ namespace QuickShare
                     PersistentDisplay.ActivatePersistentDisplay();
 
                     statusBar.ProgressIndicator.Text = "Receiving...";
-                    statusBar.ProgressIndicator.ProgressValue = ((double)e.CurrentPart) / (double)(e.Total + 1);
+                    statusBar.ProgressIndicator.ProgressValue = e.Progress;
                     await statusBar.ProgressIndicator.ShowAsync();
                 }
             }
@@ -139,7 +139,7 @@ namespace QuickShare
             }
             else
             {
-                ViewModel.Caption = "Receiving " + ((int)Math.Round((100.0 * e.CurrentPart) / (e.Total + 1))).ToString() + "%";
+                ViewModel.Caption = $"Receiving {(int)Math.Round(100.0 * e.Progress)}%";
             }
         }
 
@@ -155,6 +155,10 @@ namespace QuickShare
         {
             if ((ContentFrame.Content is MainActions) || (ContentFrame.Content is MainShareTarget))
                 return;
+
+            if (ContentFrame.Content is MainSendFailed)
+                while (ContentFrame.BackStackDepth > 0 && ContentFrame.BackStack[ContentFrame.BackStackDepth - 1].SourcePageType == typeof(MainSend))
+                    ContentFrame.BackStack.RemoveAt(ContentFrame.BackStackDepth - 1);
 
             e.Handled = true;
             if (ContentFrame.CanGoBack)
@@ -278,9 +282,10 @@ namespace QuickShare
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("AppLoadTime", loadTimeString).Build());
             }
 #endif
-
-            PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
-                                                                                                          DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
+            
+            PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(item => item.IsAvailable,
+                DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
+                DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
             await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)27 : (uint)80);
         }
 
@@ -425,7 +430,7 @@ namespace QuickShare
         }
 
         bool alreadyDiscovered = false;
-        internal async Task<bool> DiscoverOtherDevices(bool force = false)
+        internal async Task<bool> DiscoverOtherDevices(bool force = false, bool forceSelectHighScore = false)
         {
             if (!SecureKeyStorage.IsUserIdStored())
                 return false;
@@ -435,17 +440,19 @@ namespace QuickShare
             alreadyDiscovered = true;
 
             var userId = SecureKeyStorage.GetUserId();
-            var devices = await Common.Service.DevicesLoader.GetAndroidDevices(userId);
+            var devices = await Common.Service.Device.GetAndroidDevices(userId);
 
             foreach (var item in devices)
                 if (ViewModel.ListManager.RemoteSystems.FirstOrDefault(x => x.Id == item.Id) == null) //if not already exists
                     ViewModel.ListManager.AddDevice(item);
 
-            if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!IsUserSelectedRemoteSystemManually) && (AllowedToChangeSelectedRemoteSystem()))
+            if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (((!IsUserSelectedRemoteSystemManually) && (AllowedToChangeSelectedRemoteSystem())) || forceSelectHighScore))
                 ViewModel.ListManager.SelectHighScoreItem();
             ViewModel.RemoteSystemCollectionChanged();
 
-            await Common.Service.DevicesLoader.WakeAndroidDevices(userId);
+            PackageManagerHelper.InitAndroidPackageManagerMode();
+            if (AndroidPackageManager.Mode == AndroidRomePackageManager.AndroidPackageManagerMode.MessageCarrier)
+                await Common.Service.Device.WakeAndroidDevices(userId);
 
             return true;
         }

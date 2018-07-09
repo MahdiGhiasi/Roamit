@@ -13,6 +13,8 @@ using Android.Provider;
 using Android.Util;
 using Uri = Android.Net.Uri;
 using Android.Database;
+using Android.Net;
+using System.Runtime.Serialization;
 
 namespace QuickShare.Droid.Classes
 {
@@ -69,16 +71,23 @@ namespace QuickShare.Droid.Classes
                         return Android.OS.Environment.ExternalStorageDirectory + "/" + split[1];
                     }
 
+                    throw new NonPrimaryExternalStorageNotSupportedException();
                     // TODO handle non-primary volumes
                 }
                 // DownloadsProvider
                 else if (IsDownloadsDocument(uri))
                 {
-
                     string id = DocumentsContract.GetDocumentId(uri);
-                    Uri contentUri = ContentUris.WithAppendedId(Uri.Parse("content://downloads/public_downloads"), long.Parse(id));
 
-                    return GetDataColumn(context, contentUri, null, null);
+                    if (id.Length > 4 && id.Substring(0, 4) == "raw:")
+                    {
+                        return id.Substring(4);
+                    }
+                    else
+                    {
+                        Uri contentUri = ContentUris.WithAppendedId(Uri.Parse("content://downloads/public_downloads"), long.Parse(id));
+                        return GetDataColumn(context, contentUri, null, null);
+                    }
                 }
                 // MediaProvider
                 else if (IsMediaDocument(uri))
@@ -226,6 +235,16 @@ namespace QuickShare.Droid.Classes
             return null;
         }
 
+        internal static string GetPathForDocTree(Context context, Uri uri)
+        {
+            var docUri = DocumentsContract.BuildDocumentUriUsingTree(uri,
+                        DocumentsContract.GetTreeDocumentId(uri));
+            string path = GetPath(context, docUri);
+            return path;
+        }
+    }
 
+    internal class NonPrimaryExternalStorageNotSupportedException : Exception
+    {
     }
 }

@@ -13,6 +13,7 @@ namespace QuickShare.ToastNotifications
     public static partial class Toaster
     {
         static string[] notDirectlyOpenableExtensions = { ".exe" };
+        static string[] pictureFileExtensions = { ".png", ".jpg", ".jpeg", ".bmp", ".gif" };
 
         public static async void ShowFileReceiveFinishedNotification(int filesCount, string hostName, Guid guid)
         {
@@ -32,11 +33,17 @@ namespace QuickShare.ToastNotifications
             if (filesCount == 1)
             {
                 var fileName = (data.Data as ReceivedFileCollection).Files[0].Name;
+                var path = (data.Data as ReceivedFileCollection).Files[0].StorePath;
 
-                if (notDirectlyOpenableExtensions.Contains(System.IO.Path.GetExtension(fileName)))
+                if (notDirectlyOpenableExtensions.Contains(System.IO.Path.GetExtension(fileName).ToLower()))
                     toastXml = Templates.SingleFileReceivedWithNoOpenFileButton.Replace("{title}", $"1 file received from {hostName}")
                                                                                .Replace("{subtitle}", $"You can find it in '{savePath}'")
                                                                                .Replace("{guid}", guid.ToString());
+                else if (pictureFileExtensions.Contains(System.IO.Path.GetExtension(fileName).ToLower()))
+                    toastXml = Templates.SinglePhotoReceived.Replace("{title}", $"Save successful")
+                                                            .Replace("{subtitle}", $"You can find the received file in '{savePath}'")
+                                                            .Replace("{heroImagePath}", System.IO.Path.Combine(path, fileName))
+                                                            .Replace("{guid}", guid.ToString());
                 else
                     toastXml = Templates.SingleFileReceived.Replace("{title}", $"1 file received from {hostName}")
                                                            .Replace("{subtitle}", $"You can find it in '{savePath}'")
@@ -83,7 +90,7 @@ namespace QuickShare.ToastNotifications
             {
                 var fileName = (data.Data as ReceivedFileCollection).Files[0].Name;
 
-                if (notDirectlyOpenableExtensions.Contains(System.IO.Path.GetExtension(fileName)))
+                if (notDirectlyOpenableExtensions.Contains(System.IO.Path.GetExtension(fileName).ToLower()))
                     toastXml = Templates.SaveAsSuccessfulSingleFileNoOpenFile.Replace("{title}", $"Save successful")
                                                                              .Replace("{subtitle}", $"You can find the received file in '{savePath}'")
                                                                              .Replace("{guid}", guid.ToString());

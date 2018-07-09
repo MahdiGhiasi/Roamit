@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using PCLStorage;
 using QuickShare.Common;
+using QuickShare.Common.Interfaces;
 using QuickShare.DataStore;
+using QuickShare.FileTransfer.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,7 +39,7 @@ namespace QuickShare.FileTransfer
 
         static ulong totalBytesReceived = 0;
 
-        public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
+        public static async Task<Dictionary<string, object>> ReceiveRequest(Dictionary<string, object> request, IDownloadFolderDecider downloadFolderDecider)
         {
             Dictionary<string, object> returnVal = new Dictionary<string, object>();
 
@@ -72,7 +74,7 @@ namespace QuickShare.FileTransfer
             return returnVal;
         }
 
-        private static async Task ProcessSingularFile(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
+        private static async Task ProcessSingularFile(Dictionary<string, object> request, IDownloadFolderDecider downloadFolderDecider)
         {
             //Singular file
             filesCount = 1;
@@ -81,7 +83,7 @@ namespace QuickShare.FileTransfer
             isQueue = false;
             totalBytesReceived = 0;
 
-            var downloadFolder = await downloadFolderDecider(new string[] { Path.GetExtension((string)request["FileName"]) });
+            var downloadFolder = await downloadFolderDecider.DecideAsync(new string[] { Path.GetExtension((string)request["FileName"]) });
 
             await DataStorageProviders.HistoryManager.OpenAsync();
             DataStorageProviders.HistoryManager.Add(requestGuid,
@@ -110,7 +112,7 @@ namespace QuickShare.FileTransfer
             DataStorageProviders.HistoryManager.Close();
         }
 
-        private static async Task ProcessQueueItemGroup(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
+        private static async Task ProcessQueueItemGroup(Dictionary<string, object> request, IDownloadFolderDecider downloadFolderDecider)
         {
             if (queuedSlicesYet < queueTotalSlices) //Ignore if queue already started processing
             {
@@ -135,7 +137,7 @@ namespace QuickShare.FileTransfer
             }
         }
 
-        private static async Task InitQueue(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider, Dictionary<string, object> returnVal)
+        private static async Task InitQueue(Dictionary<string, object> request, IDownloadFolderDecider downloadFolderDecider, Dictionary<string, object> returnVal)
         {
             isQueue = true;
             queueTotalSlices = (long)request["TotalSlices"];
@@ -194,7 +196,7 @@ namespace QuickShare.FileTransfer
             }
         }
 
-        private static async Task ProcessQueueItem(Dictionary<string, object> request, Func<string[], Task<IFolder>> downloadFolderDecider)
+        private static async Task ProcessQueueItem(Dictionary<string, object> request, IDownloadFolderDecider downloadFolderDecider)
         {
             //Queue data details
             queuedSlicesYet += (int)(long)request["SlicesCount"];
@@ -216,9 +218,9 @@ namespace QuickShare.FileTransfer
             FileTransferProgress = null;
         }
 
-        private static async Task BeginProcessingQueue(Func<string[], Task<IFolder>> downloadFolderDecider)
+        private static async Task BeginProcessingQueue(IDownloadFolderDecider downloadFolderDecider)
         {
-            var downloadFolder = await downloadFolderDecider(queueItems.Select(x => Path.GetExtension((string)x["FileName"])).ToArray());
+            var downloadFolder = await downloadFolderDecider.DecideAsync(queueItems.Select(x => Path.GetExtension((string)x["FileName"])).ToArray());
 
             string queueParentDirectory2 = await GetUniqueQueueParentDirectory(downloadFolder);
 

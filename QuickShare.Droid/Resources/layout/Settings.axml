@@ -34,18 +34,38 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/settings_deviceNameText"
                 android:text="Android" />
+            <TextView
+                android:text="File receive location"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView5"
+                android:layout_marginTop="16dp" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_fileReceiveLocationText"
+                android:text="/storage/"
+                android:singleLine="false"
+                android:inputType="none" />
+            <TextView
+                android:text="Group received files by"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView6"
+                android:layout_marginTop="16dp" />
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_groupReceivedBySpinner"
+                android:layout_marginBottom="4dp" />
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/settings_darkThemeSwitch"
                 android:layout_marginTop="16dp"
                 android:text="Dark theme" />
-            <TextView
-                android:text="You'll see the change next time you start the app."
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
             <TextView
                 android:text="Universal clipboard"
                 android:textAppearance="?android:attr/textAppearanceMedium"
@@ -62,29 +82,37 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="16dp" />
+            <TextView
+                android:text="You can enable Universal Clipboard from Roamit settings on your PC."
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_universalClipboardNotAvailable"
+                android:textStyle="bold" />
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/settings_cloudClipboardActiveSwitch"
                 android:text="Receive Universal clipboard on this device"
-                android:layout_marginBottom="24dp"
-                android:checked="false" />
+                android:checked="false"
+                android:layout_marginTop="10dp" />
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/settings_cloudClipboardModeSwitch"
-                android:text="Reflect clipboard changes automatically to this device" />
+                android:text="Reflect clipboard changes automatically to this device"
+                android:layout_marginTop="30dp" />
             <TextView
                 android:id="@+id/settings_cloudClipboardModeDescription"
                 android:text="If this option is turned off, a notification will appear in the notificaion center of this device containing latest clipboard text. Tapping it will copy it to the local clipboard of this device."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginTop="10dp" />
             <TextView
                 android:text="Advanced"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="30dp"
                 android:layout_marginBottom="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,25 +128,25 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp" />
-          <Switch
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/settings_showReceiveUIOnWindowsSwitch"
-    android:text="Show file receive progress on my Windows devices" />
-          <TextView
-              android:text="Disabling this might cause some issues with transferring large files for some users."
-              android:textAppearance="?android:attr/textAppearanceSmall"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="10dp"
-              android:layout_marginBottom="30dp" />
+                android:layout_marginTop="10dp" />
+            <Switch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_showReceiveUIOnWindowsSwitch"
+                android:layout_marginTop="30dp"
+                android:text="Show file receive progress on my Windows devices" />
+            <TextView
+                android:text="Disabling this might cause some issues with transferring large files for some users."
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/settings_uiModeSwitch"
                 android:text="Legacy UI mode"
+                android:layout_marginTop="30dp"
                 android:visibility="gone" />
             <TextView
                 android:text="You'll see the change next time you start the app."
@@ -126,12 +154,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp"
                 android:visibility="gone" />
+            <Switch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:id="@+id/settings_useSystemFolderPicker"
+                android:text="Use system folder picker for moving received files and changing default receive path" />
+          <Switch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:id="@+id/settings_useSystemFilePicker"
+                android:text="Use system file picker for selecting files to send" />
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
                 android:layout_marginBottom="20dp"
                 android:id="@+id/linearLayout1">
                 <TextView
@@ -153,21 +193,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:textColor="?colorPrimary" />
+                android:textColor="?colorAccent" />
             <TextView
                 android:id="@+id/settings_gitHubLink"
                 android:text="@string/GitHubLink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:textColor="?colorPrimary" />
+                android:textColor="?colorAccent" />
             <TextView
                 android:id="@+id/settings_privacyPolicyLink"
                 android:text="@string/PrivacyPolicyLink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:textColor="?colorPrimary" />
+                android:textColor="?colorAccent" />
             <TextView
                 android:id="@+id/settings_logOutLink"
                 android:text="@string/LogOutLink"
@@ -175,7 +215,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
-                android:textColor="?colorPrimary" />
+                android:textColor="?colorAccent" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

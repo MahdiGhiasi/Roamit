@@ -35,13 +35,21 @@ namespace QuickShare
 
         private int partsCount;
 
-        public IncrementalLoadingCollection(int preferredItemsPerPage = 20, int partCoefficient = 3)
+        public Func<I, bool> VisibilityDecider { get; }
+
+        public IncrementalLoadingCollection(int preferredItemsPerPage = 20, int partCoefficient = 3) :
+            this(item => true, preferredItemsPerPage, partCoefficient)
+        {
+        }
+
+        public IncrementalLoadingCollection(Func<I, bool> visibilityDecider, int preferredItemsPerPage = 20, int partCoefficient = 3)
         {
             source = new T();
             itemsPerPart = Math.Max(preferredItemsPerPage / partCoefficient, 5);
             itemsPerPage = itemsPerPart * partCoefficient;
             hasMoreItems = true;
             partsCount = partCoefficient;
+            this.VisibilityDecider = visibilityDecider;
         }
 
         public bool HasMoreItems
@@ -76,7 +84,8 @@ namespace QuickShare
                             resultCount = (uint)result.Count();
 
                             foreach (I item in result)
-                                this.Add(item);
+                                if (VisibilityDecider(item))
+                                    this.Add(item);
                         }
                     }, CoreDispatcherPriority.High);
                 }

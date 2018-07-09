@@ -34,6 +34,7 @@ using Windows.UI.Xaml.Navigation;
 using QuickShare.HelperClasses;
 using QuickShare.ViewModels.ShareTarget;
 using QuickShare.HelperClasses.Version;
+using Microsoft.Services.Store.Engagement;
 
 namespace QuickShare
 {
@@ -82,7 +83,8 @@ namespace QuickShare
         {
             try
             {
-                var message = new MessageDialog(msg, "Unhandled exception occured.");
+                string appIdentity = $"({DeviceInfo.ApplicationName} {DeviceInfo.ApplicationVersionString} - {DeviceInfo.SystemArchitecture} {DeviceInfo.SystemFamily} {DeviceInfo.SystemVersion})\n";
+                var message = new MessageDialog(appIdentity + msg, "Unhandled exception occured.");
                 await message.ShowAsync();
             }
             catch { }
@@ -104,6 +106,13 @@ namespace QuickShare
                 LaunchTime = null;
                 InitApplication(e, typeof(Intro));
             }
+#if !DEBUG
+            var osVersion = DeviceInfo.SystemVersion.ToString();
+            App.Tracker.Send(HitBuilder.CreateCustomEvent("OSVersion", osVersion).Build());
+
+            StoreServicesCustomEventLogger logger = StoreServicesCustomEventLogger.GetDefault();
+            logger.Log("AppLaunched_" + osVersion);
+#endif
         }
 
         private void InitApplication(LaunchActivatedEventArgs e, Type defaultPage)
@@ -252,11 +261,14 @@ namespace QuickShare
                 else
                 {
                     string clipboardData = ParseFastClipboardUri(pEventArgs.Uri.AbsoluteUri);
-                    string launchUriData = ParseLaunchUri(pEventArgs.Uri.AbsoluteUri);
+                    string remoteLaunchUriData = ParseRemoteLaunchUri(pEventArgs.Uri.AbsoluteUri);
+                    string localLaunchUriData = ParseLocalLaunchUri(pEventArgs.Uri.AbsoluteUri);
+                    string commServiceData = ParseCommunicationServiceData(pEventArgs.Uri.AbsoluteUri);
                     bool isSettings = ParseSettings(pEventArgs.Uri.AbsoluteUri);
-                    bool isReceiveDialog = ParseReceive(pEventArgs.Uri.AbsoluteUri);
+                    string receiveDialogData = ParseReceive(pEventArgs.Uri.AbsoluteUri);
+                    
 
-                   if (isSettings)
+                    if (isSettings)
                     {
                         if (rootFrame == null)
                         {
@@ -264,13 +276,24 @@ namespace QuickShare
                         }
                         rootFrame.Navigate(typeof(MainPage), "settings");
                     }
-                    else if (isReceiveDialog)
+                    else if (receiveDialogData.Length > 0)
                     {
                         if (rootFrame == null)
                         {
                             LaunchRootFrameIfNecessary(ref rootFrame, false);
                         }
                         rootFrame.Navigate(typeof(MainPage), "receiveDialog");
+
+                        if (receiveDialogData.Length > 1)
+                        {
+                            var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(receiveDialogData.Substring(1).DecodeBase64());
+                            await ParseMessage(data);
+                        }
+                    }
+                    else if (commServiceData.Length > 0)
+                    {
+                        var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(commServiceData.DecodeBase64());
+                        await ParseMessage(data);
                     }
                     else if (clipboardData.Length > 0)
                     {
@@ -280,14 +303,14 @@ namespace QuickShare
                         LaunchRootFrameIfNecessary(ref rootFrame, false);
                         rootFrame.Navigate(typeof(ClipboardReceive), guid.ToString());
                     }
-                    else if (launchUriData.Length > 0)
+                    else if (remoteLaunchUriData.Length > 0)
                     {
 #if !DEBUG
                         App.Tracker.Send(HitBuilder.CreateCustomEvent("ExtensionCalled", "").Build());
 #endif
 
-                        string type = ExternalContentHelper.SetUriData(new Uri(launchUriData.DecodeBase64()));
-                        
+                        string type = ExternalContentHelper.SetUriData(new Uri(remoteLaunchUriData.DecodeBase64()));
+
                         SendDataTemporaryStorage.IsSharingTarget = true;
 
                         if (rootFrame == null)
@@ -305,6 +328,20 @@ namespace QuickShare
                                 Type = type,
                             });
                         }
+                    }
+                    else if (localLaunchUriData.Length > 0)
+                    {
+                        try
+                        {
+                            //TODO: Log it in history
+                            await LaunchOperations.LaunchUrl(localLaunchUriData.DecodeBase64());
+                        }
+                        catch
+                        {
+                        }
+
+                        if (rootFrame == null)
+                            Application.Current.Exit();
                     }
                     else
                     {
@@ -329,35 +366,53 @@ namespace QuickShare
             return false;
         }
 
-        private bool ParseReceive(string s)
+        private string ParseReceive(string s)
         {
             s = s.ToLower();
 
-            if ((s == "roamit://receivedialog") || (s == "roamit://receivedialog/"))
-                return true;
-            return false;
+            if (s.Length < 22)
+                return "";
+
+            var part = s.Substring(0, 22);
+
+            if (part == "roamit://receivedialog")
+            {
+                if (s.Length > 23)
+                    return "/" + s.Substring(23);
+                else
+                    return "/";
+            }
+            return "";
+        }
+
+        private static string GetUrlDataPart(string url, string firstPart)
+        {
+            if (url.Length < firstPart.Length)
+                return "";
+
+            var command = url.Substring(0, firstPart.Length).ToLower();
+
+            return (command == firstPart) ? url.Substring(firstPart.Length) : "";
         }
 
         private string ParseFastClipboardUri(string s)
         {
-            string fastClipboardUri = "roamit://clipboard/";
-            if (s.Length < fastClipboardUri.Length)
-                return "";
-
-            var command = s.Substring(0, fastClipboardUri.Length).ToLower();
-
-            return (command == fastClipboardUri) ? s.Substring(fastClipboardUri.Length) : "";
+            return GetUrlDataPart(s, "roamit://clipboard/");
         }
 
-        private string ParseLaunchUri(string s)
+        private string ParseRemoteLaunchUri(string s)
         {
-            string launchUri = "roamit://remotelaunch/";
-            if (s.Length < launchUri.Length)
-                return "";
+            return GetUrlDataPart(s, "roamit://remotelaunch/");
+        }
 
-            var command = s.Substring(0, launchUri.Length).ToLower();
+        private string ParseLocalLaunchUri(string s)
+        {
+            return GetUrlDataPart(s, "roamit://url/");
+        }
 
-            return (command == launchUri) ? s.Substring(launchUri.Length) : "";
+        private string ParseCommunicationServiceData(string s)
+        {
+            return GetUrlDataPart(s, "roamit://comm/");
         }
 
         private async Task<HistoryRow> GetHistoryItemGuid(Guid guid)

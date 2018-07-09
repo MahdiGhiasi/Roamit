@@ -47,7 +47,7 @@ namespace QuickShare.Common.Service
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception in GetPremiumStatus: {ex.Message}");
+                Debug.WriteLine($"Exception in GetDevices: {ex.Message}");
                 return null;
             }
         }
@@ -85,42 +85,10 @@ namespace QuickShare.Common.Service
 
         public static async Task<PremiumStatus> GetPremiumStatus(string accountId)
         {
-            try
+            return new PremiumStatus()
             {
-                PremiumStatus output;
-
-                using (var httpClient = new HttpClient())
-                {
-                    var result = await httpClient.GetAsync($"{Constants.ServerAddress}/v2/User/{accountId}/PremiumStatus");
-                    var s = await result.Content.ReadAsStringAsync();
-
-                    var parts = s.Split(',');
-
-                    if (parts[0].ToLower() == "free")
-                        output = new PremiumStatus
-                        {
-                            State = AccountPremiumState.Free,
-                        };
-                    else if (parts[0].ToLower() == "premiumtrial")
-                        output = new PremiumStatus
-                        {
-                            State = AccountPremiumState.PremiumTrial,
-                            TrialExpireTime = new DateTime(long.Parse(parts[1])),
-                        };
-                    else
-                        output = new PremiumStatus
-                        {
-                            State = AccountPremiumState.Premium,
-                        };
-                }
-
-                return output;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception in GetPremiumStatus: {ex.Message}");
-                return null;
-            }
+                State = AccountPremiumState.Premium,
+            };
         }
 
         public static async Task<string> GetUserName(string accountId)

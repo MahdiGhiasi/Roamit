@@ -7,7 +7,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D78FDFFF-E82C-4E9C-B78F-54E1D924D49F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>FileTransfer</RootNamespace>
+    <RootNamespace>QuickShare.FileTransfer</RootNamespace>
     <AssemblyName>FileTransfer</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
@@ -56,11 +56,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
-    <Compile Include="FailedToDownloadException.cs" />
+    <Compile Include="Exceptions\HandshakeFailedException.cs" />
+    <Compile Include="FileReceiveProgressCalculator.cs" />
+    <Compile Include="FileSendProgressCalculator.cs" />
+    <Compile Include="FileTransferProgressCalculator.cs" />
+    <Compile Include="Helpers\CompatibilityHelper.cs" />
+    <Compile Include="Exceptions\FailedToDownloadException.cs" />
     <Compile Include="FileDetails.cs" />
+    <Compile Include="FileInfoListGenerator.cs" />
     <Compile Include="FileReceiver.cs" />
+    <Compile Include="FileReceiver2.cs" />
     <Compile Include="FileSender.cs" />
+    <Compile Include="FileSender2.cs" />
+    <Compile Include="FileSendInfo.cs" />
+    <Compile Include="FileTransferStatus.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
+    <Compile Include="Helpers\HttpHelper.cs" />
+    <Compile Include="QueueInfo.cs" />
+    <Compile Include="ReceiveCancelledException.cs" />
+    <Compile Include="ReceiveSessionAgent.cs" />
+    <Compile Include="SliceRequestedEventArgs.cs" />
+    <Compile Include="FileSliceSender.cs" />
     <Compile Include="FileTransferProgressEventArgs.cs" />
+    <Compile Include="Handshaker.cs" />
     <Compile Include="IPDetectionCompletedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerIPFinder.cs" />
@@ -72,6 +90,9 @@
     <Reference Include="PCLStorage.Abstractions">
       <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

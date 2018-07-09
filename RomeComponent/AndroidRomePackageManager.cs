@@ -114,7 +114,7 @@ namespace QuickShare.UWP.Rome
         {
             var dataJson = JsonConvert.SerializeObject(data);
 
-            bool result = await Common.Service.DevicesLoader.SendMessage(userId, nrs.Id, dataJson);
+            bool result = await Common.Service.Device.SendMessage(userId, nrs.Id, dataJson);
 
             if (result)
                 return new RomeAppServiceResponse
@@ -208,7 +208,7 @@ namespace QuickShare.UWP.Rome
             return await Connect();
         }
 
-        private async Task<RomeAppServiceConnectionStatus> Connect()
+        public async Task<RomeAppServiceConnectionStatus> Connect()
         {
             if (Mode == AndroidPackageManagerMode.PushNotification)
             {
@@ -216,7 +216,7 @@ namespace QuickShare.UWP.Rome
             }
             else
             {
-                bool result = await Common.Service.DevicesLoader.RequestMessageCarrier(userId, nrs.Id, whosNotMe);
+                bool result = await Common.Service.Device.RequestMessageCarrier(userId, nrs.Id, whosNotMe);
 
                 if (result)
                     return RomeAppServiceConnectionStatus.Success;
@@ -232,7 +232,7 @@ namespace QuickShare.UWP.Rome
 
         public static async Task<RomeRemoteLaunchUriStatus> LaunchUri(Uri _uri, NormalizedRemoteSystem _remoteSystem, string _userId)
         {
-            bool result = await Common.Service.DevicesLoader.LaunchUri(_userId, _remoteSystem.Id, _uri);
+            bool result = await Common.Service.Device.LaunchUri(_userId, _remoteSystem.Id, _uri);
 
             if (result)
                 return RomeRemoteLaunchUriStatus.Success;
@@ -245,7 +245,7 @@ namespace QuickShare.UWP.Rome
             if (_text.Length > 1024)
                 return false;
 
-            bool result = await Common.Service.DevicesLoader.SendClipboard(_userId, _remoteSystem.Id, _text, _senderName);
+            bool result = await Common.Service.Device.SendClipboard(_userId, _remoteSystem.Id, _text, _senderName);
 
             return result;
         }

@@ -118,7 +118,7 @@ namespace QuickShare.FileTransfer
             {
                 FileTransferProgress?.Invoke(s, ee);
             };
-
+            
             cancellationToken.Register(() =>
             {
                 fileSendTcs?.TrySetResult(TRANSFER_CANCELLED_MESSAGE);
@@ -637,5 +637,6 @@ namespace QuickShare.FileTransfer
         FailedOnSend = 5,
         Cancelled = 6,
         NoFiles = 7,
+        Timeout = 8,
     }
 }

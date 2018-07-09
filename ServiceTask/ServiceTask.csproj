@@ -117,6 +117,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{E9E7916C-D4FD-4B08-B904-3BCAE5DE1AF0}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataStore\DataStore.csproj">
       <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
       <Name>DataStore</Name>

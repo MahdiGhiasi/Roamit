@@ -22,22 +22,22 @@ namespace QuickShare
     {
         private void InitCommunicationService()
         {
-            FileTransfer.FileReceiver.ClearEventRegistrations();
-            FileTransfer.FileReceiver.FileTransferProgress += FileReceiver_FileTransferProgress;
+            FileReceiver2.ClearEventRegistrations();
+            FileReceiver2.FileTransferProgress += FileReceiver_FileTransferProgress;
         }
 
-        private async void FileReceiver_FileTransferProgress(FileTransferProgressEventArgs e)
+        private async void FileReceiver_FileTransferProgress(FileTransfer2ProgressEventArgs e)
         {
-            await NotificationHandler.HandleAsync(e);
-
             if (e.State == FileTransferState.Finished)
             {
                 Toaster.ShowFileReceiveFinishedNotification(e.TotalFiles, e.SenderName, e.Guid);
             }
             else if (e.State == FileTransferState.Error)
             {
-                Toaster.ShowFileReceiveFailedNotification(e.Guid);
+                Toaster.ShowFileReceiveFailedNotification(e.Guid, e.Exception);
             }
+
+            await NotificationHandler.HandleAsync(e);
         }
 
         private async void OnCommunicationServiceRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
@@ -47,20 +47,11 @@ namespace QuickShare
             {
                 if (args.Request.Message.ContainsKey("Receiver"))
                 {
-                    string receiver = args.Request.Message["Receiver"] as string;
-
                     Dictionary<string, object> reqMessage = new Dictionary<string, object>();
                     foreach (var item in args.Request.Message)
                         reqMessage.Add(item.Key, item.Value);
 
-                    if (receiver == "ServerIPFinder")
-                        await FileTransfer.ServerIPFinder.ReceiveRequest(reqMessage);
-                    else if (receiver == "FileReceiver")
-                        await FileTransfer.FileReceiver.ReceiveRequest(reqMessage, DecideDownloadFolder);
-                    else if (receiver == "TextReceiver")
-                        await TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
-                    else if (receiver == "CloudClipboardHandler")
-                        CloudClipboardHandler.ReceiveRequest(reqMessage);
+                    await ParseMessage(reqMessage);
                 }
             }
             catch (Exception ex)
@@ -73,9 +64,19 @@ namespace QuickShare
             }
         }
 
-        private async Task<IFolder> DecideDownloadFolder(string[] fileTypes)
+        private async Task ParseMessage(Dictionary<string, object> reqMessage)
         {
-            return await DownloadFolderDecider.DecideAsync(fileTypes);
+            string receiver = reqMessage["Receiver"] as string;
+
+            if (receiver == "ServerIPFinder")
+                await FileTransfer.ServerIPFinder.ReceiveRequest(reqMessage);
+            else if (receiver == "FileReceiver")
+                await FileTransfer.FileReceiver2.ReceiveRequest(reqMessage, new DownloadFolderDecider(), 
+                    async s => { return new WinRTFolder(await StorageFolder.GetFolderFromPathAsync(s)); });
+            else if (receiver == "TextReceiver")
+                await TextTransfer.TextReceiver.ReceiveRequest(reqMessage);
+            else if (receiver == "CloudClipboardHandler")
+                CloudClipboardHandler.ReceiveRequest(reqMessage);
         }
 
         private void CommunicationServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)

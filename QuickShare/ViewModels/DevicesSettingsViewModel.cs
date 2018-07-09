@@ -36,6 +36,20 @@ namespace QuickShare.ViewModels
 
                 Devices.Add(new DeviceItem(item));
             }
+
+            Loading = false;
+        }
+
+
+        private bool loading = true;
+        public bool Loading
+        {
+            get { return loading; }
+            set
+            {
+                loading = value;
+                OnPropertyChanged("Loading");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -54,19 +68,21 @@ namespace QuickShare.ViewModels
         public string Name { get; }
         public string Kind { get; }
 
-        private bool isActive;
-        public bool IsActive
+        private bool isReceiveUniversalClipboardActive;
+        public bool IsReceiveUniversalClipboardActive
         {
             get
             {
-                return isActive;
+                return isReceiveUniversalClipboardActive;
             }
             set
             {
-                isActive = value;
+                isReceiveUniversalClipboardActive = value;
                 ActiveChanged(value);
             }
         }
+
+        public bool CanRemoveDevice { get => Kind == null || Kind?.ToLower() == "qs_android"; }
 
         private async void ActiveChanged(bool value)
         {
@@ -75,7 +91,7 @@ namespace QuickShare.ViewModels
 
         public DeviceItem(DeviceInformation item)
         {
-            isActive = item.CloudClipboardEnabled; //Does not call cloud service for initial value.
+            isReceiveUniversalClipboardActive = item.CloudClipboardEnabled; //Does not call cloud service for initial value.
             AccountID = item.AccountID;
             DeviceID = item.DeviceID;
             Name = item.Name;

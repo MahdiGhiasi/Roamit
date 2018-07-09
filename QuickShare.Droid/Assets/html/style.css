@@ -149,6 +149,13 @@ body {
             transform: translateY(125px);
 }
 
+@media (max-height: 375px) {
+    .actionbuttons-landscape {
+        -webkit-transform: translateY(90px);
+                transform: translateY(90px);
+    }
+}
+
 .actionbutton-content {
     height: 100%;
     width: 100%;
@@ -350,12 +357,18 @@ body {
     right: 0;
     z-index: 10;
     background: #eee;
-
     display: none;
+    -webkit-transition: opacity 0.2s ease-out;
+    transition: opacity 0.2s ease-out;
 }
 
 .progress-show {
     display: block;
+    opacity: 0;
+}
+
+.progress-show-finishedanim {
+    opacity: 1;
 }
 
 .progress-content {
@@ -365,12 +378,34 @@ body {
     -webkit-transform: translate( -50%, -50%);
             transform: translate( -50%, -50%);
     text-align: center;
+    width: 80%;
 }
 
 .progress-status {
     font-size: 26px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
+    line-height: 26px;
 }
+
+.progress-status-subtitle {
+    font-size: 18px;
+    opacity: 0.8;
+    margin-bottom: 20px;
+}
+
+.progress-status-buttons {
+    display: none;
+}
+
+    .progress-status-buttons.visible {
+        margin-top: 100px;
+        display: block;
+    }
+
+    .progress-status-buttons button {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
 
 .progress-spinner {
     width: 120px;
@@ -407,6 +442,11 @@ body {
 .spinner-container {
     margin-left: auto;
     margin-right: auto;
+    margin-top: 40px;
+}
+
+.spinner-container.hidden {
+    display: none;
 }
 
 .header-transparent {
@@ -498,4 +538,8 @@ body {
         .sharedialog-buttons button {
             margin-bottom: 0;
         }
+}
+
+.mdl-button {
+    margin-left: 12px;
 }

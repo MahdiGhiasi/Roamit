@@ -45,6 +45,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <ProjectReference Include="..\DataStore\DataStore.csproj">
+      <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
+      <Name>DataStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevicesListManager\DevicesListManager.csproj">
       <Project>{3085ef40-87c7-4b3b-929c-50e6a15fc42b}</Project>
       <Name>DevicesListManager</Name>
@@ -52,8 +56,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AwaitTimeout.cs" />
+    <Compile Include="Classes\ReceivedSaveAsHelper.cs" />
+    <Compile Include="Classes\SaveAsFailedException.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DateTimeExtension.cs" />
+    <Compile Include="Classes\DownloadGroupByItem.cs" />
+    <Compile Include="Extensions\ParallelForEach.cs" />
+    <Compile Include="Interfaces\IDownloadFolderDecider.cs" />
     <Compile Include="IWebServer.cs" />
     <Compile Include="IWebServerGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,13 +75,18 @@
     <Compile Include="Rome\RomeRemoteLaunchUriStatus.cs" />
     <Compile Include="Secrets.cs" />
     <Compile Include="Service\Models\Device.cs" />
-    <Compile Include="Service\DevicesLoader.cs" />
+    <Compile Include="Service\Device.cs" />
     <Compile Include="Service\CloudClipboardService.cs" />
     <Compile Include="Service\UpgradeDetails.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PCLStorage.Abstractions">
+      <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

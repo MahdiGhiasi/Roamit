@@ -29,7 +29,7 @@ namespace QuickShare
                 {
                     await DispatcherEx.RunOnCoreDispatcherIfPossible(async () =>
                     {
-                        await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<FileTransferProgressEventArgs>(message["Data"] as string));
+                        await NotificationHandler.HandleAsync(JsonConvert.DeserializeObject<FileTransfer2ProgressEventArgs>(message["Data"] as string));
                     });
                 }
                 else if (message["Type"].ToString() == "TextReceive")

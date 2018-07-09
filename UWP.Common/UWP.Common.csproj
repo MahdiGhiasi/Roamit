@@ -111,6 +111,7 @@
     <Compile Include="HelperClasses\DeviceInfo.cs" />
     <Compile Include="HelperClasses\DownloadFolderDecider.cs" />
     <Compile Include="HelperClasses\DownloadFolderHelper.cs" />
+    <Compile Include="HelperClasses\DownloadGroupByHelper.cs" />
     <Compile Include="HelperClasses\FutureAccessListHelper.cs" />
     <Compile Include="HelperClasses\SecureKeyStorage.cs" />
     <Compile Include="HelperClasses\StringFunctions.cs" />
@@ -129,9 +130,17 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{e9e7916c-d4fd-4b08-b904-3bcae5de1af0}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataStore\DataStore.csproj">
       <Project>{b368a0ae-3cd8-41e4-932d-64bb1e1e1557}</Project>
       <Name>DataStore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileTransfer\FileTransfer.csproj">
+      <Project>{D78FDFFF-E82C-4E9C-B78F-54E1D924D49F}</Project>
+      <Name>FileTransfer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +150,9 @@
     <Reference Include="PCLStorage.Abstractions">
       <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

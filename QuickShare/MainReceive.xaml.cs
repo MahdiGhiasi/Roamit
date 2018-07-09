@@ -66,7 +66,7 @@ namespace QuickShare
             }
         }
 
-        internal void FileTransferProgress(FileTransferProgressEventArgs e)
+        internal void FileTransferProgress(FileTransfer2ProgressEventArgs e)
         {
             if (e.State == FileTransferState.Finished || e.State == FileTransferState.Error)
             {
@@ -74,17 +74,14 @@ namespace QuickShare
                 return;
             }
 
-            if (e.Total == 0)
-                return;
-
             ViewModel.ProgressIsIndeterminate = false;
             ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
             ViewModel.ReceiveStatus = "Receiving...";
 
-            ViewModel.ProgressValue = (int)e.CurrentPart;
-            ViewModel.ProgressMaximum = (int)e.Total;
+            ViewModel.ProgressValue = (int)(e.Progress * 1000.0);
+            ViewModel.ProgressMaximum = 1000;
 
-            ViewModel.ProgressCaption = StringFunctions.GetSizeString(e.TotalBytesTransferred);
+            ViewModel.ProgressCaption = StringFunctions.GetSizeString(e.TotalTransferredBytes);
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)

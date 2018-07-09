@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardElevation="4dp"
+        card_view:cardUseCompatPadding="true"
+        card_view:cardCornerRadius="5dp">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/historyListItemLayout_cardBackground">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:scaleX="-1">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="25px"
+                    android:minHeight="25px">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/historyListItemLayout_removeItem"
+                        android:scaleX="-1"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:drawableLeft="@android:drawable/ic_menu_delete"
+                        android:drawableTint="?android:attr/colorForeground"
+                        android:height="52dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:minHeight="52dp">
+                    <TextView
+                        android:text="1 file from Mahdi-Surface"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/historyListItemLayout_title"
+                        android:textSize="18dp"
+                        android:layout_marginRight="0.0dp"
+                        android:scaleX="-1" />
+                </LinearLayout>
+            </LinearLayout>
+            <TextView
+                android:text="Some text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/historyListItemLayout_textPreview"
+                android:textSize="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:gravity="center" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/historyListItemLayout_buttons"
+                android:gravity="right"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+                <Button
+                    android:text="Move"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/historyListItemLayout_moveFiles"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+                <Button
+                    android:text="Open file"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/historyListItemLayout_openFile"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+                <Button
+                    android:text="Browse files"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/historyListItemLayout_browseFiles"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+                <Button
+                    android:text="Copy to\nclipboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/historyListItemLayout_copyToClipboard"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+                <Button
+                    android:text="Open URL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/historyListItemLayout_openUrl"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+                <Button
+                    android:text="Share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/historyListItemLayout_share"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+            </LinearLayout>
+            <TextView
+                android:text="4/16/2018 12:30:21"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/historyListItemLayout_date"
+                android:gravity="left"
+                android:layout_marginTop="6dp"
+                android:textSize="12dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</FrameLayout>
