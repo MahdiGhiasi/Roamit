@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Desktop", "Desktop", "{5A45
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickShare.Desktop", "QuickShare.Desktop\QuickShare.Desktop.csproj", "{398614D0-AE25-40E7-8E24-601E5FDF09C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCLStorage.Droid", "PCLStorage.Android.UrlBased\PCLStorage.Droid.csproj", "{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -630,6 +632,38 @@ Global
 		{398614D0-AE25-40E7-8E24-601E5FDF09C8}.Release-Squirrel|x64.Build.0 = Release-Squirrel|Any CPU
 		{398614D0-AE25-40E7-8E24-601E5FDF09C8}.Release-Squirrel|x86.ActiveCfg = Release-Squirrel|Any CPU
 		{398614D0-AE25-40E7-8E24-601E5FDF09C8}.Release-Squirrel|x86.Build.0 = Release-Squirrel|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug|ARM.Build.0 = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug|x64.Build.0 = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug|x86.Build.0 = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug-Squirrel|Any CPU.ActiveCfg = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug-Squirrel|Any CPU.Build.0 = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug-Squirrel|ARM.ActiveCfg = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug-Squirrel|ARM.Build.0 = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug-Squirrel|x64.ActiveCfg = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug-Squirrel|x64.Build.0 = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug-Squirrel|x86.ActiveCfg = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Debug-Squirrel|x86.Build.0 = Debug|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release|ARM.Build.0 = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release|x64.ActiveCfg = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release|x64.Build.0 = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release|x86.ActiveCfg = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release|x86.Build.0 = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release-Squirrel|Any CPU.ActiveCfg = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release-Squirrel|Any CPU.Build.0 = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release-Squirrel|ARM.ActiveCfg = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release-Squirrel|ARM.Build.0 = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release-Squirrel|x64.ActiveCfg = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release-Squirrel|x64.Build.0 = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release-Squirrel|x86.ActiveCfg = Release|Any CPU
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105}.Release-Squirrel|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -652,6 +686,7 @@ Global
 		{6F14E10A-6869-44D9-88CD-12E50BD92D9C} = {B76E8F7C-DE09-4249-92FD-42F3DC363EE7}
 		{CDC46A7B-207E-4C7A-83FF-83B367CC7F9A} = {B76E8F7C-DE09-4249-92FD-42F3DC363EE7}
 		{398614D0-AE25-40E7-8E24-601E5FDF09C8} = {5A453827-FB58-4C48-8081-07B72E619278}
+		{E576A7AE-6ADB-4CE6-BD19-B3A9CDDB5105} = {91103E35-542F-457A-8248-CFCD92016755}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8D99B16C-BED5-46D9-AEFB-142C782D7934}

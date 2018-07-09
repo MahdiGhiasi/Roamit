@@ -211,6 +211,7 @@
     <Compile Include="Adapters\SettingsReceivedGroupByAdapter.cs" />
     <Compile Include="Classes\CloudClipboardNotifier.cs" />
     <Compile Include="Classes\DownloadFolderDecider.cs" />
+    <Compile Include="Classes\ExternalStorageHelper.cs" />
     <Compile Include="Classes\FilePicker\BackHandlingFilePickerActivity.cs" />
     <Compile Include="Classes\FilePicker\BackHandlingFilePickerActivityDark.cs" />
     <Compile Include="Classes\FilePicker\BackHandlingFilePickerActivityLight.cs" />
