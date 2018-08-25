@@ -1,0 +1,3 @@
+[submodule "PCLStorageEx"]
+	path = PCLStorageEx
+	url = https://github.com/MahdiGhiasi/PCLStorageEx.git
