@@ -32,6 +32,8 @@ using QuickShare.Common.Rome;
 using System.IO;
 using Com.Nononsenseapps.Filepicker;
 using QuickShare.Droid.Classes.FilePicker;
+using PCLStorage.Droid;
+using PCLStorage;
 
 namespace QuickShare.Droid.Activities
 {
@@ -224,7 +226,7 @@ namespace QuickShare.Droid.Activities
                     .SetTitle("Please uninstall the legacy version of Roamit.")
                     .SetMessage("Having both versions side-by-side might cause problems.\n" +
                     "Uninstall the previous version to have the best experience possible.")
-                    .SetPositiveButton("OK", (s,e) => { });
+                    .SetPositiveButton("OK", (s, e) => { });
 
                 RunOnUiThread(() =>
                 {
@@ -240,7 +242,8 @@ namespace QuickShare.Droid.Activities
             string sharePage = (theme == AppTheme.Light) ? "share" : "shar2";
             if ((Intent.Action == Intent.ActionSend) && (Intent.Extras.ContainsKey(Intent.ExtraStream)))
             {
-                var fileUrl = FilePathHelper.GetPath(this, (Android.Net.Uri)Intent.Extras.GetParcelable(Intent.ExtraStream));
+                var uri = (Android.Net.Uri)Intent.Extras.GetParcelable(Intent.ExtraStream);
+                var fileUrl = FilePathHelper.GetPath(this, uri);
 
                 Common.ShareFiles = new string[] { fileUrl };
 
@@ -841,36 +844,36 @@ namespace QuickShare.Droid.Activities
 
         private async Task<IEnumerable<FileSendInfo>> GetFiles(string[] files, bool preserveFolderStructure)
         {
-            var items = files.Select(x => new Java.IO.File(x)).ToList();
+            var fileSystem = new AndroidFileSystem(this);
+            var items = files.Select(x => fileSystem.GetItemFromPathAsync(x).GetAwaiter().GetResult()).ToList();
 
             return preserveFolderStructure ? await GetFiles(items) : await GetFilesWithoutFolderStructure(items);
         }
 
-        private async Task<List<FileSendInfo>> GetFilesWithoutFolderStructure(IEnumerable<Java.IO.File> items)
+        private async Task<List<FileSendInfo>> GetFilesWithoutFolderStructure(IEnumerable<IStorageItem> items)
         {
             var output = new List<FileSendInfo>();
 
-            var files = items.Where(x => x.IsFile)
-                .Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x.AbsolutePath))).ToList();
-            var folders = items.Where(x => x.IsDirectory).ToList();
+            var files = items.OfType<IFile>().Select(x => new FileSendInfo(x)).ToList();
+            var folders = items.OfType<AndroidFolder>().ToList();
 
             output.AddRange(files);
 
             foreach (var folder in folders)
             {
-                output.AddRange(await GetFilesWithoutFolderStructure(await folder.ListFilesAsync()));
+                output.AddRange(await GetFilesWithoutFolderStructure(await folder.GetItemsAsync()));
             }
 
             return output;
         }
 
-        private async Task<List<FileSendInfo>> GetFiles(List<Java.IO.File> items)
+        private async Task<List<FileSendInfo>> GetFiles(List<IStorageItem> items)
         {
             var output = new List<FileSendInfo>();
 
-            var files = items.Where(x => x.IsFile)
-                .Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x.AbsolutePath), Path.GetDirectoryName(x.AbsolutePath))).ToList();
-            var folders = items.Where(x => x.IsDirectory).ToList();
+            var files = items.OfType<IFile>()
+                .Select(x => new FileSendInfo(x, x.Path)).ToList();
+            var folders = items.OfType<AndroidFolder>().ToList();
 
             var paths = files
                 .Select(x => Path.GetDirectoryName(x.File.Path))
@@ -890,17 +893,17 @@ namespace QuickShare.Droid.Activities
             return output;
         }
 
-        private async Task<List<FileSendInfo>> GetFilesOfFolder(Java.IO.File f, string rootFolder = null)
+        private async Task<List<FileSendInfo>> GetFilesOfFolder(AndroidFolder f, string rootFolder = null)
         {
             if (rootFolder == null)
-                rootFolder = f.AbsolutePath;
+                rootFolder = f.Path;
 
-            var items = await f.ListFilesAsync();
+            var items = await f.GetItemsAsync();
 
-            List<FileSendInfo> files = (from x in items.Where(x => x.IsFile)
-                                        select new FileSendInfo(new PCLStorage.FileSystemFile(x.AbsolutePath), rootFolder)).ToList();
+            List<FileSendInfo> files = (from x in items.OfType<IFile>()
+                                        select new FileSendInfo(x, rootFolder)).ToList();
 
-            var folders = items.Where(x => x.IsDirectory).ToList();
+            var folders = items.OfType<AndroidFolder>().ToList();
 
             foreach (var folder in folders)
             {
@@ -1291,7 +1294,7 @@ namespace QuickShare.Droid.Activities
                 //{
                 //    var r = new Random();
                 //    DateTime dt = DateTime.Now;
-                
+
                 //    for (int i = 0; i < 500; i++)
                 //    {
                 //        DataStore.DataStorageProviders.HistoryManager.OpenAsync().Wait();

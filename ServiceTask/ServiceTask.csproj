@@ -129,6 +129,14 @@
       <Project>{d78fdfff-e82c-4e9c-b78f-54e1d924d49f}</Project>
       <Name>FileTransfer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PCLStorageEx\src\PCLStorage.Abstractions\PCLStorage.Abstractions.csproj">
+      <Project>{eebb53f3-ebdf-4dd0-82e5-ff9a2c8dbd72}</Project>
+      <Name>PCLStorage.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PCLStorageEx\src\PCLStorage.UWP\PCLStorage.UWP.csproj">
+      <Project>{1569c102-e351-41af-ba3d-4c98739b05c5}</Project>
+      <Name>PCLStorage.UWP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RomeComponent\RomeComponent.csproj">
       <Project>{dbf6ee00-7c48-4e1d-baba-5be9b42b186b}</Project>
       <Name>RomeComponent</Name>
@@ -141,14 +149,6 @@
       <Project>{cdc46a7b-207e-4c7a-83ff-83b367cc7f9a}</Project>
       <Name>UWP.Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="PCLStorage">
-      <HintPath>..\PCLStorageEx2\WinRT\PCLStorage.dll</HintPath>
-    </Reference>
-    <Reference Include="PCLStorage.Abstractions">
-      <HintPath>..\PCLStorageEx2\PCLStorage.Abstractions.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

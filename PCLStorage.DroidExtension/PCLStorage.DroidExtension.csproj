@@ -41,9 +41,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
-    <Reference Include="PCLStorage.Abstractions, Version=1.0.3.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchitecture=MSIL">
-      <HintPath>..\packages\PCLStorage.Abstractions.1.0.3\lib\netstandard1.0\PCLStorage.Abstractions.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
@@ -73,11 +70,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DocumentFileBased\File.cs" />
-    <Compile Include="DocumentFileBased\Folder.cs" />
-    <Compile Include="UrlBased\File.cs" />
-    <Compile Include="UrlBased\FileSystem.cs" />
-    <Compile Include="UrlBased\Folder.cs" />
+    <Compile Include="AlreadyExistsException.cs" />
+    <Compile Include="AndroidFile.cs" />
+    <Compile Include="AndroidFileSystem.cs" />
+    <Compile Include="AndroidFolder.cs" />
+    <Compile Include="AndroidFileStats.cs" />
+    <Compile Include="CopiedReadOnlyFileStream.cs" />
+    <Compile Include="FileSystemFile.cs" />
+    <Compile Include="FileSystemFolder.cs" />
+    <Compile Include="AndroidUriFile.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -85,7 +86,16 @@
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PCLStorageEx\src\PCLStorage.Abstractions\PCLStorage.Abstractions.csproj">
+      <Project>{eebb53f3-ebdf-4dd0-82e5-ff9a2c8dbd72}</Project>
+      <Name>PCLStorage.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PCLStorageEx\src\PCLStorage.Android\PCLStorage.Android.csproj">
+      <Project>{d813c9d8-d6d1-4d2b-af04-0d877656f47e}</Project>
+      <Name>PCLStorage.Android</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -13,18 +13,19 @@ using Android.Support.V4.Provider;
 using Android.Views;
 using Android.Widget;
 
-namespace PCLStorage.Droid.UrlBased.DocumentFileBased
+namespace PCLStorage.Droid
 {
-    class File : IFile
+    public class AndroidFile : IFile
     {
         private Context context;
         private DocumentFile file;
 
         public string Name => file.Name;
+        public string Path => System.IO.Path.GetDirectoryName(file.Uri.ToString()).Replace('\\', '/');
 
-        public string Path => file.ParentFile.Uri.ToString();
+        public IFolder Parent { get; } = null;
 
-        public File(Context context, DocumentFile file)
+        internal AndroidFile(Context context, DocumentFile file)
         {
             if (!file.IsFile)
                 throw new ArgumentException();
@@ -32,6 +33,13 @@ namespace PCLStorage.Droid.UrlBased.DocumentFileBased
             this.context = context;
             this.file = file;
         }
+
+        internal AndroidFile(Context context, DocumentFile file, IFolder parent)
+            : this(context, file)
+        {
+            Parent = parent;
+        }
+
 
         public async Task DeleteAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -47,7 +55,10 @@ namespace PCLStorage.Droid.UrlBased.DocumentFileBased
         {
             if (fileAccess == FileAccess.Read)
             {
-                return context.ContentResolver.OpenInputStream(file.Uri);
+                var readStream = context.ContentResolver.OpenInputStream(file.Uri);
+                var stream = await CopiedReadOnlyFileStream.CreateForStream(readStream);
+
+                return stream;
             }
             else
             {
@@ -77,7 +88,7 @@ namespace PCLStorage.Droid.UrlBased.DocumentFileBased
                             file.ParentFile.FindFile(finalName).Delete();
                             break;
                         case NameCollisionOption.FailIfExists:
-                            return;
+                            throw new AlreadyExistsException();
                         default:
                             break;
                     }
@@ -85,6 +96,34 @@ namespace PCLStorage.Droid.UrlBased.DocumentFileBased
             } while (alreadyExists);
 
             file.RenameTo(newName);
+        }
+
+        public async Task<IFileStats> GetFileStats(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var name = Name;
+            var length = file.Length();
+
+            return new AndroidFileStats
+            {
+                Name = System.IO.Path.GetFileNameWithoutExtension(name),
+                Extension = System.IO.Path.GetExtension(name),
+                Length = length,
+            };
+        }
+
+        public Task SetCreationTime(DateTime creationTime, bool utc = false, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetLastAccessTime(DateTime lastAccessTime, bool utc = false, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetLastWriteTime(DateTime lastWriteTime, bool utc = false, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
         }
     }
 }
