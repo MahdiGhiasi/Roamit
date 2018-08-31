@@ -32,63 +32,51 @@ namespace PCLStorage.Droid
         {
             try
             {
-                return await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken);
+                var file = await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken);
+                if (file != null)
+                    return file;
+
+                var item = GetDocumentFile(path);
+                return new AndroidFile(context, item);
             }
             catch
             {
-                try
-                {
-                    var item = GetDocumentFile(path);
-                    return new AndroidFile(context, item);
-                }
-                catch
-                {
-                    return new AndroidUriFile(context, Android.Net.Uri.Parse(path));
-                }
+                return new AndroidUriFile(context, Android.Net.Uri.Parse(path));
             }
         }
 
         public async Task<IFolder> GetFolderFromPathAsync(string path, CancellationToken cancellationToken = default(CancellationToken))
         {
-            try
-            {
-                return await FileSystem.Current.GetFolderFromPathAsync(path, cancellationToken);
-            }
-            catch
-            {
-                var item = GetDocumentFile(path);
-                return new AndroidFolder(context, item);
-            }
+            var file = await FileSystem.Current.GetFolderFromPathAsync(path, cancellationToken);
+            if (file != null)
+                return file;
+
+            var item = GetDocumentFile(path);
+            return new AndroidFolder(context, item);
         }
 
         public async Task<IStorageItem> GetItemFromPathAsync(string path, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
-                return await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken);
+                var file = await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken);
+                if (file != null)
+                    return file;
+
+                var folder = await FileSystem.Current.GetFolderFromPathAsync(path, cancellationToken);
+                if (folder != null)
+                    return folder;
+
+                var item = GetDocumentFile(path);
+
+                if (item.IsFile)
+                    return new AndroidFile(context, item);
+                else
+                    return new AndroidFolder(context, item);
             }
             catch
             {
-                try
-                {
-                    return await FileSystem.Current.GetFolderFromPathAsync(path, cancellationToken);
-                }
-                catch
-                {
-                    try
-                    {
-                        var item = GetDocumentFile(path);
-
-                        if (item.IsFile)
-                            return new AndroidFile(context, item);
-                        else
-                            return new AndroidFolder(context, item);
-                    }
-                    catch
-                    {
-                        return new AndroidUriFile(context, Android.Net.Uri.Parse(path));
-                    }
-                }
+                return new AndroidUriFile(context, Android.Net.Uri.Parse(path));
             }
         }
 
