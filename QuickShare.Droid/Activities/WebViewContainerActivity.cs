@@ -186,7 +186,7 @@ namespace QuickShare.Droid.Activities
 
         private async void InitAndroidPushNotifier()
         {
-            Common.AndroidPushNotifier = new AndroidPushNotifier(await MSAAuthenticator.GetUserUniqueIdAsync());
+            Common.AndroidPushNotifier = new RoamitCloudPackageManager(await MSAAuthenticator.GetUserUniqueIdAsync());
 
             Common.AndroidPushNotifier.Devices.CollectionChanged += DevicesCollectionChanged;
 
@@ -804,7 +804,6 @@ namespace QuickShare.Droid.Activities
             SetProgressText("Connecting...");
             Common.AndroidPushNotifier.SetRemoteDevice(Common.GetCurrentNormalizedRemoteSystem().Id);
 
-            SetProgressText("Preparing...");
             var transferResult = await BeginSend(files, Common.AndroidPushNotifier, preserveFolderStructure, sendFinishService: true);
 
             FinishSend(transferResult, isWindows: false);
@@ -938,16 +937,17 @@ namespace QuickShare.Droid.Activities
                 return;
             }
 
-            SetProgressText("Preparing...");
-
             var transferResult = await BeginSend(files, Common.PackageManager, preserveFolderStructure, sendFinishService: !settings.UseInAppServiceOnWindowsDevices);
 
             FinishSend(transferResult, isWindows: true);
         }
 
-        private async Task<FileTransferResult> BeginSend(string[] files, IRomePackageManager packageManager, bool preserveFolderStructure, bool sendFinishService)
+        private async Task<FileTransferResult> BeginSend(string[] filePaths, IRomePackageManager packageManager, bool preserveFolderStructure, bool sendFinishService)
         {
-            string sendingText = (files.Length == 1) ? "Sending file..." : "Sending files...";
+            SetProgressText((filePaths.Length == 1) ? "Retrieving file..." : "Retrieving files...");
+            var files = (await GetFiles(filePaths, preserveFolderStructure)).ToList();
+
+            SetProgressText("Preparing...");
 
             FileTransferResult transferResult = FileTransferResult.Successful;
 
@@ -982,21 +982,21 @@ namespace QuickShare.Droid.Activities
                     {
                         RunOnUiThread(() =>
                         {
-                            SetProgressText(sendingText);
+                            SetProgressText((filePaths.Length == 1) ? "Sending file..." : "Sending files...");
                             SetProgressValue(ee.Progress, 1.0);
                         });
                     }
                 };
 
                 sendFileCancellationTokenSource = new CancellationTokenSource();
-                if (files.Length == 0)
+                if (filePaths.Length == 0)
                 {
                     SetProgressText("No files.");
                     return FileTransferResult.NoFiles;
                 }
                 await Task.Run(async () =>
                 {
-                    transferResult = await fs.Send((await GetFiles(files, preserveFolderStructure)).ToList(), sendFileCancellationTokenSource.Token);
+                    transferResult = await fs.Send(files, sendFileCancellationTokenSource.Token);
                 });
                 sendFileCancellationTokenSource = null;
             }

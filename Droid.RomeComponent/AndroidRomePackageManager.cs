@@ -18,13 +18,13 @@ using Microsoft.ConnectedDevices;
 
 namespace QuickShare.Droid.RomeComponent
 {
-    public class AndroidPushNotifier : IRomePackageManager
+    public class RoamitCloudPackageManager : IRomePackageManager
     {
         string userId, deviceId;
 
         public ObservableCollection<NormalizedRemoteSystem> Devices { get; } = new ObservableCollection<NormalizedRemoteSystem>();
 
-        public AndroidPushNotifier(string _userId)
+        public RoamitCloudPackageManager(string _userId)
         {
             userId = _userId;
         }
