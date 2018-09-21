@@ -26,15 +26,22 @@ namespace PCLStorage.Droid
             this.context = context;
 
             LocalStorage = new AndroidFolder(context, GetDocumentFile(context.GetExternalFilesDir(null).AbsolutePath));
+
+            // For some reason switching off main thread causes the app to hang. Will disable it for now.
+            // TODO: Take a look into this.
+            ((DesktopFileSystem)FileSystem.Current).SwitchOffMainThread = false;
         }
 
         public async Task<IFile> GetFileFromPathAsync(string path, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
-                var file = await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken);
-                if (file != null)
-                    return file;
+                if (path[0] == '/')
+                {
+                    var file = await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken);
+                    if (file != null)
+                        return file;
+                }
 
                 var item = GetDocumentFile(path);
                 return new AndroidFile(context, item);
@@ -47,9 +54,12 @@ namespace PCLStorage.Droid
 
         public async Task<IFolder> GetFolderFromPathAsync(string path, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var file = await FileSystem.Current.GetFolderFromPathAsync(path, cancellationToken);
-            if (file != null)
-                return file;
+            if (path[0] == '/')
+            {
+                var file = await FileSystem.Current.GetFolderFromPathAsync(path, cancellationToken);
+                if (file != null)
+                    return file;
+            }
 
             var item = GetDocumentFile(path);
             return new AndroidFolder(context, item);
@@ -59,13 +69,16 @@ namespace PCLStorage.Droid
         {
             try
             {
-                var file = await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken);
-                if (file != null)
-                    return file;
+                if (path[0] == '/')
+                {
+                    var file = await FileSystem.Current.GetFileFromPathAsync(path, cancellationToken);
+                    if (file != null)
+                        return file;
 
-                var folder = await FileSystem.Current.GetFolderFromPathAsync(path, cancellationToken);
-                if (folder != null)
-                    return folder;
+                    var folder = await FileSystem.Current.GetFolderFromPathAsync(path, cancellationToken);
+                    if (folder != null)
+                        return folder;
+                }
 
                 var item = GetDocumentFile(path);
 
