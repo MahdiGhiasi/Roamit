@@ -146,9 +146,6 @@ namespace QuickShare.Droid.Activities
 
             Analytics.TrackPage("WebViewContainerActivity");
 
-            if (settings.AllowToStayInBackground)
-                StartService(new Intent(this, typeof(Services.RomeReadyService)));
-
             CheckForLegacyVersionInstallations();
         }
 
