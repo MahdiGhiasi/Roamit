@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AndroidRomePackageManager.cs" />
+    <Compile Include="RoamitCloudPackageManager.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="RomeHelper.cs" />
     <Compile Include="RomePackageManager.cs" />

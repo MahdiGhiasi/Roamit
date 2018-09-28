@@ -71,6 +71,9 @@
     <Reference Include="Binding_NoNonsenseFilepicker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Binding_NoNonsenseFilePicker.1.0.2\lib\MonoAndroid60\Binding_NoNonsenseFilepicker.dll</HintPath>
     </Reference>
+    <Reference Include="JWT, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JWT.4.0.0\lib\netstandard1.3\JWT.dll</HintPath>
+    </Reference>
     <Reference Include="LiteDB, Version=3.1.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>..\packages\LiteDB.3.1.0\lib\netstandard1.4\LiteDB.dll</HintPath>
     </Reference>
@@ -242,6 +245,7 @@
     <Compile Include="Activities\MessageShowActivity.cs" />
     <Compile Include="Activities\NotificationLaunchActivity.cs" />
     <Compile Include="OnlineServiceHelpers\AuthenticateDialog.cs" />
+    <Compile Include="OnlineServiceHelpers\CloudServiceAuthenticationHelper.cs" />
     <Compile Include="OnlineServiceHelpers\ServiceFunctions.cs" />
     <Compile Include="OnlineServiceHelpers\MSAAuthenticator.cs" />
     <Compile Include="OnlineServiceHelpers\MsaWebViewClient.cs" />

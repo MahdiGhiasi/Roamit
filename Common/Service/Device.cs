@@ -42,7 +42,7 @@ namespace QuickShare.Common.Service
             {
                 Debug.WriteLine($"An exception was thrown in GetAndroidDevices: {ex.Message}");
                 Debug.WriteLine($"Server returned text was '{responseText}'");
-                return new List<NormalizedRemoteSystem>();
+                return null;
             }
         }
 
@@ -197,5 +197,45 @@ namespace QuickShare.Common.Service
             }
         }
 
+        public static async Task<APIv3LoginInfo> MigrateToV3(string userId)
+        {
+            try
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    var formContent = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("jwt", Secrets.GenerateAPIMigrateClaim(userId)),
+                    });
+                    var result = await httpClient.PostAsync($"{Constants.ServerAddress}/api/User/Migrate", formContent);
+                    var s = await result.Content.ReadAsStringAsync();
+
+                    if (s.Split(',')[0] == "1")
+                    {
+                        var parts = s.Split('\n');
+                        return new APIv3LoginInfo(Guid.Parse(parts[1]), parts[2]);
+                    } 
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception in MigrateToV3: {ex.Message}");
+                return null;
+            }
+        }
+
+    }
+
+    public class APIv3LoginInfo
+    {
+        public Guid AccountId { get; }
+        public string Token { get; }
+
+        public APIv3LoginInfo(Guid accountId, string token)
+        {
+            AccountId = accountId;
+            Token = token;
+        }
     }
 }

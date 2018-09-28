@@ -21,7 +21,7 @@ namespace QuickShare.Droid
     {
         internal static RomePackageManager PackageManager { get; set; } = null;
         internal static RomePackageManager MessageCarrierPackageManager { get; set; } = null;
-        internal static RoamitCloudPackageManager AndroidPushNotifier { get; set; } = null;
+        internal static RoamitCloudPackageManager RoamitCloudPackageManager { get; set; } = null;
         internal static DevicesListManager.DevicesListManager ListManager { get; } = new DevicesListManager.DevicesListManager("", new RemoteSystemNormalizer());
 
         internal static string ShareText { get; set; }

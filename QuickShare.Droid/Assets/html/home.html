@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="style.css">
 
     <script>
-        var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview, showSearchSpinner, hideSearchSpinner, showProgressButtons, hideProgressButtons, setProgressSubtext;
+        var addItem, selectItem, removeItem, updateItemId, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview, showSearchSpinner, hideSearchSpinner, showProgressButtons, hideProgressButtons, setProgressSubtext;
         var allowRedirects = true; //false only when debugging on browser.
 
         $(document).ready(function () {
@@ -77,7 +77,7 @@
 
             function getDeviceType(type)
             {
-                if (type == "qs_android")
+                if (type == "android")
                     return "phone_android";
 
                 return type;
@@ -102,7 +102,7 @@
                 {
                     if ((selectedItem == null) || (items[i].id != selectedItem.id))
                     {
-                        listData += itemTemplate.replace("{type}", getDeviceType(items[i].type)).replace("{name}", items[i].name).replace("{id}", items[i].id);
+                        listData += itemTemplate.replace("{type}", getDeviceType(items[i].type)).replace("{name}", items[i].name + items[i].type).replace("{id}", items[i].id);
                     }
                 }
 
@@ -159,7 +159,7 @@
 
                 items.push({ name: _name, type: _type, id: _id });
 
-                if (_type != "qs_android")
+                if (_type != "android")
                     hideSearchSpinner();
 
                 updateList();
@@ -176,6 +176,14 @@
                 updateList();
             }
 
+            updateItemId = function (_name, _id) {
+                for (i = 0; i < items.length; i++) {
+                    if (items[i].name == _name) {
+                        items[i].id = _id;
+                    }
+                }
+            }
+
             selectItem = function(_id) {
                 if ((selectedItem != null) && (selectedItem.id == _id))
                     return;
@@ -186,7 +194,7 @@
                     // Hide spinner if at least one Rome-based device is discovered.
                     for (i = 0; i < items.length; i++)
                     {
-                        if (items[i].type != "qs_android")
+                        if (items[i].type != "android")
                         {
                             hideSearchSpinner();
                             break;

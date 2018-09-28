@@ -81,7 +81,11 @@
     <Compile Include="Service\Models\Device.cs" />
     <Compile Include="Service\Device.cs" />
     <Compile Include="Service\CloudClipboardService.cs" />
+    <Compile Include="Service\Models\v3\DeviceBasic3.cs" />
     <Compile Include="Service\UpgradeDetails.cs" />
+    <Compile Include="Service\v3\Device.cs" />
+    <Compile Include="Service\v3\ServiceBase.cs" />
+    <Compile Include="Service\v3\User.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
