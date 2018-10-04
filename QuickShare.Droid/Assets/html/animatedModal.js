@@ -10,7 +10,7 @@
  
     $.fn.animatedModal = function(options) {
         var modal = $(this);
-        
+
         //Defaults
         var settings = $.extend({
             modalTarget:'animatedModal', 
@@ -43,7 +43,9 @@
 
         var href = $(modal).attr('href'),
             id = $('body').find('#'+settings.modalTarget),
-            idConc = '#'+id.attr('id');
+            idConc = '#'+id.attr('id'),
+            isOpened = false,
+            isClosing = false;
             //console.log(idConc);
             // Default Classes
             id.addClass('animated');
@@ -64,9 +66,14 @@
         //Apply stles
         id.css(initStyles);
 
-        modal.click(function(event) {       
+        modal.click(function(event) {     
+            console.log("opening:" + id.attr("id"));
             event.preventDefault();
+
             window.location.hash = href;
+            isOpened = true;
+            isClosing = false;
+
             $('body, html').css({'overflow':'hidden'});
             if (href == idConc) {
                 if (id.hasClass(settings.modalTarget+'-off')) {
@@ -88,6 +95,9 @@
             $('body, html').css({'overflow':'auto'});
 
             settings.beforeClose(); //beforeClose
+
+            isClosing = true;
+
             if (id.hasClass(settings.modalTarget+'-on')) {
                 id.removeClass(settings.modalTarget+'-on');
                 id.addClass(settings.modalTarget+'-off');
@@ -106,7 +116,12 @@
         });
 
         function afterClose () {       
-            id.css({'z-index':settings.zIndexOut});
+            console.log("afterClose:" + id.attr("id"));
+            if (isOpened && isClosing) {
+                id.css({'z-index':settings.zIndexOut});
+                isClosing = false;
+                isOpened = false;
+            }
             settings.afterClose(); //afterClose
         }
 
@@ -115,7 +130,7 @@
         }
 
         $(window).on('hashchange', function() {
-            if (window.location.hash != href) {
+            if (window.location.hash != href && isOpened) {
                 close();
             }
         });
