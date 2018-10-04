@@ -9,11 +9,14 @@
     <script src="jquery-3.2.1.min.js"></script>
     <script src="progressbar.js"></script>
     <script src="jquery-material-icons-polyfill.js"></script>
+    <script src="animatedModal.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="animate.min.css">
 
     <script>
         var addItem, selectItem, removeItem, updateItemId, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview, showSearchSpinner, hideSearchSpinner, showProgressButtons, hideProgressButtons, setProgressSubtext;
         var allowRedirects = true; //false only when debugging on browser.
+        var loginWarningModal;
 
         $(document).ready(function () {
             var itemTemplate = '<li class="mdl-list__item mdl-button deviceItem" data-deviceId="{id}"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-icon">{type}</i>{name}</span></li>';
@@ -511,6 +514,37 @@
 
                 redirect("sendUrl.html");
             });
+
+            $(".loginWarningModal-authorize").on("click", function() {
+                redirect("loginWarningAuthorize.html");
+            });
+
+            // Initialize modal popups
+            loginWarningModal = $("#loginWarningButton").animatedModal({
+                modalTarget:'loginWarningModal',
+                /**
+                animatedIn:'zoomIn',
+                animatedOut:'zoomOut',
+                /**/
+                /**/
+                animatedIn: 'slideInUp',
+                animatedOut: 'slideOutDown',
+                /**/
+                /**
+                animatedIn: 'fadeInUp',
+                animatedOut: 'fadeOutDown',
+                /**/
+                animationDuration:'.4s',
+            });
+
+            setInterval(function() {
+                $("#loginWarningButton").addClass("rubberBand").addClass("animated");
+
+                setTimeout(function() {
+                    $("#loginWarningButton").removeClass("rubberBand").removeClass("animated");
+                }, 2000);
+            }, 5000);
+            
         });
     </script>
 </head>
@@ -522,6 +556,10 @@
             <div class="mdl-layout__header-row" style="padding-left: 16px;">
                 <!-- Title -->
                 <span class="mdl-layout-title"></span>
+                
+                <a id="loginWarningButton" href="#loginWarningModal" class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="material-icons">warning</i>
+                </a>
                 <div class="mdl-layout-spacer"></div>
                 <!-- Right aligned menu below button -->
                 <button id="historyButton" class="mdl-button mdl-js-button mdl-button--icon">
@@ -649,6 +687,18 @@
             </div>
         </div>
     </div>
+
+    <div id="loginWarningModal" class="modal">
+        <div class="modal-content">
+            <h1>Authorization required</h1>
+            <p>Please authorize Roamit to communicate with your Windows devices one more time, so we can give you the best experience possible.</p>
+            <br />
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect close-loginWarningModal" style="background-color: #eeeeeebb">I'll do it later</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-button--accent-2 close-loginWarningModal loginWarningModal-authorize">Authorize</button>
+        </div>
+        
+    </div>
+</div>
 </body>
 
 </html>

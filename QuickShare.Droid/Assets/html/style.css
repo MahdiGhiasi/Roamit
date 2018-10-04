@@ -543,3 +543,38 @@ body {
 .mdl-button {
     margin-left: 12px;
 }
+
+#loginWarningButton {
+    color: orangered;
+}
+
+#loginWarningModal {
+    background: #ad1457ee;
+    color: white;
+}
+
+.modal {
+    text-align: center;
+
+    /* Make modal-content vertically centered */
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modal .modal-content {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.modal .modal-content p {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.modal .modal-content h1 {
+    font-size: 28px;
+    font-weight: 200;
+}

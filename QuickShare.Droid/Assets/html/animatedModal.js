@@ -66,6 +66,7 @@
 
         modal.click(function(event) {       
             event.preventDefault();
+            window.location.hash = href;
             $('body, html').css({'overflow':'hidden'});
             if (href == idConc) {
                 if (id.hasClass(settings.modalTarget+'-off')) {
@@ -83,10 +84,7 @@
             } 
         });
 
-
-
-        closeBt.click(function(event) {
-            event.preventDefault();
+        function close() {
             $('body, html').css({'overflow':'auto'});
 
             settings.beforeClose(); //beforeClose
@@ -100,7 +98,11 @@
                 id.addClass(settings.animatedOut);
                 id.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', afterClose);
             };
+        }
 
+        closeBt.click(function(event) {
+            event.preventDefault();
+            history.back();
         });
 
         function afterClose () {       
@@ -111,6 +113,12 @@
         function afterOpen () {       
             settings.afterOpen(); //afterOpen
         }
+
+        $(window).on('hashchange', function() {
+            if (window.location.hash != href) {
+                close();
+            }
+        });
 
     }; // End animatedModal.js
 
