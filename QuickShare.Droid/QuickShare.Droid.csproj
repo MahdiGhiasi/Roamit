@@ -255,7 +255,6 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Services\CloudClipboardService.cs" />
     <Compile Include="Services\MessageCarrierService.cs" />
-    <Compile Include="Services\RomeReadyService.cs" />
     <Compile Include="Services\WaiterService.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Activities\WebViewContainerActivity.cs" />

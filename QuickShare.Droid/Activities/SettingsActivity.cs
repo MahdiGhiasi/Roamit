@@ -60,7 +60,6 @@ namespace QuickShare.Droid.Activities
             swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
             swUiMode = FindViewById<Switch>(Resource.Id.settings_uiModeSwitch);
-            swStayInBackground = FindViewById<Switch>(Resource.Id.settings_allowToStayInBackgroundSwitch);
             swDarkTheme = FindViewById<Switch>(Resource.Id.settings_darkThemeSwitch);
             swUseInAppRomeProcessOnWindows = FindViewById<Switch>(Resource.Id.settings_showReceiveUIOnWindowsSwitch);
             swUseSystemFolderPicker = FindViewById<Switch>(Resource.Id.settings_useSystemFolderPicker);
