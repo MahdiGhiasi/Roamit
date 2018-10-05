@@ -553,10 +553,16 @@ body {
     color: white;
 }
 
+#otherDevicesModal {
+    background: #ffebeeee;
+    color: black;
+}
+
 .modal {
     text-align: center;
+}
 
-    /* Make modal-content vertically centered */
+.modal-vertically-centered {
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -565,8 +571,7 @@ body {
 }
 
 .modal .modal-content {
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 20px;
 }
 
 .modal .modal-content p {
@@ -578,3 +583,76 @@ body {
     font-size: 28px;
     font-weight: 200;
 }
+
+.modal .modal-content h2 {
+    font-size: 24px;
+    font-weight: 200;
+}
+
+.modal .modal-content h3 {
+    font-size: 20px;
+    font-weight: 200;
+}
+
+#otherDevicesModal .card {
+    padding-left: 12px; 
+    padding-right: 12px; 
+    padding-top: 8px; 
+    padding-bottom: 4px;
+    color: white;
+    height: 30%;
+}
+
+#otherDevicesModal .card-head {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 16px;
+    color: white;
+    height: 10%;
+    text-align: center;
+}
+
+#otherDevicesModal .card .header {
+    width: 100%; 
+    margin-bottom: 8px; 
+    font-weight: bold;
+}
+
+#otherDevicesModal .card .itemBullet {
+    float:left; 
+    width: 8%; 
+    margin-top: -3px;
+}
+
+#otherDevicesModal .card .item {
+    float:right; 
+    width: 92%;
+}
+
+#otherDevicesModal .card .itemAfter { 
+    clear: both; 
+    margin-bottom: 4px;
+}
+
+.mdl-button--white {
+    background-color: #eeeeeebb;
+}
+
+.apps-box-gradient-1 {
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, #DD5D3A), color-stop(100%, #D22737)); /* safari4+,chrome */
+    background: -webkit-linear-gradient(241deg, #D22737 0%, #DD5D3A 100%); /* safari5.1+,chrome10+ */
+    background: linear-gradient(209deg, #D22737 0%, #DD5D3A 100%); /* w3c */
+}
+
+.apps-box-gradient-2 {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #71AF1F), color-stop(100%, #8DDE1D)); /* safari4+,chrome */
+    background: -webkit-linear-gradient(98deg, #8DDE1D 0%, #71AF1F 100%); /* safari5.1+,chrome10+ */
+    background: linear-gradient(352deg, #8DDE1D 0%, #71AF1F 100%); /* w3c */
+}
+
+.apps-box-gradient-3 {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2D8FB3), color-stop(100%, #51C3E8)); /* safari4+,chrome */
+    background: -webkit-linear-gradient(101deg, #51C3E8 0%, #2D8FB3 100%); /* safari5.1+,chrome10+ */
+    background: linear-gradient(349deg, #51C3E8 0%, #2D8FB3 100%); /* w3c */
+}
+
