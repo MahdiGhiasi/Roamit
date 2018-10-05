@@ -492,6 +492,12 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_doc_folder.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\animate.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\animatedModal.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
