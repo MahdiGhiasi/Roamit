@@ -493,8 +493,14 @@ namespace QuickShare
         SpriteVisual _hostSprite;
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
+        {           
             InitAcrylicUI();
+
+            if ((e.NewSize.Height > 850 && e.PreviousSize.Height <= 850 && !ViewModel.IsDevicesListExpanded) ||
+                (e.NewSize.Height < 670 && e.PreviousSize.Height >= 670 && ViewModel.IsDevicesListExpanded))
+            {
+                ToggleDevicesListSize();
+            }
         }
 
         private void ShowSignInFlyout()
@@ -611,11 +617,15 @@ namespace QuickShare
 
         private void ListExpandCollapseButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            ToggleDevicesListSize();
+        }
+
+        private void ToggleDevicesListSize()
+        {
             if (ViewModel.IsDevicesListExpanded)
                 devicesListCollapseStoryboard.Begin();
             else
                 devicesListExpandStoryboard.Begin();
-
             ViewModel.IsDevicesListExpanded = !ViewModel.IsDevicesListExpanded;
         }
     }
