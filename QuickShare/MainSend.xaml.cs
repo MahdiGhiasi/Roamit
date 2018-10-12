@@ -491,7 +491,7 @@ namespace QuickShare
             }            
         }
 
-        private async Task<List<FileSendInfo>> GetFilesWithoutFolderStructure(IEnumerable<IStorageItem> items)
+        private async Task<List<FileSendInfo>> GetFilesWithoutFolderStructure(IEnumerable<Windows.Storage.IStorageItem> items)
         {
             var output = new List<FileSendInfo>();
 
@@ -510,7 +510,7 @@ namespace QuickShare
             return output;
         }
 
-        private async Task<List<FileSendInfo>> GetFiles(List<IStorageItem> items)
+        private async Task<List<FileSendInfo>> GetFiles(List<Windows.Storage.IStorageItem> items)
         {
             var output = new List<FileSendInfo>();
 
