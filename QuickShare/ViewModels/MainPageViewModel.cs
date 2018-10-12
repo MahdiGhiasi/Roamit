@@ -156,6 +156,34 @@ namespace QuickShare.ViewModels
             }
         }
 
+        private bool frameBottomPaddingEnabled = false;
+        public bool FrameBottomPaddingEnabled
+        {
+            get
+            {
+                return frameBottomPaddingEnabled;
+            }
+            set
+            {
+                frameBottomPaddingEnabled = value;
+                OnPropertyChanged("FrameBottomPaddingEnabled");
+            }
+        }
+
+        private bool isDevicesListExpanded = false;
+        public bool IsDevicesListExpanded
+        {
+            get
+            {
+                return isDevicesListExpanded;
+            }
+            set
+            {
+                isDevicesListExpanded = value;
+                OnPropertyChanged("IsDevicesListExpanded");
+            }
+        }
+
         public bool IsContentFrameEnabled
         {
             get

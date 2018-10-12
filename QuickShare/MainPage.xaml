@@ -22,7 +22,7 @@
             <Storyboard x:Name="bottomBarShowStoryboard">
                 <DoubleAnimation Storyboard.TargetName="BottomBar" 
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                 Duration="0:0:0.3" From="170" To="0">
+                                 Duration="0:0:0.3" From="300" To="0">
                     <DoubleAnimation.EasingFunction>
                         <BackEase EasingMode="EaseOut" Amplitude="0" />
                         <!-- Because ExponentialEase animation is Mobile is buggy -->
@@ -30,7 +30,7 @@
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="BottomCommandBar" 
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                 Duration="0:0:0.3" From="48" To="0">
+                                 Duration="0:0:0.3" From="60" To="0">
                     <DoubleAnimation.EasingFunction>
                         <BackEase EasingMode="EaseOut" Amplitude="0" />
                     </DoubleAnimation.EasingFunction>
@@ -39,14 +39,14 @@
             <Storyboard x:Name="bottomBarHideStoryboard">
                 <DoubleAnimation Storyboard.TargetName="BottomBar" 
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                 Duration="0:0:0.4" From="0" To="250">
+                                 Duration="0:0:0.5" From="0" To="500">
                     <DoubleAnimation.EasingFunction>
                         <ExponentialEase EasingMode="EaseOut" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="BottomCommandBar" 
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                 Duration="0:0:0.3" From="0" To="48">
+                                 Duration="0:0:0.3" From="0" To="60">
                     <DoubleAnimation.EasingFunction>
                         <ExponentialEase EasingMode="EaseOut" />
                     </DoubleAnimation.EasingFunction>
@@ -78,6 +78,58 @@
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
             </Storyboard>
+            <Storyboard x:Name="devicesListExpandStoryboard">
+                <DoubleAnimation Storyboard.TargetName="devicesList" 
+                                 Storyboard.TargetProperty="(UIElement.Height)"
+                                 EnableDependentAnimation="True"
+                                 Duration="0:0:0.3" From="108" To="250">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="ContentFrameBottomPadding" 
+                                 Storyboard.TargetProperty="(UIElement.Height)"
+                                 EnableDependentAnimation="True"
+                                 Duration="0:0:0.3" From="0" To="142">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="ListExpandCollapseFontIcon" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                 EnableDependentAnimation="True"
+                                 Duration="0:0:0.3" From="0" To="180">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+            <Storyboard x:Name="devicesListCollapseStoryboard">
+                <DoubleAnimation Storyboard.TargetName="devicesList" 
+                                 Storyboard.TargetProperty="(UIElement.Height)"
+                                 EnableDependentAnimation="True"
+                                 Duration="0:0:0.3" From="250" To="108">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="ContentFrameBottomPadding" 
+                                 Storyboard.TargetProperty="(UIElement.Height)"
+                                 EnableDependentAnimation="True"
+                                 Duration="0:0:0.3" From="142" To="0">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+                <DoubleAnimation Storyboard.TargetName="ListExpandCollapseFontIcon" 
+                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                 EnableDependentAnimation="True"
+                                 Duration="0:0:0.3" From="180" To="360">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
         </ResourceDictionary>
     </Page.Resources>
 
@@ -86,16 +138,7 @@
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowHeight="632" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="BehindBottomCommandBar.Height" Value="48" />
-                        <Setter Target="BottomCommandBar.ClosedDisplayMode" Value="Compact" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowHeight="612" />
+                        <AdaptiveTrigger MinWindowHeight="662" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="BehindBottomCommandBar.Height" Value="48" />
@@ -117,7 +160,15 @@
                 <TextBlock Text="Roamit" FontSize="12" Foreground="LightGray" />
             </StackPanel>
             <Grid Grid.Row="1" RenderTransformOrigin="0.5,0.5">
-                <Frame x:Name="ContentFrame" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Navigating="ContentFrame_Navigating" Padding="0,10,0,0" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Frame x:Name="ContentFrame" Grid.Row="0" IsEnabled="{x:Bind ViewModel.IsContentFrameEnabled, Mode=OneWay}" Navigated="ContentFrame_Navigated" Navigating="ContentFrame_Navigating" Padding="0,10,0,0" />
+                <Grid x:Name="ContentFrameBottomPadding" 
+                      Grid.Row="1" 
+                      Height="0" 
+                      Visibility="{x:Bind ViewModel.FrameBottomPaddingEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
         </Grid>
 
@@ -170,25 +221,45 @@
                              Visibility="{x:Bind ViewModel.LookingForDevicesVisibility, Mode=OneWay}"
                              VerticalAlignment="Bottom" 
                              HorizontalAlignment="Stretch" />
-                <Button VerticalAlignment="Stretch"
-                        HorizontalAlignment="Right"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Tapped="LookingForDevicesHelp_Tapped">
-                    <Button.Content>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE11B;" />
-                    </Button.Content>
-                    <ToolTipService.ToolTip>
-                        Not seeing your devices?
-                    </ToolTipService.ToolTip>
-                </Button>
+                <StackPanel VerticalAlignment="Stretch"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                    <Button VerticalAlignment="Stretch"
+                            HorizontalAlignment="Right"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tapped="LookingForDevicesHelp_Tapped">
+                        <Button.Content>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE11B;" />
+                        </Button.Content>
+                        <ToolTipService.ToolTip>
+                            Not seeing your devices?
+                        </ToolTipService.ToolTip>
+                    </Button>
+                    <Button VerticalAlignment="Stretch"
+                            HorizontalAlignment="Right"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tapped="ListExpandCollapseButton_Tapped">
+                        <Button.Content>
+                            <FontIcon x:Name="ListExpandCollapseFontIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xE010;" RenderTransformOrigin="0.5, 0.5">
+                                <FontIcon.RenderTransform>
+                                    <RotateTransform Angle="0" />
+                                </FontIcon.RenderTransform>
+                            </FontIcon>
+                        </Button.Content>
+                        <ToolTipService.ToolTip>
+                            Expand/Collapse
+                        </ToolTipService.ToolTip>
+                    </Button>
+                </StackPanel>
             </Grid>
             <ListView x:Name="devicesList" 
                       ItemsSource="{x:Bind ViewModel.DevicesList, Mode=OneWay}" 
                       Margin="0,0,0,0" 
                       SelectionChanged="DevicesList_SelectionChanged" 
                       Background="{Binding Source={ThemeResource ListViewItemBackgroundSelectedPressed}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.6}" 
-                      Height="{Binding (classes:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=(108v(x-464))^56}" 
+                      Height="108" 
                       VerticalAlignment="Bottom" 
                       Opacity="0.9">
                 <ListView.ItemTemplate>

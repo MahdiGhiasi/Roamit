@@ -384,6 +384,8 @@ namespace QuickShare
                 if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!IsUserSelectedRemoteSystemManually))
                     ViewModel.ListManager.SelectHighScoreItem();
             }
+
+            ViewModel.FrameBottomPaddingEnabled = e.SourcePageType == typeof(MainActions);
         }
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
@@ -415,7 +417,7 @@ namespace QuickShare
                 BottomBar.Visibility = Visibility.Collapsed;
                 BottomCommandBar.Visibility = Visibility.Collapsed;
             }
-            
+
             ViewModel.ContentFrameNeedsRemoteSystemSelection = !(((e.Content is Settings) || (e.Content is HistoryPage) || (e.Content is DevicesSettings) || (e.Content is CloudServiceLogin)));
             ViewModel.RemoteSystemCollectionChanged();
         }
@@ -605,6 +607,16 @@ namespace QuickShare
         private void DonateButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ShowDonateFlyout();
+        }
+
+        private void ListExpandCollapseButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (ViewModel.IsDevicesListExpanded)
+                devicesListCollapseStoryboard.Begin();
+            else
+                devicesListExpandStoryboard.Begin();
+
+            ViewModel.IsDevicesListExpanded = !ViewModel.IsDevicesListExpanded;
         }
     }
 }
