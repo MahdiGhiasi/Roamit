@@ -29,11 +29,12 @@ namespace QuickShare.Common.Service
                              {
                                  Id = d.DeviceID,
                                  DisplayName = d.FriendlyName,
-                                 Kind = "QS_Android",
+                                 Kind = "Android",
                                  Status = NormalizedRemoteSystemStatus.Available,
                                  IsAvailableByProximity = false,
                                  IsAvailableBySpatialProximity = false,
                                  AppVersion = d.AppVersion ?? "",
+                                 Type = DeviceType.Android,
                              };
 
                 return output;

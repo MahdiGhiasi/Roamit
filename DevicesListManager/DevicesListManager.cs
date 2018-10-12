@@ -100,7 +100,7 @@ namespace QuickShare.DevicesListManager
         {
             lock (RemoteSystems)
             {
-                var d = devices.Where(x => attrNormalizer.Normalize(x).DisplayName == name);
+                var d = devices.Where(x => attrNormalizer.Normalize(x).DisplayName == name).ToList();
                 if (d == null)
                     return;
                 foreach (var i in d)
@@ -114,9 +114,9 @@ namespace QuickShare.DevicesListManager
         {
             lock (RemoteSystems)
             {
-                devices.RemoveAll(x => ((x is NormalizedRemoteSystem) && ((x as NormalizedRemoteSystem).Kind == "QS_Android")));
+                devices.RemoveAll(x => ((x is NormalizedRemoteSystem) && ((x as NormalizedRemoteSystem).Kind == "Android")));
 
-                if (SelectedRemoteSystem.Kind == "QS_Android")
+                if (SelectedRemoteSystem.Kind == "Android")
                 {
                     SelectHighScoreItem();
                 }
