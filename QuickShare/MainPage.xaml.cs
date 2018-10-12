@@ -365,6 +365,9 @@ namespace QuickShare
             if (devicesList.SelectedItem == null)
                 return;
 
+            if (ViewModel.IsDevicesListExpanded && ContentFrame.ActualHeight < 450)
+                ToggleDevicesListSize();
+
             IsUserSelectedRemoteSystemManually = true;
 
             var s = devicesList.SelectedItem as NormalizedRemoteSystem;

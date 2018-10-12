@@ -194,5 +194,10 @@ namespace QuickShare
                 ClipboardButton.IsEnabled = true;
             }
         }
+
+        //private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    MainPage.Current.ViewModel.Caption = $"{MainGrid.ActualWidth}, {MainGrid.ActualHeight} - {buttonsParentGrid.ActualWidth}, {buttonsParentGrid.ActualHeight} - {this.ActualWidth}, {this.ActualHeight}";
+        //}
     }
 }
