@@ -10,11 +10,15 @@
     <script src="progressbar.js"></script>
     <script src="jquery-material-icons-polyfill.js"></script>
     <script src="animatedModal.js"></script>
+    <link rel="stylesheet" href="roboto/roboto.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="animate.min.css">
 
     <script>
-        var addItem, selectItem, removeItem, updateItemId, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview, showSearchSpinner, hideSearchSpinner, showProgressButtons, hideProgressButtons, setProgressSubtext;
+        var addItem, selectItem, removeItem, updateItemId, setClipboardText,
+            setProgressText, setProgressValue, showProgress, setSharePreview, 
+            showSearchSpinner, hideSearchSpinner, showProgressButtons, 
+            hideProgressButtons, setProgressSubtext, showLoginWarning, hideLoginWarning;
         var allowRedirects = true; //false only when debugging on browser.
         var loginWarningModal, otherDevicesModal;
 
@@ -554,6 +558,26 @@
                 animationDuration:'.4s',
             });
 
+            showLoginWarning = function() {
+                $("#loginWarningButton").css("display", "block");
+            }
+
+            hideLoginWarning = function() {
+                $("#loginWarningButton").css("display", "none");
+            }
+
+            $("#getWindows10AppLink").on("click", function() {
+                redirect("getWindows10AppLink.html");
+            });
+
+            $("#getAndroidAppLink").on("click", function() {
+                redirect("getAndroidAppLink.html");
+            });
+
+            $("#getExtensionLink").on("click", function() {
+                redirect("getExtensionLink.html");
+            });
+
             setInterval(function() {
                 $("#loginWarningButton").addClass("rubberBand").addClass("animated");
 
@@ -577,7 +601,7 @@
                 <button id="otherDevicesButton" href="#otherDevicesModal" class="mdl-button mdl-js-button mdl-button--icon">
                     <i class="material-icons">important_devices</i>
                 </button>
-                <button id="loginWarningButton" href="#loginWarningModal" class="mdl-button mdl-js-button mdl-button--icon">
+                <button id="loginWarningButton" href="#loginWarningModal" class="mdl-button mdl-js-button mdl-button--icon" style="display: none">
                     <i class="material-icons">warning</i>
                 </button>
                 <div class="mdl-layout-spacer"></div>
@@ -718,51 +742,72 @@
         </div>
     </div>
 
-    <div id="otherDevicesModal" class="modal close-otherDevicesModal">
+    <div id="otherDevicesModal" class="modal">
         <div class="modal-content" style="text-align: left; margin:0;">
             <div class="card-head" style="line-height: 25px; background-color: #333;">
-                <span style="font-weight: bold; font-size: 18px; margin-top: 8px;">ROAMIT COMPONENTS</span><br />
-                <span style="font-weight: 100; font-size:14px;">Remove the barrier between your devices</span>
+                <div class="body">
+                    <span style="font-weight: bold; font-size: 18px; margin-top: 8px;">Roamit</span><br />
+                    <span style="font-weight: 100; font-size:14px;">Remove the barrier between your devices</span>
+                </div>
             </div>
             <div class="card apps-box-gradient-1">
-                <div class="header">BROWSER EXTENSIONS</div>
+                <div class="body">
+                    <div class="header">Browser Extensions</div>
 
-                <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
-                <div class="item">Continue reading webpages on your other device quickly.</div>
-                <div class="itemAfter"></div>
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Continue reading webpages on your other device quickly</div>
+                    <div class="itemAfter"></div>
 
-                <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
-                <div class="item">Integrate your browser with Windows Timeline.</div>
-                <div class="itemAfter"></div>
-
-                <div style="margin-top: 12px; margin-bottom: 8px; text-align: right;">
-                    <a href="#">Get for Chrome</a>, <a href="#">Firefox</a>
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Integrate browser with Windows Timeline</div>
+                    <div class="itemAfter"></div>
+                </div>
+                <div class="button-container">
+                    <a id="getExtensionLink" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--white close-otherDevicesModal">
+                        <img src="images/chrome-small.png" style="margin-top: -3px; height: 18px;" />
+                        <img src="images/firefox-small.png" style="margin-top: -3px; margin-right: 5px; height: 18px;" />
+                        Get for Chrome and Firefox
+                    </a>
                 </div>
             </div>
             <div class="card apps-box-gradient-2">
-                <div class="header">ROAMIT FOR WINDOWS 10</div>
+                <div class="body">
+                    <div class="header">Roamit for Windows 10</div>
 
-                <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
-                <div class="item">Automatically sync your Clipboard to your phone.</div>
-                <div class="itemAfter"></div>
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Automatically sync your Clipboard</div>
+                    <div class="itemAfter"></div>
 
-                <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
-                <div class="item">Send pictures and files quickly to your phone over Wi-Fi.</div>
-                <div class="itemAfter"></div>
-
-                <div style="margin-top: 12px; margin-bottom: 8px; text-align: right;">
-                    <a href="#">Get it now</a>
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Send pictures and files quickly</div>
+                    <div class="itemAfter"></div>
+                </div>
+                <div class="button-container">
+                    <a id="getWindows10AppLink" href="https://www.microsoft.com/store/apps/9nrdffns92g1" 
+                       class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--white close-otherDevicesModal">
+                        <img src="images/windows-small.png" style="margin-top: -3px; margin-right: 5px; height: 18px;" />
+                        Get it now
+                    </a>
                 </div>
             </div>
             <div class="card apps-box-gradient-3">
-                <div class="header">ROAMIT FOR ANDROID</div>
+                <div class="body">
+                    <div class="header">Roamit for Android</div>
 
-                <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
-                <div class="item">Send pictures and files quickly to your PC over Wi-Fi.</div>
-                <div class="itemAfter"></div>
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Send pictures and files quickly</div>
+                    <div class="itemAfter"></div>
 
-                <div style="margin-top: 12px; margin-bottom: 8px; text-align: right;">
-                    <a href="#">Get it now</a>
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Share your clipboard</div>
+                    <div class="itemAfter"></div>
+                </div>
+                <div class="button-container">
+                    <a id="getAndroidAppLink" href="https://play.google.com/store/apps/details?id=com.ghiasi.roamitapp&hl=en" 
+                       class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--white close-otherDevicesModal">
+                        <img src="images/android-small-black.png" style="margin-top: -3px; margin-right: 5px; height: 18px;" />
+                        Get it now
+                    </a>
                 </div>
             </div>
         </div>

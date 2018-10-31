@@ -266,6 +266,18 @@
     <AndroidAsset Include="Assets\html\materialicons.woff2" />
     <AndroidAsset Include="Assets\html\MaterialIcons-Regular.ttf" />
     <AndroidAsset Include="Assets\html\MaterialIcons-Regular.woff" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Black.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-BlackItalic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Bold.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-BoldItalic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Italic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Light.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-LightItalic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Medium.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-MediumItalic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Regular.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Thin.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-ThinItalic.ttf" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
@@ -497,6 +509,24 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\html\animatedModal.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\images\android-small-black.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\images\chrome-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\images\firefox-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\images\windows-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\roboto\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\roboto\roboto.css" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

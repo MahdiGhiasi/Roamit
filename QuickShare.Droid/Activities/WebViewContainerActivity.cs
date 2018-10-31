@@ -126,6 +126,7 @@ namespace QuickShare.Droid.Activities
             }
 
             MigrateApiIfNecessary();
+            CheckDevicesPermission();
 
             if (Common.MessageCarrierPackageManager == null)
             {
@@ -149,6 +150,21 @@ namespace QuickShare.Droid.Activities
             CheckForLegacyVersionInstallations();
         }
 
+        private async void CheckDevicesPermission()
+        {
+            if (CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
+            {
+                var apiLoginInfo = (CloudServiceAuthenticationHelper.GetApiLoginInfo());
+                var user = new QuickShare.Common.Service.v3.User(apiLoginInfo.AccountId, apiLoginInfo.Token);
+                var hasPermission = await user.HasDevicesPermission();
+
+                if (!hasPermission)
+                {
+                    ShowLoginWarning();
+                }
+            }
+        }
+
         private async void MigrateApiIfNecessary()
         {
             if (CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
@@ -159,12 +175,23 @@ namespace QuickShare.Droid.Activities
                 await CloudServiceAuthenticationHelper.MigrateFromV1ToV3();
                 InitRoamitCloudPackageManager();
                 Analytics.TrackEvent("ApiMigration", "V1toV3", "Success");
+                CheckDevicesPermission();
             }
             catch (Exception ex)
             {
                 Analytics.TrackEvent("ApiMigration", "V1toV3", $"Failed:{ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"API migration from v1 to v3 failed: {ex.ToString()}");
             }
+        }
+
+        private void ShowLoginWarning()
+        {
+            SendJavascriptToWebView($"showLoginWarning();");
+        }
+
+        private void HideLoginWarning()
+        {
+            SendJavascriptToWebView($"hideLoginWarning();");
         }
 
         private void InitUI(Classes.Settings settings)

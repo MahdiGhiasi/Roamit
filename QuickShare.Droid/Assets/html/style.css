@@ -1,5 +1,6 @@
 body {
     background-color: #eee;
+    font-family: Roboto;
 }
 
 .footer-extra {
@@ -595,27 +596,46 @@ body {
 }
 
 #otherDevicesModal .card {
-    padding-left: 12px; 
-    padding-right: 12px; 
-    padding-top: 8px; 
-    padding-bottom: 4px;
     color: white;
-    height: 30%;
+    height: 29%;
+    position: relative;
+}
+
+#otherDevicesModal .card .body {
+    padding-left: 16px; 
+    padding-right: 16px; 
+    padding-top: 20px; 
+    padding-bottom: 4px;
+}
+
+#otherDevicesModal .card .button-container { 
+    text-align: right; 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    right: 0;
+    margin-right: 14px;
+    margin-bottom: 14px;
 }
 
 #otherDevicesModal .card-head {
-    padding-left: 12px;
+    color: white;
+    height: 13%;
+    text-align: left;
+}
+
+#otherDevicesModal .card-head .body {
+    padding-left: 24px;
     padding-right: 12px;
     padding-top: 16px;
-    color: white;
-    height: 10%;
-    text-align: center;
 }
 
 #otherDevicesModal .card .header {
     width: 100%; 
-    margin-bottom: 8px; 
+    margin-bottom: 12px; 
     font-weight: bold;
+    font-size: 18px;
+    text-align: center;
 }
 
 #otherDevicesModal .card .itemBullet {

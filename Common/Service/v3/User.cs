@@ -59,6 +59,14 @@ namespace QuickShare.Common.Service.v3
             return output;
         }
 
+        public async Task<bool> HasDevicesPermission()
+        {
+            var response = await SendGetRequest("CheckDevicesPermission");
+            var result = await response.Content.ReadAsStringAsync();
 
+            if (result.Contains(',') && result.Split(',')[0] == "1")
+                return true;
+            return false;
+        }
     }
 }
