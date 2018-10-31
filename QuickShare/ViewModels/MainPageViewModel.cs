@@ -1,4 +1,5 @@
 ﻿using QuickShare.Classes;
+using QuickShare.Common;
 using QuickShare.DevicesListManager;
 using QuickShare.UWP.Rome;
 using System;
@@ -129,16 +130,37 @@ namespace QuickShare.ViewModels
             }
         }
 
+        private Visibility signInToCloudServiceFlyoutVisibility = Visibility.Collapsed;
+        public Visibility SignInToCloudServiceFlyoutVisibility
+        {
+            get { return signInToCloudServiceFlyoutVisibility; }
+            set
+            {
+                signInToCloudServiceFlyoutVisibility = value;
+                OnPropertyChanged("SignInToCloudServiceFlyoutVisibility");
+                OnPropertyChanged("OverlayVisibility");
+            }
+        }
+
         public Visibility OverlayVisibility
         {
             get
             {
                 if ((signInNoticeVisibility == Visibility.Visible) ||
                     (whatsNewVisibility == Visibility.Visible) || 
-                    (donateFlyoutVisibility == Visibility.Visible))
+                    (donateFlyoutVisibility == Visibility.Visible) ||
+                    (signInToCloudServiceFlyoutVisibility == Visibility.Visible))
                     return Visibility.Visible;
 
                 return Visibility.Collapsed;
+            }
+        }
+
+        public Visibility SignInWarningVisibility
+        {
+            get
+            {
+                return SecureKeyStorage.IsAccountIdStored() ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
@@ -246,6 +268,11 @@ namespace QuickShare.ViewModels
         public void Dispose()
         {
             ListManager.PropertyChanged -= ListManager_PropertyChanged;
+        }
+
+        public void UpdateSignInWarningVisibility()
+        {
+            OnPropertyChanged("SignInWarningVisibility");
         }
     }
 }

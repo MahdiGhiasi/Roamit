@@ -22,9 +22,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace QuickShare.Flyouts
 {
-    public sealed partial class DonateFlyout : UserControl, IFlyout
+    public sealed partial class DonateFlyout : UserControl, IFlyout<EventArgs>
     {
-        public event EventHandler FlyoutCloseRequest;
+        public event EventHandler<EventArgs> FlyoutCloseRequest;
 
         public DonateFlyout()
         {

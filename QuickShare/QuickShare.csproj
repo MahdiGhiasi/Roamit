@@ -95,6 +95,7 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Compile Include="Classes\ActualSizePropertyProxy.cs" />
+    <Compile Include="Classes\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Classes\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="CloudServiceLogin.xaml.cs">
       <DependentUpon>CloudServiceLogin.xaml</DependentUpon>
@@ -105,6 +106,9 @@
     <Compile Include="Flyouts\IFlyout.cs" />
     <Compile Include="Flyouts\DonateFlyout.xaml.cs">
       <DependentUpon>DonateFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Flyouts\SignInToCloudServiceFlyout.xaml.cs">
+      <DependentUpon>SignInToCloudServiceFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Flyouts\WhatsNewFlyout.xaml.cs">
       <DependentUpon>WhatsNewFlyout.xaml</DependentUpon>
@@ -426,6 +430,10 @@
     <Page Include="DevicesSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Flyouts\SignInToCloudServiceFlyout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Flyouts\SignInNoticeFlyout.xaml">
       <SubType>Designer</SubType>

@@ -15,6 +15,7 @@
             <converters:BrushAlphaModifier x:Key="BrushAlphaModifier"></converters:BrushAlphaModifier>
             <converters:SelectedIndexToEnabledConverter x:Key="SelectedIndexToEnabledConverter"></converters:SelectedIndexToEnabledConverter>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"></converters:BooleanToVisibilityConverter>
+            <converters:InvertBooleanConverter x:Key="InvertBooleanConverter"></converters:InvertBooleanConverter>
 
             <logicalModifiers:OrModifier x:Key="OrModifier" />
             <logicalModifiers:AndModifier x:Key="AndModifier" />

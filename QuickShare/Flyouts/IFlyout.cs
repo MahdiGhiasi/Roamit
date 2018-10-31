@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace QuickShare.Flyouts
 {
-    internal interface IFlyout
+    internal interface IFlyout<T>
     {
-        event EventHandler FlyoutCloseRequest;
+        event EventHandler<T> FlyoutCloseRequest;
     }
 }

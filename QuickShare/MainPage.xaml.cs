@@ -424,6 +424,7 @@ namespace QuickShare
 
             ViewModel.ContentFrameNeedsRemoteSystemSelection = !(((e.Content is Settings) || (e.Content is HistoryPage) || (e.Content is DevicesSettings) || (e.Content is CloudServiceLogin)));
             ViewModel.RemoteSystemCollectionChanged();
+            ViewModel.UpdateSignInWarningVisibility();
         }
 
         private async void DiscoverDevices()
@@ -631,6 +632,28 @@ namespace QuickShare
             else
                 devicesListExpandStoryboard.Begin();
             ViewModel.IsDevicesListExpanded = !ViewModel.IsDevicesListExpanded;
+        }
+
+        private void SignInButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ViewModel.SignInToCloudServiceFlyoutVisibility = Visibility.Visible;
+            overlayShowStoryboard.Begin();
+        }
+
+        private async void SignInToCloudServiceFlyoutInstance_FlyoutCloseRequest(object sender, Flyouts.SignInToCloudServiceFlyoutResultEventArgs e)
+        {
+            overlayHideStoryboard.Begin();
+            if (e.ShouldStartSignInProcess)
+            {
+                ViewModel.SignInToCloudServiceFlyoutVisibility = Visibility.Collapsed;
+
+                ContentFrame.Navigate(typeof(CloudServiceLogin));
+            }
+            else
+            {
+                await Task.Delay(250);
+                ViewModel.SignInToCloudServiceFlyoutVisibility = Visibility.Collapsed;
+            }
         }
     }
 }
