@@ -388,7 +388,8 @@ namespace QuickShare
                     ViewModel.ListManager.SelectHighScoreItem();
             }
 
-            ViewModel.FrameBottomPaddingEnabled = e.SourcePageType == typeof(MainActions);
+            ViewModel.FrameBottomPaddingEnabled = (e.SourcePageType == typeof(MainActions)) ||
+                (e.SourcePageType == typeof(MainShareTarget));
         }
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
