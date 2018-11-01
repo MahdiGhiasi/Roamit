@@ -43,20 +43,20 @@ namespace QuickShare
 
         private void WebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            if ((args.Uri.AbsolutePath.Contains("/v2/Graph/Welcome")))
+            if ((args.Uri.AbsolutePath.Contains("/v3/Graph/Welcome")))
             {
                 var queryStrings = QueryHelpers.ParseQuery(args.Uri.Query);
 
-                if (queryStrings.ContainsKey("accountId"))// && queryStrings.ContainsKey("token"))
+                if (queryStrings.ContainsKey("accountId") && queryStrings.ContainsKey("token"))
                 {
                     webView.Visibility = Visibility.Collapsed;
 
                     string id = queryStrings["accountId"][0];
-                    //string token = queryStrings["token"][0];
-                    Debug.WriteLine($"Account Id is: '{id}', token is: ''");
+                    string token = queryStrings["token"][0];
+                    Debug.WriteLine($"Account Id is: '{id}', token is: '{token}'");
 
                     SecureKeyStorage.SetAccountId(id);
-                    //SecureKeyStorage.SetToken(token);
+                    SecureKeyStorage.SetToken(token);
 
                     if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard") &&
                         ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString().ToLower() == "true")
@@ -106,7 +106,7 @@ namespace QuickShare
 
         private void LoadAuthenticateGraphPage()
         {
-            webView.Navigate(new Uri($"{Constants.ServerAddress}/v2/Authenticate/Graph"));
+            webView.Navigate(new Uri($"{Constants.ServerAddress}/v3/Authenticate/Graph"));
         }
 
         private void Retry_Tapped(object sender, TappedRoutedEventArgs e)
