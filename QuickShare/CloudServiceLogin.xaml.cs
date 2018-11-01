@@ -1,4 +1,5 @@
-﻿using QuickShare.Common;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using QuickShare.Common;
 using QuickShare.HelperClasses;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -26,8 +28,6 @@ namespace QuickShare
     /// </summary>
     public sealed partial class CloudServiceLogin : Page
     {
-        bool sendCloudClipboardOriginalValue;
-
         public CloudServiceLogin()
         {
             this.InitializeComponent();
@@ -43,26 +43,45 @@ namespace QuickShare
 
         private void WebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            if ((args.Uri.AbsolutePath.Contains("/v2/Graph/Welcome")) && (args.Uri.Query.Length > 12))
+            if ((args.Uri.AbsolutePath.Contains("/v2/Graph/Welcome")))
             {
-                webView.Visibility = Visibility.Collapsed;
+                var queryStrings = QueryHelpers.ParseQuery(args.Uri.Query);
 
-                string id = args.Uri.Query.Substring(11);
-                Debug.WriteLine($"Account Id is: {id}");
-
-                SecureKeyStorage.SetAccountId(id);
-
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard") &&
-                    ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString().ToLower() == "true")
+                if (queryStrings.ContainsKey("accountId"))// && queryStrings.ContainsKey("token"))
                 {
+                    webView.Visibility = Visibility.Collapsed;
+
+                    string id = queryStrings["accountId"][0];
+                    //string token = queryStrings["token"][0];
+                    Debug.WriteLine($"Account Id is: '{id}', token is: ''");
+
+                    SecureKeyStorage.SetAccountId(id);
+                    //SecureKeyStorage.SetToken(token);
+
+                    if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard") &&
+                        ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString().ToLower() == "true")
+                    {
+    #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                        PCExtensionHelper.StartPCExtension();
+    #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+                        if (PCExtensionHelper.IsSupported)
+                            ToastFunctions.SendUniversalClipboardNoticeToast();
+                    }
+                    Frame.GoBack();
+                }
+                else
+                {
+                    // Failed to log in
+                    var errorCode = queryStrings.ContainsKey("error") ? queryStrings["error"][0] : "null";
+                    var md = new MessageDialog($"Login failed with error '{errorCode}'. Functionality may be limited.");
+
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    PCExtensionHelper.StartPCExtension();
+                    md.ShowAsync();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-                    if (PCExtensionHelper.IsSupported)
-                        ToastFunctions.SendUniversalClipboardNoticeToast();
+                    Frame.GoBack();
                 }
-                Frame.GoBack();
             }
             else
             {

@@ -188,9 +188,9 @@ namespace QuickShare.ViewModels
             get { return (PCExtensionHelper.IsSupported) ? Visibility.Visible : Visibility.Collapsed; }
         }
 
-        public bool IsAccountIdStored
+        public bool IsCloudServiceLoggedIn
         {
-            get { return (SecureKeyStorage.IsAccountIdStored()); }
+            get => SecureKeyStorage.IsTokenStored() && SecureKeyStorage.IsAccountIdStored();
         }
 
         private bool receiveCloudClipboard = true;
@@ -261,7 +261,7 @@ namespace QuickShare.ViewModels
         {
             get
             {
-                return receiveCloudClipboardEnabled && IsAccountIdStored;
+                return receiveCloudClipboardEnabled && IsCloudServiceLoggedIn;
             }
             set
             {
@@ -320,7 +320,7 @@ namespace QuickShare.ViewModels
         {
             get
             {
-                return sendCloudClipboardEnabled && IsAccountIdStored;
+                return sendCloudClipboardEnabled && IsCloudServiceLoggedIn;
             }
             set
             {
@@ -387,19 +387,24 @@ namespace QuickShare.ViewModels
                 userName = value;
 
                 OnPropertyChanged("UserName");
-                OnPropertyChanged("SignedInText");
+                OnPropertyChanged("SignedInFullName");
+                OnPropertyChanged("IsSignedInFullNameAvailable");
             }
         }
 
-        public string SignedInText
+        public string SignedInFullName
         {
             get
             {
                 if (string.IsNullOrWhiteSpace(UserName))
-                    return "Just a moment...";
-
-                return $"Signed in to Roamit Cloud Service as '{UserName}'";
+                    return "...";
+                return UserName;
             }
+        }
+
+        public bool IsSignedInFullNameAvailable
+        {
+            get => !string.IsNullOrEmpty(UserName);
         }
 
         public void RefreshCloudClipboardBindings()

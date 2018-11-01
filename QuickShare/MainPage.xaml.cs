@@ -285,11 +285,29 @@ namespace QuickShare
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("AppLoadTime", loadTimeString).Build());
             }
 #endif
+
+            if (SecureKeyStorage.IsAccountIdStored() && !SecureKeyStorage.IsTokenStored())
+                MigrateToApiV3();
             
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(item => item.IsAvailable,
                 DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                 DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
             await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)27 : (uint)80);
+        }
+
+        private async void MigrateToApiV3()
+        {
+            var result = await Common.Service.v2.User.MigrateToV3(SecureKeyStorage.GetAccountId());
+
+            if (result != null)
+            {
+                SecureKeyStorage.SetToken(result.Token);
+                ViewModel.UpdateSignInWarningVisibility();
+            }
+            else
+            {
+                Debug.WriteLine("Failed to migrate api v2 to api v3.");
+            }
         }
 
         int AcrylicStatus = -1;

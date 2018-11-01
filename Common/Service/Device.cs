@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using QuickShare.Common.Service.Models;
 using QuickShare.DevicesListManager;
 using System;
 using System.Collections.Generic;
@@ -221,22 +222,9 @@ namespace QuickShare.Common.Service
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Exception in MigrateToV3: {ex.Message}");
+                Debug.WriteLine($"Exception in v1.MigrateToV3: {ex.Message}");
                 return null;
             }
-        }
-
-    }
-
-    public class APIv3LoginInfo
-    {
-        public Guid AccountId { get; }
-        public string Token { get; }
-
-        public APIv3LoginInfo(Guid accountId, string token)
-        {
-            AccountId = accountId;
-            Token = token;
         }
     }
 }

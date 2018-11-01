@@ -158,10 +158,7 @@ namespace QuickShare.ViewModels
 
         public Visibility SignInWarningVisibility
         {
-            get
-            {
-                return SecureKeyStorage.IsAccountIdStored() ? Visibility.Collapsed : Visibility.Visible;
-            }
+            get => (SecureKeyStorage.IsTokenStored() && SecureKeyStorage.IsAccountIdStored()) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private bool contentFrameNeedsRemoteSystemSelection = false;

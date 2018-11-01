@@ -151,6 +151,7 @@ namespace QuickShare
             await PCExtensionHelper.StopPCExtensionIfRunning();
 
             SecureKeyStorage.DeleteAccountId();
+            SecureKeyStorage.DeleteToken();
 
             ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = false.ToString();
             Model.SendCloudClipboard = false;

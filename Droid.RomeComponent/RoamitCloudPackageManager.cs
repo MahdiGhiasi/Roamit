@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using Microsoft.ConnectedDevices;
 using v1 = QuickShare.Common.Service;
 using v3 = QuickShare.Common.Service.v3;
+using QuickShare.Common.Service.Models;
 
 namespace QuickShare.Droid.RomeComponent
 {
@@ -48,7 +49,7 @@ namespace QuickShare.Droid.RomeComponent
             this.v3EndpointDevice = new v3.Device(accountId, token);
         }
 
-        public void SetLoginInfoV3(v1.APIv3LoginInfo loginInfo)
+        public void SetLoginInfoV3(APIv3LoginInfo loginInfo)
         {
             SetLoginInfoV3(loginInfo.AccountId, loginInfo.Token);
         }

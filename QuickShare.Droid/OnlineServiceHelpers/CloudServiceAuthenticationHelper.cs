@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Plugin.SecureStorage;
 using QuickShare.Common.Service;
+using QuickShare.Common.Service.Models;
 
 namespace QuickShare.Droid.OnlineServiceHelpers
 {
