@@ -23,17 +23,6 @@ namespace QuickShare.ViewModels
         
         public SettingsViewModel()
         {
-            if ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet))
-            {
-                extensionsSectionVisibility = Visibility.Visible;
-                chromeFirefoxExtensionVisibility = Visibility.Visible;
-            }
-            else
-            {
-                extensionsSectionVisibility = Visibility.Collapsed;
-                chromeFirefoxExtensionVisibility = Visibility.Collapsed;
-            }
-
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
             {
                 if (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc))
@@ -169,18 +158,6 @@ namespace QuickShare.ViewModels
         public Visibility FreeVersionBoxVisibility
         {
             get { return freeVersionBoxVisibility; }
-        }
-
-        private Visibility extensionsSectionVisibility;
-        public Visibility ExtensionsSectionVisibility
-        {
-            get { return extensionsSectionVisibility; }
-        }
-
-        private Visibility chromeFirefoxExtensionVisibility;
-        public Visibility ChromeFirefoxExtensionVisibility
-        {
-            get { return chromeFirefoxExtensionVisibility; }
         }
 
         public Visibility SendCloudClipboardVisibility

@@ -71,31 +71,6 @@
                                        Foreground="#CCCCCC" />
                             <ToggleSwitch IsOn="{x:Bind Model.TypeBasedDownloadFolderToggle, Mode=TwoWay}" />
                         </StackPanel>
-                        <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
-                            <TextBlock Text="Browser Integration" FontWeight="Bold" />
-                            <HyperlinkButton Foreground="SkyBlue" Visibility="{x:Bind Model.ChromeFirefoxExtensionVisibility, Mode=OneWay}" Tapped="GetChromeFirefoxExtension_Tapped">
-                                <HyperlinkButton.Content>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Source="ms-appx:///Assets/chrome-firefox.png"
-                                               Grid.Column="0"
-                                               VerticalAlignment="Top"
-                                               Margin="0,2,0,0"
-                                               Height="20" />
-                                        <TextBlock TextWrapping="Wrap"
-                                                   Margin="4,0,0,0"
-                                                   Grid.Column="1">
-                                        <Underline>
-                                            <Run Text="Get Roamit integration extension for Chrome and Firefox" />
-                                        </Underline>
-                                        </TextBlock>
-                                    </Grid>
-                                </HyperlinkButton.Content>
-                            </HyperlinkButton>
-                        </StackPanel>
                         <StackPanel Margin="0,24,0,8" Visibility="Collapsed">
                             <TextBlock Text="Universal clipboard" FontWeight="Bold" />
                             <TextBlock Text="Universal clipboard mirrors any text you copy on your PC to the clipboard of your other devices."
