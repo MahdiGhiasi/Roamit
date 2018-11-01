@@ -16,7 +16,7 @@ namespace QuickShare.Common.Service.v3
         {
         }
 
-        public async Task<IEnumerable<NormalizedRemoteSystem>> GetDevices(string userId)
+        public async Task<IEnumerable<NormalizedRemoteSystem>> GetDevices()
         {
             string responseText = "";
 
