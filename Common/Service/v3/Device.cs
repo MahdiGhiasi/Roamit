@@ -16,42 +16,6 @@ namespace QuickShare.Common.Service.v3
         {
         }
 
-        public async Task<IEnumerable<NormalizedRemoteSystem>> GetDevices()
-        {
-            string responseText = "";
-
-            try
-            {
-
-                var response = await SendGetRequest("Devices");
-                responseText = await response.Content.ReadAsStringAsync();
-
-                var devices = JsonConvert.DeserializeObject<List<Models.v3.DeviceBasic3>>(responseText);
-
-                var output = from d in devices
-                             //where d.Type == DeviceType.Android || d.Type == DeviceType.GraphWindowsDevice
-                             select new NormalizedRemoteSystem
-                             {
-                                 Id = d.DeviceID,
-                                 DisplayName = d.Name,
-                                 Kind = d.FormFactor ?? (d.Kind == DeviceType.Android ? "Android" : ""),
-                                 Status = NormalizedRemoteSystemStatus.Available,
-                                 IsAvailableByProximity = false,
-                                 IsAvailableBySpatialProximity = false,
-                                 AppVersion = d.AppVersion ?? "",
-                                 Type = d.Kind,
-                             };
-
-                return output;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"An exception was thrown in GetAndroidDevices: {ex.Message}");
-                Debug.WriteLine($"Server returned text was '{responseText}'");
-                return new List<NormalizedRemoteSystem>();
-            }
-        }
-
         public async Task<string> ChangeCloudClipboardActivation(string deviceId, bool value)
         {
             var response = await SendGetRequest($"CloudClipboardActivation/{deviceId}", new []

@@ -34,17 +34,19 @@ namespace QuickShare.UWP.Rome
         private CloudServiceRomePackageManager() { }
 
 
+        Common.Service.v3.User user = null;
         Common.Service.v3.Device device = null;
         List<NormalizedRemoteSystem> remoteSystems = null;
 
         string deviceId = null;
 
-        public bool IsInitialized => device != null;
+        public bool IsInitialized => user != null;
 
-        public async Task Initialize(APIv3LoginInfo loginInfo)
+        public async Task Initialize(Guid accountId, string token)
         {
-            device = new Common.Service.v3.Device(loginInfo.AccountId, loginInfo.Token);
-            remoteSystems = (await device.GetDevices()).Where(x => x.Type == DeviceType.GraphWindowsDevice || x.Type == DeviceType.Android).ToList();
+            user = new Common.Service.v3.User(accountId, token);
+            device = new Common.Service.v3.Device(accountId, token);
+            remoteSystems = (await user.GetDevices()).Where(x => x.Type == DeviceType.GraphWindowsDevice || x.Type == DeviceType.Android).ToList();
         }
 
         public async Task<RomeAppServiceResponse> Send(Dictionary<string, object> data)
@@ -103,6 +105,17 @@ namespace QuickShare.UWP.Rome
                 return RomeAppServiceConnectionStatus.Success;
 
             return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
+        }
+
+        public async Task<bool> QuickClipboardForWindowsDevice(string _text, string deviceName, string _senderName)
+        {
+            if ((_text + _senderName).Length > 1024)
+                return false;
+
+            var uri = new Uri("roamit://clipboard/" + _senderName.EncodeToBase64() + "?" + _text.EncodeToBase64());
+            var result = await LaunchUri(deviceName, uri);
+
+            return (result == RomeRemoteLaunchUriStatus.Success);
         }
 
         private string FindDevice(string deviceName)

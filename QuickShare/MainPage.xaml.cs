@@ -301,8 +301,7 @@ namespace QuickShare
 
         private async void InitializeCloudServicePackageManager()
         {
-            await CloudServiceRomePackageManager.Instance.Initialize(
-                new Common.Service.Models.APIv3LoginInfo(Guid.Parse(SecureKeyStorage.GetAccountId()), SecureKeyStorage.GetToken()));
+            await CloudServiceRomePackageManager.Instance.Initialize(Guid.Parse(SecureKeyStorage.GetAccountId()), SecureKeyStorage.GetToken());
         }
 
         private async void MigrateToApiV3()
