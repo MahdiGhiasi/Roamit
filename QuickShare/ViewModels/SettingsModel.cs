@@ -388,7 +388,7 @@ namespace QuickShare.ViewModels
         {
             OnPropertyChanged("SendCloudClipboardEnabled");
             OnPropertyChanged("ReceiveCloudClipboardEnabled");
-            OnPropertyChanged("IsAccountIdStored");
+            OnPropertyChanged("IsCloudServiceLoggedIn");
         }
 
         public DownloadGroupByItem GroupReceivedBySelectedItem
