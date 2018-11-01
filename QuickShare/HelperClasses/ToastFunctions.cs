@@ -24,8 +24,8 @@ namespace QuickShare.HelperClasses
 
         public static void SendUniversalClipboardNoticeToast()
         {
-            SendToast("Universal clipboard will continue to run in the background",
-                "You can always see its status by tapping the Roamit icon in the system tray.");
+            SendToast("Roamit universal clipboard will run in the background",
+                "You can see your clipboard history by clicking the Roamit icon in the system tray.");
         }
     }
 }
