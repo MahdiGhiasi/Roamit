@@ -33,6 +33,9 @@ namespace QuickShare.ViewModels
                 ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] = false;
             typeBasedDownloadFolderToggle = (ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] as bool?) ?? false;
 
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("PreferProximityLocalConnection"))
+                preferProximityLocalConnection = (ApplicationData.Current.LocalSettings.Values["PreferProximityLocalConnection"] as bool?) ?? false;
+
             InitDownloadLocation();
 
             RetrieveCloudClipboardActivationStatus();
@@ -113,6 +116,24 @@ namespace QuickShare.ViewModels
             {
                 findOtherDevicesEnabled = value;
                 OnPropertyChanged("FindOtherDevicesEnabled");
+            }
+        }
+
+        private bool preferProximityLocalConnection = false;
+        public bool PreferProximityLocalConnection
+        {
+            get
+            {
+                return preferProximityLocalConnection;
+            }
+            set
+            {
+                preferProximityLocalConnection = value;
+                ApplicationData.Current.LocalSettings.Values["PreferProximityLocalConnection"] = value;
+                OnPropertyChanged("PreferProximityLocalConnection");
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "PreferProximityLocalConnection", value ? "activated" : "deactivated").Build());
+#endif
             }
         }
 

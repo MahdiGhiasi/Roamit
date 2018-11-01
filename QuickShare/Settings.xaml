@@ -171,6 +171,12 @@
                                                      IsEnabled="{x:Bind Model.IsCloudServiceLoggedIn, Mode=OneWay}"
                                                      Foreground="SkyBlue"
                                                      Tapped="ManageDevices_Tapped" />
+                            <TextBlock Text="Prefer legacy communication method for Windows devices when available locally" 
+                                       TextWrapping="Wrap"
+                                       Margin="0,24,0,4" />
+                            <TextBlock Text="(Not recommended)"
+                                       Foreground="#CCCCCC" />
+                            <ToggleSwitch IsOn="{x:Bind Model.PreferProximityLocalConnection, Mode=TwoWay}" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

@@ -613,7 +613,7 @@ namespace QuickShare
             {
                 // If device is not available by proximity and cloud service is initialized, 
                 // go for cloud service first as it's more reliable.
-                if ((rs as RemoteSystem).IsAvailableByProximity || !CloudServiceRomePackageManager.Instance.IsInitialized)
+                if (ShouldPrioritizeRomePackageManager(rs as RemoteSystem))
                 {
                     launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs, false);
 
@@ -675,7 +675,7 @@ namespace QuickShare
             {
                 // If device is not available by proximity and cloud service is initialized, 
                 // go for cloud service first as it's more reliable.
-                if ((rs as RemoteSystem).IsAvailableByProximity || !CloudServiceRomePackageManager.Instance.IsInitialized)
+                if (ShouldPrioritizeRomePackageManager(rs as RemoteSystem))
                 {
                     var result = await MainPage.Current.PackageManager.Connect(rs, true, new Uri("roamit://wake"));
 
@@ -721,7 +721,7 @@ namespace QuickShare
             {
                 // If device is not available by proximity and cloud service is initialized, 
                 // go for cloud service first as it's more reliable.
-                if ((rs as RemoteSystem).IsAvailableByProximity || !CloudServiceRomePackageManager.Instance.IsInitialized)
+                if (ShouldPrioritizeRomePackageManager(rs as RemoteSystem))
                 {
                     var result = await MainPage.Current.PackageManager.QuickClipboard(text,
                         rs as RemoteSystem,
@@ -758,6 +758,19 @@ namespace QuickShare
                     }
                 }
             }
+        }
+
+        private bool ShouldPrioritizeRomePackageManager(RemoteSystem rs)
+        {
+            return (rs.IsAvailableByProximity && PreferProximityLocalConnection()) || !CloudServiceRomePackageManager.Instance.IsInitialized;
+        }
+
+        private bool PreferProximityLocalConnection()
+        {
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("PreferProximityLocalConnection"))
+                return (ApplicationData.Current.LocalSettings.Values["PreferProximityLocalConnection"] as bool?) ?? false;
+
+            return false;
         }
     }
 }
