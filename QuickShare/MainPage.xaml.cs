@@ -220,9 +220,10 @@ namespace QuickShare
 
                 Current = this;
             }
-            else if (Frame.BackStackDepth != 0)
-            {
-                // On first run
+            else if ((Frame.BackStackDepth != 0) && 
+                (!SecureKeyStorage.IsAccountIdStored() || !SecureKeyStorage.IsTokenStored()))
+                {
+                // On first run, if we don't have account id or token for v3 api.
                 ContentFrame.Navigate(typeof(CloudServiceLogin));
                 ContentFrame.BackStack.Clear();
                 ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
@@ -230,7 +231,7 @@ namespace QuickShare
                 Current = this;
             }
             else
-            {            
+            {
                 ContentFrame.Navigate(typeof(MainActions));
                 Current = this;
 
