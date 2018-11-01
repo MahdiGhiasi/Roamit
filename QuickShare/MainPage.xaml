@@ -326,16 +326,22 @@
                 <TranslateTransform />
             </CommandBar.RenderTransform>
             <CommandBar.Content>
-                <AppBarButton x:Name="Warning"
-                              Background="DarkOrange"
-                              Label="Not signed in"
-                              Visibility="{x:Bind ViewModel.SignInWarningVisibility, Mode=OneWay}"
-                              IsCompact="{Binding IsOpen,ElementName=BottomCommandBar,Converter={StaticResource InvertBooleanConverter}}"
-                              Tapped="SignInButton_Tapped">
-                    <AppBarButton.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE171;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
+                <StackPanel Orientation="Horizontal">
+                    <AppBarButton x:Name="Warning"
+                                  Background="DarkOrange"
+                                  Label="Not signed in"
+                                  Visibility="{x:Bind ViewModel.SignInWarningVisibility, Mode=OneWay}"
+                                  IsCompact="{Binding IsOpen,ElementName=BottomCommandBar,Converter={StaticResource InvertBooleanConverter}}"
+                                  Tapped="SignInButton_Tapped">
+                        <AppBarButton.Icon>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE171;" />
+                        </AppBarButton.Icon>
+                    </AppBarButton>
+                    <AppBarButton Icon="Favorite" 
+                                  Label="Roamit apps" 
+                                  IsCompact="{Binding IsOpen,ElementName=BottomCommandBar,Converter={StaticResource InvertBooleanConverter}}"
+                                  Tapped="RoamitApps_Tapped" />
+                </StackPanel>
             </CommandBar.Content>
             <AppBarButton Icon="Shop" Label="Donate" Tapped="DonateButton_Tapped" />
             <AppBarButton Icon="Setting" Label="Settings" Tapped="SettingsButton_Tapped" />
@@ -369,8 +375,11 @@
                                       Visibility="{x:Bind ViewModel.DonateFlyoutVisibility, Mode=OneWay}"
                                       FlyoutCloseRequest="DonateFlyoutInstance_FlyoutCloseRequest" />
                 <flyouts:SignInToCloudServiceFlyout x:Name="SignInToCloudServiceFlyoutInstance"
-                                      Visibility="{x:Bind ViewModel.SignInToCloudServiceFlyoutVisibility, Mode=OneWay}"
-                                      FlyoutCloseRequest="SignInToCloudServiceFlyoutInstance_FlyoutCloseRequest" />
+                                                    Visibility="{x:Bind ViewModel.SignInToCloudServiceFlyoutVisibility, Mode=OneWay}"
+                                                    FlyoutCloseRequest="SignInToCloudServiceFlyoutInstance_FlyoutCloseRequest" />
+                <flyouts:RoamitAppsFlyout x:Name="RoamitAppsFlyout"
+                                          Visibility="{x:Bind ViewModel.RoamitAppsFlyoutVisibility, Mode=OneWay}"
+                                          FlyoutCloseRequest="RoamitAppsFlyoutInstance_FlyoutCloseRequest" />
             </Grid>
         </Grid>
     </Grid>

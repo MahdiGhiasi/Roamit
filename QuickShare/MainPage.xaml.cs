@@ -674,5 +674,18 @@ namespace QuickShare
                 ViewModel.SignInToCloudServiceFlyoutVisibility = Visibility.Collapsed;
             }
         }
+
+        private void RoamitApps_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ViewModel.RoamitAppsFlyoutVisibility = Visibility.Visible;
+            overlayShowStoryboard.Begin();
+        }
+
+        private async void RoamitAppsFlyoutInstance_FlyoutCloseRequest(object sender, EventArgs e)
+        {
+            overlayHideStoryboard.Begin();
+            await Task.Delay(250);
+            ViewModel.RoamitAppsFlyoutVisibility = Visibility.Collapsed;
+        }
     }
 }

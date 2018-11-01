@@ -1,0 +1,100 @@
+﻿<UserControl
+    x:Class="QuickShare.Flyouts.RoamitAppsFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QuickShare.Flyouts"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="600"
+    d:DesignWidth="400">
+
+    <Grid Background="{Binding Source={ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}, Converter={StaticResource BrushAlphaModifier}, ConverterParameter=0.7}"
+          BorderBrush="#aaa"
+          BorderThickness="1"
+          MaxWidth="500" 
+          Margin="0,40,0,0"
+          HorizontalAlignment="Stretch" 
+          VerticalAlignment="Center">
+        <ScrollViewer>
+            <StackPanel Padding="16,24,16,36">
+                <TextBlock TextWrapping="Wrap" 
+                           Text="Roamit" 
+                           TextAlignment="Center"
+                           FontSize="28"
+                           FontWeight="Light" />
+                <TextBlock TextWrapping="Wrap" 
+                           Margin="0,4,0,0"
+                           Text="Remove the barrier between your devices" 
+                           TextAlignment="Center"
+                           FontSize="14"
+                           FontWeight="Light" />
+
+                <RichTextBlock TextWrapping="Wrap" Margin="0,24,0,0">
+                    <Paragraph Margin="0,0,0,12">
+                        <Run FontWeight="Bold">Chrome and Firefox</Run>
+                    </Paragraph>
+                    <Paragraph Margin="8,8,0,0">
+                        <Run FontFamily="Segoe MDL2 Assets">&#xE768;</Run>
+                        <Run>Integrate your browser with Windows Timeline</Run>
+                    </Paragraph>
+                    <Paragraph Margin="8,8,0,0">
+                        <Run FontFamily="Segoe MDL2 Assets">&#xE768;</Run>
+                        <Run>Continue reading webpages on your other device quickly</Run>
+                    </Paragraph>
+                </RichTextBlock>
+                <Button Content="Get Roamit browser extension" 
+                        Tapped="GetExtension_Tapped" 
+                        Margin="0,8,0,0" 
+                        HorizontalAlignment="Right" 
+                        Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
+
+                <RichTextBlock TextWrapping="Wrap" Margin="0,24,0,0">
+                    <Paragraph Margin="0,0,0,12">
+                        <Run FontWeight="Bold">Android</Run>
+                    </Paragraph>
+                    <Paragraph Margin="8,8,0,0">
+                        <Run FontFamily="Segoe MDL2 Assets">&#xE768;</Run>
+                        <Run>Send pictures and files quickly</Run>
+                    </Paragraph>
+                    <Paragraph Margin="8,8,0,0">
+                        <Run FontFamily="Segoe MDL2 Assets">&#xE768;</Run>
+                        <Run>Share your clipboard content</Run>
+                    </Paragraph>
+                </RichTextBlock>
+                <Button Content="Get Roamit for Android" 
+                        Tapped="GetForAndroid_Tapped" 
+                        Margin="0,8,0,0" 
+                        HorizontalAlignment="Right" 
+                        Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
+
+                <RichTextBlock TextWrapping="Wrap" Margin="0,24,0,0">
+                    <Paragraph Margin="0,0,0,12">
+                        <Run FontWeight="Bold">Windows 10 and Windows 10 Mobile</Run>
+                    </Paragraph>
+                    <Paragraph Margin="8,8,0,0">
+                        <Run FontFamily="Segoe MDL2 Assets">&#xE768;</Run>
+                        <Run>Automatically sync your clipboard</Run>
+                    </Paragraph>
+                    <Paragraph Margin="8,8,0,0">
+                        <Run FontFamily="Segoe MDL2 Assets">&#xE768;</Run>
+                        <Run>Send pictures and files quickly</Run>
+                    </Paragraph>
+                </RichTextBlock>
+                <Button Content="Get Roamit for Windows 10" 
+                        Tapped="GetForWindows_Tapped" 
+                        Margin="0,8,0,0" 
+                        HorizontalAlignment="Right" 
+                        Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
+
+            </StackPanel>
+        </ScrollViewer>
+        <Button HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Content="&#xE894;"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="20"
+                Padding="16"
+                Tapped="Close_Tapped" />
+    </Grid>
+</UserControl>

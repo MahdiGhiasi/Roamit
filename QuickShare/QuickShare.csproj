@@ -107,6 +107,9 @@
     <Compile Include="Flyouts\DonateFlyout.xaml.cs">
       <DependentUpon>DonateFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Flyouts\RoamitAppsFlyout.xaml.cs">
+      <DependentUpon>RoamitAppsFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Flyouts\SignInToCloudServiceFlyout.xaml.cs">
       <DependentUpon>SignInToCloudServiceFlyout.xaml</DependentUpon>
     </Compile>
@@ -430,6 +433,10 @@
     <Page Include="DevicesSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Flyouts\RoamitAppsFlyout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Flyouts\SignInToCloudServiceFlyout.xaml">
       <Generator>MSBuild:Compile</Generator>

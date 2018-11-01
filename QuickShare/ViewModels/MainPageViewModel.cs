@@ -142,6 +142,18 @@ namespace QuickShare.ViewModels
             }
         }
 
+        private Visibility roamitAppsFlyoutVisibility = Visibility.Collapsed;
+        public Visibility RoamitAppsFlyoutVisibility
+        {
+            get { return roamitAppsFlyoutVisibility; }
+            set
+            {
+                roamitAppsFlyoutVisibility = value;
+                OnPropertyChanged("RoamitAppsFlyoutVisibility");
+                OnPropertyChanged("OverlayVisibility");
+            }
+        }
+
         public Visibility OverlayVisibility
         {
             get
@@ -149,7 +161,8 @@ namespace QuickShare.ViewModels
                 if ((signInNoticeVisibility == Visibility.Visible) ||
                     (whatsNewVisibility == Visibility.Visible) || 
                     (donateFlyoutVisibility == Visibility.Visible) ||
-                    (signInToCloudServiceFlyoutVisibility == Visibility.Visible))
+                    (signInToCloudServiceFlyoutVisibility == Visibility.Visible) ||
+                    (roamitAppsFlyoutVisibility == Visibility.Visible))
                     return Visibility.Visible;
 
                 return Visibility.Collapsed;
