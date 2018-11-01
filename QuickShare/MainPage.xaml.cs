@@ -461,8 +461,6 @@ namespace QuickShare
             ViewModel.RemoteSystemCollectionChanged();
 
             PackageManagerHelper.InitAndroidPackageManagerMode();
-            if (AndroidPackageManager.Mode == AndroidRomePackageManager.AndroidPackageManagerMode.MessageCarrier)
-                await Common.Service.Device.WakeAndroidDevices(userId);
 
             return true;
         }

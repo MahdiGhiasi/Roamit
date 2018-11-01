@@ -178,13 +178,6 @@
                                                      IsEnabled="{x:Bind Model.IsAccountIdStored, Mode=OneWay}"
                                                      Foreground="SkyBlue"
                                                      Tapped="ManageDevices_Tapped" />
-                            <TextBlock Text="Use legacy method to communicate with Android devices" 
-                                       TextWrapping="Wrap"
-                                       Margin="0,24,0,4" />
-                            <TextBlock Text="Enable this if you're having trouble connecting to your Android devices from this device."
-                                       TextWrapping="Wrap"
-                                       Foreground="#CCCCCC" />
-                            <ToggleSwitch IsOn="{x:Bind Model.LegacyAndroidModeToggle, Mode=TwoWay}" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
