@@ -302,11 +302,17 @@ namespace QuickShare
 
             if (result != null)
             {
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("MigrateApiV2ToV3", "Success").Build());
+#endif
                 SecureKeyStorage.SetToken(result.Token);
                 ViewModel.UpdateSignInWarningVisibility();
             }
             else
             {
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("MigrateApiV2ToV3", "Fail").Build());
+#endif
                 Debug.WriteLine("Failed to migrate api v2 to api v3.");
             }
         }
