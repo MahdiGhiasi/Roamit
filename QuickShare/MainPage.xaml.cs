@@ -289,11 +289,20 @@ namespace QuickShare
 
             if (SecureKeyStorage.IsAccountIdStored() && !SecureKeyStorage.IsTokenStored())
                 MigrateToApiV3();
+
+            if (SecureKeyStorage.IsAccountIdStored() && SecureKeyStorage.IsTokenStored())
+                InitializeCloudServicePackageManager();
             
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(item => item.IsAvailable,
                 DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                 DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
             await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)27 : (uint)80);
+        }
+
+        private async void InitializeCloudServicePackageManager()
+        {
+            await CloudServiceRomePackageManager.Instance.Initialize(
+                new Common.Service.Models.APIv3LoginInfo(Guid.Parse(SecureKeyStorage.GetAccountId()), SecureKeyStorage.GetToken()));
         }
 
         private async void MigrateToApiV3()
@@ -307,6 +316,7 @@ namespace QuickShare
 #endif
                 SecureKeyStorage.SetToken(result.Token);
                 ViewModel.UpdateSignInWarningVisibility();
+                InitializeCloudServicePackageManager();
             }
             else
             {

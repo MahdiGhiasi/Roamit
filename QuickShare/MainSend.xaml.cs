@@ -127,7 +127,6 @@ namespace QuickShare
             if (rs is NormalizedRemoteSystem)
             {
                 isDestinationAndroid = true;
-                packageManager = MainPage.Current.AndroidPackageManager;
 
                 var nrs = rs as NormalizedRemoteSystem;
                 
@@ -145,7 +144,6 @@ namespace QuickShare
             else
             {
                 isDestinationAndroid = false;
-                packageManager = MainPage.Current.PackageManager;
             }
 
             string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
@@ -171,22 +169,24 @@ namespace QuickShare
                     else
                     {
                         ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
-                        RomeAppServiceConnectionStatus result = await Connect(rs);
+                        var result = await Connect(rs);
+                        var connectResult = result.Item1;
+                        packageManager = result.Item2;
 
-                        if (result != RomeAppServiceConnectionStatus.Success)
+                        if (connectResult != RomeAppServiceConnectionStatus.Success)
                         {
                             HideEverything();
 
                             succeed = false;
                             string errorMessage;
 
-                            if ((result == RomeAppServiceConnectionStatus.RemoteSystemUnavailable) && (packageManager is AndroidRomePackageManager))
+                            if ((connectResult == RomeAppServiceConnectionStatus.RemoteSystemUnavailable) && (packageManager is AndroidRomePackageManager))
                             {
                                 errorMessage = "Can't connect to device. Open Roamit on your Android device and then try again.";
                             }
                             else
                             {
-                                errorMessage = result.ToString();
+                                errorMessage = connectResult.ToString();
                             }
 
                             Frame.Navigate(typeof(MainSendFailed), JsonConvert.SerializeObject(new SendFailedViewModel
@@ -205,22 +205,25 @@ namespace QuickShare
                 else if (mode == "file")
                 {
                     ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
-                    RomeAppServiceConnectionStatus result = await Connect(rs);
+                    var result = await Connect(rs);
+                    var connectResult = result.Item1;
+                    packageManager = result.Item2;
 
-                    if (result != RomeAppServiceConnectionStatus.Success)
+
+                    if (connectResult != RomeAppServiceConnectionStatus.Success)
                     {
                         HideEverything();
 
                         succeed = false;
                         string errorMessage;
 
-                        if ((result == RomeAppServiceConnectionStatus.RemoteSystemUnavailable) && (packageManager is AndroidRomePackageManager))
+                        if ((connectResult == RomeAppServiceConnectionStatus.RemoteSystemUnavailable) && (packageManager is AndroidRomePackageManager))
                         {
                             errorMessage = "Can't connect to device. Open Roamit on your Android device and then try again.";
                         }
                         else
                         {
-                            errorMessage = result.ToString();
+                            errorMessage = connectResult.ToString();
                         }
 
                         Frame.Navigate(typeof(MainSendFailed), JsonConvert.SerializeObject(new SendFailedViewModel
@@ -603,9 +606,20 @@ namespace QuickShare
             RomeRemoteLaunchUriStatus launchResult;
 
             if (rs is NormalizedRemoteSystem)
-                launchResult = await UWP.Rome.AndroidRomePackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs as NormalizedRemoteSystem, SecureKeyStorage.GetUserId());
+            {
+                launchResult = await AndroidRomePackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs as NormalizedRemoteSystem, SecureKeyStorage.GetUserId());
+            }
             else
+            {
                 launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs, false);
+
+                if (launchResult == RomeRemoteLaunchUriStatus.RemoteSystemUnavailable)
+                {
+                    // 1809 bug, will try cloud service if available
+                    if (CloudServiceRomePackageManager.Instance.IsInitialized)
+                        launchResult = await CloudServiceRomePackageManager.Instance.LaunchUri(((RemoteSystem)rs).DisplayName, SendDataTemporaryStorage.LaunchUri);
+                }
+            }
 
             string status;
             if (launchResult == RomeRemoteLaunchUriStatus.Success)
@@ -634,14 +648,32 @@ namespace QuickShare
             await packageManager.Send(vs);
         }
 
-        private async Task<RomeAppServiceConnectionStatus> Connect(object rs)
+        private async Task<Tuple<RomeAppServiceConnectionStatus, IRomePackageManager>> Connect(object rs)
         {
             if (rs is NormalizedRemoteSystem)
-                return await MainPage.Current.AndroidPackageManager.Connect(rs as NormalizedRemoteSystem,
+            {
+                var result = await MainPage.Current.AndroidPackageManager.Connect(rs as NormalizedRemoteSystem,
                     SecureKeyStorage.GetUserId(),
                     MainPage.Current.PackageManager.RemoteSystems.Where(x => x.Kind != "Unknown").Select(x => x.Id));
+
+                return new Tuple<RomeAppServiceConnectionStatus, IRomePackageManager>(result, MainPage.Current.AndroidPackageManager);
+            }
             else
-                return await MainPage.Current.PackageManager.Connect(rs, true, new Uri("roamit://wake"));
+            {
+                var result = await MainPage.Current.PackageManager.Connect(rs, true, new Uri("roamit://wake"));
+
+                if (result == RomeAppServiceConnectionStatus.RemoteSystemUnavailable && CloudServiceRomePackageManager.Instance.IsInitialized)
+                {
+                    // 1809 bug. Try to use CloudService instead.
+
+                    var result2 = await CloudServiceRomePackageManager.Instance.Connect(((RemoteSystem)rs).DisplayName);
+
+                    if (result2 == RomeAppServiceConnectionStatus.Success)
+                        return new Tuple<RomeAppServiceConnectionStatus, IRomePackageManager>(result2, CloudServiceRomePackageManager.Instance);
+                }
+
+                return new Tuple<RomeAppServiceConnectionStatus, IRomePackageManager>(result, MainPage.Current.PackageManager);
+            }
         }
 
         private async Task<bool> TrySendFastClipboard(string text, object rs, string deviceName)
