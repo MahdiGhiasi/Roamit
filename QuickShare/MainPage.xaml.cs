@@ -220,8 +220,9 @@ namespace QuickShare
 
                 Current = this;
             }
-            else if ((ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard")) && (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc)) && (scc == true) && (!SecureKeyStorage.IsAccountIdStored()))
+            else if (Frame.BackStackDepth != 0)
             {
+                // On first run
                 ContentFrame.Navigate(typeof(CloudServiceLogin));
                 ContentFrame.BackStack.Clear();
                 ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
@@ -233,7 +234,9 @@ namespace QuickShare
                 ContentFrame.Navigate(typeof(MainActions));
                 Current = this;
 
-                await PCExtensionHelper.StartPCExtension();
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard") &&
+                    ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString().ToLower() == "true")
+                    await PCExtensionHelper.StartPCExtension();
             }
 
             base.OnNavigatedTo(e);
