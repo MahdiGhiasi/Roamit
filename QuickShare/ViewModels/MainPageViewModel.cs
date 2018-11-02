@@ -284,5 +284,14 @@ namespace QuickShare.ViewModels
         {
             OnPropertyChanged("SignInWarningVisibility");
         }
+
+        public void CloseAllFlyouts()
+        {
+            DonateFlyoutVisibility = Visibility.Collapsed;
+            RoamitAppsFlyoutVisibility = Visibility.Collapsed;
+            SignInToCloudServiceFlyoutVisibility = Visibility.Collapsed;
+            WhatsNewVisibility = Visibility.Collapsed;
+            SignInNoticeVisibility = Visibility.Collapsed;
+        }
     }
 }
