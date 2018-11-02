@@ -123,6 +123,21 @@ namespace QuickShare.UWP.Rome
             return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
         }
 
+        public async Task<RomeAppServiceConnectionStatus> Connect(string deviceName, Uri launchUri)
+        {
+            deviceId = FindDevice(deviceName);
+
+            if (deviceId != null)
+            {
+                var launchUriResult = await LaunchUri(deviceName, launchUri);
+
+                if (launchUriResult == RomeRemoteLaunchUriStatus.Success)
+                    return RomeAppServiceConnectionStatus.Success;
+            }
+
+            return RomeAppServiceConnectionStatus.RemoteSystemUnavailable;
+        }
+
         public async Task<bool> QuickClipboardForWindowsDevice(string _text, string deviceName, string _senderName)
         {
             if ((_text + _senderName).Length > 1024)

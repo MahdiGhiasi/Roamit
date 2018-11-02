@@ -209,7 +209,7 @@ namespace QuickShare
                 else if (mode == "file")
                 {
                     ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
-                    var result = await Connect(rs);
+                    var result = await Connect(rs, openReceiveFileDialogIfOverCloud: true);
                     var connectResult = result.Item1;
                     packageManager = result.Item2;
 
@@ -369,14 +369,11 @@ namespace QuickShare
             FileTransferResult result = FileTransferResult.Successful;
 
             if (await DownloadNecessaryFiles() == false)
-            {
                 return FileTransferResult.Cancelled;
-            }
 
             sendingFile = true;
 
             ViewModel.SendStatus = "Preparing...";
-
             using (FileSender2 fs = new FileSender2(rs,
                                                    new QuickShare.UWP.WebServerGenerator(),
                                                    packageManager,
@@ -475,7 +472,7 @@ namespace QuickShare
                     if ((item is StorageFile file) && (!file.IsLocallyAvailable()))
                     {
                         //Download it
-                        ViewModel.SendStatus = "Retrieving files...";
+                        ViewModel.SendStatus = ((SendDataTemporaryStorage.Files.Count == 1) && (SendDataTemporaryStorage.Files[0] is StorageFile)) ? "Retrieving file..." : "Retrieving files...";
 
                         var readStream = await file.OpenStreamForReadAsync();
                         byte[] buffer = new byte[1024 * 1024];
@@ -679,7 +676,7 @@ namespace QuickShare
             await packageManager.Send(vs);
         }
 
-        private async Task<Tuple<RomeAppServiceConnectionStatus, IRomePackageManager>> Connect(object rs)
+        private async Task<Tuple<RomeAppServiceConnectionStatus, IRomePackageManager>> Connect(object rs, bool openReceiveFileDialogIfOverCloud)
         {
             if (rs is NormalizedRemoteSystem)
             {
@@ -701,7 +698,11 @@ namespace QuickShare
                     {
                         // 1809 bug. Try to use CloudService instead.
 
-                        var result2 = await CloudServiceRomePackageManager.Instance.Connect(((RemoteSystem)rs).DisplayName);
+                        RomeAppServiceConnectionStatus result2;
+                        if (openReceiveFileDialogIfOverCloud)
+                            result2 = await CloudServiceRomePackageManager.Instance.Connect(((RemoteSystem)rs).DisplayName, new Uri("roamit://receiveDialog"));
+                        else
+                            result2 = await CloudServiceRomePackageManager.Instance.Connect(((RemoteSystem)rs).DisplayName);
 
                         if (result2 == RomeAppServiceConnectionStatus.Success)
                             return new Tuple<RomeAppServiceConnectionStatus, IRomePackageManager>(result2, CloudServiceRomePackageManager.Instance);
@@ -711,7 +712,11 @@ namespace QuickShare
                 }
                 else
                 {
-                    var result2 = await CloudServiceRomePackageManager.Instance.Connect(((RemoteSystem)rs).DisplayName);
+                    RomeAppServiceConnectionStatus result2;
+                    if (openReceiveFileDialogIfOverCloud)
+                        result2 = await CloudServiceRomePackageManager.Instance.Connect(((RemoteSystem)rs).DisplayName, new Uri("roamit://receiveDialog"));
+                    else
+                        result2 = await CloudServiceRomePackageManager.Instance.Connect(((RemoteSystem)rs).DisplayName);
 
                     if (result2 == RomeAppServiceConnectionStatus.Success)
                     {
