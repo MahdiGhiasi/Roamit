@@ -57,7 +57,7 @@ namespace QuickShare.UWP.Rome
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to initialize CloudService package manager: {ex.Message}")
+                    Console.WriteLine($"Failed to initialize CloudService package manager: {ex.Message}");
                     await Task.Delay(delayTime);
                     delayTime = TimeSpan.FromSeconds(Math.Min(delayTime.TotalSeconds * 2, 20));
                 }
