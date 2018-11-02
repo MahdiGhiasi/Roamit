@@ -168,38 +168,42 @@ namespace QuickShare
                     }
                     else
                     {
-                        ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
-                        var result = await Connect(rs);
-                        var connectResult = result.Item1;
-                        packageManager = result.Item2;
+                        SendTextFinished("Text is too long.");
+#if !DEBUG
+                        App.Tracker.Send(HitBuilder.CreateCustomEvent("SendTextFailed", "TooLong").Build());
+#endif
+                        //ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
+                        //var result = await Connect(rs);
+                        //var connectResult = result.Item1;
+                        //packageManager = result.Item2;
 
-                        if (connectResult != RomeAppServiceConnectionStatus.Success)
-                        {
-                            HideEverything();
+                        //if (connectResult != RomeAppServiceConnectionStatus.Success)
+                        //{
+                        //    HideEverything();
 
-                            succeed = false;
-                            string errorMessage;
+                        //    succeed = false;
+                        //    string errorMessage;
 
-                            if ((connectResult == RomeAppServiceConnectionStatus.RemoteSystemUnavailable) && (packageManager is AndroidRomePackageManager))
-                            {
-                                errorMessage = "Can't connect to device. Open Roamit on your Android device and then try again.";
-                            }
-                            else
-                            {
-                                errorMessage = connectResult.ToString();
-                            }
+                        //    if ((connectResult == RomeAppServiceConnectionStatus.RemoteSystemUnavailable) && (packageManager is AndroidRomePackageManager))
+                        //    {
+                        //        errorMessage = "Can't connect to device. Open Roamit on your Android device and then try again.";
+                        //    }
+                        //    else
+                        //    {
+                        //        errorMessage = connectResult.ToString();
+                        //    }
 
-                            Frame.Navigate(typeof(MainSendFailed), JsonConvert.SerializeObject(new SendFailedViewModel
-                            {
-                                ErrorTitle = "Can't connect",
-                                ErrorDescription = errorMessage,
-                            }));
-                            return;
-                        }
+                        //    Frame.Navigate(typeof(MainSendFailed), JsonConvert.SerializeObject(new SendFailedViewModel
+                        //    {
+                        //        ErrorTitle = "Can't connect",
+                        //        ErrorDescription = errorMessage,
+                        //    }));
+                        //    return;
+                        //}
 
-                        ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+                        //ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
 
-                        await SendText(packageManager, deviceName, text);
+                        //await SendText(packageManager, deviceName, text);
                     }
                 }
                 else if (mode == "file")
