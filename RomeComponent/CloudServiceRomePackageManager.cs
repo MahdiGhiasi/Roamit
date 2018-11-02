@@ -46,7 +46,23 @@ namespace QuickShare.UWP.Rome
         {
             user = new Common.Service.v3.User(accountId, token);
             device = new Common.Service.v3.Device(accountId, token);
-            remoteSystems = (await user.GetDevices()).Where(x => x.Type == DeviceType.GraphWindowsDevice || x.Type == DeviceType.Android).ToList();
+
+            TimeSpan delayTime = TimeSpan.FromSeconds(3);
+            while (true)
+            {
+                try
+                {
+                    remoteSystems = (await user.GetDevices()).Where(x => x.Type == DeviceType.GraphWindowsDevice || x.Type == DeviceType.Android).ToList();
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to initialize CloudService package manager: {ex.Message}")
+                    await Task.Delay(delayTime);
+                    delayTime = TimeSpan.FromSeconds(Math.Min(delayTime.TotalSeconds * 2, 20));
+                }
+
+            }
         }
 
         public async Task<RomeAppServiceResponse> Send(Dictionary<string, object> data)
