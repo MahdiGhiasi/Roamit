@@ -32,6 +32,7 @@ using QuickShare.ViewModels.ShareTarget;
 using QuickShare.HelperClasses;
 using QuickShare.Classes.ItemSources;
 using QuickShare.ViewModels.PicturePicker;
+using Windows.Graphics.Display;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -151,10 +152,17 @@ namespace QuickShare
             return rs;
         }
 
-        private void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
+        private async void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
         {
             if ((ContentFrame.Content is MainActions) || (ContentFrame.Content is MainShareTarget))
+            {
+                if (ViewModel.OverlayVisibility == Visibility.Visible)
+                {
+                    e.Handled = true;
+                    CloseFlyout();
+                }
                 return;
+            }
 
             if (ContentFrame.Content is MainSendFailed)
                 while (ContentFrame.BackStackDepth > 0 && ContentFrame.BackStack[ContentFrame.BackStackDepth - 1].SourcePageType == typeof(MainSend))
@@ -163,6 +171,13 @@ namespace QuickShare
             e.Handled = true;
             if (ContentFrame.CanGoBack)
                 ContentFrame.GoBack();
+        }
+
+        private async void CloseFlyout()
+        {
+            overlayHideStoryboard.Begin();
+            await Task.Delay(250);
+            ViewModel.CloseAllFlyouts();
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
