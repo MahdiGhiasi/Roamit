@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" IgnorableNamespaces="uap mp uap3 rescap desktop">
-  <Identity Name="36835MahdiGhiasi.Roamit" Publisher="CN=980F2E87-1831-4300-B1DC-4FDADD353F32" Version="3.2.0.0" />
+  <Identity Name="36835MahdiGhiasi.Roamit" Publisher="CN=Mahdi" Version="3.2.0.0" />
   <mp:PhoneIdentity PhoneProductId="7a5f9ba7-c071-47b3-9aba-d0fba6f57503" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Roamit</DisplayName>
@@ -27,14 +27,18 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#111111" />
       </uap:VisualElements>
       <Extensions>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="PCExtension/RoamitPCExtension.exe" />
+        <desktop:Extension Category="windows.startupTask" Executable="PCExtension/RoamitPCExtension.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="RoamitStartupTask" Enabled="false" DisplayName="Roamit" />
+        </desktop:Extension>
         <uap:Extension Category="windows.appService" EntryPoint="QuickShare.ServiceTask.CommunicationService">
-          <uap3:AppService Name="com.roamit.service" SupportsRemoteSystems="true"/>
+          <uap3:AppService Name="com.roamit.service" SupportsRemoteSystems="true" />
         </uap:Extension>
         <uap:Extension Category="windows.appService">
-          <uap3:AppService Name="com.roamit.serviceinapp" SupportsRemoteSystems="true"/>
+          <uap3:AppService Name="com.roamit.serviceinapp" SupportsRemoteSystems="true" />
         </uap:Extension>
         <uap:Extension Category="windows.appService">
-          <uap3:AppService Name="com.roamit.messagecarrierservice" SupportsRemoteSystems="true"/>
+          <uap3:AppService Name="com.roamit.messagecarrierservice" SupportsRemoteSystems="true" />
         </uap:Extension>
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="com.roamit.notificationservice" />
@@ -66,10 +70,6 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
-        <desktop:Extension Category="windows.fullTrustProcess" Executable="PCExtension/RoamitPCExtension.exe" />
-        <desktop:Extension Category="windows.startupTask" Executable="PCExtension/RoamitPCExtension.exe" EntryPoint="Windows.FullTrustApplication">
-          <desktop:StartupTask TaskId="RoamitStartupTask" Enabled="false" DisplayName="Roamit" />
-        </desktop:Extension>
       </Extensions>
     </Application>
   </Applications>
