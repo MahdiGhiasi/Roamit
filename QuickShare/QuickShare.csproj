@@ -16,11 +16,11 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>QuickShare_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>QuickShare_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>FDB3DC51844833014EE3664066B0A13B0DA90E16</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>51EA6C5AC18132A0AB935557B44C13F955CC1072</PackageCertificateThumbprint>
     <AppxPackageDir>C:\Users\Mahdi\Projects\QuickShare\QuickShare\AppPackages\</AppxPackageDir>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
