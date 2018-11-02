@@ -186,6 +186,10 @@ namespace QuickShare
             InitAcrylicUI();
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
+            // Force portrait mode on phones
+            if (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone)
+                DisplayInformation.AutoRotationPreferences = DisplayOrientations.Portrait;
+
             if (e.Parameter is ShareTargetDetails)
             {
                 IsShareContent = true;
