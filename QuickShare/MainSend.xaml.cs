@@ -168,7 +168,7 @@ namespace QuickShare
                     }
                     else
                     {
-                        SendTextFinished("Text is too long.");
+                        SendTextFinished("Send failed. Text is too long.");
 #if !DEBUG
                         App.Tracker.Send(HitBuilder.CreateCustomEvent("SendTextFailed", "TooLong").Build());
 #endif
@@ -648,11 +648,25 @@ namespace QuickShare
 
         private void SendTextFinished(string errorMessage)
         {
-            ViewModel.SendStatus = (errorMessage.Length == 0) ? "Done." : errorMessage;
-            ViewModel.ProgressIsIndeterminate = false;
-            ViewModel.ProgressMaximum = 100;
-            ViewModel.ProgressValue = ViewModel.ProgressMaximum;
+            if (errorMessage.Length == 0)
+            {
+                ViewModel.SendStatus = "Done.";
+                ViewModel.ProgressIsIndeterminate = false;
+                ViewModel.ProgressMaximum = 100;
+                ViewModel.ProgressValue = ViewModel.ProgressMaximum;
+                ViewModel.ProgressPercentIndicatorVisibility = Visibility.Visible;
+            }
+            else
+            {
+                ViewModel.SendStatus = errorMessage;
+                ViewModel.ProgressIsIndeterminate = false;
+                ViewModel.ProgressMaximum = 100;
+                ViewModel.ProgressValue = 0;
+                ViewModel.ProgressPercentIndicatorVisibility = Visibility.Collapsed;
+            }
+
             ViewModel.UnlockNoticeVisibility = Visibility.Collapsed;
+
         }
 
         private static async Task SendFinishService(IRomePackageManager packageManager)
