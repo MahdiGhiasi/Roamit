@@ -71,45 +71,20 @@
                                        Foreground="#CCCCCC" />
                             <ToggleSwitch IsOn="{x:Bind Model.TypeBasedDownloadFolderToggle, Mode=TwoWay}" />
                         </StackPanel>
-                        <StackPanel Margin="0,24,0,8" Visibility="{x:Bind Model.ExtensionsSectionVisibility, Mode=OneWay}">
-                            <TextBlock Text="Browser Integration" FontWeight="Bold" />
-                            <HyperlinkButton Foreground="SkyBlue" Visibility="{x:Bind Model.ChromeFirefoxExtensionVisibility, Mode=OneWay}" Tapped="GetChromeFirefoxExtension_Tapped">
-                                <HyperlinkButton.Content>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Source="ms-appx:///Assets/chrome-firefox.png"
-                                               Grid.Column="0"
-                                               VerticalAlignment="Top"
-                                               Margin="0,2,0,0"
-                                               Height="20" />
-                                        <TextBlock TextWrapping="Wrap"
-                                                   Margin="4,0,0,0"
-                                                   Grid.Column="1">
-                                        <Underline>
-                                            <Run Text="Get Roamit integration extension for Chrome and Firefox" />
-                                        </Underline>
-                                        </TextBlock>
-                                    </Grid>
-                                </HyperlinkButton.Content>
-                            </HyperlinkButton>
-                        </StackPanel>
-                        <StackPanel Margin="0,24,0,8">
+                        <StackPanel Margin="0,24,0,8" Visibility="Collapsed">
                             <TextBlock Text="Universal clipboard" FontWeight="Bold" />
                             <TextBlock Text="Universal clipboard mirrors any text you copy on your PC to the clipboard of your other devices."
                                        Margin="0,8,0,12"
                                        TextWrapping="Wrap"
                                        Foreground="#CCCCCC" />
 
-                            <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Reverse}">
+                            <StackPanel Visibility="{x:Bind Model.IsCloudServiceLoggedIn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Reverse}">
                                 <TextBlock Text="To use this feature, you need to sign in to Roamit Cloud Service first from the Account section below."
                                            TextWrapping="Wrap"
                                            Foreground="Red" />
                             </StackPanel>
 
-                            <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Visibility="{x:Bind Model.IsCloudServiceLoggedIn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <StackPanel Visibility="{x:Bind Model.SendCloudClipboardVisibility, Mode=OneWay}">
                                     <TextBlock Text="Send clipboard content from device to my other devices" 
                                                TextWrapping="Wrap" />
@@ -134,7 +109,7 @@
                                                       RelativePanel.AlignVerticalCenterWithPanel="True" />
                                     </RelativePanel>
                                     <HyperlinkButton Content="Manage universal clipboard for my other devices"
-                                                     IsEnabled="{x:Bind Model.IsAccountIdStored, Mode=OneWay}"
+                                                     IsEnabled="{x:Bind Model.IsCloudServiceLoggedIn, Mode=OneWay}"
                                                      Foreground="SkyBlue"
                                                      Tapped="ManageDevices_Tapped" />
                                 </StackPanel>
@@ -142,23 +117,41 @@
                         </StackPanel>
                         <StackPanel Margin="0,24,0,0">
                             <TextBlock Text="Account" FontWeight="Bold" />
-                            <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            <StackPanel Visibility="{x:Bind Model.IsCloudServiceLoggedIn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                         Background="#aa333333"
                                         Margin="0,8,0,12"
                                         HorizontalAlignment="Left"
                                         Padding="12">
-                                <TextBlock Text="{x:Bind Model.SignedInText, Mode=OneWay}" 
-                                               TextWrapping="Wrap" />
-                                <HyperlinkButton Content="Sign out" Foreground="SkyBlue" Tapped="SignOutFromCloudService_Tapped" />
+                                <RichTextBlock Visibility="{x:Bind Model.IsSignedInFullNameAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                               TextWrapping="Wrap" >
+                                    <Paragraph>
+                                        <Run FontWeight="Light">Signed in as</Run>
+                                        <Run FontWeight="Bold" Text="{x:Bind Model.SignedInFullName, Mode=OneWay}" />
+                                    </Paragraph>
+                                </RichTextBlock>
+                                <HyperlinkButton Content="Sign out" 
+                                                 Visibility="{x:Bind Model.IsSignedInFullNameAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                 HorizontalAlignment="Right"
+                                                 Foreground="SkyBlue" 
+                                                 Tapped="SignOutFromCloudService_Tapped" />
+                                <ProgressRing Foreground="White"
+                                              IsActive="True"
+                                              Visibility="{x:Bind Model.IsSignedInFullNameAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Reverse}"
+                                              Width="30"
+                                              Height="30" />
                             </StackPanel>
-                            <StackPanel Visibility="{x:Bind Model.IsAccountIdStored, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Reverse}"
+                            <StackPanel Visibility="{x:Bind Model.IsCloudServiceLoggedIn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Reverse}"
                                         Background="#aa333333"
                                         Margin="0,8,0,12"
                                         HorizontalAlignment="Left"
                                         Padding="12">
                                 <TextBlock Text="Not signed in." 
-                                               TextWrapping="Wrap" />
-                                <HyperlinkButton Content="Sign in" Foreground="SkyBlue" Tapped="SignInToCloudService_Tapped" />
+                                           FontWeight="Light"
+                                           TextWrapping="Wrap" />
+                                <HyperlinkButton Content="Sign in" 
+                                                 HorizontalAlignment="Right"
+                                                 Foreground="SkyBlue" 
+                                                 Tapped="SignInToCloudService_Tapped" />
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Margin="0,24,0,8">
@@ -175,16 +168,15 @@
                                               RelativePanel.AlignVerticalCenterWithPanel="True" />
                             </RelativePanel>
                             <HyperlinkButton Content="Remove unused Android devices from my device list"
-                                                     IsEnabled="{x:Bind Model.IsAccountIdStored, Mode=OneWay}"
+                                                     IsEnabled="{x:Bind Model.IsCloudServiceLoggedIn, Mode=OneWay}"
                                                      Foreground="SkyBlue"
                                                      Tapped="ManageDevices_Tapped" />
-                            <TextBlock Text="Use legacy method to communicate with Android devices" 
+                            <TextBlock Text="Prefer legacy communication method for Windows devices when available locally" 
                                        TextWrapping="Wrap"
                                        Margin="0,24,0,4" />
-                            <TextBlock Text="Enable this if you're having trouble connecting to your Android devices from this device."
-                                       TextWrapping="Wrap"
+                            <TextBlock Text="(Not recommended)"
                                        Foreground="#CCCCCC" />
-                            <ToggleSwitch IsOn="{x:Bind Model.LegacyAndroidModeToggle, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{x:Bind Model.PreferProximityLocalConnection, Mode=TwoWay}" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

@@ -32,6 +32,7 @@ using QuickShare.ViewModels.ShareTarget;
 using QuickShare.HelperClasses;
 using QuickShare.Classes.ItemSources;
 using QuickShare.ViewModels.PicturePicker;
+using Windows.Graphics.Display;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -151,10 +152,17 @@ namespace QuickShare
             return rs;
         }
 
-        private void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
+        private async void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
         {
             if ((ContentFrame.Content is MainActions) || (ContentFrame.Content is MainShareTarget))
+            {
+                if (ViewModel.OverlayVisibility == Visibility.Visible)
+                {
+                    e.Handled = true;
+                    CloseFlyout();
+                }
                 return;
+            }
 
             if (ContentFrame.Content is MainSendFailed)
                 while (ContentFrame.BackStackDepth > 0 && ContentFrame.BackStack[ContentFrame.BackStackDepth - 1].SourcePageType == typeof(MainSend))
@@ -165,11 +173,22 @@ namespace QuickShare
                 ContentFrame.GoBack();
         }
 
+        private async void CloseFlyout()
+        {
+            overlayHideStoryboard.Begin();
+            await Task.Delay(250);
+            ViewModel.CloseAllFlyouts();
+        }
+
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             loadWait = false;
             InitAcrylicUI();
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+
+            // Force portrait mode on phones
+            if (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone)
+                DisplayInformation.AutoRotationPreferences = DisplayOrientations.Portrait;
 
             if (e.Parameter is ShareTargetDetails)
             {
@@ -220,8 +239,10 @@ namespace QuickShare
 
                 Current = this;
             }
-            else if ((ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard")) && (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc)) && (scc == true) && (!SecureKeyStorage.IsAccountIdStored()))
-            {
+            else if ((Frame.BackStackDepth != 0) && 
+                (!SecureKeyStorage.IsAccountIdStored() || !SecureKeyStorage.IsTokenStored()))
+                {
+                // On first run, if we don't have account id or token for v3 api.
                 ContentFrame.Navigate(typeof(CloudServiceLogin));
                 ContentFrame.BackStack.Clear();
                 ContentFrame.BackStack.Add(new PageStackEntry(typeof(MainActions), "", null));
@@ -229,11 +250,13 @@ namespace QuickShare
                 Current = this;
             }
             else
-            {            
+            {
                 ContentFrame.Navigate(typeof(MainActions));
                 Current = this;
 
-                await PCExtensionHelper.StartPCExtension();
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard") &&
+                    ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString().ToLower() == "true")
+                    await PCExtensionHelper.StartPCExtension();
             }
 
             base.OnNavigatedTo(e);
@@ -282,11 +305,44 @@ namespace QuickShare
                 App.Tracker.Send(HitBuilder.CreateCustomEvent("AppLoadTime", loadTimeString).Build());
             }
 #endif
+
+            if (SecureKeyStorage.IsAccountIdStored() && !SecureKeyStorage.IsTokenStored())
+                MigrateToApiV3();
+
+            if (SecureKeyStorage.IsAccountIdStored() && SecureKeyStorage.IsTokenStored())
+                InitializeCloudServicePackageManager();
             
             PicturePickerItems = new IncrementalLoadingCollection<PicturePickerSource, PicturePickerItem>(item => item.IsAvailable,
                 DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 27 : 80,
                 DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? 3 : 2);
             await PicturePickerItems.LoadMoreItemsAsync(DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Phone ? (uint)27 : (uint)80);
+        }
+
+        private async void InitializeCloudServicePackageManager()
+        {
+            await CloudServiceRomePackageManager.Instance.Initialize(Guid.Parse(SecureKeyStorage.GetAccountId()), SecureKeyStorage.GetToken());
+        }
+
+        private async void MigrateToApiV3()
+        {
+            var result = await Common.Service.v2.User.MigrateToV3(SecureKeyStorage.GetAccountId());
+
+            if (result != null)
+            {
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("MigrateApiV2ToV3", "Success").Build());
+#endif
+                SecureKeyStorage.SetToken(result.Token);
+                ViewModel.UpdateSignInWarningVisibility();
+                InitializeCloudServicePackageManager();
+            }
+            else
+            {
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("MigrateApiV2ToV3", "Fail").Build());
+#endif
+                Debug.WriteLine("Failed to migrate api v2 to api v3.");
+            }
         }
 
         int AcrylicStatus = -1;
@@ -365,6 +421,9 @@ namespace QuickShare
             if (devicesList.SelectedItem == null)
                 return;
 
+            if (ViewModel.IsDevicesListExpanded && ContentFrame.ActualHeight < 450)
+                ToggleDevicesListSize();
+
             IsUserSelectedRemoteSystemManually = true;
 
             var s = devicesList.SelectedItem as NormalizedRemoteSystem;
@@ -384,6 +443,9 @@ namespace QuickShare
                 if ((ViewModel.ListManager.RemoteSystems.Count > 0) && (!IsUserSelectedRemoteSystemManually))
                     ViewModel.ListManager.SelectHighScoreItem();
             }
+
+            ViewModel.FrameBottomPaddingEnabled = (e.SourcePageType == typeof(MainActions)) ||
+                (e.SourcePageType == typeof(MainShareTarget));
         }
 
         private async void ContentFrame_Navigated(object sender, NavigationEventArgs e)
@@ -415,9 +477,10 @@ namespace QuickShare
                 BottomBar.Visibility = Visibility.Collapsed;
                 BottomCommandBar.Visibility = Visibility.Collapsed;
             }
-            
+
             ViewModel.ContentFrameNeedsRemoteSystemSelection = !(((e.Content is Settings) || (e.Content is HistoryPage) || (e.Content is DevicesSettings) || (e.Content is CloudServiceLogin)));
             ViewModel.RemoteSystemCollectionChanged();
+            ViewModel.UpdateSignInWarningVisibility();
         }
 
         private async void DiscoverDevices()
@@ -451,8 +514,6 @@ namespace QuickShare
             ViewModel.RemoteSystemCollectionChanged();
 
             PackageManagerHelper.InitAndroidPackageManagerMode();
-            if (AndroidPackageManager.Mode == AndroidRomePackageManager.AndroidPackageManagerMode.MessageCarrier)
-                await Common.Service.Device.WakeAndroidDevices(userId);
 
             return true;
         }
@@ -491,8 +552,14 @@ namespace QuickShare
         SpriteVisual _hostSprite;
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
+        {           
             InitAcrylicUI();
+
+            if ((e.NewSize.Height > 850 && e.PreviousSize.Height <= 850 && !ViewModel.IsDevicesListExpanded) ||
+                (e.NewSize.Height < 670 && e.PreviousSize.Height >= 670 && ViewModel.IsDevicesListExpanded))
+            {
+                ToggleDevicesListSize();
+            }
         }
 
         private void ShowSignInFlyout()
@@ -605,6 +672,55 @@ namespace QuickShare
         private void DonateButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ShowDonateFlyout();
+        }
+
+        private void ListExpandCollapseButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ToggleDevicesListSize();
+        }
+
+        private void ToggleDevicesListSize()
+        {
+            if (ViewModel.IsDevicesListExpanded)
+                devicesListCollapseStoryboard.Begin();
+            else
+                devicesListExpandStoryboard.Begin();
+            ViewModel.IsDevicesListExpanded = !ViewModel.IsDevicesListExpanded;
+        }
+
+        private void SignInButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ViewModel.SignInToCloudServiceFlyoutVisibility = Visibility.Visible;
+            overlayShowStoryboard.Begin();
+        }
+
+        private async void SignInToCloudServiceFlyoutInstance_FlyoutCloseRequest(object sender, Flyouts.SignInToCloudServiceFlyoutResultEventArgs e)
+        {
+            overlayHideStoryboard.Begin();
+            if (e.ShouldStartSignInProcess)
+            {
+                ViewModel.SignInToCloudServiceFlyoutVisibility = Visibility.Collapsed;
+
+                ContentFrame.Navigate(typeof(CloudServiceLogin));
+            }
+            else
+            {
+                await Task.Delay(250);
+                ViewModel.SignInToCloudServiceFlyoutVisibility = Visibility.Collapsed;
+            }
+        }
+
+        private void RoamitApps_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ViewModel.RoamitAppsFlyoutVisibility = Visibility.Visible;
+            overlayShowStoryboard.Begin();
+        }
+
+        private async void RoamitAppsFlyoutInstance_FlyoutCloseRequest(object sender, EventArgs e)
+        {
+            overlayHideStoryboard.Begin();
+            await Task.Delay(250);
+            ViewModel.RoamitAppsFlyoutVisibility = Visibility.Collapsed;
         }
     }
 }

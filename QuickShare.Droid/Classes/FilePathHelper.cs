@@ -134,7 +134,7 @@ namespace QuickShare.Droid.Classes
                 return uri.Path;
             }
 
-            return null;
+            return uri.ToString();
         }
 
 
@@ -232,7 +232,7 @@ namespace QuickShare.Droid.Classes
                 if (cursor != null)
                     cursor.Close();
             }
-            return null;
+            return uri.ToString();
         }
 
         internal static string GetPathForDocTree(Context context, Uri uri)

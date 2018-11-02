@@ -121,17 +121,6 @@
             <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/settings_allowToStayInBackgroundSwitch"
-                android:text="Allow Roamit to stay in background" />
-            <TextView
-                android:text="Roamit will find your devices faster if this option is enabled."
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
-            <Switch
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/settings_showReceiveUIOnWindowsSwitch"
                 android:layout_marginTop="30dp"
                 android:text="Show file receive progress on my Windows devices" />
@@ -161,7 +150,7 @@
                 android:layout_marginTop="30dp"
                 android:id="@+id/settings_useSystemFolderPicker"
                 android:text="Use system folder picker for moving received files and changing default receive path" />
-          <Switch
+            <Switch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"

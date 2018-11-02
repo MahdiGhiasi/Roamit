@@ -29,6 +29,8 @@ namespace QuickShare.FileTransfer
         public delegate void FileTransferProgressEventHandler(object sender, FileTransfer2ProgressEventArgs e);
         public event FileTransferProgressEventHandler FileTransferProgress;
 
+        FileSliceSender fileSliceSender;
+
         public FileSender2(object remoteSystem, IWebServerGenerator webServerGenerator, IRomePackageManager packageManager, IEnumerable<string> myIPs, string deviceName)
         {
             this.remoteSystem = remoteSystem;
@@ -43,6 +45,9 @@ namespace QuickShare.FileTransfer
         public void Dispose()
         {
             handshaker.Dispose();
+
+            if (fileSliceSender != null)
+                fileSliceSender.Dispose();
         }
 
         private IWebServer InitServer(string ip, int port)
@@ -164,7 +169,7 @@ namespace QuickShare.FileTransfer
         {
             await fileInfo.InitSlicingAsync();
 
-            var fileSliceSender = new FileSliceSender(fileInfo);
+            fileSliceSender = new FileSliceSender(fileInfo);
             transferProgress.AddFileSliceSender(fileSliceSender);
             fileSliceSender.SliceRequested += transferProgress.SliceRequestReceived;
 

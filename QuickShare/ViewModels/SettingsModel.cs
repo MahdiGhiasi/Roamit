@@ -23,17 +23,6 @@ namespace QuickShare.ViewModels
         
         public SettingsViewModel()
         {
-            if ((DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Desktop) || (DeviceInfo.FormFactorType == DeviceInfo.DeviceFormFactorType.Tablet))
-            {
-                extensionsSectionVisibility = Visibility.Visible;
-                chromeFirefoxExtensionVisibility = Visibility.Visible;
-            }
-            else
-            {
-                extensionsSectionVisibility = Visibility.Collapsed;
-                chromeFirefoxExtensionVisibility = Visibility.Collapsed;
-            }
-
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SendCloudClipboard"))
             {
                 if (bool.TryParse(ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"].ToString(), out bool scc))
@@ -44,9 +33,8 @@ namespace QuickShare.ViewModels
                 ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] = false;
             typeBasedDownloadFolderToggle = (ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] as bool?) ?? false;
 
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey("LegacyAndroidMode"))
-                ApplicationData.Current.LocalSettings.Values["LegacyAndroidMode"] = false;
-            legacyAndroidModeToggle = (ApplicationData.Current.LocalSettings.Values["LegacyAndroidMode"] as bool?) ?? false;
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("PreferProximityLocalConnection"))
+                preferProximityLocalConnection = (ApplicationData.Current.LocalSettings.Values["PreferProximityLocalConnection"] as bool?) ?? false;
 
             InitDownloadLocation();
 
@@ -131,6 +119,24 @@ namespace QuickShare.ViewModels
             }
         }
 
+        private bool preferProximityLocalConnection = false;
+        public bool PreferProximityLocalConnection
+        {
+            get
+            {
+                return preferProximityLocalConnection;
+            }
+            set
+            {
+                preferProximityLocalConnection = value;
+                ApplicationData.Current.LocalSettings.Values["PreferProximityLocalConnection"] = value;
+                OnPropertyChanged("PreferProximityLocalConnection");
+#if !DEBUG
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "PreferProximityLocalConnection", value ? "activated" : "deactivated").Build());
+#endif
+            }
+        }
+
 
         private async void ActivateFindingOtherDevices()
         {
@@ -175,26 +181,14 @@ namespace QuickShare.ViewModels
             get { return freeVersionBoxVisibility; }
         }
 
-        private Visibility extensionsSectionVisibility;
-        public Visibility ExtensionsSectionVisibility
-        {
-            get { return extensionsSectionVisibility; }
-        }
-
-        private Visibility chromeFirefoxExtensionVisibility;
-        public Visibility ChromeFirefoxExtensionVisibility
-        {
-            get { return chromeFirefoxExtensionVisibility; }
-        }
-
         public Visibility SendCloudClipboardVisibility
         {
             get { return (PCExtensionHelper.IsSupported) ? Visibility.Visible : Visibility.Collapsed; }
         }
 
-        public bool IsAccountIdStored
+        public bool IsCloudServiceLoggedIn
         {
-            get { return (SecureKeyStorage.IsAccountIdStored()); }
+            get => SecureKeyStorage.IsTokenStored() && SecureKeyStorage.IsAccountIdStored();
         }
 
         private bool receiveCloudClipboard = true;
@@ -265,7 +259,7 @@ namespace QuickShare.ViewModels
         {
             get
             {
-                return receiveCloudClipboardEnabled && IsAccountIdStored;
+                return receiveCloudClipboardEnabled && IsCloudServiceLoggedIn;
             }
             set
             {
@@ -324,7 +318,7 @@ namespace QuickShare.ViewModels
         {
             get
             {
-                return sendCloudClipboardEnabled && IsAccountIdStored;
+                return sendCloudClipboardEnabled && IsCloudServiceLoggedIn;
             }
             set
             {
@@ -379,30 +373,6 @@ namespace QuickShare.ViewModels
             }
         }
 
-        private bool legacyAndroidModeToggle = false;
-        public bool LegacyAndroidModeToggle
-        {
-            get
-            {
-                return legacyAndroidModeToggle;
-            }
-            set
-            {
-                legacyAndroidModeToggle = value;
-
-                if (value == true)
-                    UWP.Rome.AndroidRomePackageManager.Instance.Mode = UWP.Rome.AndroidRomePackageManager.AndroidPackageManagerMode.MessageCarrier;
-                else
-                    UWP.Rome.AndroidRomePackageManager.Instance.Mode = UWP.Rome.AndroidRomePackageManager.AndroidPackageManagerMode.PushNotification;
-
-                ApplicationData.Current.LocalSettings.Values["LegacyAndroidMode"] = value;
-                OnPropertyChanged("LegacyAndroidModeToggle");
-#if !DEBUG
-                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "LegacyAndroidModeToggle", value ? "activated" : "deactivated").Build());
-#endif
-            }
-        }
-
         private string userName = "";
         public string UserName
         {
@@ -415,26 +385,31 @@ namespace QuickShare.ViewModels
                 userName = value;
 
                 OnPropertyChanged("UserName");
-                OnPropertyChanged("SignedInText");
+                OnPropertyChanged("SignedInFullName");
+                OnPropertyChanged("IsSignedInFullNameAvailable");
             }
         }
 
-        public string SignedInText
+        public string SignedInFullName
         {
             get
             {
                 if (string.IsNullOrWhiteSpace(UserName))
-                    return "Just a moment...";
-
-                return $"Signed in to Roamit Cloud Service as '{UserName}'";
+                    return "...";
+                return UserName;
             }
+        }
+
+        public bool IsSignedInFullNameAvailable
+        {
+            get => !string.IsNullOrEmpty(UserName);
         }
 
         public void RefreshCloudClipboardBindings()
         {
             OnPropertyChanged("SendCloudClipboardEnabled");
             OnPropertyChanged("ReceiveCloudClipboardEnabled");
-            OnPropertyChanged("IsAccountIdStored");
+            OnPropertyChanged("IsCloudServiceLoggedIn");
         }
 
         public DownloadGroupByItem GroupReceivedBySelectedItem

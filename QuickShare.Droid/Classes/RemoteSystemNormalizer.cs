@@ -24,6 +24,7 @@ namespace QuickShare.Droid.Classes
                 IsAvailableBySpatialProximity = rs.IsAvailableByProximity,
                 Kind = rs.Kind.ToString(),
                 Status = rs.Status.ConvertToNormalizedRemoteSystemStatus(),
+                Type = DeviceType.Windows,
             };
         }
     }

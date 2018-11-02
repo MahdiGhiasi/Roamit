@@ -24,9 +24,9 @@ using GoogleAnalytics;
 
 namespace QuickShare.Flyouts
 {
-    public sealed partial class WhatsNewFlyout : UserControl, IFlyout
+    public sealed partial class WhatsNewFlyout : UserControl, IFlyout<EventArgs>
     {
-        public event EventHandler FlyoutCloseRequest;
+        public event EventHandler<EventArgs> FlyoutCloseRequest;
 
         public WhatsNewFlyout()
         {

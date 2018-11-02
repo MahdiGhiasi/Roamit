@@ -32,6 +32,8 @@ using QuickShare.Common.Rome;
 using System.IO;
 using Com.Nononsenseapps.Filepicker;
 using QuickShare.Droid.Classes.FilePicker;
+using PCLStorage.Droid;
+using PCLStorage;
 
 namespace QuickShare.Droid.Activities
 {
@@ -86,7 +88,7 @@ namespace QuickShare.Droid.Activities
             if (IsInitialized)
             {
                 Common.PackageManager.RemoteSystems.CollectionChanged += DevicesCollectionChanged;
-                Common.AndroidPushNotifier.Devices.CollectionChanged += DevicesCollectionChanged;
+                Common.RoamitCloudPackageManager.Devices.CollectionChanged += DevicesCollectionChanged;
                 return;
             }
             IsInitialized = true;
@@ -108,20 +110,23 @@ namespace QuickShare.Droid.Activities
                 }
             }
 
-            if (Common.AndroidPushNotifier == null)
+            if (Common.RoamitCloudPackageManager == null)
             {
-                InitAndroidPushNotifier();
+                InitRoamitCloudPackageManager();
             }
             else
             {
-                foreach (var item in Common.AndroidPushNotifier.Devices)
+                foreach (var item in Common.RoamitCloudPackageManager.Devices)
                 {
                     Common.ListManager.AddDevice(item);
                 }
 
-                Common.AndroidPushNotifier.Devices.CollectionChanged -= DevicesCollectionChanged;
-                Common.AndroidPushNotifier.Devices.CollectionChanged += DevicesCollectionChanged;
+                Common.RoamitCloudPackageManager.Devices.CollectionChanged -= DevicesCollectionChanged;
+                Common.RoamitCloudPackageManager.Devices.CollectionChanged += DevicesCollectionChanged;
             }
+
+            MigrateApiIfNecessary();
+            CheckDevicesPermission();
 
             if (Common.MessageCarrierPackageManager == null)
             {
@@ -142,10 +147,51 @@ namespace QuickShare.Droid.Activities
 
             Analytics.TrackPage("WebViewContainerActivity");
 
-            if (settings.AllowToStayInBackground)
-                StartService(new Intent(this, typeof(Services.RomeReadyService)));
-
             CheckForLegacyVersionInstallations();
+        }
+
+        private async void CheckDevicesPermission()
+        {
+            if (CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
+            {
+                var apiLoginInfo = (CloudServiceAuthenticationHelper.GetApiLoginInfo());
+                var user = new QuickShare.Common.Service.v3.User(apiLoginInfo.AccountId, apiLoginInfo.Token);
+                var hasPermission = await user.HasDevicesPermission();
+
+                if (!hasPermission)
+                {
+                    ShowLoginWarning();
+                }
+            }
+        }
+
+        private async void MigrateApiIfNecessary()
+        {
+            if (CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
+                return;
+
+            try
+            {
+                await CloudServiceAuthenticationHelper.MigrateFromV1ToV3();
+                InitRoamitCloudPackageManager();
+                Analytics.TrackEvent("ApiMigration", "V1toV3", "Success");
+                CheckDevicesPermission();
+            }
+            catch (Exception ex)
+            {
+                Analytics.TrackEvent("ApiMigration", "V1toV3", $"Failed:{ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"API migration from v1 to v3 failed: {ex.ToString()}");
+            }
+        }
+
+        private void ShowLoginWarning()
+        {
+            SendJavascriptToWebView($"showLoginWarning();");
+        }
+
+        private void HideLoginWarning()
+        {
+            SendJavascriptToWebView($"hideLoginWarning();");
         }
 
         private void InitUI(Classes.Settings settings)
@@ -182,13 +228,18 @@ namespace QuickShare.Droid.Activities
             }
         }
 
-        private async void InitAndroidPushNotifier()
+        private async void InitRoamitCloudPackageManager()
         {
-            Common.AndroidPushNotifier = new AndroidPushNotifier(await MSAAuthenticator.GetUserUniqueIdAsync());
+            Common.RoamitCloudPackageManager = new RoamitCloudPackageManager();
 
-            Common.AndroidPushNotifier.Devices.CollectionChanged += DevicesCollectionChanged;
+            if (CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
+                Common.RoamitCloudPackageManager.SetLoginInfoV3(CloudServiceAuthenticationHelper.GetApiLoginInfo());
+            else
+                Common.RoamitCloudPackageManager.SetLoginInfoV1(await MSAAuthenticator.GetUserUniqueIdAsync());
 
-            await Common.AndroidPushNotifier.DiscoverAndroidDevices(ServiceFunctions.GetDeviceUniqueId());
+            Common.RoamitCloudPackageManager.Devices.CollectionChanged += DevicesCollectionChanged;
+
+            Common.RoamitCloudPackageManager.BeginDiscoverDevices(ServiceFunctions.GetDeviceUniqueId());
         }
 
         private void ShowWhatsNewIfNecessary()
@@ -224,7 +275,7 @@ namespace QuickShare.Droid.Activities
                     .SetTitle("Please uninstall the legacy version of Roamit.")
                     .SetMessage("Having both versions side-by-side might cause problems.\n" +
                     "Uninstall the previous version to have the best experience possible.")
-                    .SetPositiveButton("OK", (s,e) => { });
+                    .SetPositiveButton("OK", (s, e) => { });
 
                 RunOnUiThread(() =>
                 {
@@ -240,7 +291,8 @@ namespace QuickShare.Droid.Activities
             string sharePage = (theme == AppTheme.Light) ? "share" : "shar2";
             if ((Intent.Action == Intent.ActionSend) && (Intent.Extras.ContainsKey(Intent.ExtraStream)))
             {
-                var fileUrl = FilePathHelper.GetPath(this, (Android.Net.Uri)Intent.Extras.GetParcelable(Intent.ExtraStream));
+                var uri = (Android.Net.Uri)Intent.Extras.GetParcelable(Intent.ExtraStream);
+                var fileUrl = FilePathHelper.GetPath(this, uri);
 
                 Common.ShareFiles = new string[] { fileUrl };
 
@@ -363,11 +415,27 @@ namespace QuickShare.Droid.Activities
                     if (e.NewItems != null)
                         foreach (var item in e.NewItems)
                         {
-                            Common.ListManager.AddDevice(item);
                             var nrs = normalizer.Normalize(item);
-                            AddRemoteSystemToList(nrs);
+                            if ((nrs.Type == DeviceType.Windows) && 
+                                (Common.ListManager.RemoteSystems
+                                    .Concat(Common.ListManager.SelectedRemoteSystem == null ? new NormalizedRemoteSystem[] { } : new[] { Common.ListManager.SelectedRemoteSystem })
+                                    .Any(x => x.Id != nrs.Id && x.DisplayName == nrs.DisplayName && x.Type == DeviceType.GraphWindowsDevice)))
+                            {
+                                if (nrs.IsAvailableByProximity)
+                                {
+                                    // We already have this device via cloud, but it's now available by proximity. So we'll replace the cloud one with proximity one
+                                    Common.ListManager.RemoveDeviceByName(nrs.DisplayName);
+                                    Common.ListManager.AddDevice(item);
+                                    UpdateRemoteSystemIdInList(nrs);
+                                }
+                            }
+                            else 
+                            {
+                                Common.ListManager.AddDevice(item);
+                                AddRemoteSystemToList(nrs);
+                            }
 
-                            if (nrs.Kind != "QS_Android")
+                            if (nrs.Type == DeviceType.Windows)
                                 isRome = true;
                         }
 
@@ -407,9 +475,13 @@ namespace QuickShare.Droid.Activities
                                 finishLoadingTimer.Elapsed += FinishLoadingTimer_Elapsed;
                             }
 
-                            finishLoadingTimer.Start();
-                            System.Diagnostics.Debug.WriteLine("Timer started...");
+                            if (isRome)
+                            {
+                                finishLoadingTimer.Start();
+                                System.Diagnostics.Debug.WriteLine("Timer started...");
+                            }
                         }
+                        
                     }
                     catch { }
 
@@ -433,6 +505,11 @@ namespace QuickShare.Droid.Activities
         private void AddRemoteSystemToList(NormalizedRemoteSystem nrs)
         {
             SendJavascriptToWebView($"addItem('{nrs.DisplayName.NormalizeForJsCall()}', '{TranslateDeviceKindToWebViewFormat(nrs.Kind).NormalizeForJsCall()}', '{nrs.Id.NormalizeForJsCall()}');");
+        }
+
+        private void UpdateRemoteSystemIdInList(NormalizedRemoteSystem nrs)
+        {
+            SendJavascriptToWebView($"updateItemId('{nrs.DisplayName.NormalizeForJsCall()}', '{nrs.Id.NormalizeForJsCall()}');"); //TODO
         }
 
         private void SelectItemIfNecessary(bool shouldBlockAutomaticSelection)
@@ -482,8 +559,8 @@ namespace QuickShare.Droid.Activities
                 case "mobile":
                 case "phone":
                     return "smartphone";
-                case "qs_android":
-                    return "qs_android";
+                case "android":
+                    return "android";
                 case "unknown":
                 default:
                     return "laptop";
@@ -790,27 +867,33 @@ namespace QuickShare.Droid.Activities
             lastSelectedFiles = files;
             lastPreserveFolderStructure = preserveFolderStructure;
 
-            if (IsAndroidDeviceSelected())
-                await SendFilesToAndroidDevice(files, preserveFolderStructure);
+            if (IsCloudCommunication())
+                await SendFilesToCloudDevice(files, preserveFolderStructure);
             else
-                await SendFilesToWindowsDevice(files, preserveFolderStructure);
+                await SendFilesToRomeLocalDevice(files, preserveFolderStructure);
         }
 
-        private async Task SendFilesToAndroidDevice(string[] files, bool preserveFolderStructure)
+        private async Task SendFilesToCloudDevice(string[] files, bool preserveFolderStructure)
         {
+            var rs = Common.GetCurrentNormalizedRemoteSystem();
+
             SetProgressText("Connecting...");
-            Common.AndroidPushNotifier.SetRemoteDevice(Common.GetCurrentNormalizedRemoteSystem().Id);
+            Common.RoamitCloudPackageManager.SetRemoteDevice(rs.Id);
 
-            SetProgressText("Preparing...");
-            var transferResult = await BeginSend(files, Common.AndroidPushNotifier, preserveFolderStructure, sendFinishService: true);
+            if (rs.Type == DeviceType.GraphWindowsDevice)
+            {
+                await Common.RoamitCloudPackageManager.LaunchUri(new Uri("roamit://receiveDialog"), rs);
+            }
 
-            FinishSend(transferResult, isWindows: false);
+            var transferResult = await BeginSend(files, Common.RoamitCloudPackageManager, preserveFolderStructure, sendFinishService: true);
+
+            FinishSend(transferResult, isLocalRome: false);
         }
 
-        private void FinishSend(FileTransferResult transferResult, bool isWindows)
+        private void FinishSend(FileTransferResult transferResult, bool isLocalRome)
         {
             string message = transferResult.ToString(); //TODO
-            string sendEventText = isWindows ? "SendToWindows" : "SendToAndroid";
+            string sendEventText = isLocalRome ? "SendToWindows" : (IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud");
 
             if (transferResult != FileTransferResult.Successful)
             {
@@ -841,36 +924,36 @@ namespace QuickShare.Droid.Activities
 
         private async Task<IEnumerable<FileSendInfo>> GetFiles(string[] files, bool preserveFolderStructure)
         {
-            var items = files.Select(x => new Java.IO.File(x)).ToList();
+            var fileSystem = new AndroidFileSystem(this);
+            var items = files.Select(x => fileSystem.GetItemFromPathAsync(x).GetAwaiter().GetResult()).ToList();
 
             return preserveFolderStructure ? await GetFiles(items) : await GetFilesWithoutFolderStructure(items);
         }
 
-        private async Task<List<FileSendInfo>> GetFilesWithoutFolderStructure(IEnumerable<Java.IO.File> items)
+        private async Task<List<FileSendInfo>> GetFilesWithoutFolderStructure(IEnumerable<IStorageItem> items)
         {
             var output = new List<FileSendInfo>();
 
-            var files = items.Where(x => x.IsFile)
-                .Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x.AbsolutePath))).ToList();
-            var folders = items.Where(x => x.IsDirectory).ToList();
+            var files = items.OfType<IFile>().Select(x => new FileSendInfo(x)).ToList();
+            var folders = items.OfType<AndroidFolder>().ToList();
 
             output.AddRange(files);
 
             foreach (var folder in folders)
             {
-                output.AddRange(await GetFilesWithoutFolderStructure(await folder.ListFilesAsync()));
+                output.AddRange(await GetFilesWithoutFolderStructure(await folder.GetItemsAsync()));
             }
 
             return output;
         }
 
-        private async Task<List<FileSendInfo>> GetFiles(List<Java.IO.File> items)
+        private async Task<List<FileSendInfo>> GetFiles(List<IStorageItem> items)
         {
             var output = new List<FileSendInfo>();
 
-            var files = items.Where(x => x.IsFile)
-                .Select(x => new FileSendInfo(new PCLStorage.FileSystemFile(x.AbsolutePath), Path.GetDirectoryName(x.AbsolutePath))).ToList();
-            var folders = items.Where(x => x.IsDirectory).ToList();
+            var files = items.OfType<IFile>()
+                .Select(x => new FileSendInfo(x, x.Path)).ToList();
+            var folders = items.OfType<AndroidFolder>().ToList();
 
             var paths = files
                 .Select(x => Path.GetDirectoryName(x.File.Path))
@@ -890,17 +973,17 @@ namespace QuickShare.Droid.Activities
             return output;
         }
 
-        private async Task<List<FileSendInfo>> GetFilesOfFolder(Java.IO.File f, string rootFolder = null)
+        private async Task<List<FileSendInfo>> GetFilesOfFolder(AndroidFolder f, string rootFolder = null)
         {
             if (rootFolder == null)
-                rootFolder = f.AbsolutePath;
+                rootFolder = f.Path;
 
-            var items = await f.ListFilesAsync();
+            var items = await f.GetItemsAsync();
 
-            List<FileSendInfo> files = (from x in items.Where(x => x.IsFile)
-                                        select new FileSendInfo(new PCLStorage.FileSystemFile(x.AbsolutePath), rootFolder)).ToList();
+            List<FileSendInfo> files = (from x in items.OfType<IFile>()
+                                        select new FileSendInfo(x, rootFolder)).ToList();
 
-            var folders = items.Where(x => x.IsDirectory).ToList();
+            var folders = items.OfType<AndroidFolder>().ToList();
 
             foreach (var folder in folders)
             {
@@ -910,7 +993,7 @@ namespace QuickShare.Droid.Activities
             return files;
         }
 
-        private async Task SendFilesToWindowsDevice(string[] files, bool preserveFolderStructure)
+        private async Task SendFilesToRomeLocalDevice(string[] files, bool preserveFolderStructure)
         {
             Classes.Settings settings = new Classes.Settings(this);
 
@@ -930,21 +1013,22 @@ namespace QuickShare.Droid.Activities
 
             if (result != RomeAppServiceConnectionStatus.Success)
             {
-                Analytics.TrackEvent("SendToWindows", "file", "Failed");
+                Analytics.TrackEvent("SendToWindowsLocally", "file", "Failed");
                 SetProgressText($"Connect failed. ({result.ToString()})");
                 return;
             }
 
-            SetProgressText("Preparing...");
-
             var transferResult = await BeginSend(files, Common.PackageManager, preserveFolderStructure, sendFinishService: !settings.UseInAppServiceOnWindowsDevices);
 
-            FinishSend(transferResult, isWindows: true);
+            FinishSend(transferResult, isLocalRome: true);
         }
 
-        private async Task<FileTransferResult> BeginSend(string[] files, IRomePackageManager packageManager, bool preserveFolderStructure, bool sendFinishService)
+        private async Task<FileTransferResult> BeginSend(string[] filePaths, IRomePackageManager packageManager, bool preserveFolderStructure, bool sendFinishService)
         {
-            string sendingText = (files.Length == 1) ? "Sending file..." : "Sending files...";
+            SetProgressText((filePaths.Length == 1) ? "Retrieving file..." : "Retrieving files...");
+            var files = (await GetFiles(filePaths, preserveFolderStructure)).ToList();
+
+            SetProgressText("Preparing...");
 
             FileTransferResult transferResult = FileTransferResult.Successful;
 
@@ -979,21 +1063,21 @@ namespace QuickShare.Droid.Activities
                     {
                         RunOnUiThread(() =>
                         {
-                            SetProgressText(sendingText);
+                            SetProgressText((filePaths.Length == 1) ? "Sending file..." : "Sending files...");
                             SetProgressValue(ee.Progress, 1.0);
                         });
                     }
                 };
 
                 sendFileCancellationTokenSource = new CancellationTokenSource();
-                if (files.Length == 0)
+                if (filePaths.Length == 0)
                 {
                     SetProgressText("No files.");
                     return FileTransferResult.NoFiles;
                 }
                 await Task.Run(async () =>
                 {
-                    transferResult = await fs.Send((await GetFiles(files, preserveFolderStructure)).ToList(), sendFileCancellationTokenSource.Token);
+                    transferResult = await fs.Send(files, sendFileCancellationTokenSource.Token);
                 });
                 sendFileCancellationTokenSource = null;
             }
@@ -1023,12 +1107,12 @@ namespace QuickShare.Droid.Activities
             SetProgressText("Connecting...");
 
             RomeRemoteLaunchUriStatus result;
-            if (IsAndroidDeviceSelected())
-                result = await Common.AndroidPushNotifier.LaunchUri(new Uri(url), Common.GetCurrentNormalizedRemoteSystem());
+            if (IsCloudCommunication())
+                result = await Common.RoamitCloudPackageManager.LaunchUri(new Uri(url), Common.GetCurrentNormalizedRemoteSystem());
             else
                 result = await Common.PackageManager.LaunchUri(new Uri(url), Common.GetCurrentRemoteSystem());
 
-            var eventTrackCat = IsAndroidDeviceSelected() ? "SendToAndroid" : "SendToWindows";
+            var eventTrackCat = IsCloudCommunication() ? (IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud") : "SendToWindowsLocally";
 
             SetProgressValue(1.0, 1.0);
             if (result == RomeRemoteLaunchUriStatus.Success)
@@ -1046,18 +1130,25 @@ namespace QuickShare.Droid.Activities
 
         private async Task SendText(string text)
         {
-            if (IsAndroidDeviceSelected())
-                await SendTextToAndroidDevice(text);
+            if (IsCloudCommunication())
+                await SendTextToCloudDevice(text);
             else
-                await SendTextToWindowsDevice(text);
+                await SendTextToRomeLocalDevice(text);
         }
 
-        private static bool IsAndroidDeviceSelected()
+        private static bool IsCloudCommunication()
         {
-            return Common.GetCurrentNormalizedRemoteSystem().Kind == "QS_Android";
+            var type = Common.GetCurrentNormalizedRemoteSystem().Type;
+
+            return (type == DeviceType.Android || type == DeviceType.GraphWindowsDevice);
         }
 
-        private async Task SendTextToAndroidDevice(string text)
+        private static bool IsAndroidDevice()
+        {
+            return (Common.GetCurrentNormalizedRemoteSystem().Type == DeviceType.Android);
+        }
+
+        private async Task SendTextToCloudDevice(string text)
         {
             ShowProgress();
 
@@ -1065,28 +1156,28 @@ namespace QuickShare.Droid.Activities
             {
                 SetProgressText("Failed. (Text is too large)");
                 SetProgressValue(0.0, 1.0);
-                Analytics.TrackEvent("SendToAndroid", "text", "TooLarge");
+                Analytics.TrackEvent((IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "TooLarge");
 
                 return;
             }
 
             SetProgressText("Connecting...");
 
-            if (!(await Common.AndroidPushNotifier.QuickClipboard(text, Common.GetCurrentNormalizedRemoteSystem(), (new Classes.Settings(this)).DeviceName)))
+            if (!(await Common.RoamitCloudPackageManager.QuickClipboard(text, Common.GetCurrentNormalizedRemoteSystem(), (new Classes.Settings(this)).DeviceName)))
             {
                 SetProgressText("Failed.");
                 SetProgressValue(0.0, 1.0);
-                Analytics.TrackEvent("SendToAndroid", "text", "Failed");
+                Analytics.TrackEvent((IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "Failed");
 
                 return;
             }
 
             SetProgressText("Done.");
             SetProgressValue(1.0, 1.0);
-            Analytics.TrackEvent("SendToAndroid", "text", "Success");
+            Analytics.TrackEvent((IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "Success");
         }
 
-        private async Task SendTextToWindowsDevice(string text)
+        private async Task SendTextToRomeLocalDevice(string text)
         {
             ShowProgress();
             SetProgressText("Connecting...");
@@ -1291,7 +1382,7 @@ namespace QuickShare.Droid.Activities
                 //{
                 //    var r = new Random();
                 //    DateTime dt = DateTime.Now;
-                
+
                 //    for (int i = 0; i < 500; i++)
                 //    {
                 //        DataStore.DataStorageProviders.HistoryManager.OpenAsync().Wait();

@@ -8,7 +8,7 @@ using QuickShare.Common;
 
 namespace QuickShare.FileTransfer
 {
-    internal class FileSliceSender
+    internal class FileSliceSender : IDisposable
     {
         private IFile File { get; }
         public string UniqueKey { get; }
@@ -18,6 +18,8 @@ namespace QuickShare.FileTransfer
 
         public delegate void SliceRequestedEventHandler(FileSliceSender sender, SliceRequestedEventArgs e);
         public event SliceRequestedEventHandler SliceRequested;
+
+        Stream fileStream = null;
 
         public FileSliceSender(FileSendInfo fileInfo)
         {
@@ -43,11 +45,13 @@ namespace QuickShare.FileTransfer
                 });
 
                 byte[] buffer = new byte[sliceSize];
-                using (Stream stream = await File.OpenAsync(PCLStorage.FileAccess.Read))
-                {
-                    stream.Seek((int)(id * Constants.FileSliceMaxLength), SeekOrigin.Begin);
-                    await stream.ReadAsync(buffer, 0, (int)sliceSize);
-                }
+                
+                if (fileStream == null)
+                    fileStream = await File.OpenAsync(PCLStorage.FileAccess.Read);
+
+                fileStream.Seek((int)(id * Constants.FileSliceMaxLength), SeekOrigin.Begin);
+                await fileStream.ReadAsync(buffer, 0, (int)sliceSize);
+                
 
                 return buffer;
             }
@@ -61,6 +65,14 @@ namespace QuickShare.FileTransfer
         private ulong GetSliceSize(ulong id)
         {
             return (LastSliceId != id) ? Constants.FileSliceMaxLength : LastSliceSize;
+        }
+
+        public void Dispose()
+        {
+            if (fileStream != null)
+            {
+                fileStream.Dispose();
+            }
         }
     }
 }

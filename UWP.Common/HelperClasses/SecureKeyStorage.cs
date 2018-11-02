@@ -11,6 +11,7 @@ namespace QuickShare.Common
     {
         static readonly string _userId = "userId";
         static readonly string _accountId = "accountId8";
+        static readonly string _token = "accountToken";
 
         public static bool IsUserIdStored()
         {
@@ -20,6 +21,11 @@ namespace QuickShare.Common
         public static bool IsAccountIdStored()
         {
             return IsStored(_accountId);
+        }
+
+        public static bool IsTokenStored()
+        {
+            return IsStored(_token);
         }
 
         private static bool IsStored(string key)
@@ -41,6 +47,11 @@ namespace QuickShare.Common
         public static string GetAccountId()
         {
             return Get(_accountId);
+        }
+
+        public static string GetToken()
+        {
+            return Get(_token);
         }
 
         private static string Get(string key)
@@ -65,6 +76,11 @@ namespace QuickShare.Common
             Set(_accountId, value);
         }
 
+        public static void SetToken(string value)
+        {
+            Set(_token, value);
+        }
+
         private static void Set(string key, string value)
         {
             var vault = new PasswordVault();
@@ -80,6 +96,11 @@ namespace QuickShare.Common
         public static void DeleteAccountId()
         {
             Delete(_accountId);
+        }
+
+        public static void DeleteToken()
+        {
+            Delete(_token);
         }
 
         private static void Delete(string key)

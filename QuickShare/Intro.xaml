@@ -319,14 +319,6 @@
                                     Margin="4,0,0,0"
                                     HorizontalAlignment="Stretch" />
                         </Grid>
-                        <TextBlock FontSize="{Binding FontSize, ElementName=ReferenceText}"
-                                   Text="You'll be asked to login to your Microsoft account for this feature."
-                                   Opacity="0.7"
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   FontWeight="SemiLight"
-                                   FontStyle="Italic"
-                                   Margin="0,12,0,0" />
                     </StackPanel>
                 </StackPanel>
             </Grid>

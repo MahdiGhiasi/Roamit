@@ -71,6 +71,9 @@
     <Reference Include="Binding_NoNonsenseFilepicker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Binding_NoNonsenseFilePicker.1.0.2\lib\MonoAndroid60\Binding_NoNonsenseFilepicker.dll</HintPath>
     </Reference>
+    <Reference Include="JWT, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JWT.4.0.0\lib\netstandard1.3\JWT.dll</HintPath>
+    </Reference>
     <Reference Include="LiteDB, Version=3.1.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>..\packages\LiteDB.3.1.0\lib\netstandard1.4\LiteDB.dll</HintPath>
     </Reference>
@@ -91,12 +94,6 @@
     <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PCLStorage">
-      <HintPath>..\PCLStorageEx-NetStandard1.2\Android\PCLStorage.dll</HintPath>
-    </Reference>
-    <Reference Include="PCLStorage.Abstractions">
-      <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Plugin.CurrentActivity, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Plugin.CurrentActivity.1.0.1\lib\MonoAndroid10\Plugin.CurrentActivity.dll</HintPath>
@@ -248,6 +245,7 @@
     <Compile Include="Activities\MessageShowActivity.cs" />
     <Compile Include="Activities\NotificationLaunchActivity.cs" />
     <Compile Include="OnlineServiceHelpers\AuthenticateDialog.cs" />
+    <Compile Include="OnlineServiceHelpers\CloudServiceAuthenticationHelper.cs" />
     <Compile Include="OnlineServiceHelpers\ServiceFunctions.cs" />
     <Compile Include="OnlineServiceHelpers\MSAAuthenticator.cs" />
     <Compile Include="OnlineServiceHelpers\MsaWebViewClient.cs" />
@@ -257,7 +255,6 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Services\CloudClipboardService.cs" />
     <Compile Include="Services\MessageCarrierService.cs" />
-    <Compile Include="Services\RomeReadyService.cs" />
     <Compile Include="Services\WaiterService.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Activities\WebViewContainerActivity.cs" />
@@ -269,6 +266,18 @@
     <AndroidAsset Include="Assets\html\materialicons.woff2" />
     <AndroidAsset Include="Assets\html\MaterialIcons-Regular.ttf" />
     <AndroidAsset Include="Assets\html\MaterialIcons-Regular.woff" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Black.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-BlackItalic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Bold.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-BoldItalic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Italic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Light.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-LightItalic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Medium.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-MediumItalic.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Regular.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-Thin.ttf" />
+    <AndroidAsset Include="Assets\html\roboto\Roboto-ThinItalic.ttf" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
@@ -372,6 +381,18 @@
     <ProjectReference Include="..\MicrosoftGraphFunctions\MicrosoftGraphFunctions.csproj">
       <Project>{A636D1D4-EAF4-434C-A443-C7580F51A97F}</Project>
       <Name>MicrosoftGraphFunctions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PCLStorage.DroidExtension\PCLStorage.DroidExtension.csproj">
+      <Project>{e576a7ae-6adb-4ce6-bd19-b3a9cddb5105}</Project>
+      <Name>PCLStorage.DroidExtension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PCLStorageEx\src\PCLStorage.Abstractions\PCLStorage.Abstractions.csproj">
+      <Project>{eebb53f3-ebdf-4dd0-82e5-ff9a2c8dbd72}</Project>
+      <Name>PCLStorage.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PCLStorageEx\src\PCLStorage.Android\PCLStorage.Android.csproj">
+      <Project>{d813c9d8-d6d1-4d2b-af04-0d877656f47e}</Project>
+      <Name>PCLStorage.Android</Name>
     </ProjectReference>
     <ProjectReference Include="..\TextTransfer\TextTransfer.csproj">
       <Project>{7B9A3000-AAA1-4EBC-8AEE-68B24E1C1543}</Project>
@@ -482,6 +503,30 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_doc_folder.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\animate.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\animatedModal.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\images\android-small-black.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\images\chrome-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\images\firefox-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\images\windows-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\roboto\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\html\roboto\roboto.css" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

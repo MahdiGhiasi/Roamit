@@ -1,4 +1,5 @@
 ﻿using QuickShare.Classes;
+using QuickShare.Common;
 using QuickShare.DevicesListManager;
 using QuickShare.UWP.Rome;
 using System;
@@ -129,17 +130,48 @@ namespace QuickShare.ViewModels
             }
         }
 
+        private Visibility signInToCloudServiceFlyoutVisibility = Visibility.Collapsed;
+        public Visibility SignInToCloudServiceFlyoutVisibility
+        {
+            get { return signInToCloudServiceFlyoutVisibility; }
+            set
+            {
+                signInToCloudServiceFlyoutVisibility = value;
+                OnPropertyChanged("SignInToCloudServiceFlyoutVisibility");
+                OnPropertyChanged("OverlayVisibility");
+            }
+        }
+
+        private Visibility roamitAppsFlyoutVisibility = Visibility.Collapsed;
+        public Visibility RoamitAppsFlyoutVisibility
+        {
+            get { return roamitAppsFlyoutVisibility; }
+            set
+            {
+                roamitAppsFlyoutVisibility = value;
+                OnPropertyChanged("RoamitAppsFlyoutVisibility");
+                OnPropertyChanged("OverlayVisibility");
+            }
+        }
+
         public Visibility OverlayVisibility
         {
             get
             {
                 if ((signInNoticeVisibility == Visibility.Visible) ||
                     (whatsNewVisibility == Visibility.Visible) || 
-                    (donateFlyoutVisibility == Visibility.Visible))
+                    (donateFlyoutVisibility == Visibility.Visible) ||
+                    (signInToCloudServiceFlyoutVisibility == Visibility.Visible) ||
+                    (roamitAppsFlyoutVisibility == Visibility.Visible))
                     return Visibility.Visible;
 
                 return Visibility.Collapsed;
             }
+        }
+
+        public Visibility SignInWarningVisibility
+        {
+            get => (SecureKeyStorage.IsTokenStored() && SecureKeyStorage.IsAccountIdStored()) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private bool contentFrameNeedsRemoteSystemSelection = false;
@@ -153,6 +185,34 @@ namespace QuickShare.ViewModels
             {
                 contentFrameNeedsRemoteSystemSelection = value;
                 OnPropertyChanged("IsContentFrameEnabled");
+            }
+        }
+
+        private bool frameBottomPaddingEnabled = false;
+        public bool FrameBottomPaddingEnabled
+        {
+            get
+            {
+                return frameBottomPaddingEnabled;
+            }
+            set
+            {
+                frameBottomPaddingEnabled = value;
+                OnPropertyChanged("FrameBottomPaddingEnabled");
+            }
+        }
+
+        private bool isDevicesListExpanded = false;
+        public bool IsDevicesListExpanded
+        {
+            get
+            {
+                return isDevicesListExpanded;
+            }
+            set
+            {
+                isDevicesListExpanded = value;
+                OnPropertyChanged("IsDevicesListExpanded");
             }
         }
 
@@ -218,6 +278,20 @@ namespace QuickShare.ViewModels
         public void Dispose()
         {
             ListManager.PropertyChanged -= ListManager_PropertyChanged;
+        }
+
+        public void UpdateSignInWarningVisibility()
+        {
+            OnPropertyChanged("SignInWarningVisibility");
+        }
+
+        public void CloseAllFlyouts()
+        {
+            DonateFlyoutVisibility = Visibility.Collapsed;
+            RoamitAppsFlyoutVisibility = Visibility.Collapsed;
+            SignInToCloudServiceFlyoutVisibility = Visibility.Collapsed;
+            WhatsNewVisibility = Visibility.Collapsed;
+            SignInNoticeVisibility = Visibility.Collapsed;
         }
     }
 }

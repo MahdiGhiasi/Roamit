@@ -93,15 +93,6 @@ namespace QuickShare
 #endif
         }
 
-        private async void GetChromeFirefoxExtension_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            await Launcher.LaunchUriAsync(new Uri($"https://roamit.ghiasi.net/#browserExtensions"));
-
-#if !DEBUG
-            App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "Link", "GetBrowserExtensions").Build());
-#endif
-        }
-
         private async void GetPCExtension_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri(Common.Constants.PCExtensionUrl));
@@ -151,6 +142,7 @@ namespace QuickShare
             await PCExtensionHelper.StopPCExtensionIfRunning();
 
             SecureKeyStorage.DeleteAccountId();
+            SecureKeyStorage.DeleteToken();
 
             ApplicationData.Current.LocalSettings.Values["SendCloudClipboard"] = false.ToString();
             Model.SendCloudClipboard = false;

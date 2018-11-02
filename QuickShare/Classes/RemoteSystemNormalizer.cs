@@ -28,6 +28,7 @@ namespace QuickShare.Classes
                 IsAvailableBySpatialProximity = rs.IsAvailableBySpatialProximity,
                 Kind = rs.Kind,
                 Status = (NormalizedRemoteSystemStatus)((int)(rs.Status)),
+                Type = DeviceType.Windows,
             };
         }
     }

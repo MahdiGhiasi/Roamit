@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using QuickShare.Common.Service.Models;
 using QuickShare.DevicesListManager;
 using System;
 using System.Collections.Generic;
@@ -29,11 +30,12 @@ namespace QuickShare.Common.Service
                              {
                                  Id = d.DeviceID,
                                  DisplayName = d.FriendlyName,
-                                 Kind = "QS_Android",
+                                 Kind = "Android",
                                  Status = NormalizedRemoteSystemStatus.Available,
                                  IsAvailableByProximity = false,
                                  IsAvailableBySpatialProximity = false,
                                  AppVersion = d.AppVersion ?? "",
+                                 Type = DeviceType.Android,
                              };
 
                 return output;
@@ -42,7 +44,7 @@ namespace QuickShare.Common.Service
             {
                 Debug.WriteLine($"An exception was thrown in GetAndroidDevices: {ex.Message}");
                 Debug.WriteLine($"Server returned text was '{responseText}'");
-                return new List<NormalizedRemoteSystem>();
+                return null;
             }
         }
 
@@ -197,5 +199,32 @@ namespace QuickShare.Common.Service
             }
         }
 
+        public static async Task<APIv3LoginInfo> MigrateToV3(string userId)
+        {
+            try
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    var formContent = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("jwt", Secrets.GenerateAPIMigrateClaim(userId)),
+                    });
+                    var result = await httpClient.PostAsync($"{Constants.ServerAddress}/api/User/Migrate", formContent);
+                    var s = await result.Content.ReadAsStringAsync();
+
+                    if (s.Split(',')[0] == "1")
+                    {
+                        var parts = s.Split('\n');
+                        return new APIv3LoginInfo(Guid.Parse(parts[1]), parts[2]);
+                    } 
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception in v1.MigrateToV3: {ex.Message}");
+                return null;
+            }
+        }
     }
 }

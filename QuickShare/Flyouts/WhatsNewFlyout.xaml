@@ -41,6 +41,25 @@
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
+                    <StackPanel Tag="12" Margin="0,0,0,24" Visibility="Visible">
+                        <TextBlock Text="&#8226; New cloud-based communication method for better reliability"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="You'll need to be signed in to Roamit Cloud Service."
+                                   Opacity="0.6"
+                                   Margin="16,0,0,16"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; You can now expand the devices list"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="If you have lots of devices, selecting devices is now easier. Just click on the arrow button on the side, or maximize the window."
+                                   Opacity="0.6"
+                                   Margin="16,0,0,16"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Compatibility improvements for sending to Windows devices updated to version 1809"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
                     <StackPanel Tag="11" Margin="0,0,0,24" Visibility="Visible">
                         <TextBlock Text="&#8226; File transfer logic has been rewritten from scratch."
                                    Margin="0,0,0,8"

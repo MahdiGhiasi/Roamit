@@ -23,9 +23,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace QuickShare.Flyouts
 {
-    public sealed partial class SignInNoticeFlyout : UserControl, IFlyout
+    public sealed partial class SignInNoticeFlyout : UserControl, IFlyout<EventArgs>
     {
-        public event EventHandler FlyoutCloseRequest;
+        public event EventHandler<EventArgs> FlyoutCloseRequest;
 
         public SignInNoticeFlyout()
         {

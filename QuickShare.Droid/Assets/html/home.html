@@ -9,11 +9,18 @@
     <script src="jquery-3.2.1.min.js"></script>
     <script src="progressbar.js"></script>
     <script src="jquery-material-icons-polyfill.js"></script>
+    <script src="animatedModal.js"></script>
+    <link rel="stylesheet" href="roboto/roboto.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="animate.min.css">
 
     <script>
-        var addItem, selectItem, removeItem, setClipboardText, setProgressText, setProgressValue, showProgress, setSharePreview, showSearchSpinner, hideSearchSpinner, showProgressButtons, hideProgressButtons, setProgressSubtext;
+        var addItem, selectItem, removeItem, updateItemId, setClipboardText,
+            setProgressText, setProgressValue, showProgress, setSharePreview, 
+            showSearchSpinner, hideSearchSpinner, showProgressButtons, 
+            hideProgressButtons, setProgressSubtext, showLoginWarning, hideLoginWarning;
         var allowRedirects = true; //false only when debugging on browser.
+        var loginWarningModal, otherDevicesModal;
 
         $(document).ready(function () {
             var itemTemplate = '<li class="mdl-list__item mdl-button deviceItem" data-deviceId="{id}"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-icon">{type}</i>{name}</span></li>';
@@ -77,7 +84,7 @@
 
             function getDeviceType(type)
             {
-                if (type == "qs_android")
+                if (type == "android")
                     return "phone_android";
 
                 return type;
@@ -159,7 +166,7 @@
 
                 items.push({ name: _name, type: _type, id: _id });
 
-                if (_type != "qs_android")
+                if (_type != "android")
                     hideSearchSpinner();
 
                 updateList();
@@ -176,6 +183,14 @@
                 updateList();
             }
 
+            updateItemId = function (_name, _id) {
+                for (i = 0; i < items.length; i++) {
+                    if (items[i].name == _name) {
+                        items[i].id = _id;
+                    }
+                }
+            }
+
             selectItem = function(_id) {
                 if ((selectedItem != null) && (selectedItem.id == _id))
                     return;
@@ -186,7 +201,7 @@
                     // Hide spinner if at least one Rome-based device is discovered.
                     for (i = 0; i < items.length; i++)
                     {
-                        if (items[i].type != "qs_android")
+                        if (items[i].type != "android")
                         {
                             hideSearchSpinner();
                             break;
@@ -503,6 +518,74 @@
 
                 redirect("sendUrl.html");
             });
+
+            $(".loginWarningModal-authorize").on("click", function() {
+                redirect("loginWarningAuthorize.html");
+            });
+
+            // Initialize modal popups
+            otherDevicesModal = $("#otherDevicesButton").animatedModal({
+                modalTarget:'otherDevicesModal',
+                /**
+                animatedIn:'zoomIn',
+                animatedOut:'zoomOut',
+                /**/
+                /**/
+                animatedIn: 'slideInUp',
+                animatedOut: 'slideOutDown',
+                /**/
+                /**
+                animatedIn: 'fadeInUp',
+                animatedOut: 'fadeOutDown',
+                /**/
+                animationDuration:'.4s',
+            });
+
+            loginWarningModal = $("#loginWarningButton").animatedModal({
+                modalTarget:'loginWarningModal',
+                /**
+                animatedIn:'zoomIn',
+                animatedOut:'zoomOut',
+                /**/
+                /**/
+                animatedIn: 'slideInUp',
+                animatedOut: 'slideOutDown',
+                /**/
+                /**
+                animatedIn: 'fadeInUp',
+                animatedOut: 'fadeOutDown',
+                /**/
+                animationDuration:'.4s',
+            });
+
+            showLoginWarning = function() {
+                $("#loginWarningButton").css("display", "block");
+            }
+
+            hideLoginWarning = function() {
+                $("#loginWarningButton").css("display", "none");
+            }
+
+            $("#getWindows10AppLink").on("click", function() {
+                redirect("getWindows10AppLink.html");
+            });
+
+            $("#getAndroidAppLink").on("click", function() {
+                redirect("getAndroidAppLink.html");
+            });
+
+            $("#getExtensionLink").on("click", function() {
+                redirect("getExtensionLink.html");
+            });
+
+            setInterval(function() {
+                $("#loginWarningButton").addClass("rubberBand").addClass("animated");
+
+                setTimeout(function() {
+                    $("#loginWarningButton").removeClass("rubberBand").removeClass("animated");
+                }, 2000);
+            }, 5000);
+            
         });
     </script>
 </head>
@@ -514,6 +597,13 @@
             <div class="mdl-layout__header-row" style="padding-left: 16px;">
                 <!-- Title -->
                 <span class="mdl-layout-title"></span>
+                
+                <button id="otherDevicesButton" href="#otherDevicesModal" class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="material-icons">important_devices</i>
+                </button>
+                <button id="loginWarningButton" href="#loginWarningModal" class="mdl-button mdl-js-button mdl-button--icon" style="display: none">
+                    <i class="material-icons">warning</i>
+                </button>
                 <div class="mdl-layout-spacer"></div>
                 <!-- Right aligned menu below button -->
                 <button id="historyButton" class="mdl-button mdl-js-button mdl-button--icon">
@@ -641,6 +731,88 @@
             </div>
         </div>
     </div>
+
+    <div id="loginWarningModal" class="modal modal-vertically-centered">
+        <div class="modal-content">
+            <h1>Authorization required</h1>
+            <p>Please authorize Roamit to communicate with your Windows devices one more time, so we can give you the best experience possible.</p>
+            <br />
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect close-loginWarningModal mdl-button--white">I'll do it later</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-button--accent-2 close-loginWarningModal loginWarningModal-authorize">Authorize</button>
+        </div>
+    </div>
+
+    <div id="otherDevicesModal" class="modal">
+        <div class="modal-content" style="text-align: left; margin:0;">
+            <div class="card-head" style="line-height: 25px; background-color: #333;">
+                <div class="body">
+                    <span style="font-weight: bold; font-size: 18px; margin-top: 8px;">Roamit</span><br />
+                    <span style="font-weight: 100; font-size:14px;">Remove the barrier between your devices</span>
+                </div>
+            </div>
+            <div class="card apps-box-gradient-1">
+                <div class="body">
+                    <div class="header">Browser Extensions</div>
+
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Continue reading webpages on your other device quickly</div>
+                    <div class="itemAfter"></div>
+
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Integrate browser with Windows Timeline</div>
+                    <div class="itemAfter"></div>
+                </div>
+                <div class="button-container">
+                    <a id="getExtensionLink" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--white close-otherDevicesModal">
+                        <img src="images/chrome-small.png" style="margin-top: -3px; height: 18px;" />
+                        <img src="images/firefox-small.png" style="margin-top: -3px; margin-right: 5px; height: 18px;" />
+                        Get for Chrome and Firefox
+                    </a>
+                </div>
+            </div>
+            <div class="card apps-box-gradient-2">
+                <div class="body">
+                    <div class="header">Roamit for Windows 10</div>
+
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Automatically sync your Clipboard</div>
+                    <div class="itemAfter"></div>
+
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Send pictures and files quickly</div>
+                    <div class="itemAfter"></div>
+                </div>
+                <div class="button-container">
+                    <a id="getWindows10AppLink" href="https://www.microsoft.com/store/apps/9nrdffns92g1" 
+                       class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--white close-otherDevicesModal">
+                        <img src="images/windows-small.png" style="margin-top: -3px; margin-right: 5px; height: 18px;" />
+                        Get it now
+                    </a>
+                </div>
+            </div>
+            <div class="card apps-box-gradient-3">
+                <div class="body">
+                    <div class="header">Roamit for Android</div>
+
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Send pictures and files quickly</div>
+                    <div class="itemAfter"></div>
+
+                    <div class="itemBullet"><i class="material-icons material-icon-sm mr-1">done</i></div>
+                    <div class="item">Share your clipboard</div>
+                    <div class="itemAfter"></div>
+                </div>
+                <div class="button-container">
+                    <a id="getAndroidAppLink" href="https://play.google.com/store/apps/details?id=com.ghiasi.roamitapp&hl=en" 
+                       class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--white close-otherDevicesModal">
+                        <img src="images/android-small-black.png" style="margin-top: -3px; margin-right: 5px; height: 18px;" />
+                        Get it now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>

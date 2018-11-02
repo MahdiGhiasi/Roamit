@@ -57,8 +57,12 @@ namespace QuickShare.FileTransfer
             if ((parentPath.LastOrDefault() != '\\') && (parentPath.LastOrDefault() != '/'))
                 parentPath += "/";
 
-            if (file.Path.Substring(0, parentPath.Length).Replace("\\", "/") == parentPath.Replace("\\", "/"))
-                RelativePath = System.IO.Path.GetDirectoryName(file.Path).Substring(parentPath.Length - 1).Replace("\\", "/");
+            var filePath = file.Path;
+            if ((filePath.LastOrDefault() != '\\') && (filePath.LastOrDefault() != '/'))
+                filePath += "/";
+
+            if (filePath.Substring(0, parentPath.Length).Replace("\\", "/") == parentPath.Replace("\\", "/"))
+                RelativePath = System.IO.Path.GetDirectoryName(filePath).Substring(parentPath.Length - 1).Replace("\\", "/");
             else
                 throw new ArgumentException("'parentPath' is not a part of 'file.Path'.");
         }

@@ -142,14 +142,14 @@
       <Project>{D78FDFFF-E82C-4E9C-B78F-54E1D924D49F}</Project>
       <Name>FileTransfer</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="PCLStorage">
-      <HintPath>..\PCLStorageEx2\WinRT\PCLStorage.dll</HintPath>
-    </Reference>
-    <Reference Include="PCLStorage.Abstractions">
-      <HintPath>..\PCLStorageEx-NetStandard1.2\PCLStorage.Abstractions.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\PCLStorageEx\src\PCLStorage.Abstractions\PCLStorage.Abstractions.csproj">
+      <Project>{eebb53f3-ebdf-4dd0-82e5-ff9a2c8dbd72}</Project>
+      <Name>PCLStorage.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PCLStorageEx\src\PCLStorage.UWP\PCLStorage.UWP.csproj">
+      <Project>{1569c102-e351-41af-ba3d-4c98739b05c5}</Project>
+      <Name>PCLStorage.UWP</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />

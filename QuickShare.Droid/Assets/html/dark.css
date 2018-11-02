@@ -32,14 +32,14 @@ body {
     opacity:0.5;
 }
 
-.mdl-layout__header {
-    background-color: #1A1A1A;
-}
-
 .mdl-button--accent.mdl-button--accent.mdl-button--raised, .mdl-button--accent.mdl-button--accent.mdl-button--fab {
     background: #004E8C;
     border: 1px #0078D7 solid;
     color: white;
+}
+
+.mdl-button--accent-2 {
+    background: #0078D7 !important;
 }
 
 .footer-triangle {
@@ -78,4 +78,13 @@ body {
 
 .mdl-spinner--single-color .mdl-spinner__layer-1, .mdl-spinner--single-color .mdl-spinner__layer-2, .mdl-spinner--single-color .mdl-spinner__layer-3, .mdl-spinner--single-color .mdl-spinner__layer-4 {
     border-color: #0078D7;
+}
+
+#loginWarningButton {
+    color: orange;
+}
+
+#loginWarningModal {
+    background: #004E8Cee;
+    color: white;
 }

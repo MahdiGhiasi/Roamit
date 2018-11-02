@@ -107,6 +107,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CloudServiceRomePackageManager.cs" />
     <Compile Include="AndroidRomePackageManager.cs" />
     <Compile Include="DispatcherEx.cs" />
     <Compile Include="Extensions.cs" />

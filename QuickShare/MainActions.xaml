@@ -1,4 +1,5 @@
 ﻿<Page
+    x:Name="MainActionsPage"
     x:Class="QuickShare.MainActions"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,6 +11,7 @@
     xmlns:logicaltriggers="using:AdaptiveTriggerLibrary.Triggers.LogicalTriggers"
     xmlns:userinterfacetriggers="using:AdaptiveTriggerLibrary.Triggers.UserInterfaceTriggers"
     mc:Ignorable="d"
+    classes:SizeChange.IsEnabled="True"
     Loaded="Page_Loaded">
 
     <Page.Resources>
@@ -45,19 +47,19 @@
                 <!-- Clipboard button -->
                 <DoubleAnimation Storyboard.TargetName="clipboardButtonGridTransform" 
                                  Storyboard.TargetProperty="Y"
-                                 Duration="0:0:0.4" From="48" To="0" BeginTime="0:0:0.05">
+                                 Duration="0:0:0.4" From="48" To="0" BeginTime="0:0:0.1">
                     <DoubleAnimation.EasingFunction>
                         <BackEase EasingMode="EaseOut" Amplitude="0.3" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="clipboardButtonGridTransform" 
                                  Storyboard.TargetProperty="X"
-                                 Duration="0:0:0.4" From="-48" To="0" BeginTime="0:0:0.05">
+                                 Duration="0:0:0.4" From="-48" To="0" BeginTime="0:0:0.1">
                     <DoubleAnimation.EasingFunction>
                         <BackEase EasingMode="EaseOut" Amplitude="0.3" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="sendPictureButton" BeginTime="0:0:0.05">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="sendPictureButton" BeginTime="0:0:0.15">
                     <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                     <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
                 </DoubleAnimationUsingKeyFrames>
@@ -65,14 +67,14 @@
                 <!-- SendPicture button -->
                 <DoubleAnimation Storyboard.TargetName="pictureButtonGridTransform" 
                                  Storyboard.TargetProperty="Y"
-                                 Duration="0:0:0.4" From="48" To="0" BeginTime="0:0:0.1">
+                                 Duration="0:0:0.4" From="48" To="0" BeginTime="0:0:0.15">
                     <DoubleAnimation.EasingFunction>
                         <BackEase EasingMode="EaseOut" Amplitude="0.3" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="pictureButtonGridTransform" 
                                  Storyboard.TargetProperty="X"
-                                 Duration="0:0:0.4" From="48" To="0" BeginTime="0:0:0.1">
+                                 Duration="0:0:0.4" From="48" To="0" BeginTime="0:0:0.15">
                     <DoubleAnimation.EasingFunction>
                         <BackEase EasingMode="EaseOut" Amplitude="0.3" />
                     </DoubleAnimation.EasingFunction>
@@ -169,128 +171,12 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Background="Transparent" x:Name="MainGrid" classes:SizeChange.IsEnabled="True" MinHeight="540">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
-                            <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="550" ConditionModifier="{StaticResource LessThanModifier}" />
-                            </logicaltriggers:MultiTrigger.Triggers>
-                        </logicaltriggers:MultiTrigger>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentScaleTransform.ScaleX" Value="0.95" />
-                        <Setter Target="ContentScaleTransform.ScaleY" Value="0.95" />
-                        <Setter Target="DragDropText.FontSize" Value="16" />
-                        <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,200" />
-                        <Setter Target="wholeGridTransform.Y" Value="-16" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
-                            <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="550" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
-                                <userinterfacetriggers:WindowHeightTrigger Condition="620" ConditionModifier="{StaticResource LessThanModifier}" />
-                            </logicaltriggers:MultiTrigger.Triggers>
-                        </logicaltriggers:MultiTrigger>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentScaleTransform.ScaleX" Value="0.95" />
-                        <Setter Target="ContentScaleTransform.ScaleY" Value="0.95" />
-                        <Setter Target="DragDropText.FontSize" Value="16" />
-                        <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,200" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
-                            <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="620" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
-                            </logicaltriggers:MultiTrigger.Triggers>
-                        </logicaltriggers:MultiTrigger>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentScaleTransform.ScaleX" Value="1" />
-                        <Setter Target="ContentScaleTransform.ScaleY" Value="1" />
-                        <Setter Target="DragDropText.FontSize" Value="20" />
-                        <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,232" />
-                    </VisualState.Setters>
-                </VisualState>
-                
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
-                            <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="585" ConditionModifier="{StaticResource LessThanModifier}" />
-                            </logicaltriggers:MultiTrigger.Triggers>
-                        </logicaltriggers:MultiTrigger>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentScaleTransform.ScaleX" Value="0.8" />
-                        <Setter Target="ContentScaleTransform.ScaleY" Value="0.8" />
-                        <Setter Target="DragDropText.FontSize" Value="14" />
-                        <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,200" />
-                        <Setter Target="wholeGridTransform.Y" Value="-16" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
-                            <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="585" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
-                                <userinterfacetriggers:WindowHeightTrigger Condition="632" ConditionModifier="{StaticResource LessThanModifier}" />
-                            </logicaltriggers:MultiTrigger.Triggers>
-                        </logicaltriggers:MultiTrigger>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentScaleTransform.ScaleX" Value="0.9" />
-                        <Setter Target="ContentScaleTransform.ScaleY" Value="0.9" />
-                        <Setter Target="DragDropText.FontSize" Value="16" />
-                        <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,200" />
-                        <Setter Target="wholeGridTransform.Y" Value="-16" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
-                            <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="632" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
-                                <userinterfacetriggers:WindowHeightTrigger Condition="720" ConditionModifier="{StaticResource LessThanModifier}" />
-                            </logicaltriggers:MultiTrigger.Triggers>
-                        </logicaltriggers:MultiTrigger>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentScaleTransform.ScaleX" Value="1" />
-                        <Setter Target="ContentScaleTransform.ScaleY" Value="1" />
-                        <Setter Target="DragDropText.FontSize" Value="20" />
-                        <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,232" />
-                        <Setter Target="wholeGridTransform.Y" Value="-8" />
-                        <Setter Target="dragDropTextBlockTransform.Y" Value="-8" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <logicaltriggers:MultiTrigger ConditionModifier="{StaticResource AndModifier}">
-                            <logicaltriggers:MultiTrigger.Triggers>
-                                <userinterfacetriggers:WindowHeightTrigger Condition="720" ConditionModifier="{StaticResource GreaterThanEqualToModifier}" />
-                            </logicaltriggers:MultiTrigger.Triggers>
-                        </logicaltriggers:MultiTrigger>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentScaleTransform.ScaleX" Value="1" />
-                        <Setter Target="ContentScaleTransform.ScaleY" Value="1" />
-                        <Setter Target="DragDropText.FontSize" Value="20" />
-                        <Setter Target="buttonsParentGrid.Margin" Value="0,0,0,232" />
-                        <Setter Target="wholeGridTransform.Y" Value="0" />
-                        <Setter Target="dragDropTextBlockTransform.Y" Value="0" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-
+    <!-- Opacity:: 450 .. 350 => 1 .. 0 -->
+    <Grid x:Name="MainGrid" 
+          Background="Transparent" 
+          classes:SizeChange.IsEnabled="True" 
+          Opacity="{Binding (classes:SizeChange.ActualHeight), ElementName=MainActionsPage, Converter={StaticResource MathConverter}, ConverterParameter=(((x-400)/50)v1)^0.2}"
+          MinHeight="485">
         <Grid.RenderTransform>
             <TranslateTransform x:Name="wholeGridTransform" Y="0" />
         </Grid.RenderTransform>
@@ -298,14 +184,22 @@
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="dragDropTextTransform" />
             </Grid.RenderTransform>
-            <TextBlock Text="Or just drag and drop anything here" FontWeight="Light" FontSize="20" Foreground="LightGray" TextWrapping="Wrap" TextAlignment="Center" x:Name="DragDropText">
+            <!-- FontSize:: 550 .. 485 => 20 .. 14 -->
+            <TextBlock x:Name="DragDropText"
+                       Text="Or just drag and drop anything here" 
+                       FontWeight="Light" 
+                       FontSize="{Binding (classes:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=20-0.09*((550-x)^0)}" 
+                       Foreground="LightGray" 
+                       TextWrapping="Wrap" 
+                       TextAlignment="Center">
                 <TextBlock.RenderTransform>
-                    <TranslateTransform x:Name="dragDropTextBlockTransform" />
+                    <!-- 550 .. 485 => 0 .. -16 -->
+                    <TranslateTransform Y="{Binding (classes:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=-0.25*((550-x)^0)}" />
                 </TextBlock.RenderTransform>
             </TextBlock>
         </Grid>
         <Grid MaxWidth="{Binding (classes:SizeChange.ActualHeight), ElementName=MainGrid, Converter={StaticResource MathConverter}, ConverterParameter=x-270}" 
-              Margin="0,30,0,0"
+              Margin="0,10,0,0"
               RenderTransformOrigin="0.5,0">
             <Grid.RenderTransform>
                 <ScaleTransform ScaleX="1" ScaleY="1" x:Name="ContentScaleTransform" />
@@ -318,8 +212,8 @@
                     
                     <Button x:Name="SelectFileButton"
                             Tapped="SelectFile_Tapped"
-                            Width="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
-                            Height="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=x*0.6}" 
+                            Width="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x^250)*0.6}" 
+                            Height="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x^250)*0.6}" 
                             BorderBrush="White" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,100">
                         <Button.RenderTransform>
                             <TranslateTransform Y="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x-300)*0}" />
@@ -340,78 +234,90 @@
                     </Grid.RenderTransform>
                     <Grid>
                         <Grid.RenderTransform>
-                            <TranslateTransform x:Name="clipboardButtonGridTransform" />
+                            <TranslateTransform X="{Binding (classes:SizeChange.ActualHeight), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=-0.35*((370-x)^0)}"
+                                                Y="{Binding (classes:SizeChange.ActualHeight), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=-0.35*((370-x)^0)}" />
                         </Grid.RenderTransform>
-                        <Button x:Name="ClipboardButton"
-                                Tapped="ClipboardButton_Tapped"
-                                classes:SizeChange.IsEnabled="True"
-                                Width="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.24)^80}" 
-                                Height="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.24)^80}" 
-                                BorderBrush="White" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" >
-                            <Button.Content>
-                                <StackPanel>
-                                    <TextBlock Text="&#xE77F;" FontFamily="Segoe MDL2 Assets" Foreground="LightGray" HorizontalAlignment="Center" FontSize="20" Margin="0,0,0,4" />
-                                    <TextBlock Text="Clipboard" FontWeight="Light" FontSize="14" Foreground="LightGray"  HorizontalAlignment="Center" />
-                                </StackPanel>
-                            </Button.Content>
-                        </Button>
-                    </Grid>
-                    <!-- 44+ (44/sqrt(2)) = 75.112 -->
+                        <Grid>
+                            <Grid.RenderTransform>
+                                <TranslateTransform x:Name="clipboardButtonGridTransform" />
+                            </Grid.RenderTransform>
+                            <Button x:Name="ClipboardButton"
+                                    Tapped="ClipboardButton_Tapped"
+                                    classes:SizeChange.IsEnabled="True"
+                                    Width="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.24)^80}" 
+                                    Height="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.24)^80}" 
+                                    BorderBrush="White" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                                <Button.Content>
+                                    <StackPanel>
+                                        <TextBlock Text="&#xE77F;" FontFamily="Segoe MDL2 Assets" Foreground="LightGray" HorizontalAlignment="Center" FontSize="20" Margin="0,0,0,4" />
+                                        <TextBlock Text="Clipboard" FontWeight="Light" FontSize="14" Foreground="LightGray"  HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                        </Grid>
+                        <!-- 44+ (44/sqrt(2)) = 75.112 -->
 
-                    <RelativePanel x:Name="ClipboardContentPreviewContainer" Margin="0,0,-1000,0">
-                        <RelativePanel.RenderTransform>
-                            <TranslateTransform X="{Binding (classes:SizeChange.ActualWidth), ElementName=ClipboardButton, Converter={StaticResource MathConverter}, ConverterParameter=(x/2)+((x/2)/1.41421)}"
-                                                Y="{Binding (classes:SizeChange.ActualHeight), ElementName=ClipboardButton, Converter={StaticResource MathConverter}, ConverterParameter=(x/2)+((x/2)/1.41421)}" />
-                        </RelativePanel.RenderTransform>
-                        <Polyline Stroke="White" StrokeThickness="1.5" Points="0,0 16,16 24,16" HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="clipboardPolyline" Opacity="0.5" />
-                        <TextBlock RelativePanel.RightOf="clipboardPolyline" RelativePanel.AlignBottomWith="clipboardPolyline" Margin="4,0,0,-8" Text="Hello world!" Foreground="LightGray" VerticalAlignment="Bottom" x:Name="ClipboardTextPreview" />
-                        <HyperlinkButton RelativePanel.Below="ClipboardTextPreview" 
-                                         x:Name="ClipboardLaunchUrlButton"
-                                         Content="Or open this URL on the device" 
-                                         Opacity="0.75" 
-                                         Foreground="LightBlue"
-                                         Margin="28,4,0,0"
-                                         Tapped="ClipboardLaunchUrlButton_Tapped" />
-                    </RelativePanel>
+                        <RelativePanel x:Name="ClipboardContentPreviewContainer" Margin="0,0,-1000,0">
+                            <RelativePanel.RenderTransform>
+                                <TranslateTransform X="{Binding (classes:SizeChange.ActualWidth), ElementName=ClipboardButton, Converter={StaticResource MathConverter}, ConverterParameter=(x/2)+((x/2)/1.41421)}"
+                                                    Y="{Binding (classes:SizeChange.ActualHeight), ElementName=ClipboardButton, Converter={StaticResource MathConverter}, ConverterParameter=(x/2)+((x/2)/1.41421)}" />
+                            </RelativePanel.RenderTransform>
+                            <Polyline Stroke="White" StrokeThickness="1.5" Points="0,0 16,16 24,16" HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="clipboardPolyline" Opacity="0.5" />
+                            <TextBlock RelativePanel.RightOf="clipboardPolyline" RelativePanel.AlignBottomWith="clipboardPolyline" Margin="4,0,0,-8" Text="Hello world!" Foreground="LightGray" VerticalAlignment="Bottom" x:Name="ClipboardTextPreview" />
+                            <HyperlinkButton RelativePanel.Below="ClipboardTextPreview" 
+                                             x:Name="ClipboardLaunchUrlButton"
+                                             Content="Or open this URL on the device" 
+                                             Opacity="0.75" 
+                                             Foreground="LightBlue"
+                                             Margin="28,4,0,0"
+                                             Tapped="ClipboardLaunchUrlButton_Tapped" />
+                        </RelativePanel>
+                    </Grid>
                 </Grid>
 
                 <Grid>
                     <Grid.RenderTransform>
                         <TranslateTransform x:Name="pictureButtonGridTransform" />
                     </Grid.RenderTransform>
-                    <Button Width="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.3)^100}" 
-                    Height="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.3)^100}" 
-                    x:Name="sendPictureButton" classes:SizeChange.IsEnabled="True" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="White" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,20,10,0" Tapped="SendPictureButton_Tapped">
-                        <Button.RenderTransform>
-                            <TranslateTransform X="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((290-x)*0.5)^(-10)}"
-                                                Y="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((x-230)*0.3)+35}" />
-                        </Button.RenderTransform>
-                        <Button.Content>
-                            <Grid>
-                                <Grid Margin="24,-24,0,0">
-                                    <Image x:Name="img3" 
-                                       Opacity="0"
-                                       Stretch="UniformToFill"
-                                       Width="{Binding (classes:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
-                                       Height="{Binding (classes:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
-                                </Grid>
+                    <Grid>
+                        <Grid.RenderTransform>
+                            <TranslateTransform X="{Binding (classes:SizeChange.ActualHeight), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=0.35*((370-x)^0)}"
+                                                Y="{Binding (classes:SizeChange.ActualHeight), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=-0.35*((370-x)^0)}" />
+                        </Grid.RenderTransform>
+                        <Button Width="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.3)^100}" 
+                                Height="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=(x*0.3)^100}" 
+                                x:Name="sendPictureButton" classes:SizeChange.IsEnabled="True" FontWeight="Light" FontSize="16" Foreground="Gray" BorderBrush="White" Style="{StaticResource CircleButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,20,10,0" Tapped="SendPictureButton_Tapped">
+                            <Button.RenderTransform>
+                                <TranslateTransform X="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((290-x)*0.5)^(-10)}"
+                                                    Y="{Binding (classes:SizeChange.ActualWidth), ElementName=buttonsParentGrid, Converter={StaticResource MathConverter}, ConverterParameter=((x-230)*0.3)+35}" />
+                            </Button.RenderTransform>
+                            <Button.Content>
                                 <Grid>
-                                    <Image x:Name="img2" 
-                                       Opacity="0"
-                                       Stretch="UniformToFill" 
-                                       Width="{Binding (classes:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
-                                       Height="{Binding (classes:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
+                                    <Grid Margin="24,-24,0,0">
+                                        <Image x:Name="img3" 
+                                           Opacity="0"
+                                           Stretch="UniformToFill"
+                                           Width="{Binding (classes:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
+                                           Height="{Binding (classes:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
+                                    </Grid>
+                                    <Grid>
+                                        <Image x:Name="img2" 
+                                           Opacity="0"
+                                           Stretch="UniformToFill" 
+                                           Width="{Binding (classes:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
+                                           Height="{Binding (classes:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
+                                    </Grid>
+                                    <Grid Margin="-24,24,0,0">
+                                        <Image x:Name="img1" 
+                                           Opacity="0"
+                                           Stretch="UniformToFill" 
+                                           Width="{Binding (classes:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
+                                           Height="{Binding (classes:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
+                                    </Grid>
                                 </Grid>
-                                <Grid Margin="-24,24,0,0">
-                                    <Image x:Name="img1" 
-                                       Opacity="0"
-                                       Stretch="UniformToFill" 
-                                       Width="{Binding (classes:SizeChange.ActualWidth), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" 
-                                       Height="{Binding (classes:SizeChange.ActualHeight), ElementName=sendPictureButton, Converter={StaticResource MathConverter}, ConverterParameter=x*0.4}" />
-                                </Grid>
-                            </Grid>
-                        </Button.Content>
-                    </Button>
+                            </Button.Content>
+                        </Button>
+                    </Grid>
                 </Grid>
             </Grid>
         </Grid>

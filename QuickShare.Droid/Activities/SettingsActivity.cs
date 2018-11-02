@@ -30,7 +30,7 @@ namespace QuickShare.Droid.Activities
         TextView txtVersionNumber, txtCloudClipboardModeDescription, txtUniversalClipboardNotAvailable;
         TextView linkTwitter, linkGitHub, linkPrivacyPolicy, linkLogOut;
         EditText txtDeviceName, txtReceiveLocation;
-        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swStayInBackground, swDarkTheme, swUseInAppRomeProcessOnWindows, swUseSystemFolderPicker, swUseSystemFilePicker;
+        Switch swCloudClipboardActivity, swCloudClipboardMode, swUiMode, swDarkTheme, swUseInAppRomeProcessOnWindows, swUseSystemFolderPicker, swUseSystemFilePicker;
         Spinner groupReceivedBySpinner;
 
         SettingsReceivedGroupByAdapter groupReceivedByAdapter;
@@ -60,7 +60,6 @@ namespace QuickShare.Droid.Activities
             swCloudClipboardActivity = FindViewById<Switch>(Resource.Id.settings_cloudClipboardActiveSwitch);
             swCloudClipboardMode = FindViewById<Switch>(Resource.Id.settings_cloudClipboardModeSwitch);
             swUiMode = FindViewById<Switch>(Resource.Id.settings_uiModeSwitch);
-            swStayInBackground = FindViewById<Switch>(Resource.Id.settings_allowToStayInBackgroundSwitch);
             swDarkTheme = FindViewById<Switch>(Resource.Id.settings_darkThemeSwitch);
             swUseInAppRomeProcessOnWindows = FindViewById<Switch>(Resource.Id.settings_showReceiveUIOnWindowsSwitch);
             swUseSystemFolderPicker = FindViewById<Switch>(Resource.Id.settings_useSystemFolderPicker);
@@ -149,9 +148,6 @@ namespace QuickShare.Droid.Activities
 
             swUiMode.Checked = settings.UseLegacyUI;
             swUiMode.CheckedChange += SwUiMode_CheckedChange;
-
-            swStayInBackground.Checked = settings.AllowToStayInBackground;
-            swStayInBackground.CheckedChange += SwStayInBackground_CheckedChange;
 
             swCloudClipboardMode.Checked = (settings.CloudClipboardReceiveMode == CloudClipboardReceiveMode.Automatic);
             swCloudClipboardMode.CheckedChange += SwCloudClipboardMode_CheckedChange;
@@ -258,22 +254,6 @@ namespace QuickShare.Droid.Activities
             Settings settings = new Settings(this);
 
             settings.DeviceName = txtDeviceName.Text;
-        }
-
-        private void SwStayInBackground_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
-        {
-            Settings settings = new Settings(this);
-
-            if (e.IsChecked)
-            {
-                StartService(new Intent(this, typeof(Services.RomeReadyService)));
-                settings.AllowToStayInBackground = true;
-            }
-            else
-            {
-                settings.AllowToStayInBackground = false;
-                StopService(new Intent(this, typeof(Services.RomeReadyService)));
-            }
         }
 
         private void SwUiMode_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
