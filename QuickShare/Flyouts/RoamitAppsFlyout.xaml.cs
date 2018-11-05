@@ -42,14 +42,19 @@ namespace QuickShare.Flyouts
             await LaunchOperations.LaunchUrl(Constants.BrowserExtensionsUrl);
         }
 
-        private async void GetForAndroid_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            await LaunchOperations.LaunchUrl(Constants.GooglePlayAppUrl);
-        }
+        //private async void GetForAndroid_Tapped(object sender, TappedRoutedEventArgs e)
+        //{
+        //    await LaunchOperations.LaunchUrl(Constants.GooglePlayAppUrl);
+        //}
 
-        private async void GetForWindows_Tapped(object sender, TappedRoutedEventArgs e)
+        //private async void GetForWindows_Tapped(object sender, TappedRoutedEventArgs e)
+        //{
+        //    await LaunchOperations.LaunchUrl(Constants.WindowsStoreAppUrl);
+        //}
+
+        private async void GetForWindowsAndAndroid_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await LaunchOperations.LaunchUrl(Constants.WindowsStoreAppUrl);
+            await LaunchOperations.LaunchUrl(Constants.RoamitHomepageUrl);
         }
     }
 }

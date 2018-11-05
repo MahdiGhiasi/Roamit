@@ -16,6 +16,7 @@ namespace QuickShare.Common
         public static readonly string ServerAddress = "https://roamit.ghiasi.net/api"; // "http://192.168.1.100:3000";
 
         public static readonly string WindowsStoreAppUrl = "https://www.microsoft.com/store/apps/9nrdffns92g1";
+        public static readonly string RoamitHomepageUrl = "https://roamit.ghiasi.net";
         public static readonly string GooglePlayAppUrl = "https://play.google.com/store/apps/details?id=com.ghiasi.roamitapp";
         public static readonly string BrowserExtensionsUrl = "https://roamit.ghiasi.net/#browserExtensions";
         public static readonly string PCExtensionUrl = "https://roamit.ghiasi.net/#pcExtension";

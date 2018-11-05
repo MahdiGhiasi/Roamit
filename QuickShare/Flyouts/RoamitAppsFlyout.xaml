@@ -62,11 +62,6 @@
                         <Run>Share your clipboard content</Run>
                     </Paragraph>
                 </RichTextBlock>
-                <Button Content="Get Roamit for Android" 
-                        Tapped="GetForAndroid_Tapped" 
-                        Margin="0,8,0,0" 
-                        HorizontalAlignment="Right" 
-                        Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
 
                 <RichTextBlock TextWrapping="Wrap" Margin="0,24,0,0">
                     <Paragraph Margin="0,0,0,12">
@@ -81,7 +76,7 @@
                         <Run>Send pictures and files quickly</Run>
                     </Paragraph>
                 </RichTextBlock>
-                <Button Content="Get Roamit for Windows 10" 
+                <Button Content="Get Roamit for Windows 10 and Android" 
                         Tapped="GetForWindows_Tapped" 
                         Margin="0,8,0,0" 
                         HorizontalAlignment="Right" 
