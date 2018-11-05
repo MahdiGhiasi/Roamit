@@ -343,7 +343,7 @@
                                   Tapped="RoamitApps_Tapped" />
                 </StackPanel>
             </CommandBar.Content>
-            <AppBarButton Icon="Shop" Label="Donate" Tapped="DonateButton_Tapped" />
+            <AppBarButton Icon="Shop" Label="Donate" Tapped="DonateButton_Tapped" Visibility="Collapsed" />
             <AppBarButton Icon="Setting" Label="Settings" Tapped="SettingsButton_Tapped" />
             <AppBarButton Label="History" Tapped="HistoryButton_Tapped">
                 <AppBarButton.Icon>
