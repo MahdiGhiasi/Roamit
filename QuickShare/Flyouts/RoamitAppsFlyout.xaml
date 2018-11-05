@@ -77,7 +77,7 @@
                     </Paragraph>
                 </RichTextBlock>
                 <Button Content="Get Roamit for Windows 10 and Android" 
-                        Tapped="GetForWindows_Tapped" 
+                        Tapped="GetForWindowsAndAndroid_Tapped" 
                         Margin="0,8,0,0" 
                         HorizontalAlignment="Right" 
                         Background="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
