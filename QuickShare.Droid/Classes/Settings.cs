@@ -125,7 +125,7 @@ namespace QuickShare.Droid.Classes
             get
             {
                 ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-                return prefs.GetBoolean("UseSystemFilePicker", defValue: false);
+                return prefs.GetBoolean("UseSystemFilePicker", defValue: (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop));
             }
             set
             {

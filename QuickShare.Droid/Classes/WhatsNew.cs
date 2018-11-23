@@ -115,5 +115,16 @@ namespace QuickShare.Droid.Classes
         {
             settings.LatestShownWhatsNewVersion = appVersion;
         }
+
+        internal void RunMigrationCode()
+        {
+            var lastShownVersion = settings.LatestShownWhatsNewVersion;
+
+            if (lastShownVersion < new Version("3.2.0"))
+            {
+                // Make system file picker default when updating to 3.2
+                settings.UseSystemFilePicker = (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop);
+            }
+        }
     }
 }

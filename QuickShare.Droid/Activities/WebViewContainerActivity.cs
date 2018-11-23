@@ -290,6 +290,7 @@ namespace QuickShare.Droid.Activities
             if (!whatsNew.ShouldShowWhatsNew)
                 return;
 
+            whatsNew.RunMigrationCode();
             var alert = new AlertDialog.Builder(this)
                     .SetTitle(whatsNew.GetTitle())
                     .SetMessage(whatsNew.GetText())
