@@ -88,6 +88,16 @@ namespace QuickShare.Droid.Classes
                 output.Add("Other fixes and improvements");
             }
 
+            if (lastShownVersion < new Version("3.2.0"))
+            {
+                output.Add("Windows devices can now be contacted via Roamit Cloud Service for better reliability.");
+                output.Add("Sending files from SD Card is now supported.");
+                output.Add("Sharing files from apps like WhatsApp to Roamit now works.");
+                output.Add("Compatibility improvements for sending to Windows devices updated to October 2018 update.");
+                output.Add("Other fixes and improvements");
+
+            }
+
             return output;
         }
 
