@@ -74,6 +74,21 @@ namespace QuickShare.Common.Service.v3
             }
         }
 
+        protected async Task<HttpResponseMessage> SendPostRequest(string endpoint, string rawData, string mediaType)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("Authorization", $"{accountId}.{token}");
+
+                var url = $"{Constants.ServerAddress}/{apiEndpoint}/{serviceEndpoint}/{endpoint}";
+                var content = new StringContent(rawData, Encoding.UTF8, mediaType);
+                var response = await httpClient.PostAsync(url, content);
+
+                return response;
+            }
+        }
+
+
         protected enum HttpPostContentType
         {
             FormUrlEncoded,
