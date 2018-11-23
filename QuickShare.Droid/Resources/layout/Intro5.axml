@@ -13,14 +13,14 @@
         android:id="@+id/intro5_linearLayout"
         android:layout_centerInParent="true">
         <TextView
-            android:text="Let's begin!"
+            android:text="Login to Roamit"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView1"
             android:gravity="center_horizontal" />
         <TextView
-            android:text="First, please login to your Microsoft account and give us permission to access your user ID, so we can register you in our system."
+            android:text="Please login to your Microsoft account and give Roamit permission to communicate between your devices."
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/textView2"
             android:gravity="center_horizontal"

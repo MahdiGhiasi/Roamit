@@ -13,23 +13,32 @@
       android:id="@+id/linearLayout1"
       android:layout_centerInParent="true">
     <TextView
-        android:text="Also, we need your permission to talk to your other devices."
+        android:text="One more thing"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView1"
         android:gravity="center_horizontal" />
     <TextView
-        android:text="After it, you can start using the app."
+        android:text="You'll get asked for permission one more time, to communicate with your devices locally."
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:paddingTop="20dp"
-        android:paddingBottom="10dp" />
+        android:paddingTop="14dp"
+        android:paddingBottom="0dp" />
+	<TextView
+        android:text="Then, you might get asked to give Roamit permission to access Storage, that's necessary for us to be able to send and receive files."
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="20dp" />
     <Button
-        android:text="Authorize"
+        android:text="Begin"
         android:id="@+id/intro_authorizeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
