@@ -146,7 +146,14 @@ namespace QuickShare
                 isDestinationAndroid = false;
             }
 
-            string deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
+            string deviceName;
+
+            var localDeviceInfo = NetworkInformation.GetHostNames().FirstOrDefault(name => name.DisplayName.EndsWith(".local"));
+            if (localDeviceInfo != null)
+                deviceName = localDeviceInfo.DisplayName.Substring(0, localDeviceInfo.DisplayName.Length - ".local".Length);
+            else
+                deviceName = (new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation()).FriendlyName;
+
             var mode = e.Parameter.ToString();
 
             bool succeed = true;
