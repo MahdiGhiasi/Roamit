@@ -70,8 +70,26 @@ namespace QuickShare.Droid.Classes
                     {
                         return Android.OS.Environment.ExternalStorageDirectory + "/" + split[1];
                     }
+                    else
+                    {
+                        try
+                        {
+                            var path = $"/storage/{type}/{split[1]}";
 
-                    throw new NonPrimaryExternalStorageNotSupportedException();
+                            // Test if this is working
+                            var file = new Java.IO.File(path);
+                            if (!file.Exists())
+                                throw new NonPrimaryExternalStorageNotSupportedException();
+
+                            return path;
+                        }
+                        catch (Exception)
+                        {
+                            return uri.ToString();
+                        }
+                    }
+
+                    
                     // TODO handle non-primary volumes
                 }
                 // DownloadsProvider
