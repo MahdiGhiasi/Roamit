@@ -96,7 +96,8 @@ namespace QuickShare.Droid.Activities
             if (await ServiceFunctions.RemoveDevice(this) == false)
             {
                 Android.App.AlertDialog.Builder alert = new Android.App.AlertDialog.Builder(this);
-                alert.SetTitle("Failed to log out.\nPlease make sure you have a working internet connection. If the problem persists, contact us.");
+                alert.SetTitle("Failed to log out.");
+                alert.SetMessage("Please make sure you have a working internet connection. If the problem persists, contact us.");
                 alert.SetPositiveButton("OK", (IDialogInterfaceOnClickListener)null);
                 RunOnUiThread(() =>
                 {
@@ -107,6 +108,7 @@ namespace QuickShare.Droid.Activities
             }
 
             MSAAuthenticator.DeleteUserUniqueId();
+            CloudServiceAuthenticationHelper.LogOut();
 
             OSHelper.ClearAppDataAndExit();
             FinishAffinity();

@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Webkit;
 using System.Threading.Tasks;
+using QuickShare.Common;
 
 namespace QuickShare.Droid.OnlineServiceHelpers
 {
@@ -19,12 +20,14 @@ namespace QuickShare.Droid.OnlineServiceHelpers
         private static WebView webView;
         internal static Dialog authDialog;
         internal static TaskCompletionSource<MsaAuthResult> authenticateTcs;
+        internal static MsaAuthPurpose lastDialogPurpose;
 
         internal static async Task<MsaAuthResult> ShowAsync(Context context, MsaAuthPurpose purpose)
         {
             if (purpose == MsaAuthPurpose.App)
             {
-                string url = "https://login.live.com/oauth20_authorize.srf?redirect_uri=https://login.live.com/oauth20_desktop.srf&response_type=code&client_id=" + Config.Secrets.ClientId2 + "&scope=User.Read+wl.offline_access";
+                string url = $"{Constants.ServerAddress}/v3/Authenticate/Graph";
+                lastDialogPurpose = purpose;
                 return await ShowAsync(context, purpose, url);
             }
             else
@@ -34,6 +37,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
         internal static async Task<MsaAuthResult> ShowAsync(Context context, MsaAuthPurpose purpose, string oauthUrl)
         {
             authenticateTcs = new TaskCompletionSource<MsaAuthResult>();
+            lastDialogPurpose = purpose;
 
             authDialog = new Dialog(context, Android.Resource.Style.ThemeLightNoTitleBarFullScreen);
 
@@ -57,6 +61,12 @@ namespace QuickShare.Droid.OnlineServiceHelpers
             authDialog.SetCancelable(true);
 
             return await authenticateTcs.Task;
+        }
+
+        internal static void HideIfPurposeIs(MsaAuthPurpose purpose)
+        {
+            if (lastDialogPurpose == purpose)
+                Hide();
         }
 
         internal static void Hide()

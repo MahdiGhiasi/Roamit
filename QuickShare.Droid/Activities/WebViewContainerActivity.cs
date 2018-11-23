@@ -492,7 +492,7 @@ namespace QuickShare.Droid.Activities
 
                     if (((Common.ListManager.RemoteSystems.Count > 0) || (Common.ListManager.SelectedRemoteSystem != null)) && (isRome))
                     {
-                        AuthenticateDialog.Hide();
+                        AuthenticateDialog.HideIfPurposeIs(MsaAuthPurpose.ProjectRomePlatform);
                     }
 
                     try
@@ -888,6 +888,9 @@ namespace QuickShare.Droid.Activities
             }
             else
             {
+                var a = ContextCompat.GetExternalCacheDirs(this).Select(x => x.AbsolutePath).ToList();
+                var b = ContextCompat.GetExternalFilesDirs(this, null).Select(x => x.AbsolutePath).ToList();
+
                 Intent i = new Intent(this, settings.Theme == AppTheme.Dark ? typeof(BackHandlingFilePickerActivityDark) : typeof(BackHandlingFilePickerActivityLight));
 
                 i.PutExtra(FilePickerActivity.ExtraAllowMultiple, true);
@@ -1079,7 +1082,7 @@ namespace QuickShare.Droid.Activities
             var output = new List<FileSendInfo>();
 
             var files = items.OfType<IFile>()
-                .Select(x => new FileSendInfo(x, x.Path)).ToList();
+                .Select(x => new FileSendInfo(x, Path.GetDirectoryName(x.Path))).ToList();
             var folders = items.OfType<AndroidFolder>().ToList();
 
             var paths = files
@@ -1362,6 +1365,17 @@ namespace QuickShare.Droid.Activities
         }
         #endregion
 
+        public async void ReAuthenticateCloudServiceToGetDevicePermissions()
+        {
+            var result = await AuthenticateDialog.ShowAsync(this, MsaAuthPurpose.App);
+
+            if (result == MsaAuthResult.Success)
+            {
+                HideLoginWarning();
+                CheckDevicesPermission();
+            }
+        }
+
         class HybridWebViewClient : WebViewClient
         {
             WebViewContainerActivity context;
@@ -1500,7 +1514,7 @@ namespace QuickShare.Droid.Activities
                 }
                 else if (url == "file:///android_asset/html/loginWarningAuthorize.html")
                 {
-                    
+                    context.ReAuthenticateCloudServiceToGetDevicePermissions();
                 }
                 else if (url == "file:///android_asset/html/sendFileActionRetry.html")
                 {

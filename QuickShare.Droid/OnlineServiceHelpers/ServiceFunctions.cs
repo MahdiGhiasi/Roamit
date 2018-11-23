@@ -24,13 +24,23 @@ namespace QuickShare.Droid.OnlineServiceHelpers
     internal static class ServiceFunctions
     {
         static string userId = "";
-        internal static async Task<bool> RegisterWinDeviceIds(IEnumerable<string> Ids)
+        internal static async Task<bool> RegisterWinDeviceIds(IEnumerable<string> ids)
         {
             try
             {
+                if (CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
+                {
+                    var apiLoginInfo = (CloudServiceAuthenticationHelper.GetApiLoginInfo());
+                    var user = new QuickShare.Common.Service.v3.User(apiLoginInfo.AccountId, apiLoginInfo.Token);
+
+                    var apiResult = await user.RegisterWinDeviceIds(ids.ToArray());
+
+                    return apiResult;
+                }
+
                 await FindUserId();
 
-                var jsonData = JsonConvert.SerializeObject(Ids);
+                var jsonData = JsonConvert.SerializeObject(ids);
                 var httpClient = new HttpClient();
                 var result = await httpClient.PostAsync($"{QuickShare.Common.Constants.ServerAddress}/api/User/{userId}/WIDS", new StringContent(jsonData, Encoding.UTF8, "application/json"));
                 var resultString = await result.Content.ReadAsStringAsync();
@@ -58,7 +68,6 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                     return false;
                 }
 
-                await FindUserId();
 
                 Classes.Settings settings = new Classes.Settings(_context);
 
@@ -67,29 +76,49 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 var deviceUniqueId = GetDeviceUniqueId();
                 var appVersion = Application.Context.ApplicationContext.PackageManager.GetPackageInfo(Application.Context.ApplicationContext.PackageName, 0).VersionName;
 
-                var formContent = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("name", deviceName),
-                    new KeyValuePair<string, string>("osVersion", osVersion),
-                    new KeyValuePair<string, string>("deviceId", deviceUniqueId),
-                    new KeyValuePair<string, string>("type", "Android"),
-                    new KeyValuePair<string, string>("token", firebaseToken),
-                    new KeyValuePair<string, string>("appVersion", appVersion),
-                });
 
-                var myHttpClient = new HttpClient();
-                var response = await myHttpClient.PostAsync($"{QuickShare.Common.Constants.ServerAddress}/api/User/{userId}/RegisterDevice", formContent);
-                var responseText = await response.Content.ReadAsStringAsync();
-
-                if ((responseText == "1, registered") || (responseText == "2, updated"))
+                if (CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
                 {
-                    System.Diagnostics.Debug.WriteLine($"RegisterDevice Succeeded. Response was '{responseText}'");
-                    return true;
+                    var apiLoginInfo = (CloudServiceAuthenticationHelper.GetApiLoginInfo());
+                    var user = new QuickShare.Common.Service.v3.User(apiLoginInfo.AccountId, apiLoginInfo.Token);
+
+                    var result = await user.RegisterDevice(deviceName, osVersion, deviceUniqueId, "Android", firebaseToken, appVersion);
+
+                    if (result)
+                        System.Diagnostics.Debug.WriteLine($"RegisterDevice Succeeded.");
+                    else
+                        System.Diagnostics.Debug.WriteLine($"RegisterDevice failed.");
+
+                    return result;
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"RegisterDevice Failed. Response was '{responseText}'");
-                    return false;
+                    await FindUserId();
+
+                    var formContent = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("name", deviceName),
+                        new KeyValuePair<string, string>("osVersion", osVersion),
+                        new KeyValuePair<string, string>("deviceId", deviceUniqueId),
+                        new KeyValuePair<string, string>("type", "Android"),
+                        new KeyValuePair<string, string>("token", firebaseToken),
+                        new KeyValuePair<string, string>("appVersion", appVersion),
+                    });
+
+                    var myHttpClient = new HttpClient();
+                    var response = await myHttpClient.PostAsync($"{QuickShare.Common.Constants.ServerAddress}/api/User/{userId}/RegisterDevice", formContent);
+                    var responseText = await response.Content.ReadAsStringAsync();
+
+                    if ((responseText == "1, registered") || (responseText == "2, updated"))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"RegisterDevice Succeeded. Response was '{responseText}'");
+                        return true;
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"RegisterDevice Failed. Response was '{responseText}'");
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -109,24 +138,41 @@ namespace QuickShare.Droid.OnlineServiceHelpers
 
                 var deviceUniqueId = GetDeviceUniqueId();
 
-                var formContent = new FormUrlEncodedContent(new[]
+                if (CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
                 {
-                    new KeyValuePair<string, string>("deviceId", deviceUniqueId),
-                });
+                    var apiLoginInfo = (CloudServiceAuthenticationHelper.GetApiLoginInfo());
+                    var user = new QuickShare.Common.Service.v3.User(apiLoginInfo.AccountId, apiLoginInfo.Token);
 
-                var myHttpClient = new HttpClient();
-                var response = await myHttpClient.PostAsync($"{QuickShare.Common.Constants.ServerAddress}/api/User/{userId}/RemoveDevice", formContent);
-                var responseText = await response.Content.ReadAsStringAsync();
+                    var result = await user.RemoveDevice(deviceUniqueId);
 
-                if (responseText == "1, removed")
-                {
-                    System.Diagnostics.Debug.WriteLine($"RemoveDevice Succeeded. Response was '{responseText}'");
-                    return true;
+                    if (result)
+                        System.Diagnostics.Debug.WriteLine($"RemoveDevice Succeeded.");
+                    else
+                        System.Diagnostics.Debug.WriteLine($"RemoveDevice failed.");
+
+                    return result;
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"RemoveDevice Failed. Response was '{responseText}'");
-                    return false;
+                    var formContent = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("deviceId", deviceUniqueId),
+                    });
+
+                    var myHttpClient = new HttpClient();
+                    var response = await myHttpClient.PostAsync($"{QuickShare.Common.Constants.ServerAddress}/api/User/{userId}/RemoveDevice", formContent);
+                    var responseText = await response.Content.ReadAsStringAsync();
+
+                    if (responseText == "1, removed")
+                    {
+                        System.Diagnostics.Debug.WriteLine($"RemoveDevice Succeeded. Response was '{responseText}'");
+                        return true;
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"RemoveDevice Failed. Response was '{responseText}'");
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)

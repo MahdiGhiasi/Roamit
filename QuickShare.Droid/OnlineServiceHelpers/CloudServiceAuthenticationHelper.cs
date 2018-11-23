@@ -47,5 +47,17 @@ namespace QuickShare.Droid.OnlineServiceHelpers
             return new APIv3LoginInfo(Guid.Parse(CrossSecureStorage.Current.GetValue("RoamitAccountId")),
                 CrossSecureStorage.Current.GetValue("RoamitAccountToken"));
         }
+
+        public static void LogOut()
+        {
+            if (CrossSecureStorage.Current.HasKey("UserUniqueId"))
+                CrossSecureStorage.Current.DeleteKey("UserUniqueId");
+
+            if (CrossSecureStorage.Current.HasKey("RoamitAccountId"))
+                CrossSecureStorage.Current.DeleteKey("RoamitAccountId");
+
+            if (CrossSecureStorage.Current.HasKey("RoamitAccountToken"))
+                CrossSecureStorage.Current.DeleteKey("RoamitAccountToken");
+        }
     }
 }

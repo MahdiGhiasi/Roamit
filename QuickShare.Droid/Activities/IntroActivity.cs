@@ -36,7 +36,7 @@ namespace QuickShare.Droid.Activities
             RequestWindowFeature(WindowFeatures.NoTitle);
             base.OnCreate(savedInstanceState);
 
-            if (MSAAuthenticator.HasUserUniqueId())
+            if (MSAAuthenticator.HasUserUniqueId() || CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
             {
                 LaunchHomeScreen();
                 return;
