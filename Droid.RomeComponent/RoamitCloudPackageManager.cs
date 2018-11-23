@@ -86,6 +86,16 @@ namespace QuickShare.Droid.RomeComponent
             }
         }
 
+        public NormalizedRemoteSystem FindDeviceByName(string name)
+        {
+            var candidates = Devices.Where(x => x.DisplayName.ToLower() == name.ToLower()).ToArray();
+
+            if (candidates.Length == 1)
+                return candidates[0];
+
+            return null;
+        }
+
         public void SetRemoteDevice(string _deviceId)
         {
             deviceId = _deviceId;

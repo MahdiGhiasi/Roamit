@@ -1009,6 +1009,21 @@ namespace QuickShare.Droid.Activities
             var rs = Common.GetCurrentNormalizedRemoteSystem();
 
             SetProgressText("Connecting...");
+
+            if (rs.Type == DeviceType.Windows)
+            {
+                // Not a cloud device. will try to find the equivelant.
+                rs = Common.RoamitCloudPackageManager.FindDeviceByName(rs.DisplayName);
+
+                if (rs == null)
+                {
+                    SetProgressText($"Send failed. (RemoteSystemUnavailable2)");
+                    SetProgressValue(0.0, 1.0);
+                    Analytics.TrackEvent((rs.Type == DeviceType.Android ? "SendToAndroid" : "SendToWindowsViaCloud"), "file", "CloudFindFailed");
+                    return;
+                }
+            }
+
             Common.RoamitCloudPackageManager.SetRemoteDevice(rs.Id);
 
             if (rs.Type == DeviceType.GraphWindowsDevice)
@@ -1016,15 +1031,15 @@ namespace QuickShare.Droid.Activities
                 await Common.RoamitCloudPackageManager.LaunchUri(new Uri("roamit://receiveDialog"), rs);
             }
 
-            var transferResult = await BeginSend(files, Common.RoamitCloudPackageManager, preserveFolderStructure, sendFinishService: true);
+            var transferResult = await BeginSend(files, Common.RoamitCloudPackageManager, preserveFolderStructure, sendFinishService: true, normalizedRemoteSystem: rs);
 
-            FinishSend(transferResult, isLocalRome: false);
+            FinishSend(transferResult, isLocalRome: false, rs: rs);
         }
 
-        private void FinishSend(FileTransferResult transferResult, bool isLocalRome)
+        private void FinishSend(FileTransferResult transferResult, bool isLocalRome, NormalizedRemoteSystem rs)
         {
             string message = transferResult.ToString(); //TODO
-            string sendEventText = isLocalRome ? "SendToWindows" : (IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud");
+            string sendEventText = isLocalRome ? "SendToWindows" : (rs.Type == DeviceType.Android ? "SendToAndroid" : "SendToWindowsViaCloud");
 
             if (transferResult != FileTransferResult.Successful)
             {
@@ -1144,17 +1159,24 @@ namespace QuickShare.Droid.Activities
 
             if (result != RomeAppServiceConnectionStatus.Success)
             {
+                if (result == RomeAppServiceConnectionStatus.RemoteSystemUnavailable)
+                {
+                    // 1809 bug, will try cloud communication instead.
+                    await SendFilesToCloudDevice(files, preserveFolderStructure);
+                    return;
+                }
+
                 Analytics.TrackEvent("SendToWindowsLocally", "file", "Failed");
                 SetProgressText($"Connect failed. ({result.ToString()})");
                 return;
             }
 
-            var transferResult = await BeginSend(files, Common.PackageManager, preserveFolderStructure, sendFinishService: !settings.UseInAppServiceOnWindowsDevices);
+            var transferResult = await BeginSend(files, Common.PackageManager, preserveFolderStructure, sendFinishService: !settings.UseInAppServiceOnWindowsDevices, normalizedRemoteSystem: Common.GetCurrentNormalizedRemoteSystem());
 
-            FinishSend(transferResult, isLocalRome: true);
+            FinishSend(transferResult, isLocalRome: true, rs: Common.GetCurrentNormalizedRemoteSystem());
         }
 
-        private async Task<FileTransferResult> BeginSend(string[] filePaths, IRomePackageManager packageManager, bool preserveFolderStructure, bool sendFinishService)
+        private async Task<FileTransferResult> BeginSend(string[] filePaths, IRomePackageManager packageManager, bool preserveFolderStructure, bool sendFinishService, NormalizedRemoteSystem normalizedRemoteSystem)
         {
             SetProgressText((filePaths.Length == 1) ? "Retrieving file..." : "Retrieving files...");
             var files = (await GetFiles(filePaths, preserveFolderStructure)).ToList();
@@ -1163,7 +1185,7 @@ namespace QuickShare.Droid.Activities
 
             FileTransferResult transferResult = FileTransferResult.Successful;
 
-            using (FileSender2 fs = new FileSender2(Common.GetCurrentNormalizedRemoteSystem(),
+            using (FileSender2 fs = new FileSender2(normalizedRemoteSystem,
                                                     new WebServerComponent.WebServerGenerator(),
                                                     packageManager,
                                                     FindMyIPAddresses(),
@@ -1239,11 +1261,27 @@ namespace QuickShare.Droid.Activities
 
             RomeRemoteLaunchUriStatus result;
             if (IsCloudCommunication())
+            {
                 result = await Common.RoamitCloudPackageManager.LaunchUri(new Uri(url), Common.GetCurrentNormalizedRemoteSystem());
+            }
             else
+            {
                 result = await Common.PackageManager.LaunchUri(new Uri(url), Common.GetCurrentRemoteSystem());
 
-            var eventTrackCat = IsCloudCommunication() ? (IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud") : "SendToWindowsLocally";
+                if (result == RomeRemoteLaunchUriStatus.RemoteSystemUnavailable)
+                {
+                    // 1809 bug, will try cloud service.
+                    var rs = Common.GetCurrentNormalizedRemoteSystem();
+                    if (rs.Type == DeviceType.Windows)
+                    {
+                        // Not a cloud device. will try to find the equivelant.
+                        rs = Common.RoamitCloudPackageManager.FindDeviceByName(rs.DisplayName);
+                        result = await Common.RoamitCloudPackageManager.LaunchUri(new Uri(url), rs);
+                    }
+                }
+            }
+
+            var eventTrackCat = IsCloudCommunication() ? (Common.GetCurrentNormalizedRemoteSystem().Type == DeviceType.Android ? "SendToAndroid" : "SendToWindowsViaCloud") : "SendToWindowsLocally";
 
             SetProgressValue(1.0, 1.0);
             if (result == RomeRemoteLaunchUriStatus.Success)
@@ -1274,38 +1312,49 @@ namespace QuickShare.Droid.Activities
             return (type == DeviceType.Android || type == DeviceType.GraphWindowsDevice);
         }
 
-        private static bool IsAndroidDevice()
-        {
-            return (Common.GetCurrentNormalizedRemoteSystem().Type == DeviceType.Android);
-        }
-
         private async Task SendTextToCloudDevice(string text)
         {
             ShowProgress();
+
+            var rs = Common.GetCurrentNormalizedRemoteSystem();
+            if (rs.Type == DeviceType.Windows)
+            {
+                // Not a cloud device. will try to find the equivelant.
+                rs = Common.RoamitCloudPackageManager.FindDeviceByName(rs.DisplayName);
+
+                if (rs == null)
+                {
+                    SetProgressText($"Send failed. (RemoteSystemUnavailable2)");
+                    SetProgressValue(0.0, 1.0);
+                    Analytics.TrackEvent((rs.Type == DeviceType.Android ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "CloudFindFailed");
+                    return;
+                }
+            }
+
 
             if (text.Length > 2048)
             {
                 SetProgressText("Failed. (Text is too large)");
                 SetProgressValue(0.0, 1.0);
-                Analytics.TrackEvent((IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "TooLarge");
+                Analytics.TrackEvent((rs.Type == DeviceType.Android ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "TooLarge");
 
                 return;
             }
 
             SetProgressText("Connecting...");
 
-            if (!(await Common.RoamitCloudPackageManager.QuickClipboard(text, Common.GetCurrentNormalizedRemoteSystem(), (new Classes.Settings(this)).DeviceName)))
+            if (!(await Common.RoamitCloudPackageManager.QuickClipboard(text, rs , (new Classes.Settings(this)).DeviceName)))
             {
                 SetProgressText("Failed.");
                 SetProgressValue(0.0, 1.0);
-                Analytics.TrackEvent((IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "Failed");
+                Analytics.TrackEvent((rs.Type == DeviceType.Android ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "Failed");
 
                 return;
             }
 
             SetProgressText("Done.");
             SetProgressValue(1.0, 1.0);
-            Analytics.TrackEvent((IsAndroidDevice() ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "Success");
+            Analytics.TrackEvent((rs.Type == DeviceType.Android ? "SendToAndroid" : "SendToWindowsViaCloud"), "text", "Success");
         }
 
         private async Task SendTextToRomeLocalDevice(string text)
@@ -1320,6 +1369,12 @@ namespace QuickShare.Droid.Activities
 
                 if (result != QuickShare.Common.Rome.RomeAppServiceConnectionStatus.Success)
                 {
+                    if (result == RomeAppServiceConnectionStatus.RemoteSystemUnavailable)
+                    {
+                        // 1809 bug, will try cloud service.
+                        await SendTextToCloudDevice(text);
+                        return;
+                    }
                     SetProgressText($"Connect failed. ({result.ToString()})");
                     Analytics.TrackEvent("SendToWindows", "text", "Failed");
                     return;
