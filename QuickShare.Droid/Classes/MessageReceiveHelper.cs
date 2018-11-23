@@ -14,6 +14,7 @@ using Android.Util;
 using PCLStorage;
 using QuickShare.DataStore;
 using QuickShare.Droid.Activities;
+using Android.Support.V4.Content;
 
 namespace QuickShare.Droid.Classes
 {
@@ -28,7 +29,7 @@ namespace QuickShare.Droid.Classes
         public static event NotifyEventHandler Activity;
         public static event NotifyEventHandler Finish;
 
-        public static async Task<bool> ProcessReceivedMessage(Dictionary<string, object> message)
+        public static async Task<bool> ProcessReceivedMessage(Dictionary<string, object> message, Context context)
         {
             foreach (var item in message)
                 Log.Debug(TAG, $"Key = {item.Key} , Value = {item.Value.ToString()}");
@@ -40,12 +41,24 @@ namespace QuickShare.Droid.Classes
 
             if (receiver == "ServerIPFinder")
             {
+                if (!HasStorageWritePermission(context))
+                {
+                    SendPermissionErrorNotification(context);
+                    return false;
+                }
+
                 InitProgressNotifier("Initializing...");
 
                 await FileTransfer.ServerIPFinder.ReceiveRequest(message);
             }
             else if (receiver == "FileReceiver")
             {
+                if (!HasStorageWritePermission(context))
+                {
+                    SendPermissionErrorNotification(context);
+                    return false;
+                }
+
                 InitProgressNotifier("Receiving...");
 
                 await FileTransfer.FileReceiver2.ReceiveRequest(message, new DownloadFolderDecider(context),
@@ -65,6 +78,16 @@ namespace QuickShare.Droid.Classes
             }
 
             return false;
+        }
+
+        private static void SendPermissionErrorNotification(Context context)
+        {
+            Classes.Notification.SendNotification(context, "Storage permission needed", "Roamit needs Storage permission to be able to receive files.");
+        }
+
+        private static bool HasStorageWritePermission(Context context)
+        {
+            return (ContextCompat.CheckSelfPermission(context, Android.Manifest.Permission.WriteExternalStorage) == Android.Content.PM.Permission.Granted);
         }
 
         public static void ClearEventRegistrations()

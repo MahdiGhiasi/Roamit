@@ -37,18 +37,13 @@ namespace QuickShare.Droid.Firebase
                 }
                 else if (message.Data["Action"] == "Wake")
                 {
-#if DEBUG
-                    SendNotification("Wake", "Wake");
-#endif
+                    Classes.Notification.SendDebugNotification(this, "Wake", "Wake");
                     var intent = new Intent(this, typeof(MessageCarrierService));
                     intent.PutExtra("Action", "Wake");
                     StartService(intent);
                 }
                 else if (message.Data["Action"] == "SendCarrier")
                 {
-#if DEBUG
-                    SendNotification("SendCarrier", "SendCarrier");
-#endif
                     var intent = new Intent(this, typeof(MessageCarrierService));
                     intent.PutExtra("Action", "SendCarrier");
                     intent.PutExtra("DeviceId", message.Data["WakerDeviceId"]);
@@ -59,9 +54,6 @@ namespace QuickShare.Droid.Firebase
                 }
                 else if (message.Data["Action"] == "Payload")
                 {
-#if DEBUG
-                    SendNotification("Payload", "Payload");
-#endif
                     var intent = new Intent(this, typeof(WaiterService));
                     intent.PutExtra("Data", message.Data["Data"]);
 
@@ -123,31 +115,8 @@ namespace QuickShare.Droid.Firebase
             }
             catch (InvalidOperationException)
             {
-                SendNotification($"Action '{message.Data["Action"]}' not supported.", "Please make sure the app is updated to enjoy latest features.");
+                Classes.Notification.SendNotification(this, $"Action '{message.Data["Action"]}' not supported.", "Please make sure the app is updated to enjoy latest features.");
             }
-        }
-
-        private void SendNotification(string title, string body)
-        {
-            var intent = new Intent(this, typeof(MainActivity));
-            intent.AddFlags(ActivityFlags.ClearTop);
-            // intent.PutExtra("launchArguments", "stuff");
-
-            var pendingIntent = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.OneShot);
-
-            var defaultSoundUri = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
-
-            var notificationBuilder =
-                new NotificationCompat.Builder(this)
-                    .SetSmallIcon(Resource.Drawable.Icon)
-                    .SetContentTitle(title)
-                    .SetContentText(body)
-                    .SetAutoCancel(true)
-                    .SetSound(defaultSoundUri)
-                    .SetContentIntent(pendingIntent);
-
-            var notificationManager = NotificationManager.FromContext(this);
-            notificationManager.Notify(0, notificationBuilder.Build());
         }
     }
 }

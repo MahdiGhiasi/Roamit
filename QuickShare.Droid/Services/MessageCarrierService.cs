@@ -202,7 +202,7 @@ namespace QuickShare.Droid.Services
                         continue;
                     }
 
-                    var isFinished = await MessageReceiveHelper.ProcessReceivedMessage(response.Message);
+                    var isFinished = await MessageReceiveHelper.ProcessReceivedMessage(response.Message, this);
 
                     Android.Util.Log.Debug(TAG, "Finished.");
 

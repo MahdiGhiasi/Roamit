@@ -29,7 +29,6 @@ namespace QuickShare.Droid.Classes
         NotificationManager notificationManager;
         NotificationCompat.Builder builder;
         int notifId;
-
         DateTime lastProgressNotif = DateTime.MinValue;
 
         Guid lastActivityGuid = Guid.Empty;
@@ -64,7 +63,7 @@ namespace QuickShare.Droid.Classes
 
         public void SendInitialNotification(string title, string text)
         {
-            builder = new NotificationCompat.Builder(context)
+            builder = new NotificationCompat.Builder(context, Classes.Notification.ProgressChannel)
                 .SetContentTitle(title)
                 .SetContentText(text)
                 .SetSmallIcon(Resource.Drawable.Icon)
@@ -97,7 +96,7 @@ namespace QuickShare.Droid.Classes
             if (failedMessage.Length == 0)
                 return;
 
-            builder = new NotificationCompat.Builder(context)
+            builder = new NotificationCompat.Builder(context, Classes.Notification.DefaultChannel)
                 .SetContentTitle(failedMessage)
                 .SetContentText("")
                 .SetSmallIcon(Resource.Drawable.Icon)
@@ -156,7 +155,7 @@ namespace QuickShare.Droid.Classes
             notificationManager.Cancel(notifId);
             RefreshNotifId();
 
-            builder = new NotificationCompat.Builder(context)
+            builder = new NotificationCompat.Builder(context, Classes.Notification.DefaultChannel)
                 .SetSmallIcon(Resource.Drawable.Icon)
                 .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
                 .SetPriority((int)NotificationPriority.Max)
@@ -169,6 +168,7 @@ namespace QuickShare.Droid.Classes
                     .BigText(text));
 
             notificationManager.Notify(notifId, builder.Build());
+            RefreshNotifId();
         }
 
         public async Task FinishProgress(string title, string text, Intent intent, Context _context)
@@ -180,7 +180,7 @@ namespace QuickShare.Droid.Classes
             notificationManager.Cancel(notifId);
             RefreshNotifId();
 
-            builder = new NotificationCompat.Builder(_context)
+            builder = new NotificationCompat.Builder(_context, Classes.Notification.DefaultChannel)
                 .SetSmallIcon(Resource.Drawable.Icon)
                 .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
                 .SetPriority((int)NotificationPriority.Max)

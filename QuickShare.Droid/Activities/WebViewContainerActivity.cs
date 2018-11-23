@@ -34,6 +34,10 @@ using Com.Nononsenseapps.Filepicker;
 using QuickShare.Droid.Classes.FilePicker;
 using PCLStorage.Droid;
 using PCLStorage;
+using Android.Support.V4.Content;
+using Android.Support.V4.App;
+using Android.Content.PM;
+using Android.Preferences;
 
 namespace QuickShare.Droid.Activities
 {
@@ -64,6 +68,8 @@ namespace QuickShare.Droid.Activities
         string[] lastSelectedFiles;
         bool lastPreserveFolderStructure;
 
+        bool isAskingForRomePermission = false;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -84,6 +90,8 @@ namespace QuickShare.Droid.Activities
             };
             checkClipboardTextTimer.Elapsed += CheckClipboardTextTimer_Elapsed;
             checkClipboardTextTimer.Start();
+
+            TryAskStorageReadWritePermissionOnStartup();
 
             if (IsInitialized)
             {
@@ -127,6 +135,7 @@ namespace QuickShare.Droid.Activities
 
             MigrateApiIfNecessary();
             CheckDevicesPermission();
+            CreateNotificationChannel();
 
             if (Common.MessageCarrierPackageManager == null)
             {
@@ -145,9 +154,48 @@ namespace QuickShare.Droid.Activities
                 await ServiceFunctions.RegisterDevice(context);
             });
 
+
             Analytics.TrackPage("WebViewContainerActivity");
 
             CheckForLegacyVersionInstallations();
+        }
+
+        private void CreateNotificationChannel()
+        {
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.O)
+            {
+                var defaultChannel = new NotificationChannel(Classes.Notification.DefaultChannel, "Roamit", NotificationImportance.High)
+                {
+                    Description = "File receive notifications",
+                };
+                var progressChannel = new NotificationChannel(Classes.Notification.ProgressChannel, "Roamit file send progress notifications", NotificationImportance.Low)
+                {
+                    Description = "File send progress notifications",
+                };
+                var universalClipboardChannel = new NotificationChannel(Classes.Notification.UniversalClipboardChannel, "Roamit Universal Clipboard", NotificationImportance.Low)
+                {
+                    Description = "Universal clipboard notifications",
+                };
+
+                // Register the channel with the system
+                var notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
+                notificationManager.CreateNotificationChannel(defaultChannel);
+                notificationManager.CreateNotificationChannel(progressChannel);
+                notificationManager.CreateNotificationChannel(universalClipboardChannel);
+            }
+        }
+
+        private async void TryAskStorageReadWritePermissionOnStartup()
+        {
+            do
+            {
+                await Task.Delay(1000);
+            }
+            while (isAskingForRomePermission);
+
+            await TryAskStorageReadWritePermission();
         }
 
         private async void CheckDevicesPermission()
@@ -218,14 +266,7 @@ namespace QuickShare.Droid.Activities
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                 return;
 
-            if (theme == AppTheme.Dark)
-            {
-                Window.SetNavigationBarColor(Android.Graphics.Color.Black);
-            }
-            else
-            {
-                Window.SetNavigationBarColor(Android.Graphics.Color.White);
-            }
+            Window.SetNavigationBarColor(Android.Graphics.Color.Black);
         }
 
         private async void InitRoamitCloudPackageManager()
@@ -571,13 +612,10 @@ namespace QuickShare.Droid.Activities
         {
             RunOnUiThread(async () =>
             {
+                isAskingForRomePermission = true;
                 System.Diagnostics.Debug.WriteLine(oauthUrl);
                 var result = await AuthenticateDialog.ShowAsync(this, MsaAuthPurpose.ProjectRomePlatform, oauthUrl);
-
-                if ((result != MsaAuthResult.Success) && (result != MsaAuthResult.CancelledByApp))
-                {
-                    Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
-                }
+                isAskingForRomePermission = false;
             });
         }
 
@@ -807,8 +845,12 @@ namespace QuickShare.Droid.Activities
             base.OnActivityResult(requestCode, resultCode, data);
         }
 
-        private void PickAndSendPicture()
+        private async Task PickAndSendPicture()
         {
+            if (!await TryAskStorageReadPermission())
+                return;
+
+
             Intent getIntent = new Intent(Intent.ActionGetContent);
             getIntent.SetType("image/*,video/*");
             getIntent.PutExtra(Intent.ExtraAllowMultiple, true);
@@ -825,8 +867,11 @@ namespace QuickShare.Droid.Activities
             StartActivityForResult(chooserIntent, PickImageId);
         }
 
-        private void PickAndSendFile()
+        private async Task PickAndSendFile()
         {
+            if (!await TryAskStorageReadPermission())
+                return;
+
             var settings = new Classes.Settings(this);
 
             if (settings.UseSystemFilePicker)
@@ -864,6 +909,12 @@ namespace QuickShare.Droid.Activities
         {
             ShowProgress();
 
+            if (!await TryAskStorageReadPermission())
+            {
+                WebViewBack();
+                return;
+            }
+
             lastSelectedFiles = files;
             lastPreserveFolderStructure = preserveFolderStructure;
 
@@ -871,6 +922,82 @@ namespace QuickShare.Droid.Activities
                 await SendFilesToCloudDevice(files, preserveFolderStructure);
             else
                 await SendFilesToRomeLocalDevice(files, preserveFolderStructure);
+        }
+
+        TaskCompletionSource<bool> permissionAskResultTcs;
+        private async Task<bool> TryAskStorageReadPermission()
+        {
+            if (ContextCompat.CheckSelfPermission(this, Android.Manifest.Permission.ReadExternalStorage) != Android.Content.PM.Permission.Granted)
+            {
+                permissionAskResultTcs = new TaskCompletionSource<bool>();
+                ActivityCompat.RequestPermissions(this, new[] { Android.Manifest.Permission.ReadExternalStorage }, 101);
+
+                var permissionAskResult = await permissionAskResultTcs.Task;
+
+                if (permissionAskResult == false && 
+                    !ActivityCompat.ShouldShowRequestPermissionRationale(this, Android.Manifest.Permission.ReadExternalStorage)) {
+
+                    // User has selected "Don't ask again", so we show them a message instead.
+
+                    var alert = new AlertDialog.Builder(this)
+                            .SetTitle("Permission needed")
+                            .SetMessage("We need your permission in order to be able to send files. Please grant Storage permission to Roamit in system settings.")
+                            .SetPositiveButton("Ok", (s, e) => { });
+
+                    RunOnUiThread(() =>
+                    {
+                        alert.Show();
+                    });
+                }
+
+                return permissionAskResult;
+            }
+            return true;
+        }
+
+        private async Task<bool> TryAskStorageReadWritePermission()
+        {
+            if (ContextCompat.CheckSelfPermission(this, Android.Manifest.Permission.ReadExternalStorage) != Android.Content.PM.Permission.Granted ||
+                ContextCompat.CheckSelfPermission(this, Android.Manifest.Permission.WriteExternalStorage) != Android.Content.PM.Permission.Granted)
+            {
+                permissionAskResultTcs = new TaskCompletionSource<bool>();
+                ActivityCompat.RequestPermissions(this, new[] {
+                    Android.Manifest.Permission.ReadExternalStorage,
+                    Android.Manifest.Permission.WriteExternalStorage,
+                }, 102);
+
+                var permissionAskResult = await permissionAskResultTcs.Task;
+
+                if (permissionAskResult == false &&
+                    !ActivityCompat.ShouldShowRequestPermissionRationale(this, Android.Manifest.Permission.ReadExternalStorage)) {
+
+                    // User has selected "Don't ask again", so we show them a message instead.
+
+                    var alert = new AlertDialog.Builder(this)
+                            .SetTitle("Permission needed")
+                            .SetMessage("We need your permission in order to be able to send and receive files. Please grant Storage permission to Roamit in system settings.")
+                            .SetPositiveButton("Ok", (s, e) => { });
+
+                    RunOnUiThread(() =>
+                    {
+                        alert.Show();
+                    });
+                }
+
+                return permissionAskResult;
+            }
+            return true;
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+        {
+            if (requestCode == 101 || requestCode == 102)
+            {
+                if (grantResults.Length > 0)
+                {
+                    permissionAskResultTcs.TrySetResult(grantResults.Where(x => x != Permission.Granted).Count() == 0);
+                }
+            }
         }
 
         private async Task SendFilesToCloudDevice(string[] files, bool preserveFolderStructure)
@@ -1345,13 +1472,19 @@ namespace QuickShare.Droid.Activities
                 }
                 else if (url == "file:///android_asset/html/rate.html")
                 {
-                    var uri = Android.Net.Uri.Parse("market://details?id=" + Application.Context.PackageName);
-                    Intent rateAppIntent = new Intent(Intent.ActionView, uri);
-
-                    if (context.PackageManager.QueryIntentActivities(rateAppIntent, 0).Count > 0)
-                    {
-                        context.StartActivity(rateAppIntent);
-                    }
+                    LaunchUrl("market://details?id=" + Application.Context.PackageName);
+                }
+                else if (url == "file:///android_asset/html/getExtensionLink.html")
+                {
+                    LaunchUrl(Constants.BrowserExtensionsUrl);
+                }
+                else if (url == "file:///android_asset/html/getAndroidAppLink.html")
+                {
+                    LaunchUrl(Constants.GooglePlayAppUrl);
+                }
+                else if (url == "file:///android_asset/html/getWindows10AppLink.html")
+                {
+                    LaunchUrl(Constants.WindowsStoreAppUrl);
                 }
                 else if (url == "file:///android_asset/html/contact.html")
                 {
@@ -1364,6 +1497,10 @@ namespace QuickShare.Droid.Activities
                     {
                         context.StartActivity(email);
                     }
+                }
+                else if (url == "file:///android_asset/html/loginWarningAuthorize.html")
+                {
+                    
                 }
                 else if (url == "file:///android_asset/html/sendFileActionRetry.html")
                 {
@@ -1441,6 +1578,17 @@ namespace QuickShare.Droid.Activities
                 return true;
             }
 
+            private void LaunchUrl(string url)
+            {
+                var uri = Android.Net.Uri.Parse(url);
+                Intent intent = new Intent(Intent.ActionView, uri);
+
+                if (context.PackageManager.QueryIntentActivities(intent, 0).Count > 0)
+                {
+                    context.StartActivity(intent);
+                }
+            }
+
             private async void ProcessRequest(string contentType)
             {
                 bool isFromShareTarget = false;
@@ -1451,10 +1599,10 @@ namespace QuickShare.Droid.Activities
                         await context.SendText(ClipboardHelper.GetClipboardText(context));
                         break;
                     case "Photo":
-                        context.PickAndSendPicture();
+                        await context.PickAndSendPicture();
                         break;
                     case "File":
-                        context.PickAndSendFile();
+                        await context.PickAndSendFile();
                         break;
                     case "Url":
                         await context.OpenUrl(ClipboardHelper.GetClipboardText(context));

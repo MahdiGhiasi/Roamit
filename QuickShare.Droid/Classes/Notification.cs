@@ -17,7 +17,11 @@ namespace QuickShare.Droid.Classes
 {
     internal static class Notification
     {
-        internal static void SendLaunchNotification(Context context, string title, string body)
+        internal const string DefaultChannel = "default";
+        internal const string ProgressChannel = "progress";
+        internal const string UniversalClipboardChannel = "clipboard";
+
+        internal static void SendLaunchNotification(Context context, string title, string body, string channel = DefaultChannel)
         {
             var intent = new Intent(context, typeof(MainActivity));
             intent.AddFlags(ActivityFlags.ClearTop);
@@ -28,10 +32,12 @@ namespace QuickShare.Droid.Classes
             var defaultSoundUri = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
 
             var notificationBuilder =
-                new NotificationCompat.Builder(context)
+                new NotificationCompat.Builder(context, channel)
                     .SetSmallIcon(Resource.Drawable.Icon)
                     .SetContentTitle(title)
                     .SetContentText(body)
+                    .SetStyle(new NotificationCompat.BigTextStyle()
+                        .BigText(body))
                     .SetAutoCancel(true)
                     .SetSound(defaultSoundUri)
                     .SetPriority((int)NotificationPriority.Max)
@@ -41,7 +47,7 @@ namespace QuickShare.Droid.Classes
             notificationManager.Notify(0, notificationBuilder.Build());
         }
 
-        public static void SendDebugNotification(Context context, string title, string body)
+        public static void SendDebugNotification(Context context, string title, string body, string channel = DefaultChannel)
         {
 #if DEBUG
             var intent = new Intent(context, typeof(MainActivity));
@@ -52,10 +58,12 @@ namespace QuickShare.Droid.Classes
             var defaultSoundUri = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
 
             var notificationBuilder =
-                new NotificationCompat.Builder(context)
+                new NotificationCompat.Builder(context, channel)
                     .SetSmallIcon(Resource.Drawable.Icon)
                     .SetContentTitle(title)
                     .SetContentText(body)
+                    .SetStyle(new NotificationCompat.BigTextStyle()
+                        .BigText(body))
                     .SetAutoCancel(true)
                     .SetSound(defaultSoundUri)
                     .SetContentIntent(pendingIntent);
@@ -63,6 +71,31 @@ namespace QuickShare.Droid.Classes
             var notificationManager = NotificationManager.FromContext(context);
             notificationManager.Notify(0, notificationBuilder.Build());
 #endif
+        }
+
+        public static void SendNotification(Context context, string title, string body, string channel = DefaultChannel)
+        {
+            var intent = new Intent(context, typeof(MainActivity));
+            intent.AddFlags(ActivityFlags.ClearTop);
+            // intent.PutExtra("launchArguments", "stuff");
+
+            var pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.OneShot);
+
+            var defaultSoundUri = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
+
+            var notificationBuilder =
+                new NotificationCompat.Builder(context, channel)
+                    .SetSmallIcon(Resource.Drawable.Icon)
+                    .SetContentTitle(title)
+                    .SetContentText(body)
+                    .SetStyle(new NotificationCompat.BigTextStyle()
+                        .BigText(body))
+                    .SetAutoCancel(true)
+                    .SetSound(defaultSoundUri)
+                    .SetContentIntent(pendingIntent);
+
+            var notificationManager = NotificationManager.FromContext(context);
+            notificationManager.Notify(0, notificationBuilder.Build());
         }
     }
 }

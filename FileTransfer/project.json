@@ -1,7 +1,7 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "Microsoft.AspNetCore.WebUtilities": "1.1.2-rtm-201704210746",
+    "Microsoft.AspNetCore.WebUtilities": "1.1.2",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "NETStandard.Library": "1.6.1",
     "Newtonsoft.Json": "9.0.1"

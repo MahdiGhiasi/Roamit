@@ -67,7 +67,7 @@ namespace QuickShare.Droid.Services
 
                 string dataJson = intent.GetStringExtra("Data");
                 var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(dataJson);
-                await MessageReceiveHelper.ProcessReceivedMessage(data);
+                await MessageReceiveHelper.ProcessReceivedMessage(data, this);
             }
             catch (Exception ex)
             {

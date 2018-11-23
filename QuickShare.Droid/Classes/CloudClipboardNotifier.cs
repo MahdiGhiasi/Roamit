@@ -26,9 +26,9 @@ namespace QuickShare.Droid.Classes
             var pendingIntent = PendingIntent.GetService(context, 0, intent, PendingIntentFlags.UpdateCurrent);
 
             var notificationBuilder =
-                new NotificationCompat.Builder(context)
+                new NotificationCompat.Builder(context, Notification.UniversalClipboardChannel)
                     .SetSmallIcon(Resource.Drawable.Icon)
-                    .SetPriority((int)NotificationPriority.Min)
+                    .SetPriority((int)NotificationPriority.Low)
                     .SetContentTitle("Universal clipboard - Tap to copy")
                     .SetContentText(receivedText)
                     .SetContentIntent(pendingIntent);
