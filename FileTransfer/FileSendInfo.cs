@@ -57,7 +57,7 @@ namespace QuickShare.FileTransfer
             if ((parentPath.LastOrDefault() != '\\') && (parentPath.LastOrDefault() != '/'))
                 parentPath += "/";
 
-            var filePath = file.Path;
+            var filePath = System.IO.Path.GetDirectoryName(file.Path);
             if ((filePath.LastOrDefault() != '\\') && (filePath.LastOrDefault() != '/'))
                 filePath += "/";
 
