@@ -34,10 +34,19 @@ namespace QuickShare.Droid.Classes
 
         public static void OpenFile(Context context, string fileName)
         {
-            OpenFile(context, Android.Net.Uri.FromFile(new Java.IO.File(fileName)), GetMimeType(fileName));
+            var file = new Java.IO.File(fileName);
+            Android.Net.Uri fileUri;
+
+            // https://stackoverflow.com/a/52925917/942659
+            if (Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.N)
+                fileUri = Android.Net.Uri.FromFile(file);
+            else
+                fileUri = Android.Net.Uri.Parse(file.Path);
+
+            OpenFile(context, fileUri, GetMimeType(fileName));
         }
 
-        public static void OpenFile(Context context, Android.Net.Uri file, string mimeType)
+        private static void OpenFile(Context context, Android.Net.Uri file, string mimeType)
         {
             try
             {
