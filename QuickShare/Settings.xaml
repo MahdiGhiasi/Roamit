@@ -71,7 +71,7 @@
                                        Foreground="#CCCCCC" />
                             <ToggleSwitch IsOn="{x:Bind Model.TypeBasedDownloadFolderToggle, Mode=TwoWay}" />
                         </StackPanel>
-                        <StackPanel Margin="0,24,0,8" Visibility="Collapsed">
+                        <StackPanel Margin="0,24,0,8">
                             <TextBlock Text="Universal clipboard" FontWeight="Bold" />
                             <TextBlock Text="Universal clipboard mirrors any text you copy on your PC to the clipboard of your other devices."
                                        Margin="0,8,0,12"
