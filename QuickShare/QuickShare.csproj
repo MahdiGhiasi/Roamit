@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>51EA6C5AC18132A0AB935557B44C13F955CC1072</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>90AABCA135DA90B729ED95B5EA55925CF04F722F</PackageCertificateThumbprint>
     <AppxPackageDir>C:\Users\Mahdi\Projects\QuickShare\QuickShare\AppPackages\</AppxPackageDir>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
