@@ -889,9 +889,6 @@ namespace QuickShare.Droid.Activities
             }
             else
             {
-                var a = ContextCompat.GetExternalCacheDirs(this).Select(x => x.AbsolutePath).ToList();
-                var b = ContextCompat.GetExternalFilesDirs(this, null).Select(x => x.AbsolutePath).ToList();
-
                 Intent i = new Intent(this, settings.Theme == AppTheme.Dark ? typeof(BackHandlingFilePickerActivityDark) : typeof(BackHandlingFilePickerActivityLight));
 
                 i.PutExtra(FilePickerActivity.ExtraAllowMultiple, true);
