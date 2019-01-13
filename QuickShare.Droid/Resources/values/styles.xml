@@ -9,6 +9,11 @@
   <style name="MyTheme.Legacy" parent="MyTheme.Legacy.Base">
   </style>
 
+  <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+    <item name="colorPrimaryDark">#FFFFFF</item>
+    <item name="android:windowBackground">@drawable/splash_screen</item>
+  </style>
+
   <!-- Base theme applied no matter what API -->
   <style name="MyTheme.Base" parent="Theme.AppCompat.Light">
     <item name="windowNoTitle">true</item>

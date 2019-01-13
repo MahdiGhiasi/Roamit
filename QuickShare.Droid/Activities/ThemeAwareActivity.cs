@@ -19,9 +19,17 @@ namespace QuickShare.Droid.Activities
         protected override void OnCreate(Bundle savedInstanceState)
         {
             if (new Settings(this).Theme == AppTheme.Dark)
+            {
                 SetTheme(Resource.Style.MyTheme_Dark);
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+                    Window.SetNavigationBarColor(Android.Graphics.Color.Black);
+                }
+            }
             else
+            {
                 SetTheme(Resource.Style.MyTheme);
+            }
 
             base.OnCreate(savedInstanceState);
         }

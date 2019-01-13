@@ -7,7 +7,7 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.BLUETOOTH" />
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-	<application android:label="Roamit" android:name=".RoamitApp" android:theme="@style/MyTheme" android:icon="@drawable/Icon">
+	<application android:label="Roamit" android:name=".RoamitApp" android:theme="@style/SplashTheme" android:icon="@drawable/Icon">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/nnf_provider_paths" />
 		</provider>
@@ -22,8 +22,8 @@
 		<activity android:name="com.ghiasi.quickshare.sendpage" android:theme="@style/MyTheme.Legacy" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
 		<activity android:name="com.ghiasi.quickshare.webviewcontainerpage" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
 		<activity android:name="com.ghiasi.quickshare.settingspage" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
-		<activity android:name="com.ghiasi.quickshare.mainpage" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize"></activity>
-		<activity android:name="com.ghiasi.quickshare.intro" android:theme="@style/MyTheme.Legacy" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+		<activity android:name="com.ghiasi.quickshare.mainpage" android:theme="@style/SplashTheme" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize"></activity>
+		<activity android:name="com.ghiasi.quickshare.intro" android:theme="@style/SplashTheme" android:screenOrientation="portrait" android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />

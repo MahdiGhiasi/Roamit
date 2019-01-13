@@ -46,8 +46,11 @@ namespace QuickShare.Droid.Activities
 
             Instance = this;
 
+            SetTheme(Resource.Style.MyTheme_Dark);
+            Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
+                Window.SetNavigationBarColor(Android.Graphics.Color.Black);
                 Window.DecorView.SystemUiVisibility = StatusBarVisibility.Hidden;
             }
 
