@@ -95,8 +95,15 @@ namespace QuickShare.Droid.Classes
                 output.Add("Sharing files from apps like WhatsApp to Roamit now works.");
                 output.Add("Compatibility improvements for sending to Windows devices updated to October 2018 update.");
                 output.Add("Other fixes and improvements");
-
             }
+
+            if (lastShownVersion < new Version("3.3.0"))
+            {
+                output.Add("UI improvements and fixes");
+                output.Add("Fixed app crash when internet connection is unreliable");
+                output.Add("Fixed 'Log out' button not working");
+            }
+
 
             return output;
         }
