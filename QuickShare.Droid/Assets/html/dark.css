@@ -81,7 +81,12 @@ body {
 }
 
 .mdl-layout__header {
-    background-color: #004E8C !important;
+    background-color: #004E8C;
+}
+
+.header-transparent {
+    color: black;
+    background-color: transparent;
 }
 
 #loginWarningButton {
