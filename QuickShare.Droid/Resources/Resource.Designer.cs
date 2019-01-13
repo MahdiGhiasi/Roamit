@@ -2041,55 +2041,52 @@ namespace QuickShare.Droid
 			public const int icon_noborder = 2130837619;
 			
 			// aapt resource value: 0x7f020074
-			public const int icon_noborder_small = 2130837620;
+			public const int intro_cloudclipboard = 2130837620;
 			
 			// aapt resource value: 0x7f020075
-			public const int intro_cloudclipboard = 2130837621;
+			public const int intro_p1 = 2130837621;
 			
 			// aapt resource value: 0x7f020076
-			public const int intro_p1 = 2130837622;
+			public const int intro_p2 = 2130837622;
 			
 			// aapt resource value: 0x7f020077
-			public const int intro_p2 = 2130837623;
+			public const int intro_p3 = 2130837623;
 			
 			// aapt resource value: 0x7f020078
-			public const int intro_p3 = 2130837624;
+			public const int laptop = 2130837624;
 			
 			// aapt resource value: 0x7f020079
-			public const int laptop = 2130837625;
+			public const int nnf_ic_create_new_folder_white_24dp = 2130837625;
 			
 			// aapt resource value: 0x7f02007a
-			public const int nnf_ic_create_new_folder_white_24dp = 2130837626;
+			public const int nnf_ic_folder_black_48dp = 2130837626;
 			
 			// aapt resource value: 0x7f02007b
-			public const int nnf_ic_folder_black_48dp = 2130837627;
+			public const int nnf_ic_save_black_24dp = 2130837627;
 			
 			// aapt resource value: 0x7f02007c
-			public const int nnf_ic_save_black_24dp = 2130837628;
+			public const int notification_action_background = 2130837628;
 			
 			// aapt resource value: 0x7f02007d
-			public const int notification_action_background = 2130837629;
+			public const int notification_bg = 2130837629;
 			
 			// aapt resource value: 0x7f02007e
-			public const int notification_bg = 2130837630;
+			public const int notification_bg_low = 2130837630;
 			
 			// aapt resource value: 0x7f02007f
-			public const int notification_bg_low = 2130837631;
+			public const int notification_bg_low_normal = 2130837631;
 			
 			// aapt resource value: 0x7f020080
-			public const int notification_bg_low_normal = 2130837632;
+			public const int notification_bg_low_pressed = 2130837632;
 			
 			// aapt resource value: 0x7f020081
-			public const int notification_bg_low_pressed = 2130837633;
+			public const int notification_bg_normal = 2130837633;
 			
 			// aapt resource value: 0x7f020082
-			public const int notification_bg_normal = 2130837634;
+			public const int notification_bg_normal_pressed = 2130837634;
 			
 			// aapt resource value: 0x7f020083
-			public const int notification_bg_normal_pressed = 2130837635;
-			
-			// aapt resource value: 0x7f020084
-			public const int notification_icon_background = 2130837636;
+			public const int notification_icon_background = 2130837635;
 			
 			// aapt resource value: 0x7f02008d
 			public const int notification_template_icon_bg = 2130837645;
@@ -2097,17 +2094,20 @@ namespace QuickShare.Droid
 			// aapt resource value: 0x7f02008e
 			public const int notification_template_icon_low_bg = 2130837646;
 			
+			// aapt resource value: 0x7f020084
+			public const int notification_tile_bg = 2130837636;
+			
 			// aapt resource value: 0x7f020085
-			public const int notification_tile_bg = 2130837637;
+			public const int notify_panel_notification_icon_bg = 2130837637;
 			
 			// aapt resource value: 0x7f020086
-			public const int notify_panel_notification_icon_bg = 2130837638;
+			public const int phone = 2130837638;
 			
 			// aapt resource value: 0x7f020087
-			public const int phone = 2130837639;
+			public const int picture = 2130837639;
 			
 			// aapt resource value: 0x7f020088
-			public const int picture = 2130837640;
+			public const int splash_icon = 2130837640;
 			
 			// aapt resource value: 0x7f020089
 			public const int splash_screen = 2130837641;
