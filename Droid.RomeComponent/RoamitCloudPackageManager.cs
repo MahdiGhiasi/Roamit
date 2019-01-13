@@ -27,7 +27,7 @@ namespace QuickShare.Droid.RomeComponent
         private v3.Device v3EndpointDevice;
         private Guid accountId;
         private string token;
-        readonly TimeSpan retryDelay = TimeSpan.FromSeconds(10);
+        readonly TimeSpan retryDelay = TimeSpan.FromSeconds(4);
 
         public ObservableCollection<NormalizedRemoteSystem> Devices { get; } = new ObservableCollection<NormalizedRemoteSystem>();
 
@@ -59,13 +59,21 @@ namespace QuickShare.Droid.RomeComponent
             IEnumerable<NormalizedRemoteSystem> devices = null;
             while (devices == null)
             {
-                if (v3EndpointUser != null) // API v3 available 
-                    devices = await v3EndpointUser.GetDevices();
-                else
-                    devices = await v1.Device.GetAndroidDevices(userId);
-               
-                if (devices == null)
+                try
+                {
+                    if (v3EndpointUser != null) // API v3 available 
+                        devices = await v3EndpointUser.GetDevices();
+                    else
+                        devices = await v1.Device.GetAndroidDevices(userId);
+
+                    if (devices == null)
+                        await Task.Delay(retryDelay);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to get devices from API (v3 = {v3EndpointUser != null}): {ex}");
                     await Task.Delay(retryDelay);
+                }
             }
 
             AddDevicesToList(currentDeviceUniqueId, devices.Where(x => x.Type == DeviceType.Android || x.Type == DeviceType.GraphWindowsDevice));

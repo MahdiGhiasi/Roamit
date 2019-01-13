@@ -202,13 +202,35 @@ namespace QuickShare.Droid.Activities
         {
             if (CloudServiceAuthenticationHelper.IsAuthenticatedForApiV3())
             {
-                var apiLoginInfo = (CloudServiceAuthenticationHelper.GetApiLoginInfo());
-                var user = new QuickShare.Common.Service.v3.User(apiLoginInfo.AccountId, apiLoginInfo.Token);
-                var hasPermission = await user.HasDevicesPermission();
 
-                if (!hasPermission)
+                bool shownLoginWarning = false;
+                while (true)
                 {
-                    ShowLoginWarning();
+                    try
+                    {
+                        var apiLoginInfo = (CloudServiceAuthenticationHelper.GetApiLoginInfo());
+                        var user = new QuickShare.Common.Service.v3.User(apiLoginInfo.AccountId, apiLoginInfo.Token);
+                        var hasPermission = await user.HasDevicesPermission();
+
+                        if (!hasPermission)
+                        {
+                            ShowLoginWarning();
+                        }
+                        else if (shownLoginWarning)
+                        {
+                            HideLoginWarning();
+                        }
+
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"CheckDevicesPermission failed: {ex}");
+                        ShowLoginWarning();
+                        shownLoginWarning = true;
+
+                        await Task.Delay(TimeSpan.FromSeconds(10));
+                    }
                 }
             }
         }
