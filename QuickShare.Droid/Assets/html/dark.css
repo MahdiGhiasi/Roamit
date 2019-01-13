@@ -80,6 +80,10 @@ body {
     border-color: #0078D7;
 }
 
+.mdl-layout__header {
+    background-color: #004E8C !important;
+}
+
 #loginWarningButton {
     color: orange;
 }
