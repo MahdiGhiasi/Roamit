@@ -391,6 +391,7 @@
                 }
 				
                 if ((type.substr(0, 5) == "share") || (type.substr(0, 5) == "shar2")) {
+                    $("#otherDevicesButton").css({"display": "none"});
 					$(".actionbuttons").addClass("actionbuttons-hide");
 					$(".sharedialog").removeClass("sharedialog-hide");
 					
@@ -412,6 +413,7 @@
                     }
 				}
 				else {
+                    $("#otherDevicesButton").css({"display": "block"});
 					$(".actionbuttons").removeClass("actionbuttons-hide");
 					$(".sharedialog").addClass("sharedialog-hide");
 					
