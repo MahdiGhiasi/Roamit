@@ -132,8 +132,6 @@ namespace QuickShare.Droid.OnlineServiceHelpers
         {
             try
             {
-                await FindUserId();
-
                 Classes.Settings settings = new Classes.Settings(_context);
 
                 var deviceUniqueId = GetDeviceUniqueId();
@@ -154,6 +152,7 @@ namespace QuickShare.Droid.OnlineServiceHelpers
                 }
                 else
                 {
+                    await FindUserId();
                     var formContent = new FormUrlEncodedContent(new[]
                     {
                         new KeyValuePair<string, string>("deviceId", deviceUniqueId),
