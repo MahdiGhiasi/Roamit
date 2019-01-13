@@ -14,7 +14,7 @@ using QuickShare.Droid.Classes;
 
 namespace QuickShare.Droid.Activities
 {
-    internal class ThemeAwareActivity : AppCompatActivity
+    public class ThemeAwareActivity : AppCompatActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {

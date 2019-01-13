@@ -42,7 +42,7 @@ using Android.Preferences;
 namespace QuickShare.Droid.Activities
 {
     [Activity(Icon = "@drawable/icon", Name = "com.ghiasi.quickshare.webviewcontainerpage")]
-    public class WebViewContainerActivity : Activity
+    public class WebViewContainerActivity : ThemeAwareActivity
     {
         readonly string homeUrl = "file:///android_asset/html/home.html";
         readonly int PickImageId = 1000;
@@ -861,8 +861,10 @@ namespace QuickShare.Droid.Activities
             }
             else if (requestCode == SettingsId)
             {
-                var settings = new Classes.Settings(this);
-                InitUI(settings);
+                // Since theme might have changed in Settings page,
+                // we recreate the view to make sure changes are
+                // applied correctly.
+                Recreate(); 
             }
 
             base.OnActivityResult(requestCode, resultCode, data);
