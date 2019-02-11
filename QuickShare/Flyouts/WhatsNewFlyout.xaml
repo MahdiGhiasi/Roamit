@@ -41,6 +41,18 @@
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
+                    <StackPanel Tag="13" Margin="0,0,0,24" Visibility="Visible">
+                        <TextBlock Text="&#8226; More communication options for Windows devices"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="If you're having problems connecting to your Windows 10 PCs or Windows 10 Mobile devices, go to settings and change 'Windows devices communication method' to the second or third option."
+                                   Opacity="0.6"
+                                   Margin="16,0,0,16"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; Fixed an unexpected error being shown on unreliable internet connections"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
                     <StackPanel Tag="12" Margin="0,0,0,24" Visibility="Visible">
                         <TextBlock Text="&#8226; New cloud-based communication method for better reliability"
                                    Margin="0,0,0,8"
