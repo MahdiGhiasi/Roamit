@@ -40,7 +40,7 @@ namespace QuickShare.Flyouts
             }
 
             var pv = DeviceInfo.ApplicationVersion;
-            VersionText.Text = $"{pv.Major}.{pv.Minor}";
+            VersionText.Text = $"{pv.Major}.{pv.Minor}.{pv.Build}";
 
             if (PCExtensionHelper.IsSupported)
             {
