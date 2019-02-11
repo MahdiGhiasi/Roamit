@@ -33,8 +33,7 @@ namespace QuickShare.ViewModels
                 ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] = false;
             typeBasedDownloadFolderToggle = (ApplicationData.Current.LocalSettings.Values["TypeBasedDownloadFolder"] as bool?) ?? false;
 
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("PreferProximityLocalConnection"))
-                preferProximityLocalConnection = (ApplicationData.Current.LocalSettings.Values["PreferProximityLocalConnection"] as bool?) ?? false;
+            windowsCommunicationMethod = CommunicationMethodPreference.WindowsCommunicationMethodPreference;
 
             InitDownloadLocation();
 
@@ -119,20 +118,20 @@ namespace QuickShare.ViewModels
             }
         }
 
-        private bool preferProximityLocalConnection = false;
-        public bool PreferProximityLocalConnection
+        private WindowsCommunicationMethodPreference windowsCommunicationMethod = WindowsCommunicationMethodPreference.Cloud;
+        public int WindowsCommunicationMethod
         {
             get
             {
-                return preferProximityLocalConnection;
+                return (int)windowsCommunicationMethod;
             }
             set
             {
-                preferProximityLocalConnection = value;
-                ApplicationData.Current.LocalSettings.Values["PreferProximityLocalConnection"] = value;
-                OnPropertyChanged("PreferProximityLocalConnection");
+                windowsCommunicationMethod = (WindowsCommunicationMethodPreference)value;
+                CommunicationMethodPreference.WindowsCommunicationMethodPreference = windowsCommunicationMethod;
+                OnPropertyChanged("WindowsCommunicationMethod");
 #if !DEBUG
-                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "PreferProximityLocalConnection", value ? "activated" : "deactivated").Build());
+                App.Tracker.Send(HitBuilder.CreateCustomEvent("Settings", "WindowsCommunicationMethod", windowsCommunicationMethod.ToString()).Build());
 #endif
             }
         }

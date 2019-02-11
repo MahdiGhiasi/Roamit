@@ -171,12 +171,21 @@
                                                      IsEnabled="{x:Bind Model.IsCloudServiceLoggedIn, Mode=OneWay}"
                                                      Foreground="SkyBlue"
                                                      Tapped="ManageDevices_Tapped" />
-                            <TextBlock Text="Prefer legacy communication method for Windows devices when available locally" 
+                            <TextBlock Text="Windows devices communication method" 
                                        TextWrapping="Wrap"
                                        Margin="0,24,0,4" />
-                            <TextBlock Text="(Not recommended)"
+                            <TextBlock Text="Change this setting if you're having trouble connecting to other Windows 10 or Windows 10 Mobile devices."
+                                       TextWrapping="Wrap"
                                        Foreground="#CCCCCC" />
-                            <ToggleSwitch IsOn="{x:Bind Model.PreferProximityLocalConnection, Mode=TwoWay}" />
+                            <ComboBox Grid.Column="0"
+                                      HorizontalAlignment="Left"
+                                      Width="310"
+                                      Margin="0,8,0,12"
+                                      SelectedIndex="{x:Bind Model.WindowsCommunicationMethod, Mode=TwoWay}" >
+                                <ComboBoxItem Content="Always prefer cloud (Recommended)"/>
+                                <ComboBoxItem Content="Prefer native when available locally"/>
+                                <ComboBoxItem Content="Always prefer native"/>
+                            </ComboBox>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

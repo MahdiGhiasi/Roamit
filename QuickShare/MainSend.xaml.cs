@@ -619,8 +619,6 @@ namespace QuickShare
             }
             else
             {
-                // If device is not available by proximity and cloud service is initialized, 
-                // go for cloud service first as it's more reliable.
                 if (ShouldPrioritizeRomePackageManager(rs as RemoteSystem))
                 {
                     launchResult = await MainPage.Current.PackageManager.LaunchUri(SendDataTemporaryStorage.LaunchUri, rs, false);
@@ -695,8 +693,6 @@ namespace QuickShare
             }
             else
             {
-                // If device is not available by proximity and cloud service is initialized, 
-                // go for cloud service first as it's more reliable.
                 if (ShouldPrioritizeRomePackageManager(rs as RemoteSystem))
                 {
                     var result = await MainPage.Current.PackageManager.Connect(rs, true, new Uri("roamit://wake"));
@@ -749,8 +745,6 @@ namespace QuickShare
             }
             else
             {
-                // If device is not available by proximity and cloud service is initialized, 
-                // go for cloud service first as it's more reliable.
                 if (ShouldPrioritizeRomePackageManager(rs as RemoteSystem))
                 {
                     var result = await MainPage.Current.PackageManager.QuickClipboard(text,
@@ -792,15 +786,11 @@ namespace QuickShare
 
         private bool ShouldPrioritizeRomePackageManager(RemoteSystem rs)
         {
-            return (rs.IsAvailableByProximity && PreferProximityLocalConnection()) || !CloudServiceRomePackageManager.Instance.IsInitialized;
-        }
+            var commPreference = CommunicationMethodPreference.WindowsCommunicationMethodPreference;
 
-        private bool PreferProximityLocalConnection()
-        {
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("PreferProximityLocalConnection"))
-                return (ApplicationData.Current.LocalSettings.Values["PreferProximityLocalConnection"] as bool?) ?? false;
-
-            return false;
+            return (rs.IsAvailableByProximity && commPreference == WindowsCommunicationMethodPreference.NativeWhenInProximity) 
+                || commPreference == WindowsCommunicationMethodPreference.Native
+                || !CloudServiceRomePackageManager.Instance.IsInitialized;
         }
     }
 }
