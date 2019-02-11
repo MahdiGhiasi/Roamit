@@ -52,6 +52,8 @@ namespace QuickShare
 
         public object InternalFrameContent { get => ContentFrame.Content; }
 
+        private readonly TimeSpan roamitApiRetryDelay = TimeSpan.FromSeconds(4);
+
         public bool IsShareContent { get; private set; } = false;
         bool loadWait = false;
 
@@ -503,7 +505,15 @@ namespace QuickShare
             alreadyDiscovered = true;
 
             var userId = SecureKeyStorage.GetUserId();
-            var devices = await Common.Service.Device.GetAndroidDevices(userId);
+
+            IEnumerable<NormalizedRemoteSystem> devices = null;
+            while (devices == null)
+            {
+                devices = await Common.Service.Device.GetAndroidDevices(userId);
+
+                if (devices == null)
+                    await Task.Delay(roamitApiRetryDelay);
+            }
 
             foreach (var item in devices)
                 if (ViewModel.ListManager.RemoteSystems.FirstOrDefault(x => x.Id == item.Id) == null) //if not already exists
