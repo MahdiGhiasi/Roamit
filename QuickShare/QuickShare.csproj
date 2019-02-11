@@ -98,6 +98,7 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Compile Include="Classes\ActualSizePropertyProxy.cs" />
+    <Compile Include="Classes\CommunicationMethodPreference.cs" />
     <Compile Include="Classes\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Classes\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="CloudServiceLogin.xaml.cs">
