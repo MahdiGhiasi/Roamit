@@ -3,7 +3,7 @@
                     xmlns:local="clr-namespace:QuickShare.Desktop.Themes">
     <SolidColorBrush x:Key="TextColor" Color="Black" />
     <SolidColorBrush x:Key="BackgroundColor" Color="#C9EFEFEF" />
-    <SolidColorBrush x:Key="ListItemBackgroundColor" Color="#99B0B0B0" />
+    <SolidColorBrush x:Key="ListItemBackgroundColor" Color="#99A0A0A0" />
     <SolidColorBrush x:Key="BorderColor" Color="#9A9A9A" />
     <BitmapImage x:Key="AppIcon" UriSource="pack://application:,,,/Resources/icon48.png" />
     <BitmapImage x:Key="SettingsIcon" UriSource="pack://application:,,,/Resources/settings.png" />

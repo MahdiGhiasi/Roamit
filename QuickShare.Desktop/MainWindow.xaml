@@ -33,7 +33,7 @@
                     <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" 
-                           Text="Roamit clipboard history" 
+                           Text="Clipboard history" 
                            FontFamily="Segoe UI" 
                            Margin="8" 
                            Foreground="{DynamicResource ResourceKey=TextColor}"
@@ -88,12 +88,13 @@
                                   Cursor="Hand"
                                   Margin="0,2,0,2">
                                 <StackPanel HorizontalAlignment="Stretch" 
-                                            Margin="8,12,8,12"
+                                            Margin="8,8,8,8"
                                             MaxWidth="{Binding ActualWidth, ElementName=ClipboardActivity, Mode=OneWay}">
                                     <TextBlock Text="{Binding DisplayText}" 
                                                Foreground="{DynamicResource ResourceKey=TextColor}"
                                                TextWrapping="Wrap" />
                                     <TextBlock Text="{Binding CopyDateString}" 
+                                               Margin="0,4,0,0"
                                                Foreground="{DynamicResource ResourceKey=TextColor}"
                                                Opacity="0.6" 
                                                HorizontalAlignment="Right" />
