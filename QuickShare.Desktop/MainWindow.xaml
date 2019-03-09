@@ -20,32 +20,8 @@
         WindowStyle="None" 
         Topmost="True">
 
-    <Window.Resources>
-        <ResourceDictionary>
-            <Style x:Key="ThemedButton" TargetType="Button">
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Border Background="{TemplateBinding Background}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#88777777" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </ResourceDictionary>
-    </Window.Resources>
-    
-    
-    <Border BorderBrush="#3A3A3A" BorderThickness="1">
-        <Grid Background="#aa1f1f1f">
+    <Border BorderBrush="{StaticResource ResourceKey=BorderColor}" BorderThickness="1">
+        <Grid Background="{StaticResource ResourceKey=BackgroundColor}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition />
@@ -60,18 +36,18 @@
                            Text="Roamit clipboard history" 
                            FontFamily="Segoe UI" 
                            Margin="8" 
-                           Foreground="White"
+                           Foreground="{StaticResource ResourceKey=TextColor}"
                            FontSize="18" 
                            FontWeight="Light" />
                 <Button ToolTip="Open app" Grid.Column="1" Style="{StaticResource ThemedButton}" Click="OpenApp_Click">
                     <Button.Content>
-                        <Image Source="pack://application:,,,/Resources/icon48_white.png"
+                        <Image Source="{StaticResource ResourceKey=AppIcon}"
                                Width="24" />
                     </Button.Content>
                 </Button>
                 <Button ToolTip="Settings" Grid.Column="2" Style="{StaticResource ThemedButton}" Click="Settings_Click">
                     <Button.Content>
-                        <Image Source="pack://application:,,,/Resources/settings_white.png"
+                        <Image Source="{StaticResource ResourceKey=SettingsIcon}"
                                Width="20" />
                     </Button.Content>
                 </Button>
@@ -81,19 +57,18 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
                 <TextBlock Text="Please sign in to enable universal clipboard." 
-                           Foreground="White"
+                           Foreground="{StaticResource ResourceKey=TextColor}"
                            TextWrapping="Wrap"
                            Margin="0,0,0,16" />
                 <Button Content="Sign in"
                         HorizontalAlignment="Center"
-                        Foreground="White"
                         Width="100"
                         Height="32"
                         Click="SignIn_Click" />
             </StackPanel>
             <Grid Grid.Row="1" x:Name="ActivityContainer">
                 <TextBlock x:Name="NoClipboardActivity"
-                           Foreground="White"
+                           Foreground="{StaticResource ResourceKey=TextColor}"
                            Text="No clipboard activity yet."
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
@@ -109,17 +84,17 @@
                           Visibility="Collapsed">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Background="#99303030"
+                            <Grid Background="{StaticResource ResourceKey=ListItemBackgroundColor}"
                                   Cursor="Hand"
                                   Margin="0,2,0,2">
                                 <StackPanel HorizontalAlignment="Stretch" 
                                             Margin="8,12,8,12"
                                             MaxWidth="{Binding ActualWidth, ElementName=ClipboardActivity, Mode=OneWay}">
                                     <TextBlock Text="{Binding DisplayText}" 
-                                               Foreground="White"
+                                               Foreground="{StaticResource ResourceKey=TextColor}"
                                                TextWrapping="Wrap" />
                                     <TextBlock Text="{Binding CopyDateString}" 
-                                               Foreground="White"
+                                               Foreground="{StaticResource ResourceKey=TextColor}"
                                                Opacity="0.6" 
                                                HorizontalAlignment="Right" />
                                 </StackPanel>

@@ -157,6 +157,7 @@
     </Compile>
     <Compile Include="Helpers\StartupManager.cs" />
     <Compile Include="SingleInstance.cs" />
+    <Compile Include="Themes\Theme.cs" />
     <Compile Include="ViewModel\ClipboardItem.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
@@ -178,6 +179,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SignInWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Dark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Light.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -97,7 +97,7 @@ namespace QuickShare.Desktop
 #if !SQUIRREL
             ApplicationRestart.RegisterForRestart();
 #endif
-
+            
             if (Properties.Settings.Default.HasLastExceptionMessage)
             {
                 var exceptionMessage = Properties.Settings.Default.LastExceptionMessage ?? "null";
