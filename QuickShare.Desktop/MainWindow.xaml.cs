@@ -75,7 +75,6 @@ namespace QuickShare.Desktop
                 return;
 
             InitNotifyIcon();
-            UpdateTheme();
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
 
 #if SQUIRREL
@@ -485,6 +484,8 @@ namespace QuickShare.Desktop
             SetWindowPosition();
             this.Opacity = 1;
             this.Visibility = Visibility.Hidden;
+
+            UpdateTheme();
         }
 
         private bool CheckAccountId(bool showWindow)
