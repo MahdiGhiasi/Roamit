@@ -409,11 +409,13 @@ namespace QuickShare.Desktop
         }
 
         DateTime lastCheckedTrialStatus = DateTime.MinValue;
-        private void ClipboardChanged(object sender, EventArgs e)
+        SemaphoreSlim clipboardChangedSemaphore = new SemaphoreSlim(1, 1);
+        private async void ClipboardChanged(object sender, EventArgs e)
         {
             try
             {
-                // Handle your clipboard update here, debug logging example:
+                await clipboardChangedSemaphore.WaitAsync();
+
                 if (System.Windows.Clipboard.ContainsText())
                 {
                     string text = System.Windows.Clipboard.GetText();
@@ -434,6 +436,10 @@ namespace QuickShare.Desktop
 #if !DEBUG
                 AutoMeasurement.Client.TrackEvent("Exception", "ClipboardChanged", ex.Message);
 #endif
+            }
+            finally
+            {
+                clipboardChangedSemaphore.Release();
             }
         }
 
