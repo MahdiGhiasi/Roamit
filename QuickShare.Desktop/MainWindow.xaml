@@ -20,7 +20,7 @@
         WindowStyle="None" 
         Topmost="True">
 
-    <Border BorderBrush="{DynamicResource ResourceKey=BorderColor}" BorderThickness="1">
+    <Border BorderBrush="{DynamicResource ResourceKey=BorderColor}" BorderThickness="0.5">
         <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
