@@ -17,6 +17,7 @@ using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -331,9 +332,13 @@ namespace QuickShare.Desktop
             HideWindow();
         }
 
-        private void HideWindow()
+        private async void HideWindow()
         {
             lastTimeLostFocus = DateTime.UtcNow;
+
+            (FindResource("PaneCloseStoryboard") as Storyboard).Begin();
+            await Task.Delay(100);
+
             this.Visibility = Visibility.Hidden;
         }
         #endregion
@@ -353,18 +358,39 @@ namespace QuickShare.Desktop
             }
         }
 
-        private void ShowWindow()
+        private async void ShowWindow()
         {
+            // Scroll to top
+            try
+            {
+                (((VisualTreeHelper.GetChild(ClipboardActivity, 0) as Border).Child) as ScrollViewer).ScrollToVerticalOffset(0);
+            }
+            catch { }
+
             UpdateTheme();
 
             this.Height = myHeight;
             this.Width = myWidth;
             SetWindowPosition();
 
-            this.Visibility = Visibility.Visible;
-            this.Activate();
+            ShowWindowAnimation();
 
             NoClipboardActivity.Visibility = (ViewModel.ClipboardActivities.Count > 0) ? Visibility.Collapsed : Visibility.Visible;
+
+            this.Visibility = Visibility.Hidden;
+            this.Activate();
+
+            await Task.Delay(10);
+
+            this.Visibility = Visibility.Visible;
+        }
+
+        private void ShowWindowAnimation()
+        {
+            (FindResource("PaneOpenStoryboard") as Storyboard).Begin();
+            var da1 = new DoubleAnimation(this.Top + 40, this.Top, TimeSpan.FromSeconds(0.2));
+            da1.EasingFunction = new ExponentialEase();
+            this.BeginAnimation(Window.TopProperty, da1);
         }
 
         private void SetWindowPosition()
@@ -628,9 +654,6 @@ namespace QuickShare.Desktop
             System.Windows.Clipboard.SetText(item.Text);
 
             ClipboardActivity.SelectedItem = null;
-
-            // Scroll to top
-            (((VisualTreeHelper.GetChild(ClipboardActivity, 0) as Border).Child) as ScrollViewer).ScrollToVerticalOffset(0);
 
             HideWindow();
         }
