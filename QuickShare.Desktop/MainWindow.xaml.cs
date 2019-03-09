@@ -235,7 +235,6 @@ namespace QuickShare.Desktop
             notifyIcon = new NotifyIcon
             {
                 Visible = true,
-                Icon = Properties.Resources.icon_white,
                 ContextMenu = contextMenu,
 #if SQUIRREL
                 Text = "Roamit PC Extension",
@@ -243,6 +242,7 @@ namespace QuickShare.Desktop
                 Text = "Roamit",
 #endif
             };
+            UpdateNotifyIconTheme(TaskbarThemeHelper.GetTaskbarTheme());
             notifyIcon.MouseClick += NotifyIcon_MouseClick;
         }
 
@@ -665,6 +665,7 @@ namespace QuickShare.Desktop
 #endif
         }
 
+        #region Theme
         private void UpdateTheme()
         {
             // Theme
@@ -672,6 +673,36 @@ namespace QuickShare.Desktop
             ((App)System.Windows.Application.Current).ChangeTheme(theme);
 
             // Tray icon
+            if (notifyIcon != null)
+            {
+                UpdateNotifyIconTheme(theme);
+            }
+
+            // Background color
+            UpdateBackgroundColor();
+
+            // Transparency 
+            if (TaskbarThemeHelper.IsTaskbarTransparencyEnabled())
+                EnableBlur();
+            else
+                DisableBlur();
+        }
+
+        private void UpdateBackgroundColor()
+        {
+            if (TaskbarThemeHelper.IsTaskbarColored())
+            {
+                var accentColor = TaskbarThemeHelper.GetAccentColor();
+                MainGrid.Background = new SolidColorBrush(Color.FromArgb(0x99, accentColor.R, accentColor.G, accentColor.B));
+            }
+            else
+            {
+                MainGrid.Background = FindResource("BackgroundColor") as Brush;
+            }
+        }
+
+        private static void UpdateNotifyIconTheme(Themes.Theme theme)
+        {
             switch (theme)
             {
                 case Themes.Theme.Light:
@@ -682,23 +713,6 @@ namespace QuickShare.Desktop
                     notifyIcon.Icon = Properties.Resources.icon_white;
                     break;
             }
-
-            // Background color
-            if (TaskbarThemeHelper.IsTaskbarColored())
-            {
-                var accentColor = TaskbarThemeHelper.GetAccentColor();
-                MainGrid.Background = new SolidColorBrush(Color.FromArgb(0x99, accentColor.R, accentColor.G, accentColor.B));
-            }
-            else
-            {
-                MainGrid.Background = FindResource("BackgroundColor") as Brush;
-            }
-
-            // Transparency 
-            if (TaskbarThemeHelper.IsTaskbarTransparencyEnabled())
-                EnableBlur();
-            else
-                DisableBlur();
         }
 
         #region Acrylic Blur
@@ -721,6 +735,6 @@ namespace QuickShare.Desktop
             blurEnabled = false;
         }
         #endregion
-
+        #endregion
     }
 }
