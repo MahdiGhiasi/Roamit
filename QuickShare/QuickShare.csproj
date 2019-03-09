@@ -148,6 +148,7 @@
     <Compile Include="ViewModels\History\HistoryFileItem.cs" />
     <Compile Include="ViewModels\History\HistoryItem.cs" />
     <Compile Include="ViewModels\History\HistoryWebLinkItem.cs" />
+    <None Include="PCExtension\PCLStorage.Abstractions.dll.config" />
     <None Include="PCExtension\RoamitPCExtension.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -331,9 +332,9 @@
     <Content Include="PCExtension\NuGet.Squirrel.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PCExtension\NuGet.Squirrel.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="PCExtension\PCLStorage.Abstractions.dll" />
+    <Content Include="PCExtension\PCLStorage.Abstractions.pdb" />
+    <Content Include="PCExtension\PCLStorage.Abstractions.xml" />
     <Content Include="PCExtension\Resources\green-tick.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -373,9 +374,6 @@
     <Content Include="PCExtension\Squirrel.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PCExtension\Squirrel.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <TransformFile Include="PCExtension\System.Runtime.WindowsRuntime.UI.Xaml.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </TransformFile>
@@ -391,22 +389,13 @@
     <Content Include="PCExtension\Xamarin.Forms.Core.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PCExtension\Xamarin.Forms.Core.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <TransformFile Include="PCExtension\Xamarin.Forms.Core.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </TransformFile>
     <Content Include="PCExtension\Xamarin.Forms.Platform.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PCExtension\Xamarin.Forms.Platform.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="PCExtension\Xamarin.Forms.Xaml.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PCExtension\Xamarin.Forms.Xaml.pdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <TransformFile Include="PCExtension\Xamarin.Forms.Xaml.xml">
