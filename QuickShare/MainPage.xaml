@@ -24,15 +24,14 @@
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
                                  Duration="0:0:0.3" From="300" To="0">
                     <DoubleAnimation.EasingFunction>
-                        <BackEase EasingMode="EaseOut" Amplitude="0" />
-                        <!-- Because ExponentialEase animation is Mobile is buggy -->
+                        <ExponentialEase EasingMode="EaseOut" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
                 <DoubleAnimation Storyboard.TargetName="BottomCommandBar" 
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
                                  Duration="0:0:0.3" From="60" To="0">
                     <DoubleAnimation.EasingFunction>
-                        <BackEase EasingMode="EaseOut" Amplitude="0" />
+                        <ExponentialEase EasingMode="EaseOut" />
                     </DoubleAnimation.EasingFunction>
                 </DoubleAnimation>
             </Storyboard>
