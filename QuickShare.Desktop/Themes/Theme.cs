@@ -19,10 +19,10 @@ namespace QuickShare.Desktop.Themes
             switch (theme)
             {
                 case Theme.Light:
-                    return new Uri("/Themes/Light.xaml");
+                    return new Uri("pack://application:,,,/Themes/Light.xaml");
                 case Theme.Dark:
                 default:
-                    return new Uri("/Themes/Dark.xaml");
+                    return new Uri("pack://application:,,,/Themes/Dark.xaml");
             }
         }
     }

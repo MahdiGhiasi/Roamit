@@ -75,7 +75,7 @@ namespace QuickShare.Desktop
                 return;
 
             InitNotifyIcon();
-
+            UpdateTheme();
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
 
 #if SQUIRREL
@@ -354,8 +354,10 @@ namespace QuickShare.Desktop
             }
         }
 
-        private async void ShowWindow()
+        private void ShowWindow()
         {
+            UpdateTheme();
+
             this.Height = myHeight;
             this.Width = myWidth;
             SetWindowPosition();
@@ -364,6 +366,23 @@ namespace QuickShare.Desktop
             this.Activate();
 
             NoClipboardActivity.Visibility = (ViewModel.ClipboardActivities.Count > 0) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private static void UpdateTheme()
+        {
+            var theme = TaskbarThemeHelper.GetTaskbarTheme();
+            ((App)System.Windows.Application.Current).ChangeTheme(theme);
+
+            switch (theme)
+            {
+                case Themes.Theme.Light:
+                    notifyIcon.Icon = Properties.Resources.icon;
+                    break;
+                case Themes.Theme.Dark:
+                default:
+                    notifyIcon.Icon = Properties.Resources.icon_white;
+                    break;
+            }
         }
 
         private void SetWindowPosition()

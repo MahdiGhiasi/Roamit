@@ -148,6 +148,7 @@
     <Compile Include="Helpers\ScreenExtensions.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\Taskbar.cs" />
+    <Compile Include="Helpers\TaskbarThemeHelper.cs" />
     <Compile Include="Helpers\Updater.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>

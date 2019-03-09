@@ -37,6 +37,7 @@ namespace QuickShare.Desktop
                 var application = new App();
 
                 application.InitializeComponent();
+                application.ChangeTheme(Theme.Dark);
                 application.Run();
 
                 // Allow single instance code to perform cleanup operations
@@ -46,17 +47,22 @@ namespace QuickShare.Desktop
             var application = new App();
 
             application.InitializeComponent();
+            application.ChangeTheme(Theme.Dark);
             application.Run();
 #endif
 
         }
 
+        Theme? currentTheme = null;
         public void ChangeTheme(Theme theme)
         {
+            if (currentTheme.HasValue && currentTheme.Value == theme)
+                return;
+
             ThemeDictionary.MergedDictionaries.Clear();
             ThemeDictionary.MergedDictionaries.Add(new ResourceDictionary() { Source = ThemeSelector.GetThemeUrl(theme) });
+            currentTheme = theme;
         }
-
 
         #region ISingleInstanceApp Members
 
