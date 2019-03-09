@@ -58,7 +58,8 @@ namespace QuickShare.Desktop.Helpers
 
         internal static void EnableAcrylicBlur(this Window window, byte a, byte r, byte g, byte b)
         {
-            // TODO: Don't do anything if OS version is less than RS4 (1803, 17134)
+            if (DeviceInfo.SystemVersion < DeviceInfo.Rs4)
+                return;
 
             var windowHelper = new WindowInteropHelper(window);
 
@@ -82,7 +83,8 @@ namespace QuickShare.Desktop.Helpers
 
         internal static void DisableAcrylicBlur(this Window window)
         {
-            // TODO: Don't do anything if OS version is less than RS4 (1803, 17134)
+            if (DeviceInfo.SystemVersion < DeviceInfo.Rs4)
+                return;
 
             var windowHelper = new WindowInteropHelper(window);
 

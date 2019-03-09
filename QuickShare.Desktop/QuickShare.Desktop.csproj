@@ -143,6 +143,7 @@
     <Compile Include="Helpers\ArcylicBlurHelper.cs" />
     <Compile Include="Helpers\ClipboardOwner.cs" />
     <Compile Include="Helpers\CurrentDevice.cs" />
+    <Compile Include="Helpers\DeviceInfo.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Helpers\PurposeHelper.cs" />
     <Compile Include="Helpers\ScreenExtensions.cs" />
