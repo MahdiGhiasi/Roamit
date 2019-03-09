@@ -10,6 +10,8 @@ namespace QuickShare.Desktop.Themes
     {
         Dark,
         Light,
+        DarkOpaque,
+        LightOpaque,
     }
 
     public static class ThemeSelector
@@ -18,6 +20,10 @@ namespace QuickShare.Desktop.Themes
         {
             switch (theme)
             {
+                case Theme.LightOpaque:
+                    return new Uri("pack://application:,,,/Themes/LightOpaque.xaml");
+                case Theme.DarkOpaque:
+                    return new Uri("pack://application:,,,/Themes/DarkOpaque.xaml");
                 case Theme.Light:
                     return new Uri("pack://application:,,,/Themes/Light.xaml");
                 case Theme.Dark:

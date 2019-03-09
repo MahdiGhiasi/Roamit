@@ -97,7 +97,7 @@ namespace QuickShare.Desktop
 #if !SQUIRREL
             ApplicationRestart.RegisterForRestart();
 #endif
-            
+
             if (Properties.Settings.Default.HasLastExceptionMessage)
             {
                 var exceptionMessage = Properties.Settings.Default.LastExceptionMessage ?? "null";
@@ -305,7 +305,7 @@ namespace QuickShare.Desktop
             ShowWindow();
         }
 
-#region Stuff related to hiding window when clicked away
+        #region Stuff related to hiding window when clicked away
         private void Window_Activated(object sender, EventArgs e)
         {
             System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
@@ -337,7 +337,7 @@ namespace QuickShare.Desktop
             lastTimeLostFocus = DateTime.UtcNow;
             this.Visibility = Visibility.Hidden;
         }
-#endregion
+        #endregion
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -366,37 +366,6 @@ namespace QuickShare.Desktop
             this.Activate();
 
             NoClipboardActivity.Visibility = (ViewModel.ClipboardActivities.Count > 0) ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        private void UpdateTheme()
-        {
-            // Theme
-            var theme = TaskbarThemeHelper.GetTaskbarTheme();
-            ((App)System.Windows.Application.Current).ChangeTheme(theme);
-
-            // Tray icon
-            switch (theme)
-            {
-                case Themes.Theme.Light:
-                    notifyIcon.Icon = Properties.Resources.icon;
-                    break;
-                case Themes.Theme.Dark:
-                default:
-                    notifyIcon.Icon = Properties.Resources.icon_white;
-                    break;
-            }
-
-            // Background color
-            if (TaskbarThemeHelper.IsTaskbarColored())
-            {
-                var accentColor = TaskbarThemeHelper.GetAccentColor();
-                MainGrid.Background = new SolidColorBrush(Color.FromArgb(0x99, accentColor.R, accentColor.G, accentColor.B));
-            }
-            else
-            {
-                MainGrid.Background = FindResource("BackgroundColor") as Brush;
-            }
-
         }
 
         private void SetWindowPosition()
@@ -481,6 +450,7 @@ namespace QuickShare.Desktop
 
         DateTime lastSendTime = DateTime.MinValue;
         bool willSendAfterLimit = false;
+
         private async void SendClipboardItem()
         {
             if (willSendAfterLimit)
@@ -515,7 +485,6 @@ namespace QuickShare.Desktop
             SetWindowPosition();
             this.Opacity = 1;
             this.Visibility = Visibility.Hidden;
-            this.EnableAcrylicBlur();
         }
 
         private bool CheckAccountId(bool showWindow)
@@ -613,7 +582,7 @@ namespace QuickShare.Desktop
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
 #if SQUIRREL
-             if (settingsWindow == null)
+            if (settingsWindow == null)
                 InitSettingsWindow();
 
             settingsWindow.Show();
@@ -694,5 +663,63 @@ namespace QuickShare.Desktop
             }
 #endif
         }
+
+        private void UpdateTheme()
+        {
+            // Theme
+            var theme = TaskbarThemeHelper.GetTaskbarTheme();
+            ((App)System.Windows.Application.Current).ChangeTheme(theme);
+
+            // Tray icon
+            switch (theme)
+            {
+                case Themes.Theme.Light:
+                    notifyIcon.Icon = Properties.Resources.icon;
+                    break;
+                case Themes.Theme.Dark:
+                default:
+                    notifyIcon.Icon = Properties.Resources.icon_white;
+                    break;
+            }
+
+            // Background color
+            if (TaskbarThemeHelper.IsTaskbarColored())
+            {
+                var accentColor = TaskbarThemeHelper.GetAccentColor();
+                MainGrid.Background = new SolidColorBrush(Color.FromArgb(0x99, accentColor.R, accentColor.G, accentColor.B));
+            }
+            else
+            {
+                MainGrid.Background = FindResource("BackgroundColor") as Brush;
+            }
+
+            // Transparency 
+            if (TaskbarThemeHelper.IsTaskbarTransparencyEnabled())
+                EnableBlur();
+            else
+                DisableBlur();
+        }
+
+        #region Acrylic Blur
+        private bool blurEnabled = false;
+        private void EnableBlur()
+        {
+            if (blurEnabled)
+                return;
+
+            this.EnableAcrylicBlur();
+            blurEnabled = true;
+        }
+
+        private void DisableBlur()
+        {
+            if (!blurEnabled)
+                return;
+
+            this.DisableAcrylicBlur();
+            blurEnabled = false;
+        }
+        #endregion
+
     }
 }

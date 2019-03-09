@@ -38,6 +38,25 @@ namespace QuickShare.Desktop.Helpers
 
         public static Theme GetTaskbarTheme()
         {
+            switch (GetTaskbarThemeInternal())
+            {
+                case Theme.Dark:
+                    if (IsTaskbarTransparencyEnabled())
+                        return Theme.Dark;
+                    else
+                        return Theme.DarkOpaque;
+                case Theme.Light:
+                    if (IsTaskbarTransparencyEnabled())
+                        return Theme.Light;
+                    else
+                        return Theme.LightOpaque;
+                default:
+                    return Theme.Dark;
+            }
+        }
+
+        private static Theme GetTaskbarThemeInternal()
+        {
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", true))
             {
                 var value = key.GetValue("SystemUsesLightTheme");
@@ -60,6 +79,22 @@ namespace QuickShare.Desktop.Helpers
 
                 if (value == null)
                     return false;
+
+                if (value.ToString() == "1")
+                    return true;
+
+                return false;
+            }
+        }
+
+        public static bool IsTaskbarTransparencyEnabled()
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", true))
+            {
+                var value = key.GetValue("EnableTransparency");
+
+                if (value == null)
+                    return true;
 
                 if (value.ToString() == "1")
                     return true;
