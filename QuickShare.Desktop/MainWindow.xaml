@@ -70,6 +70,7 @@
                 <TextBlock x:Name="NoClipboardActivity"
                            Foreground="{DynamicResource ResourceKey=TextColor}"
                            Text="No clipboard activity yet."
+                           FontSize="13"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Opacity="0.5"/>
@@ -91,6 +92,7 @@
                                             Margin="8,8,8,8"
                                             MaxWidth="{Binding ActualWidth, ElementName=ClipboardActivity, Mode=OneWay}">
                                     <TextBlock Text="{Binding DisplayText}" 
+                                               FontSize="13"
                                                Foreground="{DynamicResource ResourceKey=TextColor}"
                                                TextWrapping="Wrap" />
                                     <TextBlock Text="{Binding CopyDateString}" 
