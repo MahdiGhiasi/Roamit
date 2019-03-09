@@ -140,6 +140,7 @@
     </Page>
     <Compile Include="Config.cs" />
     <Compile Include="Helpers\ApplicationRestart.cs" />
+    <Compile Include="Helpers\ArcylicBlurHelper.cs" />
     <Compile Include="Helpers\ClipboardOwner.cs" />
     <Compile Include="Helpers\CurrentDevice.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />
@@ -226,11 +227,13 @@
     <Content Include="Resources\icon3_BUo_icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\settings_white.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\icon48_white.png" />
     <Content Include="Resources\settings.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

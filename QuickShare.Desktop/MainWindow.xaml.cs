@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -353,7 +354,7 @@ namespace QuickShare.Desktop
             }
         }
 
-        private void ShowWindow()
+        private async void ShowWindow()
         {
             this.Height = myHeight;
             this.Width = myWidth;
@@ -361,6 +362,8 @@ namespace QuickShare.Desktop
 
             this.Visibility = Visibility.Visible;
             this.Activate();
+
+            NoClipboardActivity.Visibility = (ViewModel.ClipboardActivities.Count > 0) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void SetWindowPosition()
@@ -479,6 +482,7 @@ namespace QuickShare.Desktop
             SetWindowPosition();
             this.Opacity = 1;
             this.Visibility = Visibility.Hidden;
+            this.EnableAcrylicBlur();
         }
 
         private bool CheckAccountId(bool showWindow)
@@ -612,13 +616,20 @@ namespace QuickShare.Desktop
             Process.Start("roamit://upgrade");
         }
 
-        private void ClipboardActivity_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ClipboardActivity_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ClipboardActivity.SelectedItem == null)
                 return;
 
             var item = ClipboardActivity.SelectedItem as ClipboardItem;
             System.Windows.Clipboard.SetText(item.Text);
+
+            ClipboardActivity.SelectedItem = null;
+
+            // Scroll to top
+            (((VisualTreeHelper.GetChild(ClipboardActivity, 0) as Border).Child) as ScrollViewer).ScrollToVerticalOffset(0);
+
+            HideWindow();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
