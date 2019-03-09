@@ -21,7 +21,7 @@
         Topmost="True">
 
     <Border BorderBrush="{DynamicResource ResourceKey=BorderColor}" BorderThickness="1">
-        <Grid Background="{DynamicResource ResourceKey=BackgroundColor}">
+        <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition />

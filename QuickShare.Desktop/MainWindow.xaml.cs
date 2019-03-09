@@ -368,11 +368,13 @@ namespace QuickShare.Desktop
             NoClipboardActivity.Visibility = (ViewModel.ClipboardActivities.Count > 0) ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        private static void UpdateTheme()
+        private void UpdateTheme()
         {
+            // Theme
             var theme = TaskbarThemeHelper.GetTaskbarTheme();
             ((App)System.Windows.Application.Current).ChangeTheme(theme);
 
+            // Tray icon
             switch (theme)
             {
                 case Themes.Theme.Light:
@@ -383,6 +385,18 @@ namespace QuickShare.Desktop
                     notifyIcon.Icon = Properties.Resources.icon_white;
                     break;
             }
+
+            // Background color
+            if (TaskbarThemeHelper.IsTaskbarColored())
+            {
+                var accentColor = TaskbarThemeHelper.GetAccentColor();
+                MainGrid.Background = new SolidColorBrush(Color.FromArgb(0x99, accentColor.R, accentColor.G, accentColor.B));
+            }
+            else
+            {
+                MainGrid.Background = FindResource("BackgroundColor") as Brush;
+            }
+
         }
 
         private void SetWindowPosition()
