@@ -140,13 +140,16 @@
     </Page>
     <Compile Include="Config.cs" />
     <Compile Include="Helpers\ApplicationRestart.cs" />
+    <Compile Include="Helpers\ArcylicBlurHelper.cs" />
     <Compile Include="Helpers\ClipboardOwner.cs" />
     <Compile Include="Helpers\CurrentDevice.cs" />
+    <Compile Include="Helpers\DeviceInfo.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Helpers\PurposeHelper.cs" />
     <Compile Include="Helpers\ScreenExtensions.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\Taskbar.cs" />
+    <Compile Include="Helpers\TaskbarThemeHelper.cs" />
     <Compile Include="Helpers\Updater.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
@@ -156,6 +159,7 @@
     </Compile>
     <Compile Include="Helpers\StartupManager.cs" />
     <Compile Include="SingleInstance.cs" />
+    <Compile Include="Themes\Theme.cs" />
     <Compile Include="ViewModel\ClipboardItem.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
@@ -177,6 +181,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SignInWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\DarkOpaque.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Dark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\LightOpaque.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Light.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -226,11 +246,13 @@
     <Content Include="Resources\icon3_BUo_icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\settings_white.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\icon48_white.png" />
     <Content Include="Resources\settings.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

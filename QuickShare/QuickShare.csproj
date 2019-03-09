@@ -148,6 +148,7 @@
     <Compile Include="ViewModels\History\HistoryFileItem.cs" />
     <Compile Include="ViewModels\History\HistoryItem.cs" />
     <Compile Include="ViewModels\History\HistoryWebLinkItem.cs" />
+    <None Include="PCExtension\PCLStorage.Abstractions.dll.config" />
     <None Include="PCExtension\RoamitPCExtension.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -237,49 +238,84 @@
     <Content Include="Assets\Intro\p1.png" />
     <Content Include="Assets\Intro\p2.png" />
     <Content Include="Assets\Intro\p3.png" />
-    <Content Include="Assets\LargeTile.scale-100.png" />
-    <Content Include="Assets\LargeTile.scale-125.png" />
-    <Content Include="Assets\LargeTile.scale-150.png" />
-    <Content Include="Assets\LargeTile.scale-200.png" />
-    <Content Include="Assets\LargeTile.scale-400.png" />
-    <Content Include="Assets\SmallTile.scale-100.png" />
-    <Content Include="Assets\SmallTile.scale-125.png" />
-    <Content Include="Assets\SmallTile.scale-150.png" />
-    <Content Include="Assets\SmallTile.scale-200.png" />
-    <Content Include="Assets\SmallTile.scale-400.png" />
-    <Content Include="Assets\SplashScreen.scale-100.png" />
-    <Content Include="Assets\SplashScreen.scale-125.png" />
-    <Content Include="Assets\SplashScreen.scale-150.png" />
-    <Content Include="Assets\SplashScreen.scale-400.png" />
-    <Content Include="Assets\Square150x150Logo.scale-100.png" />
-    <Content Include="Assets\Square150x150Logo.scale-125.png" />
-    <Content Include="Assets\Square150x150Logo.scale-150.png" />
-    <Content Include="Assets\Square150x150Logo.scale-400.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
-    <Content Include="Assets\Square44x44Logo.scale-100.png" />
-    <Content Include="Assets\Square44x44Logo.scale-125.png" />
-    <Content Include="Assets\Square44x44Logo.scale-150.png" />
-    <Content Include="Assets\Square44x44Logo.scale-400.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-16.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-256.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-32.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-48.png" />
-    <Content Include="Assets\StoreLogo.scale-100.png" />
-    <Content Include="Assets\StoreLogo.scale-125.png" />
-    <Content Include="Assets\StoreLogo.scale-150.png" />
-    <Content Include="Assets\StoreLogo.scale-200.png" />
-    <Content Include="Assets\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Logo\contrast-black\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Logo\contrast-standard\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Logo\contrast-white\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-100.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-125.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-150.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-200.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-400.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-100.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-125.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-150.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-200.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-400.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-125.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-150.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-125.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-150.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-200.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\ToastNotificationIcons\Move.png" />
     <Content Include="Assets\ToastNotificationIcons\OpenFile.png" />
     <Content Include="Assets\ToastNotificationIcons\OpenFolder.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-100.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-125.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-150.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="PCExtension\Common.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -331,9 +367,9 @@
     <Content Include="PCExtension\NuGet.Squirrel.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PCExtension\NuGet.Squirrel.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="PCExtension\PCLStorage.Abstractions.dll" />
+    <Content Include="PCExtension\PCLStorage.Abstractions.pdb" />
+    <Content Include="PCExtension\PCLStorage.Abstractions.xml" />
     <Content Include="PCExtension\Resources\green-tick.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -373,9 +409,6 @@
     <Content Include="PCExtension\Squirrel.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PCExtension\Squirrel.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <TransformFile Include="PCExtension\System.Runtime.WindowsRuntime.UI.Xaml.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </TransformFile>
@@ -391,22 +424,13 @@
     <Content Include="PCExtension\Xamarin.Forms.Core.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PCExtension\Xamarin.Forms.Core.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <TransformFile Include="PCExtension\Xamarin.Forms.Core.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </TransformFile>
     <Content Include="PCExtension\Xamarin.Forms.Platform.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PCExtension\Xamarin.Forms.Platform.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="PCExtension\Xamarin.Forms.Xaml.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PCExtension\Xamarin.Forms.Xaml.pdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <TransformFile Include="PCExtension\Xamarin.Forms.Xaml.xml">
@@ -414,11 +438,6 @@
     </TransformFile>
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

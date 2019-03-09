@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -74,7 +76,6 @@ namespace QuickShare.Desktop
                 return;
 
             InitNotifyIcon();
-
             System.Windows.Application.Current.Deactivated += Application_Deactivated;
 
 #if SQUIRREL
@@ -235,7 +236,6 @@ namespace QuickShare.Desktop
             notifyIcon = new NotifyIcon
             {
                 Visible = true,
-                Icon = Properties.Resources.icon_white,
                 ContextMenu = contextMenu,
 #if SQUIRREL
                 Text = "Roamit PC Extension",
@@ -243,6 +243,7 @@ namespace QuickShare.Desktop
                 Text = "Roamit",
 #endif
             };
+            UpdateNotifyIconTheme(TaskbarThemeHelper.GetTaskbarTheme());
             notifyIcon.MouseClick += NotifyIcon_MouseClick;
         }
 
@@ -304,7 +305,7 @@ namespace QuickShare.Desktop
             ShowWindow();
         }
 
-#region Stuff related to hiding window when clicked away
+        #region Stuff related to hiding window when clicked away
         private void Window_Activated(object sender, EventArgs e)
         {
             System.Windows.Input.Mouse.Capture(this, System.Windows.Input.CaptureMode.SubTree);
@@ -331,12 +332,16 @@ namespace QuickShare.Desktop
             HideWindow();
         }
 
-        private void HideWindow()
+        private async void HideWindow()
         {
             lastTimeLostFocus = DateTime.UtcNow;
+
+            (FindResource("PaneCloseStoryboard") as Storyboard).Begin();
+            await Task.Delay(100);
+
             this.Visibility = Visibility.Hidden;
         }
-#endregion
+        #endregion
 
         private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -353,14 +358,39 @@ namespace QuickShare.Desktop
             }
         }
 
-        private void ShowWindow()
+        private async void ShowWindow()
         {
+            // Scroll to top
+            try
+            {
+                (((VisualTreeHelper.GetChild(ClipboardActivity, 0) as Border).Child) as ScrollViewer).ScrollToVerticalOffset(0);
+            }
+            catch { }
+
+            UpdateTheme();
+
             this.Height = myHeight;
             this.Width = myWidth;
             SetWindowPosition();
 
-            this.Visibility = Visibility.Visible;
+            ShowWindowAnimation();
+
+            NoClipboardActivity.Visibility = (ViewModel.ClipboardActivities.Count > 0) ? Visibility.Collapsed : Visibility.Visible;
+
+            this.Visibility = Visibility.Hidden;
             this.Activate();
+
+            await Task.Delay(10);
+
+            this.Visibility = Visibility.Visible;
+        }
+
+        private void ShowWindowAnimation()
+        {
+            (FindResource("PaneOpenStoryboard") as Storyboard).Begin();
+            var da1 = new DoubleAnimation(this.Top + 40, this.Top, TimeSpan.FromSeconds(0.2));
+            da1.EasingFunction = new ExponentialEase();
+            this.BeginAnimation(Window.TopProperty, da1);
         }
 
         private void SetWindowPosition()
@@ -409,11 +439,13 @@ namespace QuickShare.Desktop
         }
 
         DateTime lastCheckedTrialStatus = DateTime.MinValue;
-        private void ClipboardChanged(object sender, EventArgs e)
+        SemaphoreSlim clipboardChangedSemaphore = new SemaphoreSlim(1, 1);
+        private async void ClipboardChanged(object sender, EventArgs e)
         {
             try
             {
-                // Handle your clipboard update here, debug logging example:
+                await clipboardChangedSemaphore.WaitAsync();
+
                 if (System.Windows.Clipboard.ContainsText())
                 {
                     string text = System.Windows.Clipboard.GetText();
@@ -435,10 +467,15 @@ namespace QuickShare.Desktop
                 AutoMeasurement.Client.TrackEvent("Exception", "ClipboardChanged", ex.Message);
 #endif
             }
+            finally
+            {
+                clipboardChangedSemaphore.Release();
+            }
         }
 
         DateTime lastSendTime = DateTime.MinValue;
         bool willSendAfterLimit = false;
+
         private async void SendClipboardItem()
         {
             if (willSendAfterLimit)
@@ -473,6 +510,8 @@ namespace QuickShare.Desktop
             SetWindowPosition();
             this.Opacity = 1;
             this.Visibility = Visibility.Hidden;
+
+            UpdateTheme();
         }
 
         private bool CheckAccountId(bool showWindow)
@@ -570,7 +609,7 @@ namespace QuickShare.Desktop
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
 #if SQUIRREL
-             if (settingsWindow == null)
+            if (settingsWindow == null)
                 InitSettingsWindow();
 
             settingsWindow.Show();
@@ -606,13 +645,17 @@ namespace QuickShare.Desktop
             Process.Start("roamit://upgrade");
         }
 
-        private void ClipboardActivity_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ClipboardActivity_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ClipboardActivity.SelectedItem == null)
                 return;
 
             var item = ClipboardActivity.SelectedItem as ClipboardItem;
             System.Windows.Clipboard.SetText(item.Text);
+
+            ClipboardActivity.SelectedItem = null;
+
+            HideWindow();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -644,5 +687,77 @@ namespace QuickShare.Desktop
             }
 #endif
         }
+
+        #region Theme
+        private void UpdateTheme()
+        {
+            // Theme
+            var theme = TaskbarThemeHelper.GetTaskbarTheme();
+            ((App)System.Windows.Application.Current).ChangeTheme(theme);
+
+            // Tray icon
+            if (notifyIcon != null)
+            {
+                UpdateNotifyIconTheme(theme);
+            }
+
+            // Background color
+            UpdateBackgroundColor();
+
+            // Transparency 
+            if (TaskbarThemeHelper.IsTaskbarTransparencyEnabled())
+                EnableBlur();
+            else
+                DisableBlur();
+        }
+
+        private void UpdateBackgroundColor()
+        {
+            if (TaskbarThemeHelper.IsTaskbarColored())
+            {
+                var accentColor = TaskbarThemeHelper.GetAccentColor();
+                MainGrid.Background = new SolidColorBrush(Color.FromArgb(0x99, accentColor.R, accentColor.G, accentColor.B));
+            }
+            else
+            {
+                MainGrid.Background = FindResource("BackgroundColor") as Brush;
+            }
+        }
+
+        private static void UpdateNotifyIconTheme(Themes.Theme theme)
+        {
+            switch (theme)
+            {
+                case Themes.Theme.Light:
+                    notifyIcon.Icon = Properties.Resources.icon;
+                    break;
+                case Themes.Theme.Dark:
+                default:
+                    notifyIcon.Icon = Properties.Resources.icon_white;
+                    break;
+            }
+        }
+
+        #region Acrylic Blur
+        private bool blurEnabled = false;
+        private void EnableBlur()
+        {
+            if (blurEnabled)
+                return;
+
+            this.EnableAcrylicBlur();
+            blurEnabled = true;
+        }
+
+        private void DisableBlur()
+        {
+            if (!blurEnabled)
+                return;
+
+            this.DisableAcrylicBlur();
+            blurEnabled = false;
+        }
+        #endregion
+        #endregion
     }
 }

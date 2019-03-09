@@ -41,6 +41,23 @@
         <Grid Grid.Row="1" Padding="14,8,14,14">
             <ScrollViewer>
                 <StackPanel x:Name="Content">
+                    <StackPanel Tag="14" Margin="0,0,0,24" Visibility="Visible">
+                        <TextBlock Text="&#8226; The clipboard history pane is redesigned!"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="If you use Universal Clipboard, check out the redesigned clipboard history pane by clicking on the Roamit icon in the system tray."
+                                   Opacity="0.6"
+                                   Margin="16,0,0,16"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="You can enable Universal Clipboard in Roamit settings."
+                                   FontStyle="Italic"
+                                   Opacity="0.6"
+                                   Margin="16,0,0,16"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="&#8226; App icon now looks correctly in the taskbar and the system tray if you're using light taskbar theme."
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
                     <StackPanel Tag="13" Margin="0,0,0,24" Visibility="Visible">
                         <TextBlock Text="&#8226; More communication options for Windows devices"
                                    Margin="0,0,0,8"

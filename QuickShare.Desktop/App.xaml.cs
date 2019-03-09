@@ -1,4 +1,5 @@
 ﻿using Microsoft.Shell;
+using QuickShare.Desktop.Themes;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -21,6 +22,11 @@ namespace QuickShare.Desktop
         private const string Unique = "RoamitDesktopExtension2";
 #endif
 
+        public ResourceDictionary ThemeDictionary
+        {
+            get { return Resources.MergedDictionaries[0]; }
+        }
+
         // Single instance code from http://blogs.microsoft.co.il/arik/2010/05/28/wpf-single-instance-application/
         [STAThread]
         public static void Main()
@@ -31,6 +37,7 @@ namespace QuickShare.Desktop
                 var application = new App();
 
                 application.InitializeComponent();
+                application.ChangeTheme(Theme.Dark);
                 application.Run();
 
                 // Allow single instance code to perform cleanup operations
@@ -40,12 +47,24 @@ namespace QuickShare.Desktop
             var application = new App();
 
             application.InitializeComponent();
+            application.ChangeTheme(Theme.Dark);
             application.Run();
 #endif
 
         }
 
-#region ISingleInstanceApp Members
+        Theme? currentTheme = null;
+        public void ChangeTheme(Theme theme)
+        {
+            if (currentTheme.HasValue && currentTheme.Value == theme)
+                return;
+
+            ThemeDictionary.MergedDictionaries.Clear();
+            ThemeDictionary.MergedDictionaries.Add(new ResourceDictionary() { Source = ThemeSelector.GetThemeUrl(theme) });
+            currentTheme = theme;
+        }
+
+        #region ISingleInstanceApp Members
 
         public bool SignalExternalCommandLineArgs(IList<string> args)
         {
