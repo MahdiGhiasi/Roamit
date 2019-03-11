@@ -392,6 +392,7 @@ namespace QuickShare.Desktop
             (FindResource("PaneOpenStoryboard") as Storyboard).Begin();
             var da1 = new DoubleAnimation(this.Top + 40, this.Top, TimeSpan.FromSeconds(0.2));
             da1.EasingFunction = new ExponentialEase();
+            da1.FillBehavior = FillBehavior.Stop;
             this.BeginAnimation(Window.TopProperty, da1);
         }
 
