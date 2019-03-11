@@ -32,6 +32,8 @@ namespace QuickShare.Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
+        private int _maxClipboardItemsToKeep = 200;
+
         public static NotifyIcon notifyIcon;
         ClipboardManager clipboardManager;
 
@@ -390,6 +392,7 @@ namespace QuickShare.Desktop
             (FindResource("PaneOpenStoryboard") as Storyboard).Begin();
             var da1 = new DoubleAnimation(this.Top + 40, this.Top, TimeSpan.FromSeconds(0.2));
             da1.EasingFunction = new ExponentialEase();
+            da1.FillBehavior = FillBehavior.Stop;
             this.BeginAnimation(Window.TopProperty, da1);
         }
 
@@ -457,6 +460,9 @@ namespace QuickShare.Desktop
                         return;
 
                     ViewModel.ClipboardActivities.Insert(0, new ClipboardItem(text));
+
+                    if (ViewModel.ClipboardActivities.Count > _maxClipboardItemsToKeep)
+                        ViewModel.ClipboardActivities.RemoveAt(ViewModel.ClipboardActivities.Count - 1);
 
                     SendClipboardItem();
                 }
@@ -758,6 +764,16 @@ namespace QuickShare.Desktop
             blurEnabled = false;
         }
         #endregion
+        #endregion
+
+        #region Making WPF more touch friendly
+
+        private void ScrollViewer_ManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
+        {
+            // Avoid window shaking: https://stackoverflow.com/a/37000344/942659
+            e.Handled = true;
+        }
+
         #endregion
     }
 }

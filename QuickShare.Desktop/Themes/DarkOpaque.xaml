@@ -7,4 +7,11 @@
     <SolidColorBrush x:Key="BorderColor" Color="#3A3A3A" />
     <BitmapImage x:Key="AppIcon" UriSource="pack://application:,,,/Resources/icon48_white.png" />
     <BitmapImage x:Key="SettingsIcon" UriSource="pack://application:,,,/Resources/settings_white.png" />
+
+    <SolidColorBrush x:Key="ScrollBarBackground" Color="#1B1B1B" />
+    <SolidColorBrush x:Key="ScrollBarButtonPressed" Color="#A4A4A4" />
+    <SolidColorBrush x:Key="ScrollBarThumbMouseOver" Color="#767676" />
+    <SolidColorBrush x:Key="ScrollBarThumbColor" Color="#494949" />
+    <SolidColorBrush x:Key="ScrollBarButtonForeground" Color="#CDCDCD" />
+    <SolidColorBrush x:Key="ScrollBarButtonMouseOver" Color="#313131" />
 </ResourceDictionary>
