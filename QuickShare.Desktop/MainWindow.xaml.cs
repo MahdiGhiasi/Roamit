@@ -32,6 +32,8 @@ namespace QuickShare.Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
+        private int _maxClipboardItemsToKeep = 200;
+
         public static NotifyIcon notifyIcon;
         ClipboardManager clipboardManager;
 
@@ -457,6 +459,9 @@ namespace QuickShare.Desktop
                         return;
 
                     ViewModel.ClipboardActivities.Insert(0, new ClipboardItem(text));
+
+                    if (ViewModel.ClipboardActivities.Count > _maxClipboardItemsToKeep)
+                        ViewModel.ClipboardActivities.RemoveAt(ViewModel.ClipboardActivities.Count - 1);
 
                     SendClipboardItem();
                 }
