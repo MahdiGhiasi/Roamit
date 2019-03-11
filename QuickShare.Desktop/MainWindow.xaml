@@ -21,6 +21,10 @@
 
     <Window.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ControlTemplates/ScrollBar.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
             <Storyboard x:Key="PaneOpenStoryboard">
                 <DoubleAnimation Storyboard.TargetName="MainGridContent" 
                                  Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
