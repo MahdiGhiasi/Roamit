@@ -118,6 +118,7 @@
                               BorderBrush="Transparent"
                               Padding="4,4,4,0"
                               HorizontalContentAlignment="Stretch"
+                              ScrollViewer.CanContentScroll="False"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               SelectionChanged="ClipboardActivity_SelectionChanged"
