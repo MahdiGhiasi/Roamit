@@ -765,5 +765,15 @@ namespace QuickShare.Desktop
         }
         #endregion
         #endregion
+
+        #region Making WPF more touch friendly
+
+        private void ScrollViewer_ManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
+        {
+            // Avoid window shaking: https://stackoverflow.com/a/37000344/942659
+            e.Handled = true;
+        }
+
+        #endregion
     }
 }
