@@ -365,7 +365,7 @@ namespace QuickShare.Desktop
             // Scroll to top
             try
             {
-                (((VisualTreeHelper.GetChild(ClipboardActivity, 0) as Border).Child) as ScrollViewer).ScrollToVerticalOffset(0);
+                (VisualTreeHelper.GetChild(ClipboardActivity, 0) as ScrollViewer).ScrollToVerticalOffset(0);
             }
             catch { }
 
